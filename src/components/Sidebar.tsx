@@ -128,7 +128,7 @@ export default function Sidebar({
       </div>
 
       {/* 오른쪽 서브메뉴 */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 w-max">
         {getCurrentSelectedMenu() &&
           navigationItems.find((i) => i.id === getCurrentSelectedMenu())?.subItems && (
             <div>

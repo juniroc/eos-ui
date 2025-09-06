@@ -261,18 +261,23 @@ export default function SettlementInfoPage() {
                 </td>
               </tr>
             ))}
+
+            {/* 기타자료 추가하기 버튼 행 */}
+            <tr>
+              <td
+                colSpan={4}
+                className="p-3 border border-gray-200 text-center"
+              >
+                <button
+                  onClick={addRow}
+                  className="text-sm text-[#767676] flex justify-center gap-1 hover:text-[#1E1E1E]"
+                >
+                  + 기타자료 추가하기
+                </button>
+              </td>
+            </tr>
           </tbody>
         </table>
-
-        {/* Add Row */}
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={addRow}
-            className="text-sm text-gray-600 border border-gray-300 px-4 py-2 rounded flex items-center gap-1 hover:bg-gray-50"
-          >
-            + 기타자료 추가하기
-          </button>
-        </div>
       </div>
     </div>
   );

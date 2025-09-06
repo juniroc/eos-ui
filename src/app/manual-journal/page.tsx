@@ -132,7 +132,7 @@ export default function ManualJournalPage() {
                 rowSpan={2}
                 className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center"
               >
-                관리
+                적요
               </td>
             </tr>
             <tr>

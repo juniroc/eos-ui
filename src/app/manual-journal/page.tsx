@@ -1,172 +1,327 @@
 'use client';
 
 import { useState } from 'react';
-import Button from '@/components/Button';
 
-interface JournalEntry {
+interface ManualJournalRow {
   id: number;
   date: string;
-  description: string;
   debitAccount: string;
+  debitAmount: string;
+  debitPartner: string;
   creditAccount: string;
-  amount: number;
+  creditAmount: string;
+  creditPartner: string;
+  description: string;
 }
 
 export default function ManualJournalPage() {
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [newEntry, setNewEntry] = useState<Partial<JournalEntry>>({
-    date: new Date().toISOString().split('T')[0],
-    description: '',
-    debitAccount: '',
-    creditAccount: '',
-    amount: 0,
-  });
+  const [rows, setRows] = useState<ManualJournalRow[]>([
+    {
+      id: 1,
+      date: '',
+      debitAccount: '',
+      debitAmount: '',
+      debitPartner: '',
+      creditAccount: '',
+      creditAmount: '',
+      creditPartner: '',
+      description: '',
+    },
+  ]);
 
-  const addEntry = () => {
-    if (newEntry.description && newEntry.debitAccount && newEntry.creditAccount && newEntry.amount) {
-      setEntries([...entries, { ...newEntry, id: Date.now() } as JournalEntry]);
-      setNewEntry({
-        date: new Date().toISOString().split('T')[0],
-        description: '',
+  const [loading, setLoading] = useState(false);
+
+  /** 저장 버튼 활성화 여부 */
+  const hasData = rows.some(
+    (r) =>
+      r.date.trim() ||
+      r.debitAccount.trim() ||
+      r.debitAmount.trim() ||
+      r.debitPartner.trim() ||
+      r.creditAccount.trim() ||
+      r.creditAmount.trim() ||
+      r.creditPartner.trim() ||
+      r.description.trim()
+  );
+
+  /** 행 추가 */
+  const addRow = () => {
+    setRows((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        date: '',
         debitAccount: '',
+        debitAmount: '',
+        debitPartner: '',
         creditAccount: '',
-        amount: 0,
-      });
-    }
+        creditAmount: '',
+        creditPartner: '',
+        description: '',
+      },
+    ]);
   };
 
-  const removeEntry = (id: number) => {
-    setEntries(entries.filter(entry => entry.id !== id));
+  /** 행 삭제 */
+  const handleDelete = (id: number) => {
+    setRows((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  /** 저장 */
+  const handleSave = async () => {
+    alert('저장 API 연결 예정');
   };
 
   return (
     <div className="p-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">수동 분개</h1>
-          <p className="text-gray-600">수동으로 분개를 입력하고 관리합니다.</p>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">수동분개</h2>
+            <p className="text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
+          </div>
+          <button
+            className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] text-[#1E1E1E] rounded ${
+              hasData && !loading
+                ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
+                : 'bg-[#E6E6E6]'
+            }`}
+            disabled={!hasData || loading}
+            onClick={handleSave}
+          >
+            저장하기
+          </button>
         </div>
 
-        {/* 분개 입력 폼 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">분개 입력</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                날짜
-              </label>
-              <input
-                type="date"
-                value={newEntry.date}
-                onChange={(e) => setNewEntry({...newEntry, date: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+        {/* 테이블 */}
+        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+          <thead>
+            <tr>
+              <td
+                rowSpan={2}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 text-center"
+              >
+                번호
+              </td>
+              <td
+                rowSpan={2}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center"
+              >
+                일자
+              </td>
+              <td
+                colSpan={3}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+              >
+                차변
+              </td>
+              <td
+                colSpan={3}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+              >
+                대변
+              </td>
+              <td
+                rowSpan={2}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+              >
                 적요
-              </label>
-              <input
-                type="text"
-                value={newEntry.description}
-                onChange={(e) => setNewEntry({...newEntry, description: e.target.value})}
-                placeholder="적요를 입력하세요"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                차변 계정
-              </label>
-              <input
-                type="text"
-                value={newEntry.debitAccount}
-                onChange={(e) => setNewEntry({...newEntry, debitAccount: e.target.value})}
-                placeholder="차변 계정"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                대변 계정
-              </label>
-              <input
-                type="text"
-                value={newEntry.creditAccount}
-                onChange={(e) => setNewEntry({...newEntry, creditAccount: e.target.value})}
-                placeholder="대변 계정"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              </td>
+              <td
+                rowSpan={2}
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center"
+              >
+                관리
+              </td>
+            </tr>
+            <tr>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+                계정과목
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
                 금액
-              </label>
-              <input
-                type="number"
-                value={newEntry.amount}
-                onChange={(e) => setNewEntry({...newEntry, amount: Number(e.target.value)})}
-                placeholder="금액"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end mt-4">
-            <Button onClick={addEntry} className="px-6 py-2">
-              분개 추가
-            </Button>
-          </div>
-        </div>
-
-        {/* 분개 목록 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold mb-4">분개 목록</h2>
-          {entries.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              등록된 분개가 없습니다.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">날짜</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">적요</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">차변</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">대변</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">금액</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {entries.map((entry) => (
-                    <tr key={entry.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.date}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.description}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.debitAccount}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.creditAccount}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.amount.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <button
-                          onClick={() => removeEntry(entry.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          삭제
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+                거래처
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+                계정과목
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+                금액
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+                거래처
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr key={row.id}>
+                <td className="p-3 border border-[#D9D9D9] text-center">
+                  {idx + 1}
+                </td>
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="date"
+                    className="w-full focus:outline-none"
+                    value={row.date}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id ? { ...r, date: e.target.value } : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                {/* 차변 */}
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="text"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.debitAccount}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, debitAccount: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="number"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.debitAmount}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, debitAmount: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="text"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.debitPartner}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, debitPartner: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                {/* 대변 */}
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="text"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.creditAccount}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, creditAccount: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="number"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.creditAmount}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, creditAmount: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="text"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.creditPartner}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, creditPartner: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                {/* 적요 */}
+                <td className="p-3 border border-[#D9D9D9]">
+                  <input
+                    type="text"
+                    className="w-full focus:outline-none"
+                    placeholder="입력하기"
+                    value={row.description}
+                    onChange={(e) =>
+                      setRows((prev) =>
+                        prev.map((r) =>
+                          r.id === row.id
+                            ? { ...r, description: e.target.value }
+                            : r
+                        )
+                      )
+                    }
+                  />
+                </td>
+                {/* 관리 */}
+                <td className="p-3 border border-[#D9D9D9] text-center">
+                  <button
+                    onClick={() => handleDelete(row.id)}
+                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                  >
+                    삭제
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {/* 추가하기 버튼 */}
+            <tr>
+              <td colSpan={10} className="p-3 border border-[#D9D9D9] text-center">
+                <button
+                  onClick={addRow}
+                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
+                >
+                  + 추가하기
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

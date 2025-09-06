@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface ClientRow {
   id: number;
@@ -32,7 +32,7 @@ export default function ClientInfoPage() {
   );
 
   /** 거래처 목록 불러오기 */
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       const res = await fetch('/api/partner-docs', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -41,7 +41,7 @@ export default function ClientInfoPage() {
       const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         setRows(
-          data.data.map((client: any) => ({
+          data.data.map((client: ClientRow) => ({
             id: client.id,
             name: client.name || '',
             businessNumber: client.businessNumber || '',
@@ -57,7 +57,7 @@ export default function ClientInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 거래처리스트 파일 업로드 */
   const handleFileUpload = async (file: File) => {
@@ -74,7 +74,7 @@ export default function ClientInfoPage() {
       if (!res.ok) throw new Error('업로드 실패');
       const data = await res.json();
       if (data.success && data.items) {
-        const extracted = data.items.map((item: any) => ({
+        const extracted = data.items.map((item: ClientRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
           businessNumber: item.businessNumber || '',
@@ -126,7 +126,7 @@ export default function ClientInfoPage() {
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [fetchClients]);
 
   return (
     <div className="p-8">

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface SidebarProps {
   activeSection: string;
@@ -19,7 +20,6 @@ const navigationItems = [
       { id: "employee-info", label: "직원 정보" },
       { id: "client-info", label: "거래처 정보" },
       { id: "shareholder-info", label: "주주 정보" },
-      { id: "doc-archive", label: "증빙보관소" },
     ],
   },
   {
@@ -72,7 +72,22 @@ export default function Sidebar({
   activeSection,
   onSectionChange,
 }: SidebarProps) {
-  const [selectedMenu, setSelectedMenu] = useState<string | null>("basic-info");
+  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // 클라이언트에서만 실행되도록 보장
+  useEffect(() => {
+    setIsClient(true);
+    // activeSection을 기반으로 초기 selectedMenu 설정
+    const mainMenu = navigationItems.find(item => 
+      item.subItems?.some(sub => sub.id === activeSection)
+    );
+    if (mainMenu) {
+      setSelectedMenu(mainMenu.id);
+    } else {
+      setSelectedMenu("basic-info");
+    }
+  }, [activeSection]);
 
   const handleMenuClick = (itemId: string, hasSub?: boolean) => {
     if (hasSub) {
@@ -84,11 +99,16 @@ export default function Sidebar({
 
   // 현재 선택된 메뉴를 결정하는 로직
   const getCurrentSelectedMenu = () => {
-    // activeSection이 서브메뉴인 경우, 해당하는 메인 메뉴를 찾음
-    const mainMenu = navigationItems.find(item => 
-      item.subItems?.some(sub => sub.id === activeSection)
-    );
-    return mainMenu ? mainMenu.id : selectedMenu;
+    if (!isClient) {
+      // 서버 사이드에서는 activeSection을 기반으로 결정
+      const mainMenu = navigationItems.find(item => 
+        item.subItems?.some(sub => sub.id === activeSection)
+      );
+      return mainMenu ? mainMenu.id : "basic-info";
+    }
+    
+    // 클라이언트에서는 selectedMenu 상태 사용
+    return selectedMenu || "basic-info";
   };
 
   return (
@@ -114,7 +134,7 @@ export default function Sidebar({
                     : "bg-none text-[#757575] hover:bg-[#E6E6E6]"
                 }`}
               >
-                <img src={icon} alt={item.label} className="w-6 h-6 mb-2" />
+                <Image src={icon} alt={item.label} width={24} height={24} className="w-6 h-6 mb-2" />
                 <span className="text-xs font-medium">{item.label}</span>
               </button>
               

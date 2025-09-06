@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Button from '@/components/Button';
 
 interface CardRow {
@@ -33,7 +33,7 @@ export default function CardInfoPage() {
   );
 
   /** 카드 계좌 불러오기 */
-  const fetchCards = async () => {
+  const fetchCards = useCallback(async () => {
     try {
       const res = await fetch('/api/card-docs', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -42,7 +42,7 @@ export default function CardInfoPage() {
       const data = await res.json();
       if (data.success && data.data.length > 0) {
         setRows(
-          data.data.map((c: any) => ({
+          data.data.map((c: CardRow) => ({
             id: c.id,
             cardIssuer: c.cardIssuer || '',
             cardNumber: c.cardNumber || '',
@@ -58,7 +58,7 @@ export default function CardInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 카드리스트 파일 업로드 */
   const handleFileUpload = async (file: File) => {
@@ -75,7 +75,7 @@ export default function CardInfoPage() {
       if (!res.ok) throw new Error('업로드 실패');
       const data = await res.json();
       if (data.success) {
-        const extracted = data.items.map((item: any) => ({
+        const extracted = data.items.map((item: CardRow) => ({
           id: Date.now() + Math.random(),
           cardIssuer: item.cardIssuer || '',
           cardNumber: item.cardNumber || '',
@@ -157,7 +157,7 @@ export default function CardInfoPage() {
 
   useEffect(() => {
     fetchCards();
-  }, []);
+  }, [fetchCards]);
 
   return (
     <div className="p-8">

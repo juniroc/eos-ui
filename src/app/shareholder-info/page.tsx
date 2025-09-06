@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface ShareholderRow {
   id: number;
@@ -34,7 +34,7 @@ export default function ShareholderInfoPage() {
   );
 
   /** 주주 목록 불러오기 */
-  const fetchShareholders = async () => {
+  const fetchShareholders = useCallback(async () => {
     try {
       const res = await fetch('/api/shareholder-docs', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -43,7 +43,7 @@ export default function ShareholderInfoPage() {
       const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         setRows(
-          data.data.map((s: any) => ({
+          data.data.map((s: ShareholderRow) => ({
             id: s.id,
             name: s.name || '',
             residentNumber: s.residentNumber || '',
@@ -60,7 +60,7 @@ export default function ShareholderInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 주주명부 파일 업로드 */
   const handleFileUpload = async (file: File) => {
@@ -77,7 +77,7 @@ export default function ShareholderInfoPage() {
       if (!res.ok) throw new Error('업로드 실패');
       const data = await res.json();
       if (data.success && data.items) {
-        const extracted = data.items.map((item: any) => ({
+        const extracted = data.items.map((item: ShareholderRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
           residentNumber: item.residentNumber || '',
@@ -130,7 +130,7 @@ export default function ShareholderInfoPage() {
 
   useEffect(() => {
     fetchShareholders();
-  }, []);
+  }, [fetchShareholders]);
 
   return (
     <div className="p-8">

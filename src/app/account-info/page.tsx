@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Button from '@/components/Button';
 
 interface AccountRow {
@@ -33,7 +33,7 @@ export default function AccountInfoPage() {
   );
 
   /** 통장 계좌 불러오기 */
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     try {
       const res = await fetch('/api/bank-account-docs', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -42,7 +42,7 @@ export default function AccountInfoPage() {
       const data = await res.json();
       if (data.success && data.data.length > 0) {
         setRows(
-          data.data.map((acc: any) => ({
+          data.data.map((acc: AccountRow) => ({
             id: acc.id,
             bankName: acc.bankName || '',
             accountNumber: acc.accountNumber || '',
@@ -58,7 +58,7 @@ export default function AccountInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 파일 업로드 → 추출 */
   const handleFileUpload = async (file: File) => {
@@ -75,7 +75,7 @@ export default function AccountInfoPage() {
       if (!res.ok) throw new Error('업로드 실패');
       const data = await res.json();
       if (data.success) {
-        const extracted = data.items.map((item: any) => ({
+        const extracted = data.items.map((item: AccountRow) => ({
           id: Date.now() + Math.random(),
           bankName: item.bankName || '',
           accountNumber: item.accountNumber || '',
@@ -157,7 +157,7 @@ export default function AccountInfoPage() {
 
   useEffect(() => {
     fetchAccounts();
-  }, []);
+  }, [fetchAccounts]);
 
   return (
     <div className="p-8">

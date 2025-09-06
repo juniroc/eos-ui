@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface EmployeeRow {
   id: number;
@@ -32,7 +32,7 @@ export default function EmployeeInfoPage() {
   );
 
   /** 직원 목록 불러오기 */
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const res = await fetch('/api/employees', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -41,7 +41,7 @@ export default function EmployeeInfoPage() {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         setRows(
-          data.map((emp: any) => ({
+          data.map((emp: EmployeeRow) => ({
             id: emp.id,
             name: emp.name || '',
             residentNumber: emp.residentNumber || '',
@@ -57,7 +57,7 @@ export default function EmployeeInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 직원리스트 파일 업로드 */
   const handleFileUpload = async (file: File) => {
@@ -74,7 +74,7 @@ export default function EmployeeInfoPage() {
       if (!res.ok) throw new Error('업로드 실패');
       const data = await res.json();
       if (data.success && data.items) {
-        const extracted = data.items.map((item: any) => ({
+        const extracted = data.items.map((item: EmployeeRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
           residentNumber: item.residentNumber || '',
@@ -126,7 +126,7 @@ export default function EmployeeInfoPage() {
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
   return (
     <div className="p-8">

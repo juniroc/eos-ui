@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Button from '@/components/Button';
 
 interface SettlementRow {
@@ -28,7 +28,7 @@ export default function SettlementInfoPage() {
   const hasData = rows.some(row => row.value.trim() !== '');
 
   /** 전기결산정보 불러오기 */
-  const fetchDocs = async () => {
+  const fetchDocs = useCallback(async () => {
     try {
       const res = await fetch('/api/previous-docs', {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -37,7 +37,7 @@ export default function SettlementInfoPage() {
       const data = await res.json();
       if (data.success) {
         setRows(
-          data.data.map((doc: any) => ({
+          data.data.map((doc: { id: number; originalName: string }) => ({
             id: doc.id,
             type: '선택',
             value: doc.originalName,
@@ -54,7 +54,7 @@ export default function SettlementInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  };
+  }, [firstLoad]);
 
   /** 파일 업로드 */
   const handleFileUpload = async (rowId: number, file: File) => {
@@ -155,7 +155,7 @@ export default function SettlementInfoPage() {
 
   useEffect(() => {
     fetchDocs();
-  }, []);
+  }, [fetchDocs]);
 
   return (
     <div className="p-8">

@@ -53,7 +53,7 @@ export default function BusinessInfoPage() {
         },
       });
 
-      if (!res.ok) throw new Error('데이터 불러오기 실패');
+      if (!res.ok) return; // 에러 시 조용히 리턴
       const data = await res.json();
 
       setFormData((prev) => ({
@@ -62,7 +62,7 @@ export default function BusinessInfoPage() {
       }));
     } catch (err) {
       console.error(err);
-      alert('사업자 정보를 불러오지 못했습니다.');
+      // 초기 로드 시에는 에러 알림 제거
     } finally {
       setLoading(false);
     }

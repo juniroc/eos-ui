@@ -141,13 +141,15 @@ export default function BusinessInfoPage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">사업자 정보</h2>
-          <p className="text-[#767676]">
-            파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
-          </p>
-        </div>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">사업자 정보</h2>
+            <p className="text-[#767676]">
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+            </p>
+          </div>
         <div className="flex gap-3">
           <Button
             variant="neutral"
@@ -333,8 +335,7 @@ export default function BusinessInfoPage() {
           </tr>
         </tbody>
       </table>
-
-
+      </div>
     </div>
   );
 }

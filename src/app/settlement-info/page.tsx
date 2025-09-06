@@ -161,22 +161,25 @@ export default function SettlementInfoPage() {
     <div className="p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">정기결산 정보</h1>
-          <Button
-            variant="neutral"
-            size="small"
-            onClick={handleSave}
-            disabled={!hasData || loading}
-            loading={loading}
-          >
-            저장하기
-          </Button>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">정기결산 정보</h2>
+            <p className="text-[#767676]">
+              필요한 내용을 입력하고 정보를 저장하세요.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="neutral"
+              size="small"
+              onClick={handleSave}
+              disabled={!hasData || loading}
+              loading={loading}
+            >
+              저장하기
+            </Button>
+          </div>
         </div>
-
-        <p className="text-gray-600 mb-4">
-          필요한 내용을 입력하고 정보를 저장하세요.
-        </p>
 
         {/* Table */}
         <table className="w-full border border-gray-200 text-sm">

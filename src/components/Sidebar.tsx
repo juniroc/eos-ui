@@ -6,6 +6,7 @@ interface SidebarProps {
   onSectionChange: (section: string) => void;
 }
 
+
 const navigationItems = [
   {
     id: "basic-info",
@@ -28,8 +29,10 @@ const navigationItems = [
     icon: "/icons/chart_black.png",
     iconGrey: "/icons/chart_grey.png",
     subItems: [
+      { id: "ai-journal-main", label: "AI 분개" },
       { id: "guideline-period", label: "지침 주기" },
-      { id: "settlement-info-ai", label: "정기결산 정보" },
+      { id: "manual-journal", label: "수동 분개" },
+      { id: "ai-closing-check", label: "AI 결산점검" },
     ],
   },
   {
@@ -38,9 +41,13 @@ const navigationItems = [
     icon: "/icons/book_black.png",
     iconGrey: "/icons/book_grey.png",
     subItems: [
-      { id: "general-ledger", label: "일반장부" },
-      { id: "subsidiary-ledger", label: "보조장부" },
-      { id: "trial-balance", label: "시산표" },
+      { id: "proof-storage", label: "증빙보관소" },
+      { id: "journal", label: "전표/수정" },
+      { id: "general-ledger", label: "계정원장" },
+      { id: "cashbook", label: "현금출납장" },
+      { id: "ledger", label: "원장" },
+      { id: "statements", label: "명세서" },
+      { id: "financial-statements", label: "재무제표" },
     ],
   },
   {
@@ -67,6 +74,7 @@ const navigationItems = [
     iconGrey: "/icons/feather_grey.png",
   },
 ];
+
 
 export default function Sidebar({
   activeSection,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Button from '@/components/Button';
 
 interface AccountRow {
   id: number;
@@ -171,43 +172,25 @@ export default function AccountInfoPage() {
           </div>
           <div className="flex gap-3">
             {/* 파일 업로드 */}
-            <button
-              style={{
-                width: 'auto',
-                minWidth: '79px',
-                height: '28px',
-                padding: '8px 12px',
-                background: '#F3F3F3',
-                color: '#1E1E1E',
-                fontSize: '12px',
-                lineHeight: '12px',
-              }}
+            <Button
+              variant="neutral"
+              size="small"
               onClick={() => document.getElementById('accountFile')?.click()}
               disabled={loading}
+              loading={loading}
             >
               파일 업로드
-            </button>
+            </Button>
             {/* 저장하기 */}
-            <button
-              style={{
-                width: 'auto',
-                minWidth: hasData ? '79px' : '66px',
-                height: '28px',
-                padding: '8px 12px',
-                background: hasData
-                  ? loading
-                    ? '#E6E6E6'
-                    : '#F3F3F3'
-                  : '#E6E6E6',
-                color: '#1E1E1E',
-                fontSize: '12px',
-                lineHeight: '12px',
-              }}
+            <Button
+              variant="neutral"
+              size="small"
               onClick={handleSave}
               disabled={!hasData || loading}
+              loading={loading}
             >
               저장하기
-            </button>
+            </Button>
           </div>
         </div>
 

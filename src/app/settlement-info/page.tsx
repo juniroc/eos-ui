@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Button from '@/components/Button';
 
 interface SettlementRow {
   id: number;
@@ -162,29 +163,15 @@ export default function SettlementInfoPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">정기결산 정보</h1>
-          <button
-            style={{
-              width: 'auto',
-              minWidth: loading ? '66px' : '79px',
-              height: '28px',
-              gap: '8px',
-              opacity: 1,
-              paddingTop: 'var(--Space-200, 8px)',
-              paddingRight: 'var(--Space-300, 12px)',
-              paddingBottom: 'var(--Space-200, 8px)',
-              paddingLeft: 'var(--Space-300, 12px)',
-              background: loading
-                ? '#E6E6E6'
-                : 'var(--Background-Neutral-Tertiary, #F3F3F3)',
-              color: '#1E1E1E',
-              fontSize: '12px',
-              lineHeight: '12px',
-            }}
+          <Button
+            variant="neutral"
+            size="small"
             onClick={handleSave}
             disabled={!hasData || loading}
+            loading={loading}
           >
             저장하기
-          </button>
+          </Button>
         </div>
 
         <p className="text-gray-600 mb-4">

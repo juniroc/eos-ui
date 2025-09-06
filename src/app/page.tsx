@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Button from '@/components/Button';
 
 interface FormData {
   companyName: string;
@@ -148,48 +149,24 @@ export default function BusinessInfoPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            style={{
-              width: 'auto',
-              minWidth: '79px',
-              height: '28px',
-              gap: '8px',
-              opacity: 1,
-              paddingTop: 'var(--Space-200, 8px)',
-              paddingRight: 'var(--Space-300, 12px)',
-              paddingBottom: 'var(--Space-200, 8px)',
-              paddingLeft: 'var(--Space-300, 12px)',
-              background: 'var(--Background-Neutral-Tertiary, #F3F3F3)',
-              color: '#1E1E1E',
-              fontSize: '12px',
-              lineHeight: '12px'
-            }}
+          <Button
+            variant="neutral"
+            size="small"
             onClick={() => document.getElementById('fileUpload')?.click()}
             disabled={loading}
+            loading={loading}
           >
             파일 업로드
-          </button>
-          <button
-            style={{
-              width: 'auto',
-              minWidth: loading ? '66px' : '79px',
-              height: '28px',
-              gap: '8px',
-              opacity: 1,
-              paddingTop: 'var(--Space-200, 8px)',
-              paddingRight: 'var(--Space-300, 12px)',
-              paddingBottom: 'var(--Space-200, 8px)',
-              paddingLeft: 'var(--Space-300, 12px)',
-              background: loading ? '#E6E6E6' : 'var(--Background-Neutral-Tertiary, #F3F3F3)',
-              color: '#1E1E1E',
-              fontSize: '12px',
-              lineHeight: '12px'
-            }}
+          </Button>
+          <Button
+            variant="neutral"
+            size="small"
             onClick={handleSave}
             disabled={!hasData || loading}
+            loading={loading}
           >
             저장하기
-          </button>
+          </Button>
         </div>
       </div>
 

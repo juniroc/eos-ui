@@ -23,6 +23,9 @@ export default function SettlementInfoPage() {
   const [firstLoad, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
+  const hasData = rows.some(row => row.value.trim() !== '');
+
   /** 전기결산정보 불러오기 */
   const fetchDocs = async () => {
     try {
@@ -178,7 +181,7 @@ export default function SettlementInfoPage() {
               lineHeight: '12px',
             }}
             onClick={handleSave}
-            disabled={loading}
+            disabled={!hasData || loading}
           >
             저장하기
           </button>

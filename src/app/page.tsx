@@ -38,6 +38,9 @@ export default function BusinessInfoPage() {
   // ✅ 로그인 시 발급받은 토큰으로 교체
   const accessToken = 'YOUR_ACCESS_TOKEN';
 
+  /** 저장 버튼 활성화 여부 → 필수 데이터가 하나라도 있으면 true */
+  const hasData = Object.values(formData).some(value => value.trim() !== '');
+
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -183,7 +186,7 @@ export default function BusinessInfoPage() {
               lineHeight: '12px'
             }}
             onClick={handleSave}
-            disabled={loading}
+            disabled={!hasData || loading}
           >
             저장하기
           </button>

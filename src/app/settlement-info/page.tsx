@@ -69,8 +69,8 @@ export default function SettlementInfoPage() {
       const data = await res.json();
 
       if (data.success) {
-        setRows((prev) =>
-          prev.map((row) =>
+        setRows(prev =>
+          prev.map(row =>
             row.id === rowId
               ? {
                   ...row,
@@ -92,7 +92,7 @@ export default function SettlementInfoPage() {
   /** 파일 삭제 */
   const handleDelete = async (rowId: number, fileId?: string) => {
     if (!fileId) {
-      setRows((prev) => prev.filter((row) => row.id !== rowId));
+      setRows(prev => prev.filter(row => row.id !== rowId));
       return;
     }
 
@@ -105,7 +105,7 @@ export default function SettlementInfoPage() {
       if (!res.ok) throw new Error('삭제 실패');
       const data = await res.json();
       if (data.success) {
-        setRows((prev) => prev.filter((row) => row.id !== rowId));
+        setRows(prev => prev.filter(row => row.id !== rowId));
       }
     } catch (e) {
       console.error(e);
@@ -117,7 +117,7 @@ export default function SettlementInfoPage() {
 
   /** 기타자료 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
       { id: Date.now(), type: '선택', value: '', fileName: '' },
     ]);
@@ -160,7 +160,9 @@ export default function SettlementInfoPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">정기결산 정보</h2>
+            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">
+              정기결산 정보
+            </h2>
             <p className="text-[#767676]">
               필요한 내용을 입력하고 정보를 저장하세요.
             </p>
@@ -184,12 +186,14 @@ export default function SettlementInfoPage() {
             <tr>
               <th className="p-3 border border-gray-200 w-24">구분</th>
               <th className="p-3 border border-gray-200">title</th>
-              <th className="p-3 border border-gray-200 w-48 text-left">title</th>
+              <th className="p-3 border border-gray-200 w-48 text-left">
+                title
+              </th>
               <th className="p-3 border border-gray-200 w-32">title</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map(row => (
               <tr key={row.id}>
                 <td
                   className={`p-3 border border-gray-200 text-center ${
@@ -203,9 +207,9 @@ export default function SettlementInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.value}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, value: e.target.value } : r
                         )
                       )
@@ -218,7 +222,7 @@ export default function SettlementInfoPage() {
                     <input
                       type="file"
                       className="hidden"
-                      onChange={(e) =>
+                      onChange={e =>
                         e.target.files &&
                         handleFileUpload(row.id, e.target.files[0])
                       }
@@ -238,8 +242,7 @@ export default function SettlementInfoPage() {
                       paddingRight: 'var(--Space-300, 12px)',
                       paddingBottom: 'var(--Space-200, 8px)',
                       paddingLeft: 'var(--Space-300, 12px)',
-                      background:
-                        'var(--Background-Neutral-Tertiary, #F3F3F3)',
+                      background: 'var(--Background-Neutral-Tertiary, #F3F3F3)',
                       color: '#1E1E1E',
                       fontSize: '12px',
                       lineHeight: '12px',

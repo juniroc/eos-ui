@@ -23,8 +23,13 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/salary-structure': { mainMenu: '급여관리', subMenu: '급여구조' },
     '/tax-deduction': { mainMenu: '급여관리', subMenu: '세금공제' },
   };
-  
-  return breadcrumbMap[pathname] || { mainMenu: '기초정보', subMenu: '사업자등록정보' };
+
+  return (
+    breadcrumbMap[pathname] || {
+      mainMenu: '기초정보',
+      subMenu: '사업자등록정보',
+    }
+  );
 };
 
 export default function DynamicBreadcrumb() {
@@ -32,9 +37,9 @@ export default function DynamicBreadcrumb() {
   const breadcrumbInfo = getBreadcrumbInfo(pathname);
 
   return (
-    <Breadcrumb 
-      mainMenu={breadcrumbInfo.mainMenu} 
-      subMenu={breadcrumbInfo.subMenu} 
+    <Breadcrumb
+      mainMenu={breadcrumbInfo.mainMenu}
+      subMenu={breadcrumbInfo.subMenu}
     />
   );
 }

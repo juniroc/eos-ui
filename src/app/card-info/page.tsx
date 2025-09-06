@@ -24,7 +24,7 @@ export default function CardInfoPage() {
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
-    (r) =>
+    r =>
       r.cardIssuer.trim() ||
       r.cardNumber.trim() ||
       r.cardType?.trim() ||
@@ -82,7 +82,7 @@ export default function CardInfoPage() {
           purpose: item.purpose || '',
           primaryUser: item.primaryUser || '',
         }));
-        setRows((prev) => [...prev, ...extracted]);
+        setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
       console.error(err);
@@ -103,7 +103,7 @@ export default function CardInfoPage() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          cards: rows.map((r) => ({
+          cards: rows.map(r => ({
             cardIssuer: r.cardIssuer,
             cardNumber: r.cardNumber,
             cardType: r.cardType,
@@ -137,7 +137,7 @@ export default function CardInfoPage() {
       });
       if (!res.ok) throw new Error('삭제 실패');
       await res.json();
-      setRows((prev) => prev.filter((r) => r.id !== id));
+      setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error(err);
       alert('삭제 실패');
@@ -148,7 +148,7 @@ export default function CardInfoPage() {
 
   /** 행 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
       { id: Date.now(), cardIssuer: '', cardNumber: '' },
     ]);
@@ -166,7 +166,8 @@ export default function CardInfoPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">카드 정보</h2>
             <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
+              저장하세요.
             </p>
           </div>
           <div className="flex gap-3">
@@ -194,7 +195,7 @@ export default function CardInfoPage() {
         </div>
 
         {/* 파일 업로드 박스 */}
-        <div 
+        <div
           className="rounded-lg text-center mb-6"
           style={{
             width: '1168px',
@@ -206,7 +207,7 @@ export default function CardInfoPage() {
             background: 'var(--Background-Default-Default, #FFFFFF)',
             borderWidth: '1px',
             borderStyle: 'dashed',
-            borderColor: 'var(--Border-Default-Default, #D9D9D9)'
+            borderColor: 'var(--Border-Default-Default, #D9D9D9)',
           }}
           data-dasharray="8, 4"
         >
@@ -215,7 +216,7 @@ export default function CardInfoPage() {
             accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="cardFile"
-            onChange={(e) =>
+            onChange={e =>
               e.target.files && handleFileUpload(e.target.files[0])
             }
           />
@@ -239,13 +240,25 @@ export default function CardInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">번호</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">카드사</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">카드번호</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">카드종류</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+                번호
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                카드사
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                카드번호
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                카드종류
+              </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">용도</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주사용자</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">관리</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                주사용자
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+                관리
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -259,9 +272,9 @@ export default function CardInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.cardIssuer}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, cardIssuer: e.target.value }
                             : r
@@ -275,9 +288,9 @@ export default function CardInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.cardNumber}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, cardNumber: e.target.value }
                             : r
@@ -290,10 +303,12 @@ export default function CardInfoPage() {
                   <select
                     className="w-full focus:outline-none"
                     value={row.cardType || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
-                          r.id === row.id ? { ...r, cardType: e.target.value } : r
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
+                          r.id === row.id
+                            ? { ...r, cardType: e.target.value }
+                            : r
                         )
                       )
                     }
@@ -308,10 +323,12 @@ export default function CardInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.purpose || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
-                          r.id === row.id ? { ...r, purpose: e.target.value } : r
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
+                          r.id === row.id
+                            ? { ...r, purpose: e.target.value }
+                            : r
                         )
                       )
                     }
@@ -322,9 +339,9 @@ export default function CardInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.primaryUser || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, primaryUser: e.target.value }
                             : r
@@ -348,7 +365,10 @@ export default function CardInfoPage() {
 
             {/* 추가하기 */}
             <tr>
-              <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center">
+              <td
+                colSpan={7}
+                className="p-3 border border-[#D9D9D9] text-center"
+              >
                 <button
                   onClick={addRow}
                   className="text-sm text-[#767676] hover:text-[#1E1E1E]"

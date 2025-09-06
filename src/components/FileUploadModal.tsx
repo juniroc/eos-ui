@@ -5,9 +5,18 @@ interface FileUploadModalProps {
   onFileUpload: (file: File) => void;
 }
 
-const allowedFileTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+const allowedFileTypes = [
+  'image/jpeg',
+  'image/png',
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/msword',
+];
 
-export default function FileUploadModal({ onClose, onFileUpload }: FileUploadModalProps) {
+export default function FileUploadModal({
+  onClose,
+  onFileUpload,
+}: FileUploadModalProps) {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,9 +24,9 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   };
@@ -26,7 +35,7 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       if (allowedFileTypes.includes(file.type)) {
@@ -52,12 +61,18 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
 
   const getFileTypeName = (type: string) => {
     switch (type) {
-      case 'image/jpeg': return 'JPG';
-      case 'image/png': return 'PNG';
-      case 'application/pdf': return 'PDF';
-      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return 'DOCX';
-      case 'application/msword': return 'DOC';
-      default: return 'Unknown';
+      case 'image/jpeg':
+        return 'JPG';
+      case 'image/png':
+        return 'PNG';
+      case 'application/pdf':
+        return 'PDF';
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return 'DOCX';
+      case 'application/msword':
+        return 'DOC';
+      default:
+        return 'Unknown';
     }
   };
 
@@ -71,8 +86,18 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -81,8 +106,8 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
         <div className="p-6">
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              dragActive 
-                ? 'border-purple-400 bg-purple-50' 
+              dragActive
+                ? 'border-purple-400 bg-purple-50'
                 : 'border-gray-300 hover:border-gray-400'
             }`}
             onDragEnter={handleDrag}
@@ -93,13 +118,28 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
             {selectedFile ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-center">
-                  <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-12 h-12 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500">{getFileTypeName(selectedFile.type)} • {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {selectedFile.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {getFileTypeName(selectedFile.type)} •{' '}
+                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
                 </div>
                 <button
                   onClick={() => setSelectedFile(null)}
@@ -110,12 +150,26 @@ export default function FileUploadModal({ onClose, onFileUpload }: FileUploadMod
               </div>
             ) : (
               <div className="space-y-4">
-                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 <div>
-                  <p className="text-sm text-gray-600">파일을 업로드 해주세요</p>
-                  <p className="text-xs text-gray-500 mt-1">(JPG, PNG, PDF, DOCX, DOC 파일만 가능합니다.)</p>
+                  <p className="text-sm text-gray-600">
+                    파일을 업로드 해주세요
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    (JPG, PNG, PDF, DOCX, DOC 파일만 가능합니다.)
+                  </p>
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}

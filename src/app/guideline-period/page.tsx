@@ -19,7 +19,7 @@ export default function GuidelinePeriodPage() {
   const [newGuideline, setNewGuideline] = useState('');
 
   /** 저장 버튼 활성화 여부 */
-  const hasData = rows.some((r) => r.content.trim());
+  const hasData = rows.some(r => r.content.trim());
 
   /** 지침 불러오기 */
   const fetchGuidelines = async () => {
@@ -31,17 +31,19 @@ export default function GuidelinePeriodPage() {
       const data = await res.json();
       if (Array.isArray(data)) {
         setRows(
-          data.map((g: {
-            id: number;
-            content?: string;
-            status?: string;
-            problem?: string;
-          }) => ({
-            id: g.id,
-            content: g.content || '',
-            status: g.status || 'ACTIVE',
-            problem: g.problem || '',
-          }))
+          data.map(
+            (g: {
+              id: number;
+              content?: string;
+              status?: string;
+              problem?: string;
+            }) => ({
+              id: g.id,
+              content: g.content || '',
+              status: g.status || 'ACTIVE',
+              problem: g.problem || '',
+            })
+          )
         );
       }
     } catch (err) {
@@ -56,13 +58,13 @@ export default function GuidelinePeriodPage() {
 
   /** 지침 삭제 */
   const handleDelete = (id: number) => {
-    setRows((prev) => prev.filter((r) => r.id !== id));
+    setRows(prev => prev.filter(r => r.id !== id));
   };
 
   /** 지침 추가 */
   const handleAddGuideline = () => {
     if (!newGuideline.trim()) return;
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
       { id: Date.now(), content: newGuideline, status: 'ACTIVE', problem: '' },
     ]);
@@ -81,9 +83,10 @@ export default function GuidelinePeriodPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">지침 주기</h2>
             <p className="text-[#767676]">
-              EOS는 각 고객별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른 회사만의 특별할 룰이 있을 경우, 
-              특별히 회계처리시 명심할 사항 등을 알려주실 수 있습니다.  
-              특별한 사항이 없으면 작성하지 않으셔도 됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요.  
+              EOS는 각 고객별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른
+              회사만의 특별할 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을
+              알려주실 수 있습니다. 특별한 사항이 없으면 작성하지 않으셔도
+              됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요.
               업무지시를 받는 신은 상단 지시창을 이용해주세요.
             </p>
           </div>
@@ -106,10 +109,18 @@ export default function GuidelinePeriodPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] mb-6">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">번호</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">지침내용</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">반영여부</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">관리</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+                번호
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                지침내용
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                반영여부
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+                관리
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -123,10 +134,12 @@ export default function GuidelinePeriodPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.content}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
-                          r.id === row.id ? { ...r, content: e.target.value } : r
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
+                          r.id === row.id
+                            ? { ...r, content: e.target.value }
+                            : r
                         )
                       )
                     }
@@ -156,7 +169,7 @@ export default function GuidelinePeriodPage() {
             className="flex-1 focus:outline-none"
             placeholder="지침을 입력하고 추가해주세요."
             value={newGuideline}
-            onChange={(e) => setNewGuideline(e.target.value)}
+            onChange={e => setNewGuideline(e.target.value)}
           />
           <button
             onClick={handleAddGuideline}

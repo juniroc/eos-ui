@@ -31,16 +31,18 @@ export default function Button({
     paddingRight: 'var(--Space-300, 12px)',
     paddingBottom: 'var(--Space-200, 8px)',
     paddingLeft: 'var(--Space-300, 12px)',
-    background: disabled || loading 
-      ? '#E6E6E6' 
-      : variant === 'primary' 
-        ? 'var(--Background-Primary, #2563EB)' 
-        : 'var(--Background-Neutral-Tertiary, #F3F3F3)',
-    color: disabled || loading 
-      ? '#9CA3AF' 
-      : variant === 'primary' 
-        ? '#FFFFFF' 
-        : '#1E1E1E',
+    background:
+      disabled || loading
+        ? '#E6E6E6'
+        : variant === 'primary'
+          ? 'var(--Background-Primary, #2563EB)'
+          : 'var(--Background-Neutral-Tertiary, #F3F3F3)',
+    color:
+      disabled || loading
+        ? '#9CA3AF'
+        : variant === 'primary'
+          ? '#FFFFFF'
+          : '#1E1E1E',
     fontSize: size === 'small' ? '12px' : size === 'medium' ? '14px' : '16px',
     lineHeight: size === 'small' ? '12px' : size === 'medium' ? '14px' : '16px',
     border: 'none',

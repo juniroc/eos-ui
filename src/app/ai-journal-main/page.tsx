@@ -60,26 +60,31 @@ export default function AIJournalMainPage() {
 
       if (data.success && data.data) {
         if (data.data.journals && Array.isArray(data.data.journals)) {
-          const newRows = data.data.journals.map((journal: {
-            date?: string;
-            debitAccount?: string;
-            debitAmount?: string;
-            debitPartner?: string;
-            creditAccount?: string;
-            creditAmount?: string;
-            creditPartner?: string;
-            description?: string;
-          }, index: number) => ({
-            id: Date.now() + index,
-            date: journal.date || '',
-            debitAccount: journal.debitAccount || '',
-            debitAmount: journal.debitAmount || '',
-            debitPartner: journal.debitPartner || '',
-            creditAccount: journal.creditAccount || '',
-            creditAmount: journal.creditAmount || '',
-            creditPartner: journal.creditPartner || '',
-            description: journal.description || '',
-          }));
+          const newRows = data.data.journals.map(
+            (
+              journal: {
+                date?: string;
+                debitAccount?: string;
+                debitAmount?: string;
+                debitPartner?: string;
+                creditAccount?: string;
+                creditAmount?: string;
+                creditPartner?: string;
+                description?: string;
+              },
+              index: number
+            ) => ({
+              id: Date.now() + index,
+              date: journal.date || '',
+              debitAccount: journal.debitAccount || '',
+              debitAmount: journal.debitAmount || '',
+              debitPartner: journal.debitPartner || '',
+              creditAccount: journal.creditAccount || '',
+              creditAmount: journal.creditAmount || '',
+              creditPartner: journal.creditPartner || '',
+              description: journal.description || '',
+            })
+          );
           setRows(newRows);
         }
 
@@ -112,7 +117,9 @@ export default function AIJournalMainPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">AI 분개</h2>
-            <p className="text-[#767676]">파일을 업로드해서 자동으로 분개를 시작하세요.</p>
+            <p className="text-[#767676]">
+              파일을 업로드해서 자동으로 분개를 시작하세요.
+            </p>
           </div>
           {hasData && (
             <div className="flex gap-3">
@@ -154,13 +161,15 @@ export default function AIJournalMainPage() {
             accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="journalFile"
-            onChange={(e) =>
+            onChange={e =>
               e.target.files && handleFileUpload(e.target.files[0])
             }
           />
           {!loading ? (
             <label htmlFor="journalFile" className="cursor-pointer block">
-              <div className="text-[#303030]">파일을 선택하거나 드래그하여 업로드하세요</div>
+              <div className="text-[#303030]">
+                파일을 선택하거나 드래그하여 업로드하세요
+              </div>
               <div className="text-sm text-[#767676] mt-2">
                 (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
               </div>
@@ -177,7 +186,8 @@ export default function AIJournalMainPage() {
                 />
               </div>
               <div className="text-sm text-[#767676]">
-                파일 내용을 분석하고 분개작업을 진행중입니다. ({progress.current}/{progress.total})
+                파일 내용을 분석하고 분개작업을 진행중입니다. (
+                {progress.current}/{progress.total})
               </div>
             </div>
           )}
@@ -190,14 +200,28 @@ export default function AIJournalMainPage() {
             <div className="grid grid-cols-5 gap-4 mb-6 text-center border border-[#D9D9D9]">
               {[
                 { label: '거래건수', value: `${summary.transactionCount}건` },
-                { label: '신규거래처수', value: `${summary.newPartnerCount}개` },
-                { label: '차변합계', value: `${summary.totalDebit.toLocaleString()}원` },
-                { label: '대변합계', value: `${summary.totalCredit.toLocaleString()}원` },
+                {
+                  label: '신규거래처수',
+                  value: `${summary.newPartnerCount}개`,
+                },
+                {
+                  label: '차변합계',
+                  value: `${summary.totalDebit.toLocaleString()}원`,
+                },
+                {
+                  label: '대변합계',
+                  value: `${summary.totalCredit.toLocaleString()}원`,
+                },
                 { label: '분개 적중률', value: `${summary.accuracy}%` },
               ].map((item, idx) => (
-                <div key={idx} className="p-4 border-r border-[#D9D9D9] last:border-r-0">
+                <div
+                  key={idx}
+                  className="p-4 border-r border-[#D9D9D9] last:border-r-0"
+                >
                   <div className="text-sm text-[#767676]">{item.label}</div>
-                  <div className="text-lg font-bold text-[#1E1E1E]">{item.value}</div>
+                  <div className="text-lg font-bold text-[#1E1E1E]">
+                    {item.value}
+                  </div>
                 </div>
               ))}
             </div>
@@ -206,44 +230,96 @@ export default function AIJournalMainPage() {
             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
               <thead>
                 <tr>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">번호</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">일자</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">차변 계정과목</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">금액</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">대변 계정과목</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">금액</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">적요</td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    번호
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    일자
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    차변 계정과목
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    금액
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    거래처
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    대변 계정과목
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    금액
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    거래처
+                  </td>
+                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                    적요
+                  </td>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, idx) => (
                   <tr key={row.id}>
-                    <td className="p-3 border border-[#D9D9D9] text-center">{idx + 1}</td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.date} />
+                    <td className="p-3 border border-[#D9D9D9] text-center">
+                      {idx + 1}
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.debitAccount} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.date}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.debitAmount} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.debitAccount}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.debitPartner} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.debitAmount}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.creditAccount} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.debitPartner}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.creditAmount} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.creditAccount}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.creditPartner} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.creditAmount}
+                      />
                     </td>
                     <td className="p-3 border border-[#D9D9D9]">
-                      <input className="w-full focus:outline-none" placeholder="입력하기" value={row.description} />
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.creditPartner}
+                      />
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9]">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        value={row.description}
+                      />
                     </td>
                   </tr>
                 ))}

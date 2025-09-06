@@ -8,9 +8,9 @@ export default function DynamicSidebar() {
   const activeSection = pathname === '/' ? 'business-info' : pathname.slice(1);
 
   return (
-    <Sidebar 
+    <Sidebar
       activeSection={activeSection}
-      onSectionChange={(section) => {
+      onSectionChange={section => {
         if (section === 'business-info') {
           window.location.href = '/';
         } else {

@@ -33,7 +33,7 @@ export default function ManualJournalPage() {
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
-    (r) =>
+    r =>
       r.date.trim() ||
       r.debitAccount.trim() ||
       r.debitAmount.trim() ||
@@ -46,7 +46,7 @@ export default function ManualJournalPage() {
 
   /** 행 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
       {
         id: Date.now(),
@@ -64,7 +64,7 @@ export default function ManualJournalPage() {
 
   /** 행 삭제 */
   const handleDelete = (id: number) => {
-    setRows((prev) => prev.filter((r) => r.id !== id));
+    setRows(prev => prev.filter(r => r.id !== id));
   };
 
   /** 저장 */
@@ -79,7 +79,9 @@ export default function ManualJournalPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">수동분개</h2>
-            <p className="text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
+            <p className="text-[#767676]">
+              필요한 내용을 입력하고 정보를 저장하세요.
+            </p>
           </div>
           <button
             className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] text-[#1E1E1E] rounded ${
@@ -167,9 +169,9 @@ export default function ManualJournalPage() {
                     type="date"
                     className="w-full focus:outline-none"
                     value={row.date}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, date: e.target.value } : r
                         )
                       )
@@ -183,9 +185,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.debitAccount}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, debitAccount: e.target.value }
                             : r
@@ -200,9 +202,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.debitAmount}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, debitAmount: e.target.value }
                             : r
@@ -217,9 +219,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.debitPartner}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, debitPartner: e.target.value }
                             : r
@@ -235,9 +237,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.creditAccount}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, creditAccount: e.target.value }
                             : r
@@ -252,9 +254,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.creditAmount}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, creditAmount: e.target.value }
                             : r
@@ -269,9 +271,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.creditPartner}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, creditPartner: e.target.value }
                             : r
@@ -287,9 +289,9 @@ export default function ManualJournalPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.description}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, description: e.target.value }
                             : r
@@ -311,7 +313,10 @@ export default function ManualJournalPage() {
             ))}
             {/* 추가하기 버튼 */}
             <tr>
-              <td colSpan={10} className="p-3 border border-[#D9D9D9] text-center">
+              <td
+                colSpan={10}
+                className="p-3 border border-[#D9D9D9] text-center"
+              >
                 <button
                   onClick={addRow}
                   className="text-sm text-[#767676] hover:text-[#1E1E1E]"

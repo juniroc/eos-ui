@@ -4,27 +4,43 @@ import { useEffect, useState, useCallback } from 'react';
 
 interface ShareholderRow {
   id: number;
-  name: string;             // 성명
-  residentNumber: string;   // 주민등록번호
-  isRelatedParty?: string;  // 특수관계인 여부 ('YES'|'NO')
-  shares?: string;          // 주식수
+  name: string; // 성명
+  residentNumber: string; // 주민등록번호
+  isRelatedParty?: string; // 특수관계인 여부 ('YES'|'NO')
+  shares?: string; // 주식수
   acquisitionDate?: string; // 취득일자
-  note?: string;            // 비고
+  note?: string; // 비고
 }
 
 const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
 
 export default function ShareholderInfoPage() {
   const [rows, setRows] = useState<ShareholderRow[]>([
-    { id: 1, name: '', residentNumber: '', isRelatedParty: '', shares: '', acquisitionDate: '', note: '' },
-    { id: 2, name: '', residentNumber: '', isRelatedParty: '', shares: '', acquisitionDate: '', note: '' },
+    {
+      id: 1,
+      name: '',
+      residentNumber: '',
+      isRelatedParty: '',
+      shares: '',
+      acquisitionDate: '',
+      note: '',
+    },
+    {
+      id: 2,
+      name: '',
+      residentNumber: '',
+      isRelatedParty: '',
+      shares: '',
+      acquisitionDate: '',
+      note: '',
+    },
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
-    (r) =>
+    r =>
       r.name.trim() ||
       r.residentNumber.trim() ||
       r.isRelatedParty?.trim() ||
@@ -85,7 +101,7 @@ export default function ShareholderInfoPage() {
           acquisitionDate: item.acquisitionDate || '',
           note: item.note || '',
         }));
-        setRows((prev) => [...prev, ...extracted]);
+        setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
       console.error(err);
@@ -110,7 +126,7 @@ export default function ShareholderInfoPage() {
       });
       if (!res.ok) throw new Error('삭제 실패');
       await res.json();
-      setRows((prev) => prev.filter((r) => r.id !== id));
+      setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error(err);
       alert('삭제 실패');
@@ -121,9 +137,17 @@ export default function ShareholderInfoPage() {
 
   /** 행 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
-      { id: Date.now(), name: '', residentNumber: '', isRelatedParty: '', shares: '', acquisitionDate: '', note: '' },
+      {
+        id: Date.now(),
+        name: '',
+        residentNumber: '',
+        isRelatedParty: '',
+        shares: '',
+        acquisitionDate: '',
+        note: '',
+      },
     ]);
   };
 
@@ -139,14 +163,17 @@ export default function ShareholderInfoPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">주주 정보</h2>
             <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
+              저장하세요.
             </p>
           </div>
           <div className="flex gap-3">
             {/* 파일 업로드 */}
             <button
               className="flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-              onClick={() => document.getElementById('shareholderFile')?.click()}
+              onClick={() =>
+                document.getElementById('shareholderFile')?.click()
+              }
               disabled={loading}
             >
               파일 업로드
@@ -182,7 +209,7 @@ export default function ShareholderInfoPage() {
             accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="shareholderFile"
-            onChange={(e) =>
+            onChange={e =>
               e.target.files && handleFileUpload(e.target.files[0])
             }
           />
@@ -206,28 +233,42 @@ export default function ShareholderInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">번호</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+                번호
+              </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">성명</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주민등록번호</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">특수관계인 여부</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주식수</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">취득일자</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                주민등록번호
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                특수관계인 여부
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                주식수
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                취득일자
+              </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">비고</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">관리</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+                관리
+              </td>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, idx) => (
               <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">{idx + 1}</td>
+                <td className="p-3 border border-[#D9D9D9] text-center">
+                  {idx + 1}
+                </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.name}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, name: e.target.value } : r
                         )
                       )
@@ -239,9 +280,9 @@ export default function ShareholderInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.residentNumber}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, residentNumber: e.target.value }
                             : r
@@ -254,9 +295,9 @@ export default function ShareholderInfoPage() {
                   <select
                     className="w-full focus:outline-none"
                     value={row.isRelatedParty || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, isRelatedParty: e.target.value }
                             : r
@@ -274,9 +315,9 @@ export default function ShareholderInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.shares || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, shares: e.target.value } : r
                         )
                       )
@@ -288,9 +329,9 @@ export default function ShareholderInfoPage() {
                     type="date"
                     className="w-full focus:outline-none"
                     value={row.acquisitionDate || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, acquisitionDate: e.target.value }
                             : r
@@ -304,9 +345,9 @@ export default function ShareholderInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.note || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, note: e.target.value } : r
                         )
                       )
@@ -326,7 +367,10 @@ export default function ShareholderInfoPage() {
             ))}
             {/* 추가하기 */}
             <tr>
-              <td colSpan={8} className="p-3 border border-[#D9D9D9] text-center">
+              <td
+                colSpan={8}
+                className="p-3 border border-[#D9D9D9] text-center"
+              >
                 <button
                   onClick={addRow}
                   className="text-sm text-[#767676] hover:text-[#1E1E1E]"

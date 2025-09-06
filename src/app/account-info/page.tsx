@@ -24,7 +24,7 @@ export default function AccountInfoPage() {
 
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
   const hasData = rows.some(
-    (r) =>
+    r =>
       r.bankName.trim() ||
       r.accountNumber.trim() ||
       r.withdrawalFee?.trim() ||
@@ -82,7 +82,7 @@ export default function AccountInfoPage() {
           purpose: item.purpose || '',
           note: item.note || '',
         }));
-        setRows((prev) => [...prev, ...extracted]);
+        setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
       console.error(err);
@@ -103,7 +103,7 @@ export default function AccountInfoPage() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          accounts: rows.map((r) => ({
+          accounts: rows.map(r => ({
             bankName: r.bankName,
             accountNumber: r.accountNumber,
             withdrawalFee: r.withdrawalFee,
@@ -137,7 +137,7 @@ export default function AccountInfoPage() {
       });
       if (!res.ok) throw new Error('삭제 실패');
       await res.json();
-      setRows((prev) => prev.filter((r) => r.id !== id));
+      setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error(err);
       alert('삭제 실패');
@@ -148,7 +148,7 @@ export default function AccountInfoPage() {
 
   /** 행 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
       { id: Date.now(), bankName: '', accountNumber: '' },
     ]);
@@ -166,7 +166,8 @@ export default function AccountInfoPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">통장 정보</h2>
             <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
+              저장하세요.
             </p>
           </div>
           <div className="flex gap-3">
@@ -212,7 +213,7 @@ export default function AccountInfoPage() {
             accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="accountFile"
-            onChange={(e) =>
+            onChange={e =>
               e.target.files && handleFileUpload(e.target.files[0])
             }
           />
@@ -257,9 +258,9 @@ export default function AccountInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.bankName}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, bankName: e.target.value }
                             : r
@@ -273,9 +274,9 @@ export default function AccountInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.accountNumber}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, accountNumber: e.target.value }
                             : r
@@ -289,9 +290,9 @@ export default function AccountInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.withdrawalFee || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, withdrawalFee: e.target.value }
                             : r
@@ -306,9 +307,9 @@ export default function AccountInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.purpose || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, purpose: e.target.value }
                             : r
@@ -322,9 +323,9 @@ export default function AccountInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.note || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, note: e.target.value } : r
                         )
                       )

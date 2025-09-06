@@ -15,15 +15,29 @@ const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
 
 export default function EmployeeInfoPage() {
   const [rows, setRows] = useState<EmployeeRow[]>([
-    { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
-    { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+    {
+      id: 1,
+      name: '',
+      residentNumber: '',
+      employmentType: '',
+      monthlySalary: '',
+      isProduction: '',
+    },
+    {
+      id: 2,
+      name: '',
+      residentNumber: '',
+      employmentType: '',
+      monthlySalary: '',
+      isProduction: '',
+    },
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
-    (r) =>
+    r =>
       r.name.trim() ||
       r.residentNumber.trim() ||
       r.employmentType?.trim() ||
@@ -81,7 +95,7 @@ export default function EmployeeInfoPage() {
           monthlySalary: item.monthlySalary || '',
           isProduction: item.isProduction ? 'YES' : 'NO',
         }));
-        setRows((prev) => [...prev, ...extracted]);
+        setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
       console.error(err);
@@ -106,7 +120,7 @@ export default function EmployeeInfoPage() {
       });
       if (!res.ok) throw new Error('삭제 실패');
       await res.json();
-      setRows((prev) => prev.filter((r) => r.id !== id));
+      setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error(err);
       alert('삭제 실패');
@@ -117,9 +131,16 @@ export default function EmployeeInfoPage() {
 
   /** 행 추가 */
   const addRow = () => {
-    setRows((prev) => [
+    setRows(prev => [
       ...prev,
-      { id: Date.now(), name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+      {
+        id: Date.now(),
+        name: '',
+        residentNumber: '',
+        employmentType: '',
+        monthlySalary: '',
+        isProduction: '',
+      },
     ]);
   };
 
@@ -135,7 +156,8 @@ export default function EmployeeInfoPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">직원 정보</h2>
             <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
+              저장하세요.
             </p>
           </div>
           <div className="flex gap-3">
@@ -178,7 +200,7 @@ export default function EmployeeInfoPage() {
             accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="employeeFile"
-            onChange={(e) =>
+            onChange={e =>
               e.target.files && handleFileUpload(e.target.files[0])
             }
           />
@@ -202,14 +224,26 @@ export default function EmployeeInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">번호</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+                번호
+              </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">이름</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주민등록번호</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">고용형태</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                주민등록번호
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                고용형태
+              </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">월급</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">원</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">생산직 여부</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">관리</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+                원
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                생산직 여부
+              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+                관리
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -223,9 +257,9 @@ export default function EmployeeInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.name}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id ? { ...r, name: e.target.value } : r
                         )
                       )
@@ -237,9 +271,9 @@ export default function EmployeeInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.residentNumber}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, residentNumber: e.target.value }
                             : r
@@ -252,9 +286,9 @@ export default function EmployeeInfoPage() {
                   <select
                     className="w-full focus:outline-none"
                     value={row.employmentType || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, employmentType: e.target.value }
                             : r
@@ -273,9 +307,9 @@ export default function EmployeeInfoPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.monthlySalary || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, monthlySalary: e.target.value }
                             : r
@@ -289,9 +323,9 @@ export default function EmployeeInfoPage() {
                   <select
                     className="w-full focus:outline-none"
                     value={row.isProduction || ''}
-                    onChange={(e) =>
-                      setRows((prev) =>
-                        prev.map((r) =>
+                    onChange={e =>
+                      setRows(prev =>
+                        prev.map(r =>
                           r.id === row.id
                             ? { ...r, isProduction: e.target.value }
                             : r
@@ -317,7 +351,10 @@ export default function EmployeeInfoPage() {
             ))}
             {/* 추가하기 */}
             <tr>
-              <td colSpan={8} className="p-3 border border-[#D9D9D9] text-center">
+              <td
+                colSpan={8}
+                className="p-3 border border-[#D9D9D9] text-center"
+              >
                 <button
                   onClick={addRow}
                   className="text-sm text-[#767676] hover:text-[#1E1E1E]"

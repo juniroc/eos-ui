@@ -60,7 +60,16 @@ export default function AIJournalMainPage() {
 
       if (data.success && data.data) {
         if (data.data.journals && Array.isArray(data.data.journals)) {
-          const newRows = data.data.journals.map((journal: any, index: number) => ({
+          const newRows = data.data.journals.map((journal: {
+            date?: string;
+            debitAccount?: string;
+            debitAmount?: string;
+            debitPartner?: string;
+            creditAccount?: string;
+            creditAmount?: string;
+            creditPartner?: string;
+            description?: string;
+          }, index: number) => ({
             id: Date.now() + index,
             date: journal.date || '',
             debitAccount: journal.debitAccount || '',

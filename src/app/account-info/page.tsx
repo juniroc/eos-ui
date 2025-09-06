@@ -20,7 +20,7 @@ export default function AccountInfoPage() {
     { id: 2, bankName: '', accountNumber: '' },
   ]);
   const [loading, setLoading] = useState(false);
-  const [firstLoad, setFirstLoad] = useState(true);
+  const [, setFirstLoad] = useState(true);
 
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
   const hasData = rows.some(
@@ -57,7 +57,7 @@ export default function AccountInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  }, [firstLoad]);
+  }, []);
 
   /** 파일 업로드 → 추출 */
   const handleFileUpload = async (file: File) => {

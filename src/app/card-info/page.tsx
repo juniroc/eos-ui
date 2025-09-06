@@ -20,7 +20,7 @@ export default function CardInfoPage() {
     { id: 2, cardIssuer: '', cardNumber: '' },
   ]);
   const [loading, setLoading] = useState(false);
-  const [firstLoad, setFirstLoad] = useState(true);
+  const [, setFirstLoad] = useState(true);
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
@@ -57,7 +57,7 @@ export default function CardInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  }, [firstLoad]);
+  }, []);
 
   /** 카드리스트 파일 업로드 */
   const handleFileUpload = async (file: File) => {

@@ -11,12 +11,10 @@ interface CheckRow {
 
 export default function AIClosingCheckPage() {
   const [rows, setRows] = useState<CheckRow[]>([]);
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   /** AI 점검 시작 */
-  const handleStartCheck = async () => {
-    setLoading(true);
+  const _handleStartCheck = async () => {
     setRows([
       { id: 1, category: '필수', description: '차대변 합계 일치 여부', status: 'pending' },
       { id: 2, category: '필수', description: '현금출납장 대조', status: 'pending' },
@@ -40,7 +38,6 @@ export default function AIClosingCheckPage() {
           i === 1 ? { ...r, status: 'na' } : r
         )
       );
-      setLoading(false);
     }, 3000);
   };
 
@@ -81,7 +78,7 @@ export default function AIClosingCheckPage() {
 >
   직접 점검하기
 </button>
-ㅣ고             <button
+            <button
   className="
     relative flex items-center justify-center
     min-w-[90px] h-[28px] px-3

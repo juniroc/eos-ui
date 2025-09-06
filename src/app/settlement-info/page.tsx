@@ -21,7 +21,7 @@ export default function SettlementInfoPage() {
     { id: 4, type: '선택', value: '' },
     { id: 5, type: '선택', value: '' },
   ]);
-  const [firstLoad, setFirstLoad] = useState(true);
+  const [, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(false);
 
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
@@ -51,7 +51,7 @@ export default function SettlementInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  }, [firstLoad]);
+  }, []);
 
   /** 파일 업로드 */
   const handleFileUpload = async (rowId: number, file: File) => {

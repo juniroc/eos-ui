@@ -29,7 +29,7 @@ export default function ManualJournalPage() {
     },
   ]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(

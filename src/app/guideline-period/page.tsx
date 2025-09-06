@@ -15,7 +15,7 @@ export default function GuidelinePeriodPage() {
   const [rows, setRows] = useState<GuidelineRow[]>([
     { id: 1, content: '', status: 'ACTIVE', problem: '' },
   ]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [newGuideline, setNewGuideline] = useState('');
 
   /** 저장 버튼 활성화 여부 */
@@ -31,7 +31,12 @@ export default function GuidelinePeriodPage() {
       const data = await res.json();
       if (Array.isArray(data)) {
         setRows(
-          data.map((g: any) => ({
+          data.map((g: {
+            id: number;
+            content?: string;
+            status?: string;
+            problem?: string;
+          }) => ({
             id: g.id,
             content: g.content || '',
             status: g.status || 'ACTIVE',

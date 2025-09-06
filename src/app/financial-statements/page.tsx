@@ -240,40 +240,6 @@ export default function FinancialStatementsPage() {
           <p className="text-gray-600">재무상태표, 손익계산서를 조회합니다.</p>
         </div>
 
-        {/* 재무제표 선택 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">재무제표 선택</h2>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => setSelectedStatement('balance')}
-              className={`px-6 py-3 rounded-md text-sm font-medium ${
-                selectedStatement === 'balance' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              재무상태표
-            </button>
-            <button
-              onClick={() => setSelectedStatement('income')}
-              className={`px-6 py-3 rounded-md text-sm font-medium ${
-                selectedStatement === 'income' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              손익계산서
-            </button>
-          </div>
-        </div>
-
-        {/* 재무제표 내용 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold mb-6">
-            {selectedStatement === 'balance' ? '재무상태표' : '손익계산서'}
-          </h2>
-          {selectedStatement === 'balance' ? renderBalanceSheet() : renderIncomeStatement()}
-        </div>
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ export default function AIClosingCheckPage() {
 >
   직접 점검하기
 </button>
-            <button
+ㅣ고             <button
   className="
     relative flex items-center justify-center
     min-w-[90px] h-[28px] px-3

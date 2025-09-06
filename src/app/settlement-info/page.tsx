@@ -48,9 +48,6 @@ export default function SettlementInfoPage() {
       }
     } catch (e) {
       console.error(e);
-      if (!firstLoad) {
-        alert('데이터 로드 실패');
-      }
     } finally {
       setFirstLoad(false);
     }

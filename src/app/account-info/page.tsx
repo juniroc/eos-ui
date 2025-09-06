@@ -54,7 +54,6 @@ export default function AccountInfoPage() {
       }
     } catch (err) {
       console.error(err);
-      if (!firstLoad) alert('데이터 로드 실패');
     } finally {
       setFirstLoad(false);
     }

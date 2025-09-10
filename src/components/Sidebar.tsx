@@ -120,11 +120,9 @@ export default function Sidebar({
   return (
     <div className="flex h-screen bg-[#F5F5F5]">
       {/* 왼쪽 큰 메뉴 */}
-      <div className="w-24 flex flex-col items-center py-4 space-y-3">
+      <div className="w-24 flex flex-col items-center py-3 space-y-3">
         <div className="mb-6">
-          <div className="w-12 h-12 flex items-center justify-center bg-black text-white rounded-lg font-bold">
-            E
-          </div>
+            <Image src="/logo.png" alt="logo" width={56} height={32} />
         </div>
 
         {navigationItems.map((item, index) => {

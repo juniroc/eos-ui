@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { getBusinessInfo, saveBusinessInfo, extractBusinessInfo } from '@/services/api';
 
 interface FormData {
   companyName: string;
@@ -19,6 +22,8 @@ interface FormData {
 }
 
 export default function BusinessInfoPage() {
+  const router = useRouter();
+  const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
     businessNumber: '',
@@ -36,11 +41,17 @@ export default function BusinessInfoPage() {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ 로그인 시 발급받은 토큰으로 교체
-  const accessToken = 'YOUR_ACCESS_TOKEN';
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   /** 저장 버튼 활성화 여부 → 필수 데이터가 하나라도 있으면 true */
-  const hasData = Object.values(formData).some(value => value.trim() !== '');
+  const hasData = Object.values(formData).some(value => 
+    value !== undefined && value !== null && value.toString().trim() !== ''
+  );
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -48,24 +59,29 @@ export default function BusinessInfoPage() {
 
   /** 초기 데이터 불러오기 */
   const fetchBusinessInfo = async () => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('https://eos-ui.vercel.app/api/business-info', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!res.ok) return; // 에러 시 조용히 리턴
-      const data = await res.json();
-
+      const data = await getBusinessInfo(token);
       setFormData(prev => ({
         ...prev,
-        ...data, // API에서 내려준 데이터로 덮어쓰기
+        // API에서 받은 데이터의 null 값을 빈 문자열로 변환
+        companyName: data.companyName || '',
+        businessNumber: data.businessNumber || '',
+        businessCategory: data.businessCategory || '',
+        corporateNumber: data.corporateNumber || '',
+        representativeName: data.representativeName || '',
+        establishmentDate: data.establishmentDate || '',
+        address: data.address || '',
+        businessType: data.businessType || '',
+        businessCategory2: data.businessCategory2 || '',
+        taxOffice: data.taxOffice || '',
+        settlementMonth: data.settlementMonth || '',
+        settlementDay: data.settlementDay || '',
       }));
     } catch (err) {
-      console.error(err);
+      console.error('사업자 정보 조회 에러:', err);
       // 초기 로드 시에는 에러 알림 제거
     } finally {
       setLoading(false);
@@ -74,31 +90,27 @@ export default function BusinessInfoPage() {
 
   /** 사업자등록증 파일 업로드 → AI 추출 API */
   const handleFileUpload = async (file: File) => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const body = new FormData();
-      body.append('file', file);
-
-      const res = await fetch(
-        'https://eos-ui.vercel.app/api/ai/extract-business-info',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body,
-        }
-      );
-
-      if (!res.ok) throw new Error('파일 업로드 실패');
-      const data = await res.json();
+      const data = await extractBusinessInfo(file, token);
 
       setFormData(prev => ({
         ...prev,
-        ...data.extracted, // 추출된 값 반영
+        companyName: data.data.companyName || prev.companyName || '',
+        businessNumber: data.data.businessNumber || prev.businessNumber || '',
+        businessCategory: data.data.businessCategory || prev.businessCategory || '',
+        corporateNumber: data.data.corporateNumber || prev.corporateNumber || '',
+        representativeName: data.data.representativeName || prev.representativeName || '',
+        establishmentDate: data.data.establishmentDate || prev.establishmentDate || '',
+        address: data.data.address || prev.address || '',
+        businessType: data.data.businessType?.[0] || prev.businessType || '',
+        businessCategory2: data.data.businessCategory2?.[0] || prev.businessCategory2 || '',
+        taxOffice: data.data.taxOffice || prev.taxOffice || '',
       }));
     } catch (err) {
-      console.error(err);
+      console.error('파일 업로드 에러:', err);
       alert('파일 업로드 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -107,19 +119,11 @@ export default function BusinessInfoPage() {
 
   /** 저장 API 호출 */
   const handleSave = async () => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('https://eos-ui.vercel.app/api/business-info', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error('저장 실패');
-      const result = await res.json();
+      const result = await saveBusinessInfo(formData, token);
 
       if (result.success) {
         alert('저장되었습니다!');
@@ -127,7 +131,7 @@ export default function BusinessInfoPage() {
         alert('저장에 실패했습니다.');
       }
     } catch (err) {
-      console.error(err);
+      console.error('저장 에러:', err);
       alert('저장 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -136,8 +140,10 @@ export default function BusinessInfoPage() {
 
   // ✅ 페이지 진입 시 기존 데이터 불러오기
   useEffect(() => {
-    fetchBusinessInfo();
-  }, []);
+    if (isAuthenticated && token) {
+      fetchBusinessInfo();
+    }
+  }, [isAuthenticated, token]);
 
   return (
     <div className="p-8">
@@ -273,8 +279,8 @@ export default function BusinessInfoPage() {
                   }
                 >
                   <option value="">선택하기</option>
-                  <option value="corporate">법인</option>
-                  <option value="personal">개인</option>
+                  <option value="법인">법인</option>
+                  <option value="개인">개인</option>
                 </select>
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">

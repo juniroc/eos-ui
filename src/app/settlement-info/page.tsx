@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SettlementRow {
   id: number;
@@ -11,9 +13,11 @@ interface SettlementRow {
   fileId?: string;
 }
 
-const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 로그인 시 발급받은 토큰으로 교체
+const API_BASE_URL = 'https://api.eosxai.com';
 
 export default function SettlementInfoPage() {
+  const router = useRouter();
+  const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<SettlementRow[]>([
     { id: 1, type: '필수', value: '' },
     { id: 2, type: '필수', value: '' },
@@ -24,15 +28,33 @@ export default function SettlementInfoPage() {
   const [, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
-  const hasData = rows.some(row => row.value.trim() !== '');
+  const hasData = rows.some(row => 
+    row.value !== undefined && row.value !== null && row.value.trim() !== ''
+  );
 
   /** 전기결산정보 불러오기 */
   const fetchDocs = useCallback(async () => {
+    if (!token) return;
+    
     try {
-      const res = await fetch('/api/previous-docs', {
-        headers: { Authorization: `Bearer ${accessToken}` },
+      const res = await fetch(`${API_BASE_URL}/api/previous-docs`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      
+      // 404 에러는 데이터가 없는 것으로 처리 (에러 처리하지 않음)
+      if (res.status === 404) {
+        console.log('전기결산정보가 없습니다.');
+        return;
+      }
+      
       if (!res.ok) throw new Error('데이터 불러오기 실패');
       const data = await res.json();
       if (data.success) {
@@ -47,25 +69,31 @@ export default function SettlementInfoPage() {
         );
       }
     } catch (e) {
-      console.error(e);
+      console.error('전기결산정보 조회 에러:', e);
+      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
     } finally {
       setFirstLoad(false);
     }
-  }, []);
+  }, [token]);
 
   /** 파일 업로드 */
   const handleFileUpload = async (rowId: number, file: File) => {
+    if (!token) return;
+    
     const formData = new FormData();
     formData.append('file', file);
 
     try {
       setLoading(true);
-      const res = await fetch(`/api/previous-docs/upload?type=OTHER`, {
+      const res = await fetch(`${API_BASE_URL}/api/previous-docs/upload?type=OTHER`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      if (!res.ok) throw new Error('파일 업로드 실패');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || '파일 업로드 실패');
+      }
       const data = await res.json();
 
       if (data.success) {
@@ -82,8 +110,9 @@ export default function SettlementInfoPage() {
         );
       }
     } catch (e) {
-      console.error(e);
-      alert('파일 업로드 실패');
+      console.error('파일 업로드 에러:', e);
+      const errorMessage = e instanceof Error ? e.message : '파일 업로드 실패';
+      alert(`파일 업로드 실패: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -96,11 +125,13 @@ export default function SettlementInfoPage() {
       return;
     }
 
+    if (!token) return;
+
     try {
       setLoading(true);
-      const res = await fetch(`/api/previous-docs/${fileId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/previous-docs/${fileId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('삭제 실패');
       const data = await res.json();
@@ -108,7 +139,7 @@ export default function SettlementInfoPage() {
         setRows(prev => prev.filter(row => row.id !== rowId));
       }
     } catch (e) {
-      console.error(e);
+      console.error('파일 삭제 에러:', e);
       alert('삭제 실패');
     } finally {
       setLoading(false);
@@ -125,13 +156,15 @@ export default function SettlementInfoPage() {
 
   /** 저장 API */
   const handleSave = async () => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('/api/business-info', {
+      const res = await fetch(`${API_BASE_URL}/api/business-info`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ settlementDocs: rows }),
       });
@@ -143,7 +176,7 @@ export default function SettlementInfoPage() {
         alert('저장 실패');
       }
     } catch (e) {
-      console.error(e);
+      console.error('저장 에러:', e);
       alert('저장 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);

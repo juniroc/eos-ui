@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { getBankAccountDocs, extractBankAccountDocs, saveBankAccountDocs, deleteBankAccount } from '@/services/api';
 
 interface AccountRow {
   id: number;
@@ -12,15 +15,22 @@ interface AccountRow {
   note?: string;
 }
 
-const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
-
 export default function AccountInfoPage() {
+  const router = useRouter();
+  const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<AccountRow[]>([
     { id: 1, bankName: '', accountNumber: '' },
     { id: 2, bankName: '', accountNumber: '' },
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
   const hasData = rows.some(
@@ -34,12 +44,10 @@ export default function AccountInfoPage() {
 
   /** 통장 계좌 불러오기 */
   const fetchAccounts = useCallback(async () => {
+    if (!token) return;
+    
     try {
-      const res = await fetch('/api/bank-account-docs', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (!res.ok) throw new Error('불러오기 실패');
-      const data = await res.json();
+      const data = await getBankAccountDocs(token);
       if (data.success && data.data.length > 0) {
         setRows(
           data.data.map((acc: AccountRow) => ({
@@ -53,26 +61,20 @@ export default function AccountInfoPage() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error('통장 정보 조회 에러:', err);
+      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
     } finally {
       setFirstLoad(false);
     }
-  }, []);
+  }, [token]);
 
   /** 파일 업로드 → 추출 */
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('/api/bank-account-docs/extract', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: formData,
-      });
-      if (!res.ok) throw new Error('업로드 실패');
-      const data = await res.json();
+      const data = await extractBankAccountDocs(file, token);
       if (data.success) {
         const extracted = data.items.map((item: AccountRow) => ({
           id: Date.now() + Math.random(),
@@ -85,7 +87,7 @@ export default function AccountInfoPage() {
         setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
-      console.error(err);
+      console.error('파일 업로드 에러:', err);
       alert('파일 업로드 실패');
     } finally {
       setLoading(false);
@@ -94,33 +96,27 @@ export default function AccountInfoPage() {
 
   /** 저장 */
   const handleSave = async () => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('/api/bank-account-docs/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          accounts: rows.map(r => ({
-            bankName: r.bankName,
-            accountNumber: r.accountNumber,
-            withdrawalFee: r.withdrawalFee,
-            purpose: r.purpose,
-            note: r.note,
-          })),
-        }),
-      });
-      if (!res.ok) throw new Error('저장 실패');
-      const data = await res.json();
+      const data = await saveBankAccountDocs({
+        accounts: rows.map(r => ({
+          bankName: r.bankName,
+          accountNumber: r.accountNumber,
+          withdrawalFee: r.withdrawalFee,
+          purpose: r.purpose,
+          note: r.note,
+        })),
+      }, token);
+      
       if (data.success) {
         alert('저장되었습니다!');
       } else {
         alert('저장 실패');
       }
     } catch (err) {
-      console.error(err);
+      console.error('저장 에러:', err);
       alert('저장 중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -129,17 +125,14 @@ export default function AccountInfoPage() {
 
   /** 삭제 */
   const handleDelete = async (id: number) => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch(`/api/bank-accounts/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (!res.ok) throw new Error('삭제 실패');
-      await res.json();
+      await deleteBankAccount(id.toString(), token);
       setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
-      console.error(err);
+      console.error('삭제 에러:', err);
       alert('삭제 실패');
     } finally {
       setLoading(false);
@@ -157,6 +150,21 @@ export default function AccountInfoPage() {
   useEffect(() => {
     fetchAccounts();
   }, [fetchAccounts]);
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

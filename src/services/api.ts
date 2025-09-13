@@ -156,3 +156,287 @@ export function createAuthenticatedFetch(token: string) {
     return response;
   };
 }
+
+// 통장 정보 관련 API
+export async function getBankAccountDocs(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/bank-account-docs`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('통장 정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractBankAccountDocs(file: File, token: string): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/bank-account-docs/extract`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('통장 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveBankAccountDocs(data: any, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/bank-account-docs/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('통장 정보 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteBankAccount(id: string, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/bank-accounts/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('통장 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 카드 정보 관련 API
+export async function getCardDocs(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/card-docs`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('카드 정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractCardDocs(file: File, token: string): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/card-docs/extract`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('카드 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveCardDocs(data: any, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/card-docs/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('카드 정보 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteCard(id: string, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/cards/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('카드 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 직원 정보 관련 API
+export async function getEmployees(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/employees`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('직원 정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractEmployeeDocs(file: File, token: string): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/employee-docs/extract-list`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('직원 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteEmployee(id: string, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/employees/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('직원 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 거래처 정보 관련 API
+export async function getPartnerDocs(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/partner-docs`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('거래처 정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractPartnerDocs(file: File, token: string): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/partner-docs/extract-list`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('거래처 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deletePartner(id: string, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/partners/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('거래처 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 주주 정보 관련 API
+export async function getShareholderDocs(token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/shareholder-docs`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('주주 정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractShareholderDocs(file: File, token: string): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/shareholder-docs/extract-list`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('주주 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteShareholder(id: string, token: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/api/shareholders/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('주주 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}

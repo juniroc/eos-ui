@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface JournalRow {
   id: number;
@@ -14,10 +16,17 @@ interface JournalRow {
   description: string;
 }
 
-const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
-
 export default function AIJournalMainPage() {
+  const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<JournalRow[]>([]);
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [summary, setSummary] = useState({
@@ -109,6 +118,21 @@ export default function AIJournalMainPage() {
   const handleSave = async () => {
     alert('저장 API는 추후 구현 예정입니다.');
   };
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="mx-auto w-full">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

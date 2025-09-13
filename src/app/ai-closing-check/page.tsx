@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CheckRow {
   id: number;
@@ -10,8 +12,17 @@ interface CheckRow {
 }
 
 export default function AIClosingCheckPage() {
+  const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<CheckRow[]>([]);
   const [showModal, setShowModal] = useState(false);
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   /** AI 점검 시작 */
   const _handleStartCheck = async () => {
@@ -77,6 +88,21 @@ export default function AIClosingCheckPage() {
         return <span className="text-gray-400">N/A</span>;
     }
   };
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

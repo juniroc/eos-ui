@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { getShareholderDocs, extractShareholderDocs, deleteShareholder } from '@/services/api';
 
 interface ShareholderRow {
   id: number;
@@ -12,9 +15,9 @@ interface ShareholderRow {
   note?: string; // 비고
 }
 
-const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
-
 export default function ShareholderInfoPage() {
+  const router = useRouter();
+  const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<ShareholderRow[]>([
     {
       id: 1,
@@ -38,6 +41,13 @@ export default function ShareholderInfoPage() {
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
 
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(
     r =>
@@ -51,12 +61,10 @@ export default function ShareholderInfoPage() {
 
   /** 주주 목록 불러오기 */
   const fetchShareholders = useCallback(async () => {
+    if (!token) return;
+    
     try {
-      const res = await fetch('/api/shareholder-docs', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (!res.ok) throw new Error('불러오기 실패');
-      const data = await res.json();
+      const data = await getShareholderDocs(token);
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         setRows(
           data.data.map((s: ShareholderRow) => ({
@@ -71,26 +79,20 @@ export default function ShareholderInfoPage() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error('주주 정보 조회 에러:', err);
+      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
     } finally {
       setFirstLoad(false);
     }
-  }, []);
+  }, [token]);
 
   /** 주주명부 파일 업로드 */
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch('/api/shareholder-docs/extract-list', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: formData,
-      });
-      if (!res.ok) throw new Error('업로드 실패');
-      const data = await res.json();
+      const data = await extractShareholderDocs(file, token);
       if (data.success && data.items) {
         const extracted = data.items.map((item: ShareholderRow) => ({
           id: Date.now() + Math.random(),
@@ -104,7 +106,7 @@ export default function ShareholderInfoPage() {
         setRows(prev => [...prev, ...extracted]);
       }
     } catch (err) {
-      console.error(err);
+      console.error('파일 업로드 에러:', err);
       alert('파일 업로드 실패');
     } finally {
       setLoading(false);
@@ -118,17 +120,14 @@ export default function ShareholderInfoPage() {
 
   /** 삭제 */
   const handleDelete = async (id: number) => {
+    if (!token) return;
+    
     try {
       setLoading(true);
-      const res = await fetch(`/api/shareholders/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (!res.ok) throw new Error('삭제 실패');
-      await res.json();
+      await deleteShareholder(id.toString(), token);
       setRows(prev => prev.filter(r => r.id !== id));
     } catch (err) {
-      console.error(err);
+      console.error('삭제 에러:', err);
       alert('삭제 실패');
     } finally {
       setLoading(false);
@@ -154,6 +153,21 @@ export default function ShareholderInfoPage() {
   useEffect(() => {
     fetchShareholders();
   }, [fetchShareholders]);
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

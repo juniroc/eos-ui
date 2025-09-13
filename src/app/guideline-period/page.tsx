@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface GuidelineRow {
   id: number;
@@ -9,14 +11,21 @@ interface GuidelineRow {
   problem?: string;
 }
 
-const accessToken = 'YOUR_ACCESS_TOKEN'; // ✅ 교체 필요
-
 export default function GuidelinePeriodPage() {
+  const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<GuidelineRow[]>([
     { id: 1, content: '', status: 'ACTIVE', problem: '' },
   ]);
   const [loading] = useState(false);
   const [newGuideline, setNewGuideline] = useState('');
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   /** 저장 버튼 활성화 여부 */
   const hasData = rows.some(r => r.content.trim());
@@ -74,6 +83,21 @@ export default function GuidelinePeriodPage() {
   useEffect(() => {
     fetchGuidelines();
   }, []);
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

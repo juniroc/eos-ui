@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ManualJournalRow {
   id: number;
@@ -15,6 +17,8 @@ interface ManualJournalRow {
 }
 
 export default function ManualJournalPage() {
+  const router = useRouter();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<ManualJournalRow[]>([
     {
       id: 1,
@@ -28,6 +32,13 @@ export default function ManualJournalPage() {
       description: '',
     },
   ]);
+
+  // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const [loading] = useState(false);
 
@@ -71,6 +82,21 @@ export default function ManualJournalPage() {
   const handleSave = async () => {
     alert('저장 API 연결 예정');
   };
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-8">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // 리다이렉트가 처리됨
+  }
 
   return (
     <div className="p-8">

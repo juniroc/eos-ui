@@ -168,7 +168,7 @@ export default function JournalPage() {
 
         {/* 필터 영역 (1행) */}
         <div className="bg-white border border-[#D9D9D9] rounded mb-6">
-          <table className="w-full text-sm text-[#757575]">
+          <table className="w-full text-sm text-[#1e1616]">
             <tbody>
               <tr>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">조회월(필수)</td>

@@ -43,7 +43,6 @@ const navigationItems = [
     subItems: [
       { id: 'proof-storage', label: '증빙보관소' },
       { id: 'journal', label: '전표/수정' },
-      { id: 'general-ledger', label: '계정원장' },
       { id: 'cashbook', label: '현금출납장' },
       { id: 'ledger', label: '원장' },
       { id: 'statements', label: '명세서' },

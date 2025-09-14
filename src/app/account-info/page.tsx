@@ -48,21 +48,31 @@ export default function AccountInfoPage() {
     
     try {
       const data = await getBankAccountDocs(token);
-      if (data.success && data.data.length > 0) {
-        setRows(
-          data.data.map((acc: AccountRow) => ({
-            id: acc.id,
-            bankName: acc.bankName || '',
-            accountNumber: acc.accountNumber || '',
-            withdrawalFee: acc.withdrawalFee || '',
-            purpose: acc.purpose || '',
-            note: acc.note || '',
-          }))
+      if (data.success && data.data && data.data.length > 0) {
+        // 실제 데이터만 필터링하여 설정
+        const validData = data.data.filter((acc: AccountRow) => 
+          acc.bankName?.trim() || acc.accountNumber?.trim()
         );
+        
+        if (validData.length > 0) {
+          // 기존 빈 행을 제거하고 실제 데이터만 설정
+          setRows(
+            validData.map((acc: AccountRow) => ({
+              id: acc.id,
+              bankName: acc.bankName || '',
+              accountNumber: acc.accountNumber || '',
+              withdrawalFee: acc.withdrawalFee || '',
+              purpose: acc.purpose || '',
+              note: acc.note || '',
+            }))
+          );
+        }
+        // 데이터가 없으면 기본 빈 행 유지
       }
+      // API 호출 실패해도 기본 빈 행 유지
     } catch (err) {
       console.error('통장 정보 조회 에러:', err);
-      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
+      // 에러가 발생해도 기본 빈 행 유지
     } finally {
       setFirstLoad(false);
     }
@@ -84,7 +94,8 @@ export default function AccountInfoPage() {
           purpose: item.purpose || '',
           note: item.note || '',
         }));
-        setRows(prev => [...prev, ...extracted]);
+        // 기존 빈 행을 제거하고 추출된 데이터만 설정
+        setRows(extracted);
       }
     } catch (err) {
       console.error('파일 업로드 에러:', err);
@@ -218,7 +229,6 @@ export default function AccountInfoPage() {
         >
           <input
             type="file"
-            accept=".jpg,.png,.pdf,.doc,.docx"
             className="hidden"
             id="accountFile"
             onChange={e =>
@@ -233,9 +243,6 @@ export default function AccountInfoPage() {
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
                 </div>
-                <div className="text-sm text-[#767676] mt-2">
-                  (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
-                </div>
               </>
             )}
           </label>
@@ -246,13 +253,13 @@ export default function AccountInfoPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="p-3 border border-[#D9D9D9] w-12">번호</th>
-              <th className="p-3 border border-[#D9D9D9]">title</th>
-              <th className="p-3 border border-[#D9D9D9]">title</th>
-              <th className="p-3 border border-[#D9D9D9]">title</th>
-              <th className="p-3 border border-[#D9D9D9] w-16">원</th>
-              <th className="p-3 border border-[#D9D9D9]">title</th>
-              <th className="p-3 border border-[#D9D9D9]">title</th>
-              <th className="p-3 border border-[#D9D9D9] w-24">title</th>
+              <th className="p-3 border border-[#D9D9D9]">은행명</th>
+              <th className="p-3 border border-[#D9D9D9]">계좌번호</th>
+              <th className="p-3 border border-[#D9D9D9]">출금수수료</th>
+              <th className="p-3 border border-[#D9D9D9] w-16">단위</th>
+              <th className="p-3 border border-[#D9D9D9]">용도</th>
+              <th className="p-3 border border-[#D9D9D9]">비고</th>
+              <th className="p-3 border border-[#D9D9D9] w-24">삭제</th>
             </tr>
           </thead>
           <tbody>
@@ -355,7 +362,7 @@ export default function AccountInfoPage() {
                     }}
                     disabled={loading}
                   >
-                    Button
+                    삭제
                   </button>
                 </td>
               </tr>
@@ -375,8 +382,8 @@ export default function AccountInfoPage() {
                 </button>
               </td>
             </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
       </div>
     </div>
   );

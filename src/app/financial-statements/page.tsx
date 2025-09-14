@@ -11,7 +11,7 @@ interface FSRow {
   id?: string;
   depth?: number;
   rowType?: string;
-  styles?: any;
+  styles?: Record<string, unknown>;
 }
 
 interface Account {
@@ -33,7 +33,7 @@ interface CashFlowRow {
   current: number;
   depth: number;
   rowType: string;
-  styles: any;
+  styles: Record<string, unknown>;
 }
 
 interface StatementMeta {
@@ -185,18 +185,19 @@ export default function FinancialStatementsPage() {
   };
 
   /** 날짜 포맷팅 */
-  const formatDate = (dateStr: any) => {
+  const formatDate = (dateStr: unknown) => {
     if (!dateStr) return '';
     
     // 객체인 경우 처리
     if (typeof dateStr === 'object' && dateStr !== null) {
+      const dateObj = dateStr as Record<string, unknown>;
       // { year, month, day } 형태인 경우
-      if (dateStr.year && dateStr.month && dateStr.day) {
-        return `${dateStr.year}년 ${dateStr.month}월 ${dateStr.day}일`;
+      if (dateObj.year && dateObj.month && dateObj.day) {
+        return `${dateObj.year}년 ${dateObj.month}월 ${dateObj.day}일`;
       }
       // { date } 형태인 경우
-      if (dateStr.date) {
-        return formatDate(dateStr.date);
+      if (dateObj.date) {
+        return formatDate(dateObj.date);
       }
       // 기타 객체는 JSON으로 변환해서 로그 출력
       console.warn('날짜 객체 파싱 실패:', dateStr);
@@ -381,39 +382,39 @@ export default function FinancialStatementsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {statementData.rows.map((row: any, index: number) => (
+                  {statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="p-3 border">
-                        <span style={{ paddingLeft: `${(row.depth || 0) * 20}px` }}>
-                          {row.label}
+                        <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
+                          {'label' in row ? row.label : 'account' in row ? row.account.name : 'Unknown'}
                         </span>
                       </td>
                       {selectedType === 'trial_balance' ? (
                         <>
                           <td className="p-3 border text-right">
-                            {row.debitSum?.toLocaleString() || '-'}
+                            {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
                           </td>
                           <td className="p-3 border text-right">
-                            {row.creditSum?.toLocaleString() || '-'}
+                            {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
                           </td>
                           <td className="p-3 border text-right">
-                            {row.balance?.toLocaleString() || '-'}
+                            {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
                           </td>
                           <td className="p-3 border text-center">
-                            {row.direction === 'DEBIT' ? '차변' : '대변'}
+                            {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
                           </td>
                         </>
                       ) : selectedType === 'cash_flow' ? (
                         <td className="p-3 border text-right">
-                          {row.current?.toLocaleString() || '-'}
+                          {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                         </td>
                       ) : (
                         <>
                           <td className="p-3 border text-right">
-                            {row.current?.toLocaleString() || '-'}
+                            {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                           </td>
                           <td className="p-3 border text-right">
-                            {row.prior?.toLocaleString() || '-'}
+                            {'prior' in row ? row.prior?.toLocaleString() || '-' : '-'}
                           </td>
                         </>
                       )}

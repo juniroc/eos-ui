@@ -24,6 +24,7 @@ export default function CardInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+  const [documentId, setDocumentId] = useState<string>('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function CardInfoPage() {
     if (!token) return;
     
     try {
-      const data = await getCardDocs(token);
+      const data = await getCardDocs(token) as { success: boolean; data: CardRow[] };
       if (data.success && data.data.length > 0) {
         setRows(
           data.data.map((c: CardRow) => ({
@@ -74,7 +75,7 @@ export default function CardInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractCardDocs(file, token);
+      const data = await extractCardDocs(file, token) as { success: boolean; items: CardRow[] };
       if (data.success) {
         const extracted = data.items.map((item: CardRow) => ({
           id: Date.now() + Math.random(),
@@ -101,12 +102,13 @@ export default function CardInfoPage() {
     try {
       setLoading(true);
       const data = await saveCardDocs({
+        documentId: documentId || 'temp-document-id',
         cards: rows.map(r => ({
-          cardIssuer: r.cardIssuer,
+          cardName: r.cardIssuer,
           cardNumber: r.cardNumber,
-          cardType: r.cardType,
+          expiryDate: r.cardType,
           purpose: r.purpose,
-          primaryUser: r.primaryUser,
+          note: r.primaryUser,
         })),
       }, token);
       

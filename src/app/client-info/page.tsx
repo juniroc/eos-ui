@@ -60,7 +60,7 @@ export default function ClientInfoPage() {
     if (!token) return;
     
     try {
-      const data = await getPartnerDocs(token);
+      const data = await getPartnerDocs(token) as { success: boolean; data: ClientRow[] };
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         setRows(
           data.data.map((client: ClientRow) => ({
@@ -87,7 +87,7 @@ export default function ClientInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractPartnerDocs(file, token);
+      const data = await extractPartnerDocs(file, token) as { success: boolean; items: ClientRow[] };
       if (data.success && data.items) {
         const extracted = data.items.map((item: ClientRow) => ({
           id: Date.now() + Math.random(),

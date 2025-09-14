@@ -48,7 +48,7 @@ export default function AccountInfoPage() {
     if (!token) return;
     
     try {
-      const data = await getBankAccountDocs(token);
+      const data = await getBankAccountDocs(token) as { success: boolean; data: AccountRow[] };
       if (data.success && data.data && data.data.length > 0) {
         // 실제 데이터만 필터링하여 설정
         const validData = data.data.filter((acc: AccountRow) => 
@@ -85,14 +85,14 @@ export default function AccountInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractBankAccountDocs(file, token);
+      const data = await extractBankAccountDocs(file, token) as { success: boolean; documentId?: string; data: AccountRow[] };
       if (data.success) {
         // documentId 저장
         if (data.documentId) {
           setDocumentId(data.documentId);
         }
         
-        const extracted = data.items.map((item: AccountRow) => ({
+        const extracted = data.data.map((item: AccountRow) => ({
           id: Date.now() + Math.random(),
           bankName: item.bankName || '',
           accountNumber: item.accountNumber || '',

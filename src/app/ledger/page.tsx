@@ -167,8 +167,8 @@ export default function LedgerPage() {
     // CSV 형태로 다운로드
     const csvContent = [
       ['일자', '차변금액', '대변금액', '잔액', '거래처', '적요'],
-      ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: any) => 
-        account.rows ? account.rows.map((row: LedgerRow) => [
+      ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => 
+        'rows' in account && account.rows ? account.rows.map((row: LedgerRow) => [
           row.date,
           row.debit.toLocaleString(),
           row.credit.toLocaleString(),
@@ -319,12 +319,12 @@ export default function LedgerPage() {
         {/* 원장 데이터 */}
         {ledgerData.length > 0 ? (
           <div className="space-y-6">
-            {ledgerData.map((account: any, accountIndex: number) => (
+            {ledgerData.map((account: LedgerAccount | LedgerPartner, accountIndex: number) => (
               <div key={accountIndex} className="bg-white border border-[#D9D9D9] rounded">
                 <div className="bg-[#F5F5F5] p-3 border-b border-[#D9D9D9]">
                   <h3 className="font-medium">
-                    {account.account ? `${account.account.code} - ${account.account.name}` : account.partner?.name}
-                    {account.openingBalance !== undefined && (
+                    {'account' in account ? `${account.account.code} - ${account.account.name}` : account.partner?.name}
+                    {'openingBalance' in account && account.openingBalance !== undefined && (
                       <span className="ml-4 text-sm text-gray-600">
                         기초잔액: {account.openingBalance.toLocaleString()}원
                       </span>
@@ -343,7 +343,7 @@ export default function LedgerPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {account.rows?.map((row: LedgerRow, rowIndex: number) => (
+                    {'rows' in account && account.rows?.map((row: LedgerRow, rowIndex: number) => (
                       <tr 
                         key={rowIndex}
                         onClick={() => handleRowClick(row)}

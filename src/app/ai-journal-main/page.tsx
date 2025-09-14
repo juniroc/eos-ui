@@ -18,7 +18,7 @@ interface JournalRow {
 
 export default function AIJournalMainPage() {
   const router = useRouter();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, token } = useAuth();
   const [rows, setRows] = useState<JournalRow[]>([]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
@@ -51,7 +51,7 @@ export default function AIJournalMainPage() {
       // 업로드 API 호출
       const res = await fetch('/api/ai/extract-raw-transactions/start', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
       if (!res.ok) throw new Error('업로드 실패');

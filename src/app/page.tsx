@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
-import { getBusinessInfo, saveBusinessInfo, extractBusinessInfo } from '@/services/api';
+import { getBusinessInfo, saveBusinessInfo, extractBusinessInfoWithAuth } from '@/services/api';
 
 interface FormData {
   companyName: string;
@@ -94,7 +94,7 @@ export default function BusinessInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractBusinessInfo(file, token);
+      const data = await extractBusinessInfoWithAuth(file, token);
 
       setFormData(prev => ({
         ...prev,

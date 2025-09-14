@@ -123,21 +123,25 @@ export default function LoginPage() {
           )}
 
           <div>
-            <Button
+            <button
               type="submit"
-              variant="primary"
-              size="large"
-              className="w-full"
-              loading={loading}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading ? '로그인 중...' : '로그인'}
-            </Button>
+            </button>
           </div>
-{/* 
-          <div className="text-center text-sm text-gray-600">
-            <p>테스트 계정: uitest / 12345</p>
-          </div> */}
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => router.push('/register')}
+              className="text-blue-600 hover:text-blue-500 text-sm"
+            >
+              계정이 없으신가요? 회원가입하기
+            </button>
+          </div>
+
         </form>
       </div>
     </div>

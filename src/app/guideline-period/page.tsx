@@ -13,7 +13,7 @@ interface GuidelineRow {
 
 export default function GuidelinePeriodPage() {
   const router = useRouter();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, token } = useAuth();
   const [rows, setRows] = useState<GuidelineRow[]>([
     { id: 1, content: '', status: 'ACTIVE', problem: '' },
   ]);
@@ -34,7 +34,7 @@ export default function GuidelinePeriodPage() {
   const fetchGuidelines = async () => {
     try {
       const res = await fetch('/api/instructions', {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('불러오기 실패');
       const data = await res.json();

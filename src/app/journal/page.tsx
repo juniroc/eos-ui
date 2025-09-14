@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -34,7 +34,7 @@ interface JournalFilters {
   maxAmount?: number;
 }
 
-export default function JournalPage() {
+function JournalPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const voucherIds = searchParams.get('voucherIds')?.split(',') || [];
@@ -243,5 +243,13 @@ export default function JournalPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function JournalPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <JournalPageContent />
+    </Suspense>
   );
 }

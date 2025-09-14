@@ -59,7 +59,7 @@ export default function EmployeeInfoPage() {
   const fetchEmployees = useCallback(async () => {
     try {
       const res = await fetch('/api/employees', {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('불러오기 실패');
       const data = await res.json();
@@ -88,7 +88,7 @@ export default function EmployeeInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractEmployeeDocs(file, token);
+      const data = await extractEmployeeDocs(file, token) as { success: boolean; items: EmployeeRow[] };
       if (data.success && data.items) {
         const extracted = data.items.map((item: EmployeeRow) => ({
           id: Date.now() + Math.random(),

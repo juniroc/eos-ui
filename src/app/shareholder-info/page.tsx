@@ -64,7 +64,7 @@ export default function ShareholderInfoPage() {
     if (!token) return;
     
     try {
-      const data = await getShareholderDocs(token);
+      const data = await getShareholderDocs(token) as { success: boolean; data: ShareholderRow[] };
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         setRows(
           data.data.map((s: ShareholderRow) => ({
@@ -92,7 +92,7 @@ export default function ShareholderInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractShareholderDocs(file, token);
+      const data = await extractShareholderDocs(file, token) as { success: boolean; items: ShareholderRow[] };
       if (data.success && data.items) {
         const extracted = data.items.map((item: ShareholderRow) => ({
           id: Date.now() + Math.random(),

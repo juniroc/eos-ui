@@ -94,8 +94,8 @@ export default function StatementsPage() {
     // CSV 형태로 다운로드
     const csvContent = [
       ['일자', '계정과목', '거래처', '잔액'],
-      ...(Array.isArray(balanceData) ? balanceData : []).flatMap((item: any) => {
-        if (item.account) {
+      ...(Array.isArray(balanceData) ? balanceData : []).flatMap((item: BalanceAccount | BalancePartner) => {
+        if ('account' in item && item.account) {
           // ACCOUNTS/ACCOUNT 타입
           return item.rows ? item.rows.map((row: BalanceRow) => [
             queryDate,
@@ -103,7 +103,7 @@ export default function StatementsPage() {
             row.partnerName || '',
             `${row.balance.toLocaleString()}원 (${row.direction === 'DEBIT' ? '차변' : '대변'})`
           ]) : [];
-        } else if (item.partner) {
+        } else if ('partner' in item && item.partner) {
           // PARTNER 타입
           return item.rows ? item.rows.map((row: BalanceRow) => [
             queryDate,
@@ -217,11 +217,11 @@ export default function StatementsPage() {
         {/* 잔액명세서 데이터 */}
         {balanceData.length > 0 ? (
           <div className="space-y-6">
-            {balanceData.map((item: any, itemIndex: number) => (
+            {balanceData.map((item: BalanceAccount | BalancePartner, itemIndex: number) => (
               <div key={itemIndex} className="bg-white border border-[#D9D9D9] rounded">
                 <div className="bg-[#F5F5F5] p-3 border-b border-[#D9D9D9]">
                   <h3 className="font-medium">
-                    {item.account ? `${item.account.code} - ${item.account.name}` : item.partner?.name}
+                    {'account' in item && item.account ? `${item.account.code} - ${item.account.name}` : 'partner' in item ? item.partner?.name : 'Unknown'}
                     <span className="ml-4 text-sm text-gray-600">
                       총잔액: {item.totalBalance.toLocaleString()}원 ({item.direction === 'DEBIT' ? '차변' : '대변'})
                     </span>
@@ -241,7 +241,7 @@ export default function StatementsPage() {
                       <tr key={rowIndex}>
                         <td className="p-2 border text-center">{queryDate}</td>
                         <td className="p-2 border">
-                          {row.account ? `${row.account.code} - ${row.account.name}` : (item.account ? `${item.account.code} - ${item.account.name}` : '')}
+                          {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
                         </td>
                         <td className="p-2 border">{row.partnerName || '-'}</td>
                         <td className="p-2 border text-right">

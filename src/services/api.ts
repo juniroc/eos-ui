@@ -84,8 +84,8 @@ export async function checkLoginIdDuplicate(loginId: string): Promise<boolean> {
   return data.duplicated;
 }
 
-// 사업자등록증 업로드 및 정보 추출 API
-export async function extractBusinessInfo(file: File, token: string): Promise<BusinessInfoExtractionResponse> {
+// 사업자등록증 업로드 및 정보 추출 API (기존 - 인증 필요)
+export async function extractBusinessInfoWithAuth(file: File, token: string): Promise<BusinessInfoExtractionResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -158,7 +158,7 @@ export function createAuthenticatedFetch(token: string) {
 }
 
 // 통장 정보 관련 API
-export async function getBankAccountDocs(token: string): Promise<any> {
+export async function getBankAccountDocs(token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/bank-account-docs`, {
     method: 'GET',
     headers: {
@@ -173,7 +173,7 @@ export async function getBankAccountDocs(token: string): Promise<any> {
   return response.json();
 }
 
-export async function extractBankAccountDocs(file: File, token: string): Promise<any> {
+export async function extractBankAccountDocs(file: File, token: string): Promise<unknown> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -192,7 +192,7 @@ export async function extractBankAccountDocs(file: File, token: string): Promise
   return response.json();
 }
 
-export async function saveBankAccountDocs(data: any, token: string): Promise<any> {
+export async function saveBankAccountDocs(data: { documentId: string; accounts: Array<{ bankName: string; accountNumber: string; withdrawalFee?: string; purpose?: string; note?: string }> }, token: string): Promise<{ success: boolean; partners: Array<{ id: string; bankName: string; accountNumber: string; withdrawalFee: string; purpose: string; note: string; createdAt: string }> }> {
   const response = await fetch(`${API_BASE_URL}/api/bank-account-docs/save`, {
     method: 'POST',
     headers: {
@@ -209,7 +209,7 @@ export async function saveBankAccountDocs(data: any, token: string): Promise<any
   return response.json();
 }
 
-export async function deleteBankAccount(id: string, token: string): Promise<any> {
+export async function deleteBankAccount(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/bank-accounts/${id}`, {
     method: 'DELETE',
     headers: {
@@ -225,7 +225,7 @@ export async function deleteBankAccount(id: string, token: string): Promise<any>
 }
 
 // 카드 정보 관련 API
-export async function getCardDocs(token: string): Promise<any> {
+export async function getCardDocs(token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/card-docs`, {
     method: 'GET',
     headers: {
@@ -240,7 +240,7 @@ export async function getCardDocs(token: string): Promise<any> {
   return response.json();
 }
 
-export async function extractCardDocs(file: File, token: string): Promise<any> {
+export async function extractCardDocs(file: File, token: string): Promise<unknown> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -259,7 +259,7 @@ export async function extractCardDocs(file: File, token: string): Promise<any> {
   return response.json();
 }
 
-export async function saveCardDocs(data: any, token: string): Promise<any> {
+export async function saveCardDocs(data: { documentId: string; cards: Array<{ cardName: string; cardNumber: string; expiryDate?: string; purpose?: string; note?: string }> }, token: string): Promise<{ success: boolean; cards: Array<{ id: string; cardName: string; cardNumber: string; expiryDate: string; purpose: string; note: string; createdAt: string }> }> {
   const response = await fetch(`${API_BASE_URL}/api/card-docs/save`, {
     method: 'POST',
     headers: {
@@ -276,7 +276,7 @@ export async function saveCardDocs(data: any, token: string): Promise<any> {
   return response.json();
 }
 
-export async function deleteCard(id: string, token: string): Promise<any> {
+export async function deleteCard(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/cards/${id}`, {
     method: 'DELETE',
     headers: {
@@ -292,7 +292,7 @@ export async function deleteCard(id: string, token: string): Promise<any> {
 }
 
 // 직원 정보 관련 API
-export async function getEmployees(token: string): Promise<any> {
+export async function getEmployees(token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/employees`, {
     method: 'GET',
     headers: {
@@ -307,7 +307,7 @@ export async function getEmployees(token: string): Promise<any> {
   return response.json();
 }
 
-export async function extractEmployeeDocs(file: File, token: string): Promise<any> {
+export async function extractEmployeeDocs(file: File, token: string): Promise<unknown> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -326,7 +326,7 @@ export async function extractEmployeeDocs(file: File, token: string): Promise<an
   return response.json();
 }
 
-export async function deleteEmployee(id: string, token: string): Promise<any> {
+export async function deleteEmployee(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/employees/${id}`, {
     method: 'DELETE',
     headers: {
@@ -342,7 +342,7 @@ export async function deleteEmployee(id: string, token: string): Promise<any> {
 }
 
 // 거래처 정보 관련 API
-export async function getPartnerDocs(token: string): Promise<any> {
+export async function getPartnerDocs(token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/partner-docs`, {
     method: 'GET',
     headers: {
@@ -357,7 +357,7 @@ export async function getPartnerDocs(token: string): Promise<any> {
   return response.json();
 }
 
-export async function extractPartnerDocs(file: File, token: string): Promise<any> {
+export async function extractPartnerDocs(file: File, token: string): Promise<unknown> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -376,7 +376,7 @@ export async function extractPartnerDocs(file: File, token: string): Promise<any
   return response.json();
 }
 
-export async function deletePartner(id: string, token: string): Promise<any> {
+export async function deletePartner(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/partners/${id}`, {
     method: 'DELETE',
     headers: {
@@ -392,7 +392,7 @@ export async function deletePartner(id: string, token: string): Promise<any> {
 }
 
 // 주주 정보 관련 API
-export async function getShareholderDocs(token: string): Promise<any> {
+export async function getShareholderDocs(token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/shareholder-docs`, {
     method: 'GET',
     headers: {
@@ -407,7 +407,7 @@ export async function getShareholderDocs(token: string): Promise<any> {
   return response.json();
 }
 
-export async function extractShareholderDocs(file: File, token: string): Promise<any> {
+export async function extractShareholderDocs(file: File, token: string): Promise<unknown> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -426,7 +426,7 @@ export async function extractShareholderDocs(file: File, token: string): Promise
   return response.json();
 }
 
-export async function deleteShareholder(id: string, token: string): Promise<any> {
+export async function deleteShareholder(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/shareholders/${id}`, {
     method: 'DELETE',
     headers: {
@@ -436,6 +436,94 @@ export async function deleteShareholder(id: string, token: string): Promise<any>
 
   if (!response.ok) {
     throw new Error('주주 정보 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 회원가입 관련 API
+export async function checkLoginId(loginId: string): Promise<{ duplicated: boolean }> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/check-login-id?loginId=${loginId}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('ID 중복 확인에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function extractBusinessInfo(file: File): Promise<{
+  success: boolean;
+  data: {
+    companyName: string;
+    businessNumber: string;
+    businessCategory: string;
+    corporateNumber: string;
+    representativeName: string;
+    establishmentDate: string;
+    address: string;
+    businessType: string[];
+    businessCategory2: string[];
+    taxOffice: string;
+    isTaxAgent: boolean;
+    taxAgentType: string;
+  };
+}> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/ai/extract-business-info-with-tax-agent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('사업자등록증 정보 추출에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function registerUser(data: {
+  businessRegistrationFile: File;
+  businessInfo: string;
+  loginId: string;
+  email: string;
+  password: string;
+  name: string;
+  mobilePhone: string;
+  companyPhone: string;
+  companyWebsite?: string;
+}): Promise<{ token: string; user: { id: string; loginId: string; email: string; name: string } }> {
+  const formData = new FormData();
+  formData.append('businessRegistrationFile', data.businessRegistrationFile);
+  formData.append('businessInfo', data.businessInfo);
+  formData.append('loginId', data.loginId);
+  formData.append('email', data.email);
+  formData.append('password', data.password);
+  formData.append('name', data.name);
+  formData.append('mobilePhone', data.mobilePhone);
+  formData.append('companyPhone', data.companyPhone);
+  if (data.companyWebsite) {
+    formData.append('companyWebsite', data.companyWebsite);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || '회원가입에 실패했습니다.');
   }
 
   return response.json();

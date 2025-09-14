@@ -24,6 +24,7 @@ export default function AccountInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+  const [documentId, setDocumentId] = useState<string>('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -86,6 +87,11 @@ export default function AccountInfoPage() {
       setLoading(true);
       const data = await extractBankAccountDocs(file, token);
       if (data.success) {
+        // documentId 저장
+        if (data.documentId) {
+          setDocumentId(data.documentId);
+        }
+        
         const extracted = data.items.map((item: AccountRow) => ({
           id: Date.now() + Math.random(),
           bankName: item.bankName || '',
@@ -109,9 +115,15 @@ export default function AccountInfoPage() {
   const handleSave = async () => {
     if (!token) return;
     
+    if (!documentId) {
+      alert('파일을 먼저 업로드해주세요.');
+      return;
+    }
+    
     try {
       setLoading(true);
       const data = await saveBankAccountDocs({
+        documentId: documentId,
         accounts: rows.map(r => ({
           bankName: r.bankName,
           accountNumber: r.accountNumber,

@@ -515,9 +515,6 @@ export async function registerUser(data: {
 
   const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
     body: formData,
   });
 

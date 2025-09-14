@@ -79,9 +79,12 @@ export default function RegisterPage() {
       if (result.success) {
         setBusinessInfo(result.data);
         setStep('phone');
+      } else {
+        setBusinessError('사업자등록증 정보 추출에 실패했습니다.');
       }
     } catch (error) {
-      setBusinessError(error instanceof Error ? error.message : '사업자등록증 처리에 실패했습니다.');
+      console.error('사업자등록증 업로드 에러:', error);
+      setBusinessError(error instanceof Error ? error.message : '사업자등록증 업로드에 실패했습니다.');
     } finally {
       setBusinessLoading(false);
     }

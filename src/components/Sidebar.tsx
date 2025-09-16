@@ -79,43 +79,38 @@ export default function Sidebar({
   onSectionChange,
 }: SidebarProps) {
   const { user, logout } = useAuth();
-  const [selectedMenu, setSelectedMenu] = useState<string | null>(null);
+  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   // 클라이언트에서만 실행되도록 보장
   useEffect(() => {
     setIsClient(true);
-    // activeSection을 기반으로 초기 selectedMenu 설정
-    const mainMenu = navigationItems.find(item =>
-      item.subItems?.some(sub => sub.id === activeSection)
-    );
-    if (mainMenu) {
-      setSelectedMenu(mainMenu.id);
-    } else {
-      setSelectedMenu('basic-info');
-    }
-  }, [activeSection]);
+  }, []);
 
   const handleMenuClick = (itemId: string, hasSub?: boolean) => {
     if (hasSub) {
-      setSelectedMenu(itemId);
+      // 하위메뉴가 있는 경우 첫 번째 하위메뉴로 이동
+      const firstSubItem = navigationItems
+        .find(item => item.id === itemId)
+        ?.subItems?.[0];
+      if (firstSubItem) {
+        onSectionChange(firstSubItem.id);
+      }
     } else {
       onSectionChange(itemId);
     }
   };
 
-  // 현재 선택된 메뉴를 결정하는 로직
-  const getCurrentSelectedMenu = () => {
+  // 현재 활성화된 메뉴를 찾는 함수
+  const getCurrentActiveMenu = () => {
     if (!isClient) {
-      // 서버 사이드에서는 activeSection을 기반으로 결정
-      const mainMenu = navigationItems.find(item =>
-        item.subItems?.some(sub => sub.id === activeSection)
-      );
-      return mainMenu ? mainMenu.id : 'basic-info';
+      return 'basic-info';
     }
 
-    // 클라이언트에서는 selectedMenu 상태 사용
-    return selectedMenu || 'basic-info';
+    const mainMenu = navigationItems.find(item =>
+      item.subItems?.some(sub => sub.id === activeSection)
+    );
+    return mainMenu ? mainMenu.id : 'basic-info';
   };
 
   return (
@@ -127,12 +122,13 @@ export default function Sidebar({
         </div>
 
         {navigationItems.map((item, index) => {
-          const isActive = getCurrentSelectedMenu() === item.id;
+          const isActive = getCurrentActiveMenu() === item.id;
           const icon = isActive ? item.icon : item.iconGrey;
           return (
             <div key={item.id}>
               <button
                 onClick={() => handleMenuClick(item.id, !!item.subItems)}
+                onMouseEnter={() => setHoveredMenu(item.id)}
                 className={`w-[56px] h-[56px] flex flex-col items-center justify-center rounded-lg transition-colors ${
                   isActive
                     ? 'bg-[#E6E6E6] text-[#2C2C2C]'
@@ -199,18 +195,21 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* 오른쪽 서브메뉴 */}
-      <div className="flex-1 p-6 w-max">
-        {getCurrentSelectedMenu() &&
-          navigationItems.find(i => i.id === getCurrentSelectedMenu())
-            ?.subItems && (
+      {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}
+      {hoveredMenu &&
+        navigationItems.find(i => i.id === hoveredMenu)?.subItems && (
+          <div 
+            className="flex-1 p-6 w-max animate-in slide-in-from-left duration-300 ease-out"
+            onMouseEnter={() => setHoveredMenu(hoveredMenu)}
+            onMouseLeave={() => setHoveredMenu(null)}
+          >
             <div>
               <h2
                 className="text-lg font-semibold mb-4"
                 style={{ color: '#1E1E1E' }}
               >
                 {
-                  navigationItems.find(i => i.id === getCurrentSelectedMenu())
+                  navigationItems.find(i => i.id === hoveredMenu)
                     ?.label
                 }
               </h2>
@@ -218,7 +217,7 @@ export default function Sidebar({
               <div className="w-full h-px bg-[#D9D9D9] mb-6"></div>
               <ul className="space-y-2">
                 {navigationItems
-                  .find(i => i.id === getCurrentSelectedMenu())
+                  .find(i => i.id === hoveredMenu)
                   ?.subItems?.map(sub => (
                     <li key={sub.id}>
                       <button
@@ -235,8 +234,8 @@ export default function Sidebar({
                   ))}
               </ul>
             </div>
-          )}
-      </div>
+          </div>
+        )}
     </div>
   );
 }

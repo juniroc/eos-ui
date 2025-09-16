@@ -13,12 +13,20 @@ interface GuidelineRow {
 
 export default function GuidelinePeriodPage() {
   const router = useRouter();
-  const { isAuthenticated, loading: authLoading, token } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<GuidelineRow[]>([
     { id: 1, content: '', status: 'ACTIVE', problem: '' },
   ]);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [newGuideline, setNewGuideline] = useState('');
+
+  // 로컬스토리지에서 토큰 가져오기
+  const getToken = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('accessToken');
+    }
+    return null;
+  };
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -32,11 +40,22 @@ export default function GuidelinePeriodPage() {
 
   /** 지침 불러오기 */
   const fetchGuidelines = async () => {
+    const token = getToken();
+    if (!token) {
+      console.log('토큰이 없습니다.');
+      return;
+    }
+    
     try {
-      const res = await fetch('/api/instructions', {
+      setLoading(true);
+      const res = await fetch('https://api.eosxai.com/api/instructions', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error('불러오기 실패');
+      
+      if (!res.ok) {
+        throw new Error('불러오기 실패');
+      }
+      
       const data = await res.json();
       if (Array.isArray(data)) {
         setRows(
@@ -56,7 +75,10 @@ export default function GuidelinePeriodPage() {
         );
       }
     } catch (err) {
-      console.error(err);
+      console.error('지침 불러오기 실패:', err);
+      alert('지침을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,23 +88,89 @@ export default function GuidelinePeriodPage() {
   };
 
   /** 지침 삭제 */
-  const handleDelete = (id: number) => {
-    setRows(prev => prev.filter(r => r.id !== id));
+  const handleDelete = async (id: number) => {
+    const token = getToken();
+    if (!token) {
+      alert('인증이 필요합니다.');
+      return;
+    }
+    
+    if (!confirm('정말로 이 지침을 삭제하시겠습니까?')) return;
+    
+    try {
+      setLoading(true);
+      const res = await fetch(`https://api.eosxai.com/api/instructions/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (!res.ok) {
+        throw new Error('삭제 실패');
+      }
+      
+      // 로컬 상태에서도 제거
+      setRows(prev => prev.filter(r => r.id !== id));
+      alert('지침이 삭제되었습니다.');
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 지침 추가 */
-  const handleAddGuideline = () => {
-    if (!newGuideline.trim()) return;
-    setRows(prev => [
-      ...prev,
-      { id: Date.now(), content: newGuideline, status: 'ACTIVE', problem: '' },
-    ]);
-    setNewGuideline('');
+  const handleAddGuideline = async () => {
+    const token = getToken();
+    if (!token) {
+      alert('인증이 필요합니다.');
+      return;
+    }
+    
+    if (!newGuideline.trim()) {
+      alert('지침 내용을 입력해주세요.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch('https://api.eosxai.com/api/instructions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          providedAt: new Date().toISOString().split('T')[0], // YYYY-MM-DD 형식
+          content: newGuideline,
+        }),
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('API 응답 에러:', res.status, errorText);
+        throw new Error(`추가 실패: ${res.status}`);
+      }
+      
+      const newGuidelineData = await res.json();
+      console.log('추가된 지침:', newGuidelineData);
+      
+      setRows(prev => [newGuidelineData, ...prev]);
+      setNewGuideline('');
+      alert('지침이 추가되었습니다.');
+    } catch (err) {
+      console.error('추가 실패:', err);
+      alert('지침 추가에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchGuidelines();
-  }, []);
+    if (isAuthenticated) {
+      fetchGuidelines();
+    }
+  }, [isAuthenticated]);
 
   // 로딩 중이거나 인증되지 않은 경우
   if (authLoading) {
@@ -107,11 +195,8 @@ export default function GuidelinePeriodPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">지침 주기</h2>
             <p className="text-[#767676]">
-              EOS는 각 고객별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른
-              회사만의 특별할 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을
-              알려주실 수 있습니다. 특별한 사항이 없으면 작성하지 않으셔도
-              됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요.
-              업무지시를 받는 신은 상단 지시창을 이용해주세요.
+            EOS는 각 고개별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른 우리 회사만의 특별한 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을 알려주실 수 있습니다.
+            특별한 사항이 없으면 사용하지 않아도 됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요. 업무지시를 받는 AI는 상단 지시창을 이용해주세요.
             </p>
           </div>
           <div className="flex gap-3">
@@ -124,7 +209,7 @@ export default function GuidelinePeriodPage() {
               onClick={handleSave}
               disabled={!hasData || loading}
             >
-              저장하기
+              {loading ? '처리중...' : '저장하기'}
             </button>
           </div>
         </div>
@@ -158,6 +243,7 @@ export default function GuidelinePeriodPage() {
                     className="w-full focus:outline-none"
                     placeholder="입력하기"
                     value={row.content}
+                    readOnly
                     onChange={e =>
                       setRows(prev =>
                         prev.map(r =>
@@ -198,8 +284,9 @@ export default function GuidelinePeriodPage() {
           <button
             onClick={handleAddGuideline}
             className="min-w-[32px] h-[32px] flex items-center justify-center bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded text-lg text-[#1E1E1E]"
+            disabled={loading}
           >
-            +
+            {loading ? '...' : '+'}
           </button>
         </div>
       </div>

@@ -167,9 +167,6 @@ export default function FileUploadModal({
                   <p className="text-sm text-gray-600">
                     파일을 업로드 해주세요
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    (JPG, PNG, PDF, DOCX, DOC 파일만 가능합니다.)
-                  </p>
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -185,7 +182,6 @@ export default function FileUploadModal({
             ref={fileInputRef}
             type="file"
             className="hidden"
-            accept=".jpg,.jpeg,.png,.pdf,.docx,.doc"
             onChange={handleFileSelect}
           />
         </div>

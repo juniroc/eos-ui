@@ -112,9 +112,6 @@ export default function BusinessRegistrationForm({
               <p className="mt-2 text-sm text-gray-600">
                 파일을 업로드 해주세요
               </p>
-              <p className="mt-1 text-xs text-gray-500">
-                (JPG, PNG, PDF, DOCX, DOC 파일만 가능합니다.)
-              </p>
             </div>
           )}
         </div>

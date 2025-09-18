@@ -103,7 +103,8 @@ export default function ShareholderInfoPage() {
           acquisitionDate: item.acquisitionDate || '',
           note: item.note || '',
         }));
-        setRows(prev => [...prev, ...extracted]);
+        // 기존 빈 행을 제거하고 추출된 데이터만 설정
+        setRows(extracted);
       }
     } catch (err) {
       console.error('파일 업로드 에러:', err);

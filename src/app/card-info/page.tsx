@@ -24,7 +24,7 @@ export default function CardInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
-  const [documentId, setDocumentId] = useState<string>('');
+  const [documentId, setDocumentId] = useState<string | null>(null); // documentId 상태 추가
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -75,8 +75,13 @@ export default function CardInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractCardDocs(file, token) as { success: boolean; items: CardRow[] };
+      const data = await extractCardDocs(file, token) as { success: boolean; documentId?: string; items: CardRow[] };
       if (data.success) {
+        // documentId 저장
+        if (data.documentId) {
+          setDocumentId(data.documentId);
+        }
+        
         const extracted = data.items.map((item: CardRow) => ({
           id: Date.now() + Math.random(),
           cardIssuer: item.cardIssuer || '',
@@ -85,7 +90,8 @@ export default function CardInfoPage() {
           purpose: item.purpose || '',
           primaryUser: item.primaryUser || '',
         }));
-        setRows(prev => [...prev, ...extracted]);
+        // 기존 빈 행을 제거하고 추출된 데이터만 설정
+        setRows(extracted);
       }
     } catch (err) {
       console.error('파일 업로드 에러:', err);
@@ -101,16 +107,32 @@ export default function CardInfoPage() {
     
     try {
       setLoading(true);
-      const data = await saveCardDocs({
-        documentId: documentId || 'temp-document-id',
-        cards: rows.map(r => ({
-          cardName: r.cardIssuer,
-          cardNumber: r.cardNumber,
-          expiryDate: r.cardType,
-          purpose: r.purpose,
-          note: r.primaryUser,
-        })),
-      }, token);
+      const res = await fetch('https://api.eosxai.com/api/card-docs/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          documentId: documentId || 'temp-document-id', // documentId 사용
+          cards: rows.map(r => ({
+            cardName: r.cardIssuer,
+            cardNumber: r.cardNumber,
+            expiryDate: r.cardType,
+            purpose: r.purpose,
+            note: r.primaryUser,
+          })),
+        }),
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('저장 API 에러:', res.status, errorText);
+        throw new Error(`저장 실패: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      console.log('저장 응답:', data);
       
       if (data.success) {
         alert('저장되었습니다!');

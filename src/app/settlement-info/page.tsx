@@ -102,6 +102,7 @@ export default function SettlementInfoPage() {
             row.id === rowId
               ? {
                   ...row,
+                  value: data.data.originalName, // value 필드에도 파일명 저장
                   fileName: data.data.originalName,
                   fileId: data.data.id,
                 }
@@ -240,6 +241,7 @@ export default function SettlementInfoPage() {
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"
                     value={row.value}
+                    readOnly={!!row.fileName} // 파일 업로드된 경우 읽기 전용
                     onChange={e =>
                       setRows(prev =>
                         prev.map(r =>
@@ -250,17 +252,34 @@ export default function SettlementInfoPage() {
                   />
                 </td>
                 <td className="p-3 border border-gray-200 text-left">
-                  <label className="cursor-pointer text-gray-400 hover:text-gray-600">
-                    파일 업로드
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={e =>
-                        e.target.files &&
-                        handleFileUpload(row.id, e.target.files[0])
-                      }
-                    />
-                  </label>
+                  {row.fileName ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-700">{row.fileName}</span>
+                      <label className="cursor-pointer text-gray-400 hover:text-gray-600 text-xs">
+                        변경
+                        <input
+                          type="file"
+                          className="hidden"
+                          onChange={e =>
+                            e.target.files &&
+                            handleFileUpload(row.id, e.target.files[0])
+                          }
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer text-gray-400 hover:text-gray-600">
+                      파일 업로드
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={e =>
+                          e.target.files &&
+                          handleFileUpload(row.id, e.target.files[0])
+                        }
+                      />
+                    </label>
+                  )}
                 </td>
                 <td className="p-3 border border-gray-200 text-center">
                   <button
@@ -296,7 +315,7 @@ export default function SettlementInfoPage() {
               >
                 <button
                   onClick={addRow}
-                  className="text-sm text-[#767676] flex justify-center gap-1 hover:text-[#1E1E1E]"
+                  className="text-sm text-[#767676] flex justify-center gap-1 hover:text-[#1E1E1E] w-full"
                 >
                   + 기타자료 추가하기
                 </button>

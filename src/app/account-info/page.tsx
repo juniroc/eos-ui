@@ -79,37 +79,42 @@ export default function AccountInfoPage() {
     }
   }, [token]);
 
-  /** 파일 업로드 → 추출 */
-  const handleFileUpload = async (file: File) => {
-    if (!token) return;
+/** 파일 업로드 → 추출 */
+const handleFileUpload = async (file: File) => {
+  if (!token) return;
+  
+  try {
+    setLoading(true);
+    const response = await extractBankAccountDocs(file, token) as { 
+      success: boolean; 
+      documentId?: string; 
+      items: AccountRow[]; // data 대신 items 사용
+    };
     
-    try {
-      setLoading(true);
-      const data = await extractBankAccountDocs(file, token) as { success: boolean; documentId?: string; data: AccountRow[] };
-      if (data.success) {
-        // documentId 저장
-        if (data.documentId) {
-          setDocumentId(data.documentId);
-        }
-        
-        const extracted = data.data.map((item: AccountRow) => ({
-          id: Date.now() + Math.random(),
-          bankName: item.bankName || '',
-          accountNumber: item.accountNumber || '',
-          withdrawalFee: item.withdrawalFee || '',
-          purpose: item.purpose || '',
-          note: item.note || '',
-        }));
-        // 기존 빈 행을 제거하고 추출된 데이터만 설정
-        setRows(extracted);
+    if (response.success) {
+      // documentId 저장
+      if (response.documentId) {
+        setDocumentId(response.documentId);
       }
-    } catch (err) {
-      console.error('파일 업로드 에러:', err);
-      alert('파일 업로드 실패');
-    } finally {
-      setLoading(false);
+      
+      const extracted = response.items.map((item: AccountRow) => ({
+        id: Date.now() + Math.random(),
+        bankName: item.bankName || '',
+        accountNumber: item.accountNumber || '',
+        withdrawalFee: item.withdrawalFee || '',
+        purpose: item.purpose || '',
+        note: item.note || '',
+      }));
+      // 기존 빈 행을 제거하고 추출된 데이터만 설정
+      setRows(extracted);
     }
-  };
+  } catch (err) {
+    console.error('파일 업로드 에러:', err);
+    alert('파일 업로드 실패');
+  } finally {
+    setLoading(false);
+  }
+};
 
   /** 저장 */
   const handleSave = async () => {

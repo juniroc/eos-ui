@@ -33,9 +33,9 @@ export default function AIClosingCheckPage() {
   const [autoJobId, setAutoJobId] = useState<string | null>(null);
   const [closingDate, setClosingDate] = useState<string>('');
   const [streamStatus, setStreamStatus] = useState<string>('');
-  const [modalData, setModalData] = useState<any>(null);
+  const [modalData, setModalData] = useState<Record<string, unknown> | null>(null);
   const [selectedItemKey, setSelectedItemKey] = useState<string>('');
-  const [allResults, setAllResults] = useState<any>(null);
+  const [allResults, setAllResults] = useState<Record<string, unknown> | null>(null);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -238,7 +238,7 @@ export default function AIClosingCheckPage() {
                     } else if (currentEventType === 'error') {
                       setStreamStatus(`오류: ${parsedData.error}`);
                     }
-                  } catch (e) {
+                  } catch {
                     console.log('SSE 텍스트 데이터:', data);
                   }
                 }
@@ -402,7 +402,7 @@ export default function AIClosingCheckPage() {
                       console.log('전체 결과:', allResults);
                       console.log('해당 항목 데이터:', allResults?.[r.key]);
                       setSelectedItemKey(r.key);
-                      setModalData(allResults?.[r.key] || null);
+                      setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
                       setShowModal(true);
                     }}
                   >
@@ -451,7 +451,7 @@ export default function AIClosingCheckPage() {
                     selectedItemKey === 'bad_debt' ? '매출채권 연령 분석' :
                     selectedItemKey === 'retirement_benefit' ? '퇴직급여 충당금' :
                     selectedItemKey === 'suspense_clear' ? '미결산 정리' :
-                    '기말수정분개'} 작업을 확인해주세요. 수정사항이 있으면 수정 후 '결산 반영'을 클릭해주세요.
+                    '기말수정분개'} 작업을 확인해주세요. 수정사항이 있으면 수정 후 &apos;결산 반영&apos;을 클릭해주세요.
                   </p>
                   
                   {/* 감가상각 테이블 */}
@@ -472,36 +472,36 @@ export default function AIClosingCheckPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {modalData && modalData.tangible && modalData.tangible.length > 0 ? (
-                          modalData.tangible.map((item: any, index: number) => (
+                        {modalData && modalData.tangible && Array.isArray(modalData.tangible) && modalData.tangible.length > 0 ? (
+                          (modalData.tangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
                             <tr key={index}>
-                              <td className="p-2 border border-[#D9D9D9]">{item.accountName || '-'}</td>
+                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.itemName || ''}
+                                  defaultValue={String(item.itemName || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.purchaseDate || ''}
+                                  defaultValue={String(item.purchaseDate || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.purchasePrice?.toLocaleString() || ''}
+                                  defaultValue={typeof item.purchasePrice === 'number' ? item.purchasePrice.toLocaleString() : String(item.purchasePrice || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.accumulatedDepreciation?.toLocaleString() || ''}
+                                  defaultValue={typeof item.accumulatedDepreciation === 'number' ? item.accumulatedDepreciation.toLocaleString() : String(item.accumulatedDepreciation || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
@@ -509,13 +509,13 @@ export default function AIClosingCheckPage() {
                                   <input 
                                     type="text" 
                                     className="w-16 px-1 py-1 text-xs" 
-                                    defaultValue={item.previousDepreciationDate || ''}
+                                    defaultValue={String(item.previousDepreciationDate || '')}
                                     placeholder="일자"
                                   />
                                   <input 
                                     type="text" 
                                     className="w-20 px-1 py-1 text-xs" 
-                                    defaultValue={item.previousDepreciationAmount?.toLocaleString() || ''}
+                                    defaultValue={typeof item.previousDepreciationAmount === 'number' ? item.previousDepreciationAmount.toLocaleString() : String(item.previousDepreciationAmount || '')}
                                     placeholder="상각액"
                                   />
                                 </div>
@@ -525,13 +525,13 @@ export default function AIClosingCheckPage() {
                                   <input 
                                     type="text" 
                                     className="w-16 px-1 py-1 text-xs" 
-                                    defaultValue={item.currentDepreciationDate || ''}
+                                    defaultValue={String(item.currentDepreciationDate || '')}
                                     placeholder="일자"
                                   />
                                   <input 
                                     type="text" 
                                     className="w-20 px-1 py-1 text-xs" 
-                                    defaultValue={item.currentDepreciationAmount?.toLocaleString() || ''}
+                                    defaultValue={typeof item.currentDepreciationAmount === 'number' ? item.currentDepreciationAmount.toLocaleString() : String(item.currentDepreciationAmount || '')}
                                     placeholder="상각액"
                                   />
                                 </div>
@@ -546,7 +546,7 @@ export default function AIClosingCheckPage() {
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.usefulLife || ''}
+                                  defaultValue={String(item.usefulLife || '')}
                                   placeholder="년"
                                 />
                               </td>
@@ -582,37 +582,37 @@ export default function AIClosingCheckPage() {
                   </tr>
                 </thead>
                 <tbody>
-                        {modalData && modalData.rows && modalData.rows.length > 0 ? (
-                          modalData.rows.map((item: any, index: number) => (
+                        {modalData && modalData.rows && Array.isArray(modalData.rows) && modalData.rows.length > 0 ? (
+                          (modalData.rows as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
                             <tr key={index}>
-                              <td className="p-2 border border-[#D9D9D9]">{item.accountCode || '-'}</td>
-                              <td className="p-2 border border-[#D9D9D9]">{item.accountName || '-'}</td>
+                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountCode || '-')}</td>
+                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.endingBalance?.toLocaleString() || ''}
+                                  defaultValue={typeof item.endingBalance === 'number' ? item.endingBalance.toLocaleString() : String(item.endingBalance || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.addAmount?.toLocaleString() || ''}
+                                  defaultValue={typeof item.addAmount === 'number' ? item.addAmount.toLocaleString() : String(item.addAmount || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.counterAccountId || ''}
+                                  defaultValue={String(item.counterAccountId || '')}
                                 />
                               </td>
                               <td className="p-2 border border-[#D9D9D9]">
                                 <input 
                                   type="text" 
                                   className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={item.memo || ''}
+                                  defaultValue={String(item.memo || '')}
                                 />
                               </td>
                             </tr>

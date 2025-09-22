@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getPartnerDocs, extractPartnerDocs, deletePartner } from '@/services/api';
+import FileUploadBox from '@/components/FileUploadBox';
 
 interface ClientRow {
   id: number;
@@ -202,39 +203,12 @@ export default function ClientInfoPage() {
         </div>
 
         {/* 파일 업로드 박스 */}
-        <div
-          className="rounded-lg text-center mb-6"
-          style={{
-            width: '100%',
-            height: '120px',
-            padding: '24px',
-            background: '#FFFFFF',
-            border: '1px dashed #D9D9D9',
-          }}
-        >
-          <input
-            type="file"
-            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-            className="hidden"
+        <div className="mb-6">
+          <FileUploadBox
             id="clientFile"
-            onChange={e =>
-              e.target.files && handleFileUpload(e.target.files[0])
-            }
+            onFileUpload={handleFileUpload}
+            loading={loading}
           />
-          <label htmlFor="clientFile" className="cursor-pointer block">
-            {loading ? (
-              <div className="text-gray-500">처리 중...</div>
-            ) : (
-              <>
-                <div className="text-[#303030]">
-                  파일을 선택하거나 드래그하여 업로드하세요
-                </div>
-                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
-                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
-                </div>
-              </>
-            )}
-          </label>
         </div>
 
         {/* 테이블 */}

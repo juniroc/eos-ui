@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import FileUploadBox from '@/components/FileUploadBox';
 
 interface JournalRow {
   id: number;
@@ -174,51 +175,32 @@ export default function AIJournalMainPage() {
         </div>
 
         {/* 파일 업로드 박스 */}
-        <div
-          className="rounded-lg text-center mb-6"
-          style={{
-            width: '100%',
-            height: loading ? '80px' : '120px',
-            padding: '24px',
-            background: '#FFFFFF',
-            border: '1px dashed #D9D9D9',
-          }}
-        >
-          <input
-            type="file"
-            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-            className="hidden"
+        <div className="mb-6">
+          <FileUploadBox
             id="journalFile"
-            onChange={e =>
-              e.target.files && handleFileUpload(e.target.files[0])
+            onFileUpload={handleFileUpload}
+            loading={loading}
+            style={{
+              height: loading ? '80px' : '120px',
+            }}
+            customLoadingContent={
+              <div className="flex flex-col items-center justify-center h-full">
+                {/* Progress Bar */}
+                <div className="w-full bg-gray-100 rounded-full h-2 mb-2">
+                  <div
+                    className="bg-gradient-to-r from-sky-400 to-purple-500 h-2 rounded-full transition-all"
+                    style={{
+                      width: `${(progress.current / progress.total) * 100}%`,
+                    }}
+                  />
+                </div>
+                <div className="text-sm text-[#767676]">
+                  파일 내용을 분석하고 분개작업을 진행중입니다. (
+                  {progress.current}/{progress.total})
+                </div>
+              </div>
             }
           />
-          {!loading ? (
-            <label htmlFor="journalFile" className="cursor-pointer block">
-              <div className="text-[#303030]">
-                파일을 선택하거나 드래그하여 업로드하세요
-              </div>
-              <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
-                (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
-              </div>
-            </label>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full">
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-100 rounded-full h-2 mb-2">
-                <div
-                  className="bg-gradient-to-r from-sky-400 to-purple-500 h-2 rounded-full transition-all"
-                  style={{
-                    width: `${(progress.current / progress.total) * 100}%`,
-                  }}
-                />
-              </div>
-              <div className="text-sm text-[#767676]">
-                파일 내용을 분석하고 분개작업을 진행중입니다. (
-                {progress.current}/{progress.total})
-              </div>
-            </div>
-          )}
         </div>
 
         {/* 업로드 완료 후 데이터 표시 */}

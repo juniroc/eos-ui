@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { getBankAccountDocs, extractBankAccountDocs, saveBankAccountDocs, deleteBankAccount } from '@/services/api';
+import FileUploadBox from '@/components/FileUploadBox';
 
 interface AccountRow {
   id: number;
@@ -244,42 +245,12 @@ const handleFileUpload = async (file: File) => {
         </div>
 
         {/* 파일 업로드 박스 */}
-        <div
-          className="rounded-lg text-center mb-6"
-          style={{
-            width: '100%',
-            height: '120px',
-            minWidth: '400px',
-            padding: '24px',
-            background: '#FFFFFF',
-            borderWidth: '1px',
-            borderStyle: 'dashed',
-            borderColor: '#D9D9D9',
-          }}
-        >
-          <input
-            type="file"
-            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-            className="hidden"
+        <div className="mb-6">
+          <FileUploadBox
             id="accountFile"
-            onChange={e =>
-              e.target.files && handleFileUpload(e.target.files[0])
-            }
+            onFileUpload={handleFileUpload}
+            loading={loading}
           />
-          <label htmlFor="accountFile" className="cursor-pointer block">
-            {loading ? (
-              <div className="text-gray-500">처리 중...</div>
-            ) : (
-              <>
-                <div className="text-[#303030]">
-                  파일을 선택하거나 드래그하여 업로드하세요
-                </div>
-                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
-                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
-                </div>
-              </>
-            )}
-          </label>
         </div>
 
         {/* 테이블 */}

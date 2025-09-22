@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Button from '@/components/Button';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 interface ProofRow {
   id: number;
@@ -118,9 +117,12 @@ export default function ProofStoragePage() {
   if (!isAuthenticated) return null;
 
   /** 검색 필터링 */
-  const filteredRows = rows.filter(r =>
-    r.fileName.includes(search)
+  const filteredRows = rows.filter(r =>{
+    console.log(r.fileName, search);
+    return  r.fileName.includes(search)
+  }
   );
+
 
   return (
     <div className="p-8">

@@ -163,11 +163,10 @@ export default function Sidebar({
             <Image
               src="/user.png"
               alt="계정관리"
-              width={24}
-              height={24}
-              className="w-6 h-6 mb-2"
+              width={28}
+              height={28}
             />
-            <span className="text-xs font-medium">계정관리</span>
+            <span className="text-xs font-medium text-[#757575] mt-[4px]">계정관리</span>
           </button>
         </div>
       </div>

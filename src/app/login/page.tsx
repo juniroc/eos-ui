@@ -73,7 +73,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* 왼쪽 배경 이미지 */}
-      <div className="hidden lg:flex lg:w-3/5 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative">
         <Image
           src="/login_bg.png"
           alt="Login Background"
@@ -83,7 +83,7 @@ export default function LoginPage() {
       </div>
 
       {/* 오른쪽 로그인 폼 */}
-      <div className="w-full lg:w-2/5 flex items-center justify-center p-8 bg-[#F5F5F5]">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#F5F5F5]">
         <div className="w-full max-w-md space-y-8">
           <div className="text-left">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { initClosingCheck, getClosingCheckStream } from '@/services/api';
 // import { getToken } from '@/services/api';
 
 interface CheckRow {
@@ -64,23 +65,7 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/init', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          mode: 'manual'
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('API 호출에 실패했습니다.');
-      }
-
-      const data: ClosingCheckResponse = await response.json();
+      const data: ClosingCheckResponse = await initClosingCheck({ closingDate, mode: 'manual' }, accessToken) as ClosingCheckResponse;
       
       // API 응답을 CheckRow 형식으로 변환
       const convertedRows = data.items.map((item, index) => ({

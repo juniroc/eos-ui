@@ -525,3 +525,262 @@ export async function registerUser(data: {
 
   return response.json();
 }
+
+// 결산점검 관련 API
+export async function initClosingCheck(data: { closingDate: string; mode: 'manual' | 'auto' }, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/closing-check/init`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('결산점검 초기화에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function getClosingCheckStream(jobId: string, token: string): Promise<ReadableStream<Uint8Array> | null> {
+  const response = await fetch(`${API_BASE_URL}/api/closing-check/stream?jobId=${jobId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'text/event-stream',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('결산점검 스트림 조회에 실패했습니다.');
+  }
+
+  return response.body;
+}
+
+// 가이드라인 관련 API
+export async function getGuidelines(token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/instructions`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('가이드라인 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteGuideline(id: string, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/instructions/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('가이드라인 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveGuideline(data: { providedAt: string; content: string }, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/instructions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('가이드라인 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 분개장 관련 API
+export async function getJournal(params: URLSearchParams, token: string): Promise<unknown> {
+  const url = `${API_BASE_URL}/api/journal?${params.toString()}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('분개장 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveJournal(data: unknown, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/journal/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('분개장 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 대차대조표 관련 API
+export async function getBalanceSheet(params: URLSearchParams, token: string): Promise<unknown> {
+  const url = `${API_BASE_URL}/api/balance?${params.toString()}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('대차대조표 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 원장 관련 API
+export async function getLedger(params: URLSearchParams, token: string): Promise<unknown> {
+  const url = `${API_BASE_URL}/api/ledger?${params.toString()}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('원장 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function getLedgerVoucher(voucherId: string, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/ledger/voucher/${voucherId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('원장 전표 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveLedgerVoucher(voucherId: string, data: unknown, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/ledger/voucher/${voucherId}/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('원장 전표 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 손익계산서 관련 API
+export async function getFinancialStatements(params: URLSearchParams, token: string): Promise<unknown> {
+  const url = `${API_BASE_URL}/api/statements?${params.toString()}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('손익계산서 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 현금출납부 관련 API
+export async function getCashbook(params: URLSearchParams, token: string): Promise<unknown> {
+  const url = `${API_BASE_URL}/api/cashbook?${params.toString()}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('현금출납부 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function getCashbookVoucher(voucherId: string, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/cashbook/voucher/${voucherId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('현금출납부 전표 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function saveCashbookVoucher(voucherId: string, data: unknown, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/cashbook/voucher/${voucherId}/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('현금출납부 전표 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 증빙보관 관련 API
+export async function getProofs(token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/proof`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('증빙보관 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function getProofUrl(id: string, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/proof/${id}/url`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('증빙 URL 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+export async function deleteProof(id: string, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/proof/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error('증빙 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}

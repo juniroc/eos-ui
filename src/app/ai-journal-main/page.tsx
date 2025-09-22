@@ -17,7 +17,6 @@ interface JournalRow {
   description: string;
 }
 
-const API_BASE_URL = 'https://api.eosxai.com';
 
 export default function AIJournalMainPage() {
   const router = useRouter();
@@ -54,7 +53,7 @@ export default function AIJournalMainPage() {
       setProgress({ current: 0, total: 200 }); // 예시 total (실제는 SSE로 받아올 수 있음)
 
       // 업로드 API 호출
-      const res = await fetch(`${API_BASE_URL}/api/ai/extract-raw-transactions/start`, {
+      const res = await fetch(`https://api.eosxai.com/api/ai/extract-raw-transactions/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` },
         body: formData,

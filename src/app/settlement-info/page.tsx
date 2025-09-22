@@ -13,7 +13,6 @@ interface SettlementRow {
   fileId?: string;
 }
 
-const API_BASE_URL = 'https://api.eosxai.com';
 
 export default function SettlementInfoPage() {
   const router = useRouter();
@@ -45,7 +44,7 @@ export default function SettlementInfoPage() {
     if (!token) return;
     
     try {
-      const res = await fetch(`${API_BASE_URL}/api/previous-docs`, {
+      const res = await fetch(`https://api.eosxai.com/api/previous-docs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -85,7 +84,7 @@ export default function SettlementInfoPage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/previous-docs/upload?type=OTHER`, {
+      const res = await fetch(`https://api.eosxai.com/api/previous-docs/upload?type=OTHER`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -130,7 +129,7 @@ export default function SettlementInfoPage() {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/previous-docs/${fileId}`, {
+      const res = await fetch(`https://api.eosxai.com/api/previous-docs/${fileId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -161,7 +160,7 @@ export default function SettlementInfoPage() {
     
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/business-info`, {
+      const res = await fetch(`https://api.eosxai.com/api/business-info`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

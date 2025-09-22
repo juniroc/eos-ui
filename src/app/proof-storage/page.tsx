@@ -119,7 +119,7 @@ export default function ProofStoragePage() {
 
   /** 검색 필터링 */
   const filteredRows = rows.filter(r =>
-    r.fileName.toLowerCase().includes(search.toLowerCase())
+    r.fileName.includes(search)
   );
 
   return (

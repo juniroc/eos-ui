@@ -225,10 +225,10 @@ export default function GuidelinePeriodPage() {
                 지침내용
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                반영여부
+                반영여부(문제점)
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
-                관리
+                삭제
               </td>
             </tr>
           </thead>

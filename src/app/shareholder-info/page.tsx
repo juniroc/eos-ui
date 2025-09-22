@@ -221,6 +221,7 @@ export default function ShareholderInfoPage() {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="shareholderFile"
             onChange={e =>
@@ -235,6 +236,9 @@ export default function ShareholderInfoPage() {
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
                 </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
+                </div>
               </>
             )}
           </label>
@@ -247,22 +251,22 @@ export default function ShareholderInfoPage() {
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">성명</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주주명</td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                주민등록번호
+                주민등록번호(사업자등록번호)
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                특수관계인 여부
+                특수관계자 여부
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 주식수
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                취득일자
+                지분율(%)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">비고</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">기타사항</td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
-                관리
+                삭제
               </td>
             </tr>
           </thead>

@@ -213,6 +213,7 @@ export default function EmployeeInfoPage() {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="employeeFile"
             onChange={e =>
@@ -226,6 +227,9 @@ export default function EmployeeInfoPage() {
               <>
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
+                </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
                 </div>
               </>
             )}
@@ -244,12 +248,9 @@ export default function EmployeeInfoPage() {
                 주민등록번호
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                고용형태
+                유형
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">월급</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
-                원
-              </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">월 급여</td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 생산직 여부
               </td>
@@ -330,7 +331,6 @@ export default function EmployeeInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">원</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
                     className="w-full focus:outline-none"
@@ -364,7 +364,7 @@ export default function EmployeeInfoPage() {
             {/* 추가하기 */}
             <tr>
               <td
-                colSpan={8}
+                colSpan={7}
                 className="p-3 border border-[#D9D9D9] text-center"
               >
                 <button

@@ -214,6 +214,7 @@ export default function ClientInfoPage() {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="clientFile"
             onChange={e =>
@@ -227,6 +228,9 @@ export default function ClientInfoPage() {
               <>
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
+                </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
                 </div>
               </>
             )}
@@ -244,15 +248,15 @@ export default function ClientInfoPage() {
                 거래처명
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                사업자등록번호
+                사업자등록번호(주민등록번호)
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                주요품목
+                주요거래품목
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">관계</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">비고</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">우리회사와의 관계</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">기타 거래처 이해를 위한 참고사항</td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
-                관리
+                삭제
               </td>
             </tr>
           </thead>

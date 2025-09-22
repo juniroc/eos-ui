@@ -200,6 +200,7 @@ export default function BusinessInfoPage() {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="fileUpload"
             onChange={e =>
@@ -213,6 +214,9 @@ export default function BusinessInfoPage() {
               <>
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
+                </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
                 </div>
               </>
             )}

@@ -157,8 +157,21 @@ const handleFileUpload = async (file: File) => {
     
     try {
       setLoading(true);
-      await deleteBankAccount(id.toString(), token);
+      const res = await fetch(`https://api.eosxai.com/api/bank-accounts/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (!res.ok) {
+        throw new Error('삭제 실패');
+      }
+      
+      const data = await res.json();
+      console.log('삭제 응답:', data);
+      
+      // 로컬 상태에서도 제거
       setRows(prev => prev.filter(r => r.id !== id));
+      alert('삭제되었습니다.');
     } catch (err) {
       console.error('삭제 에러:', err);
       alert('삭제 실패');
@@ -246,6 +259,7 @@ const handleFileUpload = async (file: File) => {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="accountFile"
             onChange={e =>
@@ -260,6 +274,9 @@ const handleFileUpload = async (file: File) => {
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
                 </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
+                </div>
               </>
             )}
           </label>
@@ -272,10 +289,9 @@ const handleFileUpload = async (file: File) => {
               <th className="p-3 border border-[#D9D9D9] w-12">번호</th>
               <th className="p-3 border border-[#D9D9D9]">은행명</th>
               <th className="p-3 border border-[#D9D9D9]">계좌번호</th>
-              <th className="p-3 border border-[#D9D9D9]">출금수수료</th>
-              <th className="p-3 border border-[#D9D9D9] w-16">단위</th>
+              <th className="p-3 border border-[#D9D9D9]">출금수수료(원)</th>
               <th className="p-3 border border-[#D9D9D9]">용도</th>
-              <th className="p-3 border border-[#D9D9D9]">비고</th>
+              <th className="p-3 border border-[#D9D9D9]">특이사항</th>
               <th className="p-3 border border-[#D9D9D9] w-24">삭제</th>
             </tr>
           </thead>
@@ -333,7 +349,6 @@ const handleFileUpload = async (file: File) => {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">원</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
@@ -388,7 +403,7 @@ const handleFileUpload = async (file: File) => {
             {/* 추가하기 버튼 행 */}
             <tr>
               <td
-                colSpan={8}
+                colSpan={7}
                 className="p-3 border border-[#D9D9D9] text-center"
               >
                 <button

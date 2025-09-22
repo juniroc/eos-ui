@@ -195,11 +195,11 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}
+      {/* 오른쪽 서브메뉴 - 호버 시에만 표시, 위로 올라오도록 */}
       {hoveredMenu &&
         navigationItems.find(i => i.id === hoveredMenu)?.subItems && (
           <div 
-            className="flex-1 p-6 w-max animate-in slide-in-from-left duration-300 ease-out"
+            className="absolute left-24 top-0 h-full p-6 w-max animate-in slide-in-from-left duration-300 ease-out z-10 bg-[#F5F5F5]"
             onMouseEnter={() => setHoveredMenu(hoveredMenu)}
             onMouseLeave={() => setHoveredMenu(null)}
           >

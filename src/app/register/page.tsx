@@ -235,10 +235,12 @@ export default function RegisterPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-4">사업자등록증 인증</h3>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
               <div className="text-4xl mb-4">📄</div>
-              <p className="text-gray-600 mb-4">사업자등록증을 업로드해주세요</p>
+              <p className="text-gray-600 mb-2">사업자등록증을 업로드해주세요</p>
+              <p className="mb-4" style={{ color: '#434343', fontSize: '12px' }}>(JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)</p>
               <input
                 ref={fileInputRef}
                 type="file"
+                accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
                 onChange={handleFileSelect}
                 className="hidden"
               />

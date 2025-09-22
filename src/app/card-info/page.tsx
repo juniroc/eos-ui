@@ -245,6 +245,7 @@ export default function CardInfoPage() {
         >
           <input
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             id="cardFile"
             onChange={e =>
@@ -258,6 +259,9 @@ export default function CardInfoPage() {
               <>
                 <div className="text-[#303030]">
                   파일을 선택하거나 드래그하여 업로드하세요
+                </div>
+                <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
+                  (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
                 </div>
               </>
             )}
@@ -283,9 +287,6 @@ export default function CardInfoPage() {
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">용도</td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 주사용자
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
-                관리
               </td>
             </tr>
           </thead>
@@ -378,23 +379,13 @@ export default function CardInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  <Button
-                    variant="neutral"
-                    size="small"
-                    onClick={() => handleDelete(row.id)}
-                    disabled={loading}
-                  >
-                    삭제
-                  </Button>
-                </td>
               </tr>
             ))}
 
             {/* 추가하기 */}
             <tr>
               <td
-                colSpan={7}
+                colSpan={6}
                 className="p-3 border border-[#D9D9D9] text-center"
               >
                 <button

@@ -7,10 +7,11 @@ interface FileUploadModalProps {
 
 const allowedFileTypes = [
   'image/jpeg',
+  'image/jpg',
   'image/png',
   'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/msword',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+  'text/csv', // .csv
 ];
 
 export default function FileUploadModal({
@@ -167,6 +168,9 @@ export default function FileUploadModal({
                   <p className="text-sm text-gray-600">
                     파일을 업로드 해주세요
                   </p>
+                  <p className="mt-1" style={{ color: '#434343', fontSize: '12px' }}>
+                    (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
+                  </p>
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -181,6 +185,7 @@ export default function FileUploadModal({
           <input
             ref={fileInputRef}
             type="file"
+            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
             className="hidden"
             onChange={handleFileSelect}
           />

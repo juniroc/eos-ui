@@ -195,7 +195,7 @@ export default function SettlementInfoPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">
-              정기결산 정보
+              전기결산 정보
             </h2>
             <p className="text-[#767676]">
               필요한 내용을 입력하고 정보를 저장하세요.
@@ -219,11 +219,11 @@ export default function SettlementInfoPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="p-3 border border-gray-200 w-24">구분</th>
-              <th className="p-3 border border-gray-200">title</th>
+              <th className="p-3 border border-gray-200">자료종류</th>
               <th className="p-3 border border-gray-200 w-48 text-left">
-                title
+                파일 업로드
               </th>
-              <th className="p-3 border border-gray-200 w-32">title</th>
+              <th className="p-3 border border-gray-200 w-32">삭제</th>
             </tr>
           </thead>
           <tbody>
@@ -259,6 +259,7 @@ export default function SettlementInfoPage() {
                         변경
                         <input
                           type="file"
+                          accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
                           className="hidden"
                           onChange={e =>
                             e.target.files &&
@@ -272,6 +273,7 @@ export default function SettlementInfoPage() {
                       파일 업로드
                       <input
                         type="file"
+                        accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
                         className="hidden"
                         onChange={e =>
                           e.target.files &&

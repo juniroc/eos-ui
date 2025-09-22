@@ -4,6 +4,8 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkLoginId, extractBusinessInfo, registerUser } from '@/services/api';
+import Image from 'next/image';
+import FileUploadBox from '@/components/FileUploadBox';
 
 interface BusinessInfo {
   companyName: string;
@@ -190,23 +192,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white shadow rounded-lg p-12 w-[400px] text-center">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white p-6 sm:p-12 w-full max-w-[500px] text-center">
         {/* 유형 선택 화면 */}
         {step === 'type' && (
           <>
-            <h2 className="text-xl font-bold text-gray-900">회원가입</h2>
-            <p className="mt-2 text-gray-500 text-sm">회원가입 유형을 선택해주세요.</p>
+            <h2 className="text-xl font-bold text-gray-900 text-left">회원가입</h2>
+            <p className="mt-2 text-gray-500 text-sm text-left">회원가입 유형을 선택해주세요.</p>
             <div className="mt-8 grid grid-cols-2 gap-4">
               <button
                 onClick={() => {
                   setMemberType('business');
                   setStep('business');
                 }}
-                className="border border-gray-300 rounded-lg p-6 hover:border-black hover:bg-gray-50 transition"
+                className="border border-gray-300 hover:border-black hover:bg-gray-50 transition"
               >
                 <div className="flex flex-col items-center">
-                  <span className="text-4xl mb-2">👜</span>
+                  <Image src="/briefcase.png" alt="business" width={48} height={48} className="mb-[12px]" />
                   <span className="text-sm font-medium text-gray-900">기업 회원가입</span>
                 </div>
               </button>
@@ -215,56 +217,111 @@ export default function RegisterPage() {
                   setMemberType('taxAgent');
                   setStep('form');
                 }}
-                className="border border-gray-300 rounded-lg p-6 hover:border-black hover:bg-gray-50 transition"
+                className="border border-gray-300 hover:border-black hover:bg-gray-50 transition h-[136px]"
               >
                 <div className="flex flex-col items-center">
-                  <span className="text-4xl mb-2">💲</span>
-                  <span className="text-sm font-medium text-gray-900">세무대리인 회원가입</span>
+                <Image src="/dollar.png" alt="business" width={48} height={48} className='mb-[12px]' />
+                <span className="text-sm font-medium text-gray-900">세무대리인 회원가입</span>
                 </div>
               </button>
             </div>
-            <div className="mt-10">
-              <p className="text-xs text-gray-400">© 2025 EOSSOLUTION, Inc.</p>
+            <div className="mt-10 flex flex-col items-center justify-center">
+              <Image src="/logo.png" alt="logo" width={56} height={32} />
+              <p className="text-xs text-gray-400 mt-[8px]">© 2025 EOSSOLUTION, Inc.</p>
             </div>
           </>
         )}
 
         {/* 사업자등록증 업로드 */}
         {step === 'business' && (
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">사업자등록증 인증</h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
-              <div className="text-4xl mb-4">📄</div>
-              <p className="text-gray-600 mb-2">사업자등록증을 업로드해주세요</p>
-              <p className="mb-4" style={{ color: '#434343', fontSize: '12px' }}>(JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)</p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
+          <div className="w-full">
+            {/* 헤더 */}
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 text-left">사업자등록증 인증</h3>
+                <p className="text-gray-600">사업자등록증을 인증하고 무료로 시작하세요.</p>
+              </div>
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                onClick={() => document.getElementById('businessFile')?.click()}
+                className="bg-gray-100 text-gray-700 px-4 py-2 hover:bg-gray-200 transition-colors"
               >
-                파일 선택
+                파일 추가
               </button>
-              {businessFile && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600">{businessFile.name}</p>
-                  <button
-                    onClick={handleBusinessUpload}
-                    disabled={businessLoading}
-                    className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
-                  >
-                    {businessLoading ? '처리 중...' : '인증하기'}
-                  </button>
+            </div>
+
+            {/* 파일 업로드 영역 */}
+            <div className="mb-8">
+              <FileUploadBox
+                id="businessFile"
+                onFileUpload={(file) => {
+                  setBusinessFile(file);
+                  setBusinessError('');
+                }}
+                loading={businessLoading}
+                uploadText="파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요"
+                className="w-full"
+                style={{ 
+                  width: '100%',
+                  height: '200px',
+                  minHeight: '200px'
+                }}
+              />
+            </div>
+            
+            {businessFile && (
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 mb-4">선택된 파일: {businessFile.name}</p>
+                <button
+                  onClick={handleBusinessUpload}
+                  disabled={businessLoading}
+                  className="w-full bg-green-600 text-white py-3 px-4 hover:bg-green-700 disabled:opacity-50 font-medium"
+                >
+                  {businessLoading ? '처리 중...' : '인증하기'}
+                </button>
+              </div>
+            )}
+            
+            {businessError && (
+              <p className="text-sm text-red-600 mb-6">{businessError}</p>
+            )}
+            
+            {businessInfo && (
+              <div className="mb-6">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-green-800 font-medium">사업자등록증 인증 완료</p>
+                  <p className="text-xs text-green-600 mt-1">회사명: {businessInfo.companyName}</p>
                 </div>
-              )}
-              {businessError && (
-                <p className="mt-2 text-sm text-red-600">{businessError}</p>
-              )}
+              </div>
+            )}
+
+            {/* 다음 버튼 */}
+            <button
+              onClick={() => businessInfo ? setStep('phone') : null}
+              disabled={!businessInfo}
+              className={`w-full py-3 px-4 font-medium transition-colors ${
+                businessInfo 
+                  ? 'bg-gray-800 text-white hover:bg-gray-900' 
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              다음
+            </button>
+
+            {/* 로그인 링크 */}
+            <div className="mt-6 text-center">
+              <span className="text-gray-600">계정이 있으신가요? </span>
+              <button
+                onClick={() => router.push('/login')}
+                className="text-[#1ACCFF] underline"
+              >
+                로그인
+              </button>
+            </div>
+
+            {/* 하단 로고 및 저작권 */}
+            <div className="mt-12 flex flex-col items-center">
+              <Image src="/logo.png" alt="logo" width={80} height={40} />
+              <p className="text-xs text-gray-400 mt-2">© 2025 EOSSOLUTION, Inc.</p>
             </div>
           </div>
         )}

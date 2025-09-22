@@ -11,6 +11,7 @@ const allowedFileTypes = [
   'image/png',
   'application/pdf',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+  'application/vnd.ms-excel', // .xls
   'text/csv', // .csv
 ];
 
@@ -68,6 +69,12 @@ export default function FileUploadModal({
         return 'PNG';
       case 'application/pdf':
         return 'PDF';
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return 'XLSX';
+      case 'application/vnd.ms-excel':
+        return 'XLS';
+      case 'text/csv':
+        return 'CSV';
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         return 'DOCX';
       case 'application/msword':
@@ -169,7 +176,7 @@ export default function FileUploadModal({
                     파일을 업로드 해주세요
                   </p>
                   <p className="mt-1" style={{ color: '#434343', fontSize: '12px' }}>
-                    (JPG, PNG, PDF, XLSX, CSV 파일만 지원됩니다.)
+                    (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)
                   </p>
                 </div>
                 <button
@@ -185,7 +192,7 @@ export default function FileUploadModal({
           <input
             ref={fileInputRef}
             type="file"
-            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
+            accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
             className="hidden"
             onChange={handleFileSelect}
           />

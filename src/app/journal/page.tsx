@@ -338,12 +338,9 @@ function JournalPageContent() {
                       <td className="p-3 border border-[#D9D9D9] w-1/10">
                         {transaction.debitCredit === true ? (
                           <div className="flex items-center w-full">
-                            {!transaction.amount && (
-                              <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                            )}
                             <input
                               className="flex-1 focus:outline-none"
-                              placeholder=""
+                              placeholder="입력하기"
                               value={transaction.amount || ''}
                               onChange={(e) => {
                                 const newVouchers = [...vouchers];
@@ -393,12 +390,9 @@ function JournalPageContent() {
                       <td className="p-3 border border-[#D9D9D9] w-1/10">
                         {transaction.debitCredit === false ? (
                           <div className="flex items-center w-full">
-                            {!transaction.amount && (
-                              <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                            )}
                             <input
                               className="flex-1 focus:outline-none"
-                              placeholder=""
+                              placeholder="입력하기"
                               value={transaction.amount || ''}
                               onChange={(e) => {
                                 const newVouchers = [...vouchers];

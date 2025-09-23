@@ -14,6 +14,7 @@ interface AccountRow {
   withdrawalFee?: string;
   purpose?: string;
   note?: string;
+  serverId?: number; // 서버에 저장된 데이터인지 구분
 }
 
 export default function AccountInfoPage() {
@@ -67,6 +68,7 @@ export default function AccountInfoPage() {
                 withdrawalFee: acc.withdrawalFee || '',
                 purpose: acc.purpose || '',
                 note: acc.note || '',
+                serverId: acc.id, // 서버 ID 설정
               }))
             );
           } else {
@@ -186,30 +188,40 @@ const handleFileUpload = async (file: File) => {
 
   /** 삭제 */
   const handleDelete = async (id: number) => {
-    if (!token) return;
-    
-    try {
-      setLoading(true);
-      const res = await fetch(`https://api.eosxai.com/api/bank-accounts/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const row = rows.find(r => r.id === id);
+    if (!row) return;
+
+    // 서버에 저장된 데이터인지 확인 (serverId가 있으면 서버에 저장된 것)
+    if (row.serverId) {
+      // 서버에 저장된 데이터는 API 호출로 삭제
+      if (!token) return;
       
-      if (!res.ok) {
-        throw new Error('삭제 실패');
+      try {
+        setLoading(true);
+        const res = await fetch(`https://api.eosxai.com/api/bank-accounts/${row.serverId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (!res.ok) {
+          throw new Error('삭제 실패');
+        }
+        
+        const data = await res.json();
+        console.log('삭제 응답:', data);
+        
+        // 서버에서 삭제 성공하면 로컬에서도 제거
+        setRows(prev => prev.filter(r => r.id !== id));
+        alert('삭제되었습니다.');
+      } catch (err) {
+        console.error('삭제 에러:', err);
+        alert('삭제 실패');
+      } finally {
+        setLoading(false);
       }
-      
-      const data = await res.json();
-      console.log('삭제 응답:', data);
-      
-      // 로컬 상태에서도 제거
+    } else {
+      // 로컬 데이터는 바로 제거
       setRows(prev => prev.filter(r => r.id !== id));
-      alert('삭제되었습니다.');
-    } catch (err) {
-      console.error('삭제 에러:', err);
-      alert('삭제 실패');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -339,12 +351,9 @@ const handleFileUpload = async (file: File) => {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <div className="flex items-center w-full">
-                    {!row.withdrawalFee && (
-                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                    )}
                     <input
                       className="flex-1 px-2 py-1 text-[#B3B3B3] focus:outline-none"
-                      placeholder=""
+                      placeholder="입력하기"
                       value={row.withdrawalFee || ''}
                       onChange={e =>
                         setRows(prev =>

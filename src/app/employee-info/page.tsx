@@ -13,6 +13,7 @@ interface EmployeeRow {
   employmentType?: string;
   monthlySalary?: string;
   isProduction?: string; // 'YES' | 'NO'
+  serverId?: number; // 서버에 저장된 데이터인지 구분
 }
 
 export default function EmployeeInfoPage() {
@@ -75,6 +76,7 @@ export default function EmployeeInfoPage() {
             employmentType: emp.employmentType || '',
             monthlySalary: emp.monthlySalary || '',
             isProduction: emp.isProduction ? 'YES' : 'NO',
+            serverId: emp.id, // 서버 ID 설정
           }))
         );
       } else {
@@ -189,17 +191,28 @@ export default function EmployeeInfoPage() {
 
   /** 삭제 */
   const handleDelete = async (id: number) => {
-    if (!token) return;
-    
-    try {
-      setLoading(true);
-      await deleteEmployee(id.toString(), token);
+    const row = rows.find(r => r.id === id);
+    if (!row) return;
+
+    // 서버에 저장된 데이터인지 확인 (serverId가 있으면 서버에 저장된 것)
+    if (row.serverId) {
+      // 서버에 저장된 데이터는 API 호출로 삭제
+      if (!token) return;
+      
+      try {
+        setLoading(true);
+        await deleteEmployee(row.serverId.toString(), token);
+        setRows(prev => prev.filter(r => r.id !== id));
+        alert('삭제되었습니다.');
+      } catch (err) {
+        console.error('삭제 에러:', err);
+        alert('삭제 실패');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // 로컬 데이터는 바로 제거
       setRows(prev => prev.filter(r => r.id !== id));
-    } catch (err) {
-      console.error('삭제 에러:', err);
-      alert('삭제 실패');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -363,12 +376,9 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <div className="flex items-center w-full">
-                    {!row.monthlySalary && (
-                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                    )}
                     <input
                       className="flex-1 focus:outline-none text-[#B3B3B3]"
-                      placeholder=""
+                      placeholder="입력하기"
                       value={row.monthlySalary || ''}
                       onChange={e =>
                         setRows(prev =>

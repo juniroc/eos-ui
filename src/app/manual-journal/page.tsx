@@ -14,6 +14,7 @@ interface ManualJournalRow {
   creditAmount: string;
   creditPartner: string;
   description: string;
+  voucherId?: string;
 }
 
 export default function ManualJournalPage() {
@@ -74,8 +75,43 @@ export default function ManualJournalPage() {
   };
 
   /** 행 삭제 */
-  const handleDelete = (id: number) => {
-    setRows(prev => prev.filter(r => r.id !== id));
+  const handleDelete = async (id: number) => {
+    const row = rows.find(r => r.id === id);
+    if (!row) return;
+
+    // 서버에 저장된 데이터인지 확인 (voucherId가 있으면 서버에 저장된 것)
+    if (row.voucherId) {
+      // 서버에 저장된 데이터는 API 호출로 삭제
+      try {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+          alert('로그인이 필요합니다.');
+          return;
+        }
+
+        const res = await fetch(`https://api.eosxai.com/api/journal/${row.voucherId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || '삭제 실패');
+        }
+
+        // 서버에서 삭제 성공하면 로컬에서도 제거
+        setRows(prev => prev.filter(r => r.id !== id));
+        alert('삭제되었습니다.');
+      } catch (err) {
+        console.error('삭제 에러:', err);
+        alert('삭제 실패');
+      }
+    } else {
+      // 로컬 데이터는 바로 제거
+      setRows(prev => prev.filter(r => r.id !== id));
+    }
   };
 
   /** 저장 */
@@ -224,13 +260,10 @@ export default function ManualJournalPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <div className="flex items-center w-full">
-                    {!row.debitAmount && (
-                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                    )}
                     <input
                       type="number"
                       className="flex-1 focus:outline-none text-[#B3B3B3]"
-                      placeholder=""
+                      placeholder="입력하기"
                       value={row.debitAmount}
                       onChange={e =>
                         setRows(prev =>
@@ -282,13 +315,10 @@ export default function ManualJournalPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <div className="flex items-center w-full">
-                    {!row.creditAmount && (
-                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                    )}
                     <input
                       type="number"
                       className="flex-1 focus:outline-none text-[#B3B3B3]"
-                      placeholder=""
+                      placeholder="입력하기"
                       value={row.creditAmount}
                       onChange={e =>
                         setRows(prev =>
@@ -341,7 +371,7 @@ export default function ManualJournalPage() {
                 {/* 관리 */}
                 <td className="p-3 border border-[#D9D9D9] text-center">
                   <button
-                    onClick={() => handleDelete(row.id)}
+                    onClick={async () => await handleDelete(row.id)}
                     className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0]"
                   >
                     삭제

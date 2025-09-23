@@ -38,8 +38,7 @@ interface LedgerPartner {
 }
 
 interface LedgerFilters {
-  startDate: string;
-  endDate: string;
+  period: string; // YYYY-MM
   accountCode?: string;
   partnerId?: string;
   minAmount?: number;
@@ -70,8 +69,7 @@ export default function LedgerPage() {
   const { token, isAuthenticated, loading: authLoading } = useAuth();
 
   const [filters, setFilters] = useState<LedgerFilters>({
-    startDate: '',
-    endDate: '',
+    period: '',
     accountCode: '',
     partnerId: '',
     minAmount: undefined,
@@ -97,19 +95,34 @@ export default function LedgerPage() {
       setLoading(true);
       const params = new URLSearchParams();
 
-      if (filters.startDate) params.append('startDate', filters.startDate);
-      if (filters.endDate) params.append('endDate', filters.endDate);
+      // 조회월을 startDate, endDate 로 변환
+      if (filters.period) {
+        const [year, month] = filters.period.split('-').map(Number);
+        const startDate = `${filters.period}-01`;
+        const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+        params.append('startDate', startDate);
+        params.append('endDate', endDate);
+      }
+
       if (filters.accountCode) params.append('accountCode', filters.accountCode);
       if (filters.partnerId) params.append('partnerId', filters.partnerId);
       if (filters.minAmount) params.append('minAmount', filters.minAmount.toString());
       if (filters.maxAmount) params.append('maxAmount', filters.maxAmount.toString());
 
       const url = `https://api.eosxai.com/api/ledger?${params.toString()}`;
-      console.log('API 호출 URL:', url);
-
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      setLedgerData(data.accounts || []);
+      
+      // API 응답 구조에 따라 데이터 파싱
+      if (data.type === 'ACCOUNT') {
+        // 단일 계정 응답
+        setLedgerData([data]);
+      } else if (data.type === 'ACCOUNTS' && data.accounts) {
+        // 여러 계정 응답
+        setLedgerData(data.accounts);
+      } else {
+        setLedgerData([]);
+      }
     } catch (err) {
       console.error('원장 조회 에러:', err);
     } finally {
@@ -169,22 +182,23 @@ export default function LedgerPage() {
     // CSV 형태로 다운로드
     const csvContent = [
       ['일자', '차변금액', '대변금액', '잔액', '거래처', '적요'],
-      ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => 
-        'rows' in account && account.rows ? account.rows.map((row: LedgerRow) => [
+      ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => {
+        const rows = 'rows' in account ? account.rows : [];
+        return rows ? rows.map((row: LedgerRow) => [
           row.date,
           row.debit.toLocaleString(),
           row.credit.toLocaleString(),
           row.balance.toLocaleString(),
           row.partnerName || '',
           row.description || ''
-        ]) : []
-      )
+        ]) : [];
+      })
     ].map(row => row.join(',')).join('\n');
 
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `원장_${filters.startDate || '전체'}.csv`;
+    link.download = `원장_${filters.period || '전체'}.csv`;
     link.click();
   };
 
@@ -202,8 +216,8 @@ export default function LedgerPage() {
 
   /** 조회하기 */
   const handleSearch = () => {
-    if (!filters.startDate || !filters.endDate) {
-      alert('조회일자를 입력해주세요.');
+    if (!filters.period) {
+      alert('조회월을 입력해주세요.');
       return;
     }
     fetchLedger();
@@ -246,71 +260,72 @@ export default function LedgerPage() {
           </div>
         </div>
 
-        {/* 필터 영역 */}
+        {/* 필터 영역 (1행) */}
         <div className="bg-white border border-[#D9D9D9] mb-6">
           <table className="w-full text-sm text-[#1e1616]">
             <tbody>
               <tr>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회일자(필수)</td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
                   <input
-                    type="date"
-                    value={filters.startDate}
-                    onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
-                    placeholder="시작일"
-                  />
-                </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>종료일(필수)</td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    type="date"
-                    value={filters.endDate}
-                    onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
-                    placeholder="종료일"
+                    type="month"
+                    value={filters.period}
+                    onChange={(e) => setFilters(prev => ({ ...prev, period: e.target.value }))}
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                    placeholder="YYYY-MM"
                   />
                 </td>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    type="text"
-                    placeholder="선택하기"
+                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
+                  <select
                     value={filters.accountCode || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
-                  />
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                  >
+                    <option value="">선택하기</option>
+                    <option value="11111">현금 (11111)</option>
+                    <option value="11113">보통예금 (11113)</option>
+                    <option value="11132">외상매출금 (11132)</option>
+                    <option value="11142">미수금 (11142)</option>
+                    <option value="11144">가지급금 (11144)</option>
+                    <option value="21207">가수금 (21207)</option>
+                    <option value="21212">미지급비용 (21212)</option>
+                    <option value="44007">복리후생비(판) (44007)</option>
+                    <option value="44008">여비교통비(판) (44008)</option>
+                    <option value="44015">소모품비(판) (44015)</option>
+                    <option value="44016">세금과공과금(판) (44016)</option>
+                    <option value="44025">지급수수료(판) (44025)</option>
+                    <option value="44028">외주용역비(판) (44028)</option>
+                  </select>
                 </td>
-              </tr>
-              <tr>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.partnerId || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
                   />
                 </td>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최소금액</td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-3 border border-[#D9D9D9]" style={{ width: '120px' }}>
                   <input
                     type="number"
-                    placeholder="입력하기"
                     value={filters.minAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                    placeholder="입력하기"
                   />
                 </td>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최대금액</td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-3 border border-[#D9D9D9]" style={{ width: '120px' }}>
                   <input
                     type="number"
-                    placeholder="입력하기"
                     value={filters.maxAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                    placeholder="입력하기"
                   />
                 </td>
               </tr>
@@ -318,58 +333,55 @@ export default function LedgerPage() {
           </table>
         </div>
 
-        {/* 원장 데이터 */}
-        {ledgerData.length > 0 ? (
-          <div className="space-y-6">
-            {ledgerData.map((account: LedgerAccount | LedgerPartner, accountIndex: number) => (
-              <div key={accountIndex} className="bg-white border border-[#D9D9D9]">
-                <div className="bg-[#F5F5F5] p-3 border-b border-[#D9D9D9]">
-                  <h3 className="font-medium">
-                    {'account' in account ? `${account.account.code} - ${account.account.name}` : account.partner?.name}
-                    {'openingBalance' in account && account.openingBalance !== undefined && (
-                      <span className="ml-4 text-sm text-gray-600">
-                        기초잔액: {account.openingBalance.toLocaleString()}원
-                      </span>
-                    )}
-                  </h3>
-                </div>
-                <table className="w-full text-sm text-[#757575]">
-                  <thead className="bg-[#F5F5F5]">
-                    <tr>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">일자</th>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">차변금액</th>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">대변금액</th>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">잔액</th>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">거래처</th>
-                      <th className="p-3 border border-[#D9D9D9] font-medium">적요</th>
+        {/* 원장 테이블 - 데이터가 있을 때만 표시 */}
+        {ledgerData.length > 0 && ledgerData.some(account => {
+          const rows = 'rows' in account ? account.rows : [];
+          return rows && rows.length > 0;
+        }) && (
+          <div className="bg-white border border-[#D9D9D9]">
+            <table className="w-full text-sm text-[#757575]">
+              <thead>
+                <tr>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">차변금액</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">대변금액</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ledgerData.flatMap((account: LedgerAccount | LedgerPartner, accountIndex: number) => {
+                  // API 응답 구조에 따라 rows 추출
+                  const rows = 'rows' in account ? account.rows : [];
+                  return rows ? rows.map((row: LedgerRow, rowIndex: number) => (
+                    <tr 
+                      key={`${accountIndex}-${rowIndex}`}
+                      onClick={() => handleRowClick(row)}
+                      className={`cursor-pointer hover:bg-gray-50 ${row.voucherId ? 'hover:bg-blue-50' : ''}`}
+                    >
+                      <td className="p-3 border border-[#D9D9D9] text-center">{row.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
+                      <td className="p-3 border border-[#D9D9D9]">{row.partnerName || '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9]">{row.description || '-'}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {'rows' in account && account.rows?.map((row: LedgerRow, rowIndex: number) => (
-                      <tr 
-                        key={rowIndex}
-                        onClick={() => handleRowClick(row)}
-                        className={`cursor-pointer hover:bg-gray-50 ${row.voucherId ? 'hover:bg-blue-50' : ''}`}
-                      >
-                        <td className="p-3 border border-[#D9D9D9] text-center">{row.date}</td>
-                        <td className="p-3 border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
-                        <td className="p-3 border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
-                        <td className="p-3 border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
-                        <td className="p-3 border border-[#D9D9D9]">{row.partnerName || '-'}</td>
-                        <td className="p-3 border border-[#D9D9D9]">{row.description || '-'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+                  )) : [];
+                })}
+              </tbody>
+            </table>
           </div>
-        ) : (
-          !loading && (
-            <div className="text-center text-gray-500 py-8">
-              조회된 내역이 없습니다.
-            </div>
-          )
+        )}
+
+        {/* 데이터가 없을 때 메시지 */}
+        {!loading && (ledgerData.length === 0 || !ledgerData.some(account => {
+          const rows = 'rows' in account ? account.rows : [];
+          return rows && rows.length > 0;
+        })) && (
+          <div className="text-center text-gray-500 py-8">
+            조회된 내역이 없습니다.
+          </div>
         )}
 
         {/* 전표 상세 모달 */}

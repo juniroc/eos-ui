@@ -153,6 +153,8 @@ export default function LedgerPage() {
       if (data.success) {
         alert('저장되었습니다.');
         setSelectedVoucher(data.voucher);
+        // 저장 후 리스팅 함수 다시 호출
+        fetchLedger();
       } else {
         alert('저장 실패');
       }

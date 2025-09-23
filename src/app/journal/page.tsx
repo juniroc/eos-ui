@@ -157,6 +157,8 @@ function JournalPageContent() {
         if (data.vouchers && Array.isArray(data.vouchers)) {
         setVouchers(data.vouchers);
         }
+        // 저장 후 리스팅 함수 다시 호출
+        fetchJournal();
       } else {
         alert('저장 실패: ' + (data.message || '알 수 없는 오류'));
       }

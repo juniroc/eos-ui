@@ -171,6 +171,8 @@ export default function ShareholderInfoPage() {
           acquisitionDate: shareholder.acquisitionDate,
           note: shareholder.note,
         })));
+        // 저장 후 리스팅 함수 다시 호출
+        fetchShareholders();
       } else {
         alert('저장 실패');
       }

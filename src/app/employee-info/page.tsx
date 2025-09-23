@@ -169,6 +169,8 @@ export default function EmployeeInfoPage() {
           monthlySalary: emp.monthlySalary,
           isProduction: emp.isProduction,
         })));
+        // 저장 후 리스팅 함수 다시 호출
+        fetchEmployees();
       } else {
         alert('저장 실패');
       }

@@ -149,6 +149,8 @@ export default function ClientInfoPage() {
           relationship: partner.relationship,
           note: partner.note,
         })));
+        // 저장 후 리스팅 함수 다시 호출
+        fetchClients();
       } else {
         alert('저장 실패');
       }

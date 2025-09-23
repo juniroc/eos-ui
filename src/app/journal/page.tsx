@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -37,7 +37,7 @@ interface JournalFilters {
 function JournalPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const voucherIds = searchParams.get('voucherIds')?.split(',') || [];
+  const voucherIds = useMemo(() => searchParams.get('voucherIds')?.split(',') || [], [searchParams]);
 
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
@@ -91,7 +91,7 @@ function JournalPageContent() {
       
       if (data.vouchers && Array.isArray(data.vouchers)) {
         // 날짜 포맷팅 및 데이터 구조 확인
-        const formattedVouchers = data.vouchers.map((voucher: any) => ({
+        const formattedVouchers = data.vouchers.map((voucher: { id: string; date: string; description: string; transactions: unknown[] }) => ({
           ...voucher,
           date: voucher.date ? new Date(voucher.date).toISOString().split('T')[0] : '',
           transactions: voucher.transactions || []
@@ -155,14 +155,14 @@ function JournalPageContent() {
         alert('일괄 저장되었습니다.');
         // 응답에서 업데이트된 전표 데이터로 상태 업데이트
         if (data.vouchers && Array.isArray(data.vouchers)) {
-          setVouchers(data.vouchers);
+        setVouchers(data.vouchers);
         }
       } else {
         alert('저장 실패: ' + (data.message || '알 수 없는 오류'));
       }
     } catch (err) {
       console.error('저장 에러:', err);
-      alert('저장 실패: ' + err.message);
+      alert('저장 실패: ' + (err instanceof Error ? err.message : '알 수 없는 오류'));
     }
   };
 
@@ -179,7 +179,7 @@ function JournalPageContent() {
     if (voucherIds.length > 0) {
       fetchJournal();
     }
-  }, [fetchJournal]);
+  }, [fetchJournal, voucherIds.length]);
 
   // 로딩/인증 처리
   if (authLoading) {

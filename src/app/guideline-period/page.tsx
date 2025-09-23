@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -39,7 +39,7 @@ export default function GuidelinePeriodPage() {
   const hasData = rows.some(r => r.content.trim());
 
   /** 지침 불러오기 */
-  const fetchGuidelines = async () => {
+  const fetchGuidelines = useCallback(async () => {
     const token = getToken();
     if (!token) {
       console.log('토큰이 없습니다.');
@@ -80,7 +80,7 @@ export default function GuidelinePeriodPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /** 지침 저장 */
   const handleSave = async () => {
@@ -170,7 +170,7 @@ export default function GuidelinePeriodPage() {
     if (isAuthenticated) {
       fetchGuidelines();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchGuidelines]);
 
   // 로딩 중이거나 인증되지 않은 경우
   if (authLoading) {

@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getEmployees, extractEmployeeDocs, saveEmployeeDocs, deleteEmployee } from '@/services/api';
+import { extractEmployeeDocs, saveEmployeeDocs, deleteEmployee } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
 
 interface EmployeeRow {
@@ -82,7 +82,7 @@ export default function EmployeeInfoPage() {
     } finally {
       setFirstLoad(false);
     }
-  }, []);
+  }, [token]);
 
   /** 직원리스트 파일 업로드 */
   const handleFileUpload = async (file: File) => {
@@ -132,7 +132,7 @@ export default function EmployeeInfoPage() {
       const validEmployees = rows
         .filter(row => row.name.trim() || row.residentNumber.trim())
         .map(row => {
-          const employee: any = {
+          const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: string } = {
             name: row.name.trim(),
             residentNumber: row.residentNumber.trim(),
           };

@@ -18,7 +18,7 @@ export default function ProofStoragePage() {
   const router = useRouter();
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<ProofRow[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트

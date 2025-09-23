@@ -21,7 +21,7 @@ interface JournalRow {
 export default function AIJournalMainPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading, token } = useAuth();
-  const [rows, setRows] = useState<JournalRow[]>([]);
+  const [rows] = useState<JournalRow[]>([]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function AIJournalMainPage() {
   }, [isAuthenticated, authLoading, router]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [summary, setSummary] = useState({
+  const [summary] = useState({
     transactionCount: 0,
     newPartnerCount: 0,
     totalDebit: 0,

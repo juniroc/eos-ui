@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface CashTransaction {
-  id: number;
+  id: string;
   date: string;
   deposit?: number;
   withdrawal?: number;
@@ -13,7 +13,7 @@ interface CashTransaction {
   accountName: string;
   partnerName?: string;
   note?: string;
-  voucherId?: number;
+  voucherId?: string;
 }
 
 interface VoucherTransaction {
@@ -105,12 +105,12 @@ export default function CashbookPage() {
       if (data.results && Array.isArray(data.results)) {
         console.log('results 배열 길이:', data.results.length);
         
-        data.results.forEach((result: any, index: number) => {
+        data.results.forEach((result: { result?: { type?: string; rows?: unknown[]; accounts?: unknown[] } }, index: number) => {
           console.log(`결과 ${index}:`, result);
           
           if (result.result && result.result.type === 'CASH' && result.result.rows) {
             console.log('현금 데이터 발견:', result.result.rows);
-            cashData = result.result.rows.map((row: any) => ({
+            cashData = (result.result.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
               id: row.transactionId,
               date: row.date,
               deposit: row.inAmount || 0,
@@ -124,9 +124,9 @@ export default function CashbookPage() {
             console.log('파싱된 현금 데이터:', cashData);
           } else if (result.result && result.result.type === 'DEPOSIT' && result.result.accounts) {
             console.log('보통예금 데이터 발견:', result.result.accounts);
-            result.result.accounts.forEach((account: any) => {
+            (result.result.accounts as { rows?: unknown[] }[]).forEach((account) => {
               if (account.rows) {
-                const accountData = account.rows.map((row: any) => ({
+                const accountData = (account.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
                   id: row.transactionId,
                   date: row.date,
                   deposit: row.inAmount || 0,
@@ -158,7 +158,7 @@ export default function CashbookPage() {
   }, [token, filters]);
 
   /** 전표 상세 조회 */
-  const fetchVoucherDetail = async (voucherId: number) => {
+  const fetchVoucherDetail = async (voucherId: string) => {
     if (!token) return;
     try {
       const res = await fetch(`https://api.eosxai.com/api/cashbook/voucher/${voucherId}`, {

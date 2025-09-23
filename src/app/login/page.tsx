@@ -10,20 +10,20 @@ interface LoginForm {
   password: string;
 }
 
-interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    loginId: string;
-    email: string;
-    name: string;
-  };
-}
+// interface LoginResponse {
+//   token: string;
+//   user: {
+//     id: string;
+//     loginId: string;
+//     email: string;
+//     name: string;
+//   };
+// }
 
-interface LoginError {
-  error: string;
-  subscriptionExpired?: boolean;
-}
+// interface LoginError {
+//   error: string;
+//   subscriptionExpired?: boolean;
+// }
 
 export default function LoginPage() {
   const router = useRouter();

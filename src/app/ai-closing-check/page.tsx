@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { initClosingCheck, getClosingCheckStream } from '@/services/api';
+import { initClosingCheck } from '@/services/api';
 // import { getToken } from '@/services/api';
 
 interface CheckRow {

@@ -78,7 +78,7 @@ export default function Sidebar({
   activeSection,
   onSectionChange,
 }: SidebarProps) {
-  const { user, logout } = useAuth();
+  const { } = useAuth();
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -59,7 +59,7 @@ export default function BusinessInfoPage() {
   };
 
   /** 초기 데이터 불러오기 */
-  const fetchBusinessInfo = async () => {
+  const fetchBusinessInfo = useCallback(async () => {
     if (!token) return;
     
     try {
@@ -87,7 +87,7 @@ export default function BusinessInfoPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   /** 사업자등록증 파일 업로드 → AI 추출 API */
   const handleFileUpload = async (file: File) => {
@@ -144,7 +144,7 @@ export default function BusinessInfoPage() {
     if (isAuthenticated && token) {
       fetchBusinessInfo();
     }
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, fetchBusinessInfo]);
 
   return (
     <div className="p-8">

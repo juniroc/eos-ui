@@ -57,6 +57,7 @@ export default function CashbookPage() {
   const [loading, setLoading] = useState(false);
   const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
   const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
+  const [hasDepositData, setHasDepositData] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [showVoucherDetail, setShowVoucherDetail] = useState(false);
 
@@ -79,6 +80,7 @@ export default function CashbookPage() {
       if (filters.period) {
         const [year, month] = filters.period.split('-').map(Number);
         const startDate = `${filters.period}-01`;
+        // 해당 월의 마지막 날 계산
         const endDate = new Date(year, month, 0).toISOString().split('T')[0];
         params.append('startDate', startDate);
         params.append('endDate', endDate);
@@ -90,27 +92,26 @@ export default function CashbookPage() {
       if (filters.maxAmount) params.append('maxAmount', filters.maxAmount.toString());
 
       const url = `https://api.eosxai.com/api/cashbook?${params.toString()}`;
-      console.log('API 호출 URL:', url);
-
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      console.log('API 응답 데이터:', data);
       
       // API 응답 구조에 맞게 데이터 파싱
       let cashData: CashTransaction[] = [];
       let depositData: CashTransaction[] = [];
+      let hasDeposit = false;
       
-      console.log('데이터 파싱 시작:', data);
-      
-      if (data.results && Array.isArray(data.results)) {
-        console.log('results 배열 길이:', data.results.length);
-        
-        data.results.forEach((result: { result?: { type?: string; rows?: unknown[]; accounts?: unknown[] } }, index: number) => {
-          console.log(`결과 ${index}:`, result);
+      // API 응답 구조 처리: results 배열 또는 직접 응답
+      if (data && data.results && Array.isArray(data.results)) {
+        // 전체 조회 시: data.results 배열
+        data.results.forEach((item: { accountCode: number; result?: { type?: string; rows?: unknown[]; accounts?: unknown[] } }) => {
+          // accountCode 필터링 (문자열로 비교)
+          const accountCodeStr = item.accountCode.toString();
+          if (filters.accountCode && filters.accountCode !== accountCodeStr) {
+            return;
+          }
           
-          if (result.result && result.result.type === 'CASH' && result.result.rows) {
-            console.log('현금 데이터 발견:', result.result.rows);
-            cashData = (result.result.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
+          if (item.result && item.result.type === 'CASH' && item.result.rows) {
+            const newCashData = (item.result.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
               id: row.transactionId,
               date: row.date,
               deposit: row.inAmount || 0,
@@ -121,11 +122,12 @@ export default function CashbookPage() {
               note: row.note,
               voucherId: row.voucherId
             }));
-            console.log('파싱된 현금 데이터:', cashData);
-          } else if (result.result && result.result.type === 'DEPOSIT' && result.result.accounts) {
-            console.log('보통예금 데이터 발견:', result.result.accounts);
-            (result.result.accounts as { rows?: unknown[] }[]).forEach((account) => {
-              if (account.rows) {
+            cashData = [...cashData, ...newCashData];
+          } else if (item.result && item.result.type === 'DEPOSIT' && item.result.accounts) {
+            hasDeposit = true;
+            (item.result.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
+              // rows가 있으면 거래 내역 추가
+              if (account.rows && account.rows.length > 0) {
                 const accountData = (account.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
                   id: row.transactionId,
                   date: row.date,
@@ -138,18 +140,77 @@ export default function CashbookPage() {
                   voucherId: row.voucherId
                 }));
                 depositData = [...depositData, ...accountData];
+              } else {
+                // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
+                const accountInfo = {
+                  id: account.partnerId,
+                  date: '',
+                  deposit: 0,
+                  withdrawal: 0,
+                  balance: account.openingBalance,
+                  accountName: account.bankName,
+                  partnerName: account.partnerName,
+                  note: `계좌번호: ${account.accountNumber}`,
+                  voucherId: undefined
+                };
+                depositData = [...depositData, accountInfo];
               }
             });
-            console.log('파싱된 보통예금 데이터:', depositData);
           }
         });
+      } else if (data && data.type) {
+        // 특정 계정코드 조회 시: 직접 응답
+        if (data.type === 'CASH' && data.rows) {
+          cashData = (data.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
+            id: row.transactionId,
+            date: row.date,
+            deposit: row.inAmount || 0,
+            withdrawal: row.outAmount || 0,
+            balance: row.balance,
+            accountName: row.accountName,
+            partnerName: row.partnerName,
+            note: row.note,
+            voucherId: row.voucherId
+          }));
+        } else if (data.type === 'DEPOSIT' && data.accounts) {
+          hasDeposit = true;
+          (data.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
+            // rows가 있으면 거래 내역 추가
+            if (account.rows && account.rows.length > 0) {
+              const accountData = (account.rows as { transactionId: string; date: string; inAmount?: number; outAmount?: number; balance: number; accountName: string; partnerName?: string; note?: string; voucherId?: string }[]).map((row) => ({
+                id: row.transactionId,
+                date: row.date,
+                deposit: row.inAmount || 0,
+                withdrawal: row.outAmount || 0,
+                balance: row.balance,
+                accountName: row.accountName,
+                partnerName: row.partnerName,
+                note: row.note,
+                voucherId: row.voucherId
+              }));
+              depositData = [...depositData, ...accountData];
+            } else {
+              // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
+              const accountInfo = {
+                id: account.partnerId,
+                date: '',
+                deposit: 0,
+                withdrawal: 0,
+                balance: account.openingBalance,
+                accountName: account.bankName,
+                partnerName: account.partnerName,
+                note: `계좌번호: ${account.accountNumber}`,
+                voucherId: undefined
+              };
+              depositData = [...depositData, accountInfo];
+            }
+          });
+        }
       }
-      
-      console.log('최종 현금 데이터:', cashData);
-      console.log('최종 보통예금 데이터:', depositData);
       
       setCashTransactions(cashData);
       setDepositTransactions(depositData);
+      setHasDepositData(hasDeposit);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
     } finally {
@@ -296,10 +357,11 @@ export default function CashbookPage() {
           </div>
         </div>
 
-        {/* 필터 영역 (1행) */}
+        {/* 필터 영역 (2행) */}
         <div className="bg-white border border-[#D9D9D9] mb-6">
           <table className="w-full text-sm text-[#1e1616]">
             <tbody>
+              {/* 첫 번째 행 */}
               <tr>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회월(필수)</td>
                 <td className="p-3 border border-[#D9D9D9]">
@@ -307,7 +369,7 @@ export default function CashbookPage() {
                     type="month"
                     value={filters.period}
                     onChange={(e) => setFilters(prev => ({ ...prev, period: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
                     placeholder="YYYY-MM"
                   />
                 </td>
@@ -316,8 +378,7 @@ export default function CashbookPage() {
                   <select
                     value={filters.accountCode || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
-                    style={{ minWidth: '150px' }}
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
                   >
                     <option value="">선택하기</option>
                     <option value="11111">현금 (11111)</option>
@@ -327,130 +388,151 @@ export default function CashbookPage() {
                 </td>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
                 <td className="p-3 border border-[#D9D9D9]">
+                  <div className="flex items-center h-6">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.partnerId || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
+                      className="flex-1 border-none outline-none bg-transparent text-[#B3B3B3] h-6"
                   />
+                  </div>
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최소금액</td>
+              </tr>
+              {/* 두 번째 행 */}
+              <tr>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최소금액</td>
                 <td className="p-3 border border-[#D9D9D9]">
+                  <div className="flex items-center h-6">
+                    {!filters.minAmount && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
                   <input
                     type="number"
-                    placeholder="입력하기"
                     value={filters.minAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent"
+                      className="flex-1 border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                      placeholder=""
                   />
+                  </div>
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최대금액</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최대금액</td>
                 <td className="p-3 border border-[#D9D9D9]">
+                  <div className="flex items-center h-6">
+                    {!filters.maxAmount && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
                   <input
                     type="number"
-                    placeholder="입력하기"
                     value={filters.maxAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent"
+                      className="flex-1 border-none outline-none bg-transparent text-[#B3B3B3] h-6"
+                      placeholder=""
                   />
+                  </div>
                 </td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}></td>
+                <td className="p-3 border border-[#D9D9D9]"></td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        {/* 현금 테이블 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">현금</h3>
-          <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-            <thead>
-              <tr>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">일자</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">입금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">출금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">잔액</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">계정과목</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">거래처</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">적요</th>
+        {/* 현금 테이블 - 데이터가 있을 때만 표시 */}
+        {(cashTransactions.length > 0 || loading) && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">현금</h3>
+            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+              <thead>
+                <tr>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">계정과목</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
               </tr>
             </thead>
             <tbody>
-              {cashTransactions.length > 0 ? (
-                cashTransactions.map(tx => (
-                  <tr 
-                    key={tx.id}
-                    onClick={() => handleRowClick(tx)}
-                    className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
-                  >
-                    <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                {cashTransactions.length > 0 ? (
+                  cashTransactions.map(tx => (
+                <tr 
+                  key={tx.id}
+                  onClick={() => handleRowClick(tx)}
+                  className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
+                >
+                      <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                      {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
+                    </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
-                    {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 보통예금 테이블 */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
-          <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-            <thead>
-              <tr>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">일자</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">입금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">출금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">잔액</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">계정과목</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">적요</th>
-              </tr>
-            </thead>
-            <tbody>
-              {depositTransactions.length > 0 ? (
-                depositTransactions.map(tx => (
-                  <tr 
-                    key={tx.id}
-                    onClick={() => handleRowClick(tx)}
-                    className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
-                  >
-                    <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
-                    <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
-                    {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 조회 전 메시지 */}
-        {cashTransactions.length === 0 && depositTransactions.length === 0 && !loading && (
-          <div className="text-center text-gray-500 py-8">
-            조회월을 선택하고 조회하기 버튼을 클릭하세요.
+                )}
+              </tbody>
+            </table>
           </div>
+        )}
+
+        {/* 보통예금 테이블 - 보통예금 데이터가 있거나 로딩 중일 때 표시 */}
+        {(hasDepositData || loading) && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
+            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+              <thead>
+                <tr>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">계정과목</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
+                </tr>
+              </thead>
+              <tbody>
+                {depositTransactions.length > 0 ? (
+                  depositTransactions.map(tx => (
+                    <tr 
+                      key={tx.id}
+                      onClick={() => handleRowClick(tx)}
+                      className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
+                    >
+                      <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                      <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                      {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
+                    </td>
+                  </tr>
+                )}
+            </tbody>
+          </table>
+          </div>
+        )}
+
+        {/* 조회 전 메시지 - 데이터가 없고 로딩 중이 아닐 때만 표시 */}
+        {cashTransactions.length === 0 && depositTransactions.length === 0 && !loading && (
+            <div className="text-center text-gray-500 py-8">
+            조회월을 선택하고 조회하기 버튼을 클릭하세요.
+            </div>
         )}
 
         {/* 전표 상세 모달 */}

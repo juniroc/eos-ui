@@ -2,13 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SettlementRow {
   id: number;
   type: '필수' | '선택';
-  value: string;
+  dataType: string;
   fileName?: string;
   fileId?: string;
   file?: File;
@@ -19,12 +18,12 @@ export default function SettlementInfoPage() {
   const router = useRouter();
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<SettlementRow[]>([
-    { id: 1, type: '필수', value: '' },
-    { id: 2, type: '필수', value: '' },
-    { id: 3, type: '선택', value: '' },
-    { id: 4, type: '선택', value: '' },
-    { id: 5, type: '선택', value: '' },
+    { id: 1, type: '필수', dataType: '재무상태표' },
+    { id: 2, type: '필수', dataType: '손익계산서' },
+    { id: 3, type: '선택', dataType: '계정(잔액)명세서' },
+    { id: 4, type: '선택', dataType: '분개장' },
   ]);
+  const [additionalRows, setAdditionalRows] = useState<SettlementRow[]>([]);
   const [, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -35,9 +34,9 @@ export default function SettlementInfoPage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
-  /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
-  const hasData = rows.some(row => 
-    row.value !== undefined && row.value !== null && row.value.trim() !== ''
+  /** 저장 버튼 활성화 여부 → 파일이 하나라도 있으면 true */
+  const hasData = [...rows, ...additionalRows].some(row => 
+    row.fileName && row.fileName.trim() !== ''
   );
 
   /** 전기결산정보 불러오기 */
@@ -58,11 +57,56 @@ export default function SettlementInfoPage() {
       if (!res.ok) throw new Error('데이터 불러오기 실패');
       const data = await res.json();
       if (data.success) {
-        setRows(
-          data.data.map((doc: { id: number; originalName: string }) => ({
+        // 기본 행들 정의
+        const defaultRows = [
+          { id: 1, type: '필수' as const, dataType: '재무상태표' },
+          { id: 2, type: '필수' as const, dataType: '손익계산서' },
+          { id: 3, type: '선택' as const, dataType: '계정(잔액)명세서' },
+          { id: 4, type: '선택' as const, dataType: '분개장' },
+        ];
+        
+        // 기본 행들에 파일 정보 매핑 (type으로 매칭)
+        const updatedRows = defaultRows.map(row => {
+          let apiType = '';
+          switch (row.dataType) {
+            case '재무상태표':
+              apiType = 'BALANCE_SHEET';
+              break;
+            case '손익계산서':
+              apiType = 'INCOME_STATEMENT';
+              break;
+            case '계정(잔액)명세서':
+              apiType = 'ACCOUNT_STATEMENT';
+              break;
+            case '분개장':
+              apiType = 'JOURNAL';
+              break;
+          }
+          
+          const matchingDoc = data.data.find((doc: { id: string; type: string; originalName: string }) => 
+            doc.type === apiType
+          );
+          
+          if (matchingDoc) {
+            return {
+              ...row,
+              fileName: matchingDoc.originalName,
+              fileId: matchingDoc.id,
+            };
+          }
+          return row;
+        });
+        setRows(updatedRows);
+        
+        // 기타 자료들 (기본 4개 타입이 아닌 것들)
+        const otherDocs = data.data.filter((doc: { id: string; type: string; originalName: string }) => 
+          !['BALANCE_SHEET', 'INCOME_STATEMENT', 'ACCOUNT_STATEMENT', 'JOURNAL'].includes(doc.type)
+        );
+        setAdditionalRows(
+          otherDocs.map((doc: { id: string; type: string; originalName: string }) => ({
             id: doc.id,
-            type: '선택',
-            value: doc.originalName,
+            type: '선택' as const,
+            dataType: doc.originalName,
             fileName: doc.originalName,
             fileId: doc.id,
           }))
@@ -83,19 +127,34 @@ export default function SettlementInfoPage() {
     try {
       setLoading(true);
       
-      // 파일을 로컬 상태에만 저장 (증빙보관소에는 저장하지 않음)
-      setRows(prev =>
-        prev.map(row =>
-          row.id === rowId
-            ? {
-                ...row,
-                value: file.name, // 파일명만 저장
-                fileName: file.name,
-                file: file, // 파일 객체 저장
-              }
-            : row
-        )
-      );
+      // 기본 행들에서 찾기
+      const isBasicRow = rows.some(row => row.id === rowId);
+      if (isBasicRow) {
+        setRows(prev =>
+          prev.map(row =>
+            row.id === rowId
+              ? {
+                  ...row,
+                  fileName: file.name,
+                  file: file, // 파일 객체 저장
+                }
+              : row
+          )
+        );
+      } else {
+        // 추가 행들에서 찾기
+        setAdditionalRows(prev =>
+          prev.map(row =>
+            row.id === rowId
+              ? {
+                  ...row,
+                  fileName: file.name,
+                  file: file, // 파일 객체 저장
+                }
+              : row
+          )
+        );
+      }
     } catch (e) {
       console.error('파일 업로드 에러:', e);
       const errorMessage = e instanceof Error ? e.message : '파일 업로드 실패';
@@ -108,7 +167,19 @@ export default function SettlementInfoPage() {
   /** 파일 삭제 */
   const handleDelete = async (rowId: number, fileId?: string) => {
     if (!fileId) {
-      setRows(prev => prev.filter(row => row.id !== rowId));
+      // 기본 행은 삭제하지 않고 파일만 제거
+      const isBasicRow = rows.some(row => row.id === rowId);
+      if (isBasicRow) {
+        setRows(prev =>
+          prev.map(row =>
+            row.id === rowId
+              ? { ...row, fileName: undefined, file: undefined, fileId: undefined }
+              : row
+          )
+        );
+      } else {
+        setAdditionalRows(prev => prev.filter(row => row.id !== rowId));
+      }
       return;
     }
 
@@ -123,7 +194,19 @@ export default function SettlementInfoPage() {
       if (!res.ok) throw new Error('삭제 실패');
       const data = await res.json();
       if (data.success) {
-        setRows(prev => prev.filter(row => row.id !== rowId));
+        // 기본 행은 파일만 제거, 추가 행은 삭제
+        const isBasicRow = rows.some(row => row.id === rowId);
+        if (isBasicRow) {
+          setRows(prev =>
+            prev.map(row =>
+              row.id === rowId
+                ? { ...row, fileName: undefined, file: undefined, fileId: undefined }
+                : row
+            )
+          );
+        } else {
+          setAdditionalRows(prev => prev.filter(row => row.id !== rowId));
+        }
       }
     } catch (e) {
       console.error('파일 삭제 에러:', e);
@@ -135,9 +218,9 @@ export default function SettlementInfoPage() {
 
   /** 기타자료 추가 */
   const addRow = () => {
-    setRows(prev => [
+    setAdditionalRows(prev => [
       ...prev,
-      { id: Date.now(), type: '선택', value: '', fileName: '' },
+      { id: Date.now(), type: '선택', dataType: '', fileName: '' },
     ]);
   };
 
@@ -149,14 +232,35 @@ export default function SettlementInfoPage() {
       setLoading(true);
       
       // 먼저 파일들을 증빙보관소에 업로드
+      const allRows = [...rows, ...additionalRows];
       const updatedRows = await Promise.all(
-        rows.map(async (row) => {
+        allRows.map(async (row) => {
           if (row.file && !row.fileId) {
             // 파일이 있고 아직 업로드되지 않은 경우
             const formData = new FormData();
             formData.append('file', row.file);
             
-            const uploadRes = await fetch(`https://api.eosxai.com/api/previous-docs/upload?type=OTHER`, {
+            // 자료종류에 따라 API 타입 매핑
+            let apiType = 'OTHER';
+            switch (row.dataType) {
+              case '재무상태표':
+                apiType = 'BALANCE_SHEET';
+                break;
+              case '손익계산서':
+                apiType = 'INCOME_STATEMENT';
+                break;
+              case '계정(잔액)명세서':
+                apiType = 'ACCOUNT_STATEMENT';
+                break;
+              case '분개장':
+                apiType = 'JOURNAL';
+                break;
+              default:
+                apiType = 'OTHER';
+                break;
+            }
+            
+            const uploadRes = await fetch(`https://api.eosxai.com/api/previous-docs/upload?type=${apiType}`, {
               method: 'POST',
               headers: { Authorization: `Bearer ${token}` },
               body: formData,
@@ -168,7 +272,6 @@ export default function SettlementInfoPage() {
                 ...row,
                 fileId: uploadData.data.id,
                 fileName: uploadData.data.originalName,
-                value: uploadData.data.originalName,
                 file: undefined, // 파일 객체 제거
               };
             }
@@ -178,7 +281,14 @@ export default function SettlementInfoPage() {
       );
       
       // 업데이트된 행들로 상태 업데이트
-      setRows(updatedRows);
+      const updatedBasicRows = updatedRows.filter(row => 
+        ['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType)
+      );
+      const updatedAdditionalRows = updatedRows.filter(row => 
+        !['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType)
+      );
+      setRows(updatedBasicRows);
+      setAdditionalRows(updatedAdditionalRows);
       
       // 비즈니스 정보 저장
       const res = await fetch(`https://api.eosxai.com/api/business-info`, {
@@ -187,13 +297,15 @@ export default function SettlementInfoPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ settlementDocs: updatedRows }),
+        body: JSON.stringify({ settlementDocs: allRows }),
       });
       
       if (!res.ok) throw new Error('저장 실패');
       const result = await res.json();
       if (result.success) {
         alert('저장되었습니다!');
+        // 저장 후 최신 데이터 다시 불러오기
+        await fetchDocs();
       } else {
         alert('저장 실패');
       }
@@ -223,64 +335,77 @@ export default function SettlementInfoPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button
-              variant="neutral"
-              size="small"
+            <button
               onClick={handleSave}
               disabled={!hasData || loading}
-              loading={loading}
+              className="px-4 py-2 bg-[#F3F3F3] text-[#1E1E1E] text-sm disabled:opacity-50"
             >
-              저장하기
-            </Button>
+              {loading ? '저장 중...' : '저장하기'}
+            </button>
           </div>
         </div>
 
         {/* Table */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead className="bg-[#F5F5F5]">
-            <tr>
-              <th className="p-3 border border-[#D9D9D9] w-24 font-medium">구분</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">자료종류</th>
-              <th className="p-3 border border-[#D9D9D9] w-48 text-left font-medium">
-                파일 업로드
-              </th>
-              <th className="p-3 border border-[#D9D9D9] w-32 font-medium">삭제</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(row => (
-              <tr key={row.id}>
-                <td
-                  className={`p-3 border border-[#D9D9D9] text-center ${
-                    row.type === '필수' ? 'text-red-500 font-medium' : ''
-                  }`}
-                >
-                  {row.type}
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.value}
-                    readOnly={!!row.fileName} // 파일 업로드된 경우 읽기 전용
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, value: e.target.value } : r
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-gray-200 text-left">
-                  {row.fileName ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-700">{row.fileName}</span>
-                      <label className="cursor-pointer text-gray-400 hover:text-gray-600 text-xs">
-                        변경
+        <div className="bg-white border border-[#D9D9D9]">
+          <table className="w-full text-sm text-[#757575]">
+            <thead>
+              <tr>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">구분</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">자료종류</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" colSpan={2}>파일 업로드</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...rows, ...additionalRows].map(row => (
+                <tr key={row.id}>
+                  <td className="p-3 border border-[#D9D9D9] text-center">
+                    <span className={`${row.type === '필수' ? 'text-red-500 font-medium' : ''}`}>
+                      {row.type}
+                    </span>
+                  </td>
+                  <td className="p-3 border border-[#D9D9D9]">
+                    {['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType) ? (
+                      row.dataType
+                    ) : (
+                      <input
+                        className="w-full px-2 py-1 text-gray-700 focus:outline-none"
+                        placeholder="자료종류 입력"
+                        value={row.dataType}
+                        onChange={e =>
+                          setAdditionalRows(prev =>
+                            prev.map(r =>
+                              r.id === row.id ? { ...r, dataType: e.target.value } : r
+                            )
+                          )
+                        }
+                      />
+                    )}
+                  </td>
+                  <td className="p-3 border border-[#D9D9D9]" colSpan={2}>
+                    {row.fileName ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-700">{row.fileName}</span>
+                        <label className="cursor-pointer text-gray-400 hover:text-gray-600 text-xs">
+                          변경
+                          <input
+                            type="file"
+                            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
+                            className="hidden"
+                            onChange={e =>
+                              e.target.files &&
+                              handleFileUpload(row.id, e.target.files[0])
+                            }
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer text-gray-400 hover:text-gray-600 flex items-center gap-1">
+                        <img src="/icons/upload.png" alt="업로드" className="w-4 h-4" />
+                        <span>파일 업로드</span>
                         <input
                           type="file"
-                          accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
+                          accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
                           className="hidden"
                           onChange={e =>
                             e.target.files &&
@@ -288,64 +413,35 @@ export default function SettlementInfoPage() {
                           }
                         />
                       </label>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer text-gray-400 hover:text-gray-600">
-                      파일 업로드
-                      <input
-                        type="file"
-                        accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-                        className="hidden"
-                        onChange={e =>
-                          e.target.files &&
-                          handleFileUpload(row.id, e.target.files[0])
-                        }
-                      />
-                    </label>
-                  )}
-                </td>
-                <td className="p-3 border border-gray-200 text-center">
+                    )}
+                  </td>
+                  <td className="p-3 border border-[#D9D9D9] text-center">
+                    <button
+                      onClick={() => handleDelete(row.id, row.fileId)}
+                      className="px-3 py-1 text-xs bg-[#F3F3F3] text-[#1E1E1E]"
+                      disabled={loading}
+                    >
+                      삭제
+                    </button>
+                  </td>
+                </tr>
+              ))}
+
+              {/* 기타자료 추가하기 버튼 행 */}
+              <tr>
+                <td colSpan={5} className="p-3 border border-[#D9D9D9] text-center">
                   <button
-                    onClick={() => handleDelete(row.id, row.fileId)}
-                    style={{
-                      width: 'auto',
-                      minWidth: '66px',
-                      height: '28px',
-                      gap: '8px',
-                      opacity: 1,
-                      paddingTop: 'var(--Space-200, 8px)',
-                      paddingRight: 'var(--Space-300, 12px)',
-                      paddingBottom: 'var(--Space-200, 8px)',
-                      paddingLeft: 'var(--Space-300, 12px)',
-                      background: 'var(--Background-Neutral-Tertiary, #F3F3F3)',
-                      color: '#1E1E1E',
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                    }}
-                    disabled={loading}
+                    onClick={addRow}
+                    className="text-sm text-[#767676] flex items-center justify-center gap-1 hover:text-[#1E1E1E] w-full"
                   >
-                    삭제
+                    <span className="w-4 h-4 rounded-full border border-[#767676] flex items-center justify-center text-xs">+</span>
+                    기타자료 추가하기
                   </button>
                 </td>
               </tr>
-            ))}
-
-            {/* 기타자료 추가하기 버튼 행 */}
-            <tr>
-              <td
-                colSpan={4}
-                className="p-3 border border-gray-200 text-center"
-              >
-                <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] flex justify-center gap-1 hover:text-[#1E1E1E] w-full"
-                >
-                  + 기타자료 추가하기
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

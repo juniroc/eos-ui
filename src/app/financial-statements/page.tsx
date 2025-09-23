@@ -50,6 +50,11 @@ interface StatementMeta {
     debit: number;
     credit: number;
   };
+  companyName?: string;
+  unit?: string;
+  title?: string;
+  currentPeriodLabel?: string;
+  priorPeriodLabel?: string;
 }
 
 interface StatementData {
@@ -292,14 +297,14 @@ export default function FinancialStatementsPage() {
             {/* 제목 및 기간 정보 */}
             <div className="text-center py-6 border-b border-gray-200">
               <h3 className="text-2xl font-bold mb-4">
-                {statementTypes.find(s => s.key === selectedType)?.label}
+                {statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label}
               </h3>
               {statementData.meta.periods && statementData.meta.periods.current && statementData.meta.periods.prior && 
                formatDate(statementData.meta.periods.current) !== '날짜 정보 없음' && 
                formatDate(statementData.meta.periods.prior) !== '날짜 정보 없음' ? (
                 <div className="text-sm text-gray-600">
-                  <div>제 6기 {formatDate(statementData.meta.periods.current)} 현재</div>
-                  <div>제 5기 {formatDate(statementData.meta.periods.prior)} 현재</div>
+                  <div>{statementData.meta.currentPeriodLabel || '제 6기'} {formatDate(statementData.meta.periods.current)} 현재</div>
+                  <div>{statementData.meta.priorPeriodLabel || '제 5기'} {formatDate(statementData.meta.periods.prior)} 현재</div>
                 </div>
               ) : statementData.meta.asOfDate && formatDate(statementData.meta.asOfDate) !== '날짜 정보 없음' ? (
                 <div className="text-sm text-gray-600">
@@ -307,16 +312,16 @@ export default function FinancialStatementsPage() {
                 </div>
               ) : date ? (
                 <div className="text-sm text-gray-600">
-                  <div>제 6기 {date} 현재</div>
-                  <div>제 5기 {date} 현재</div>
+                  <div>{statementData.meta.currentPeriodLabel || '제 6기'} {date} 현재</div>
+                  <div>{statementData.meta.priorPeriodLabel || '제 5기'} {date} 현재</div>
                 </div>
               ) : null}
             </div>
 
             {/* 회사명 및 단위 */}
             <div className="flex justify-between items-center px-6 py-2 text-sm text-gray-600">
-              <span>회사명 : 주식회사 000</span>
-              <span>(단위 : 원)</span>
+              <span>회사명 : {statementData.meta.companyName || ''}</span>
+              <span>(단위 : {statementData.meta.unit || '원'})</span>
             </div>
 
             {/* 테이블 */}
@@ -337,11 +342,11 @@ export default function FinancialStatementsPage() {
                     ) : (
                       <>
                         <th className="p-3 border border-[#D9D9D9] text-right font-medium">
-                          <div>제6(당)기</div>
+                          <div>{statementData.meta.currentPeriodLabel || '제6(당)기'}</div>
                           <div className="text-xs font-normal">금액</div>
                         </th>
                         <th className="p-3 border border-[#D9D9D9] text-right font-medium">
-                          <div>제5(전)기</div>
+                          <div>{statementData.meta.priorPeriodLabel || '제5(전)기'}</div>
                           <div className="text-xs font-normal">금액</div>
                         </th>
                       </>

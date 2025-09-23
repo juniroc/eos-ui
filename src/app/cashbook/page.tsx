@@ -445,7 +445,7 @@ export default function CashbookPage() {
             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
               <thead>
                 <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
@@ -462,7 +462,13 @@ export default function CashbookPage() {
                   onClick={() => handleRowClick(tx)}
                   className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
                 >
-                      <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-center">
+                        {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
+                          year: '2-digit',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                      </td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
@@ -490,7 +496,7 @@ export default function CashbookPage() {
             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
               <thead>
                 <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
@@ -507,7 +513,13 @@ export default function CashbookPage() {
                       onClick={() => handleRowClick(tx)}
                       className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
                     >
-                      <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-center">
+                        {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
+                          year: '2-digit',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                      </td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>

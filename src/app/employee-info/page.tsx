@@ -286,7 +286,7 @@ export default function EmployeeInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 font-medium">
                 번호
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">이름</td>

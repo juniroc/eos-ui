@@ -128,7 +128,7 @@ export default function ManualJournalPage() {
             <tr>
               <td
                 rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 text-center font-medium"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 text-center font-medium"
               >
                 번호
               </td>
@@ -164,7 +164,7 @@ export default function ManualJournalPage() {
               </td>
             </tr>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium w-[100px]">
                 계정과목
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
@@ -173,7 +173,7 @@ export default function ManualJournalPage() {
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 거래처
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium w-[100px]">
                 계정과목
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">

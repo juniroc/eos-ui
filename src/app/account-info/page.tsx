@@ -290,7 +290,7 @@ const handleFileUpload = async (file: File) => {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3 border border-[#D9D9D9] w-12 font-medium">번호</th>
+              <th className="p-3 border border-[#D9D9D9] w-14 font-medium">번호</th>
               <th className="p-3 border border-[#D9D9D9] font-medium">은행명</th>
               <th className="p-3 border border-[#D9D9D9] font-medium">계좌번호</th>
               <th className="p-3 border border-[#D9D9D9] font-medium">출금수수료(원)</th>

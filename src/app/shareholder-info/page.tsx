@@ -307,10 +307,10 @@ export default function ShareholderInfoPage() {
         </div>
 
         {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] text-center">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 font-medium">
                 번호
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">주주명</td>

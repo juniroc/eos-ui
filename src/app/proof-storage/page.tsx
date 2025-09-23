@@ -155,7 +155,7 @@ export default function ProofStoragePage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3 border border-[#D9D9D9] w-12">번호</th>
+              <th className="p-3 border border-[#D9D9D9] w-14">번호</th>
               <th className="p-3 border border-[#D9D9D9]">제출일자</th>
               <th className="p-3 border border-[#D9D9D9]">내용(파일명)</th>
               <th className="p-3 border border-[#D9D9D9]">증빙종류</th>

@@ -350,10 +350,10 @@ export default function SettlementInfoPage() {
           <table className="w-full text-sm text-[#757575]">
             <thead>
               <tr>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">구분</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[65px]">구분</th>
                 <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">자료종류</th>
                 <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" colSpan={2}>파일 업로드</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">삭제</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[85px]">삭제</th>
               </tr>
             </thead>
             <tbody>

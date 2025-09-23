@@ -220,7 +220,7 @@ export default function StatementsPage() {
             <table className="w-full text-sm text-[#757575]">
               <thead className="bg-[#F5F5F5]">
                 <tr>
-                  <th className="p-3 border border-[#D9D9D9] font-medium">일자</th>
+                  <th className="p-3 border border-[#D9D9D9] font-medium w-[90px]">일자</th>
                   <th className="p-3 border border-[#D9D9D9] font-medium">계정과목</th>
                   <th className="p-3 border border-[#D9D9D9] font-medium">거래처</th>
                   <th className="p-3 border border-[#D9D9D9] font-medium">잔액</th>
@@ -230,7 +230,13 @@ export default function StatementsPage() {
                 {balanceData.flatMap((item: BalanceAccount | BalancePartner, itemIndex: number) => 
                   item.rows?.map((row: BalanceRow, rowIndex: number) => (
                     <tr key={`${itemIndex}-${rowIndex}`} className="hover:bg-gray-50">
-                      <td className="p-3 border border-[#D9D9D9] text-center">{queryDate}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-center">
+                        {queryDate ? new Date(queryDate).toLocaleDateString('ko-KR', {
+                          year: '2-digit',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                      </td>
                       <td className="p-3 border border-[#D9D9D9]">
                         {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
                       </td>

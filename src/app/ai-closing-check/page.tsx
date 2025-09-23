@@ -409,10 +409,10 @@ export default function AIClosingCheckPage() {
         )}
 
         {/* 점검 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm">
+        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">구분</th>
+              <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-[120px]">구분</th>
               <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 점검항목
               </th>
@@ -420,7 +420,7 @@ export default function AIClosingCheckPage() {
               <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 처리현황
               </th>
-              <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-[90px]">
                 점검/수정
               </th>
             </tr>

@@ -342,7 +342,7 @@ export default function LedgerPage() {
             <table className="w-full text-sm text-[#757575]">
               <thead>
                 <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">일자</th>
+                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">차변금액</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">대변금액</th>
                   <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
@@ -360,7 +360,13 @@ export default function LedgerPage() {
                       onClick={() => handleRowClick(row)}
                       className={`cursor-pointer hover:bg-gray-50 ${row.voucherId ? 'hover:bg-blue-50' : ''}`}
                     >
-                      <td className="p-3 border border-[#D9D9D9] text-center">{row.date}</td>
+                      <td className="p-3 border border-[#D9D9D9] text-center">
+                        {row.date ? new Date(row.date).toLocaleDateString('ko-KR', {
+                          year: '2-digit',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                      </td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
                       <td className="p-3 border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>

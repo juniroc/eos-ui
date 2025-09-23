@@ -46,7 +46,7 @@ export default function AIJournalMainPage() {
     if (!token) return;
     
     const formData = new FormData();
-    formData.append('files[]', file);
+    formData.append('files', file);
 
     try {
       setLoading(true);

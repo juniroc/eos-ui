@@ -263,21 +263,21 @@ export default function ClientInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 거래처명
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 사업자등록번호(주민등록번호)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 주요거래품목
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">우리회사와의 관계</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">기타 거래처 이해를 위한 참고사항</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">우리회사와의 관계</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">기타 거래처 이해를 위한 참고사항</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
                 삭제
               </td>
             </tr>
@@ -290,7 +290,7 @@ export default function ClientInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.name}
                     onChange={e =>
@@ -304,7 +304,7 @@ export default function ClientInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.businessNumber}
                     onChange={e =>
@@ -320,7 +320,7 @@ export default function ClientInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.mainItems || ''}
                     onChange={e =>
@@ -336,7 +336,7 @@ export default function ClientInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.relationship || ''}
                     onChange={e =>
@@ -352,7 +352,7 @@ export default function ClientInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.note || ''}
                     onChange={e =>

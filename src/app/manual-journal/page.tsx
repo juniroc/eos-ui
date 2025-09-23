@@ -110,10 +110,10 @@ export default function ManualJournalPage() {
             </p>
           </div>
           <button
-            className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] text-[#1E1E1E] rounded ${
+            className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] ${
               hasData && !loading
-                ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
-                : 'bg-[#E6E6E6]'
+                ? 'bg-[#2C2C2C] text-white'
+                : 'bg-[#E6E6E6] text-[#1E1E1E]'
             }`}
             disabled={!hasData || loading}
             onClick={handleSave}
@@ -128,31 +128,31 @@ export default function ManualJournalPage() {
             <tr>
               <td
                 rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 text-center"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 text-center font-medium"
               >
                 번호
               </td>
               <td
                 rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center font-medium"
               >
                 일자
               </td>
               <td
                 colSpan={3}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
               >
                 차변
               </td>
               <td
                 colSpan={3}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
               >
                 대변
               </td>
               <td
                 rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center"
+                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
               >
                 적요
               </td>
@@ -164,22 +164,22 @@ export default function ManualJournalPage() {
               </td>
             </tr>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 계정과목
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 금액
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 거래처
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 계정과목
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 금액
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
                 거래처
               </td>
             </tr>
@@ -193,7 +193,7 @@ export default function ManualJournalPage() {
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="date"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.date}
                     onChange={e =>
                       setRows(prev =>
@@ -208,7 +208,7 @@ export default function ManualJournalPage() {
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.debitAccount}
                     onChange={e =>
@@ -223,26 +223,32 @@ export default function ManualJournalPage() {
                   />
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    type="number"
-                    className="w-full focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.debitAmount}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, debitAmount: e.target.value }
-                            : r
+                  <div className="flex items-center w-full">
+                    {!row.debitAmount && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
+                    <input
+                      type="number"
+                      className="flex-1 focus:outline-none text-[#B3B3B3]"
+                      placeholder=""
+                      value={row.debitAmount}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, debitAmount: e.target.value }
+                              : r
+                          )
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                    <span className="text-gray-400 text-sm ml-2">원</span>
+                  </div>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.debitPartner}
                     onChange={e =>
@@ -260,7 +266,7 @@ export default function ManualJournalPage() {
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.creditAccount}
                     onChange={e =>
@@ -275,26 +281,32 @@ export default function ManualJournalPage() {
                   />
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    type="number"
-                    className="w-full focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.creditAmount}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, creditAmount: e.target.value }
-                            : r
+                  <div className="flex items-center w-full">
+                    {!row.creditAmount && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
+                    <input
+                      type="number"
+                      className="flex-1 focus:outline-none text-[#B3B3B3]"
+                      placeholder=""
+                      value={row.creditAmount}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, creditAmount: e.target.value }
+                              : r
+                          )
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                    <span className="text-gray-400 text-sm ml-2">원</span>
+                  </div>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.creditPartner}
                     onChange={e =>
@@ -312,7 +324,7 @@ export default function ManualJournalPage() {
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.description}
                     onChange={e =>

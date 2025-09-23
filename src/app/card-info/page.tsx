@@ -273,23 +273,23 @@ export default function CardInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 카드사
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 카드번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 카드종류
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">용도</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">용도</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 주사용자
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 삭제
               </td>
             </tr>
@@ -302,7 +302,7 @@ export default function CardInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.cardIssuer}
                     onChange={e =>
@@ -318,7 +318,7 @@ export default function CardInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.cardNumber}
                     onChange={e =>
@@ -334,7 +334,7 @@ export default function CardInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.cardType || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -353,7 +353,7 @@ export default function CardInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.purpose || ''}
                     onChange={e =>
@@ -369,7 +369,7 @@ export default function CardInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.primaryUser || ''}
                     onChange={e =>

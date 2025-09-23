@@ -274,13 +274,13 @@ const handleFileUpload = async (file: File) => {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3 border border-[#D9D9D9] w-12">번호</th>
-              <th className="p-3 border border-[#D9D9D9]">은행명</th>
-              <th className="p-3 border border-[#D9D9D9]">계좌번호</th>
-              <th className="p-3 border border-[#D9D9D9]">출금수수료(원)</th>
-              <th className="p-3 border border-[#D9D9D9]">용도</th>
-              <th className="p-3 border border-[#D9D9D9]">특이사항</th>
-              <th className="p-3 border border-[#D9D9D9] w-24">삭제</th>
+              <th className="p-3 border border-[#D9D9D9] w-12 font-medium">번호</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">은행명</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">계좌번호</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">출금수수료(원)</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">용도</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">특이사항</th>
+              <th className="p-3 border border-[#D9D9D9] w-24 font-medium">삭제</th>
             </tr>
           </thead>
           <tbody>
@@ -291,7 +291,7 @@ const handleFileUpload = async (file: File) => {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
+                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
                     placeholder="입력하기"
                     value={row.bankName}
                     onChange={e =>
@@ -307,7 +307,7 @@ const handleFileUpload = async (file: File) => {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
+                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
                     placeholder="입력하기"
                     value={row.accountNumber}
                     onChange={e =>
@@ -322,24 +322,30 @@ const handleFileUpload = async (file: File) => {
                   />
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.withdrawalFee || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, withdrawalFee: e.target.value }
-                            : r
+                  <div className="flex items-center w-full">
+                    {!row.withdrawalFee && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
+                    <input
+                      className="flex-1 px-2 py-1 text-[#B3B3B3] focus:outline-none"
+                      placeholder=""
+                      value={row.withdrawalFee || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, withdrawalFee: e.target.value }
+                              : r
+                          )
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                    <span className="text-gray-400 text-sm ml-2">원</span>
+                  </div>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
+                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
                     placeholder="입력하기"
                     value={row.purpose || ''}
                     onChange={e =>
@@ -355,7 +361,7 @@ const handleFileUpload = async (file: File) => {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full px-2 py-1 text-gray-700 focus:outline-none"
+                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
                     placeholder="입력하기"
                     value={row.note || ''}
                     onChange={e =>

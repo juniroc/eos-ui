@@ -299,24 +299,24 @@ export default function ShareholderInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">주주명</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">주주명</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 주민등록번호(사업자등록번호)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 특수관계자 여부
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 주식수
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 지분율(%)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">기타사항</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">기타사항</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
                 삭제
               </td>
             </tr>
@@ -329,7 +329,7 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.name}
                     onChange={e =>
@@ -343,7 +343,7 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.residentNumber}
                     onChange={e =>
@@ -359,7 +359,7 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.isRelatedParty || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -377,23 +377,29 @@ export default function ShareholderInfoPage() {
                   </select>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.shares || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, shares: e.target.value } : r
+                  <div className="flex items-center w-full">
+                    {!row.shares && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
+                    <input
+                      className="flex-1 focus:outline-none text-[#B3B3B3]"
+                      placeholder=""
+                      value={row.shares || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id ? { ...r, shares: e.target.value } : r
+                          )
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                    <span className="text-gray-400 text-sm ml-2">주</span>
+                  </div>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="date"
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.acquisitionDate || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -408,7 +414,7 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.note || ''}
                     onChange={e =>

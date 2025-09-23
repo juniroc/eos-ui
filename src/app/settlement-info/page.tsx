@@ -236,28 +236,28 @@ export default function SettlementInfoPage() {
         </div>
 
         {/* Table */}
-        <table className="w-full border border-gray-200 text-sm">
-          <thead className="bg-gray-50">
+        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+          <thead className="bg-[#F5F5F5]">
             <tr>
-              <th className="p-3 border border-gray-200 w-24">구분</th>
-              <th className="p-3 border border-gray-200">자료종류</th>
-              <th className="p-3 border border-gray-200 w-48 text-left">
+              <th className="p-3 border border-[#D9D9D9] w-24 font-medium">구분</th>
+              <th className="p-3 border border-[#D9D9D9] font-medium">자료종류</th>
+              <th className="p-3 border border-[#D9D9D9] w-48 text-left font-medium">
                 파일 업로드
               </th>
-              <th className="p-3 border border-gray-200 w-32">삭제</th>
+              <th className="p-3 border border-[#D9D9D9] w-32 font-medium">삭제</th>
             </tr>
           </thead>
           <tbody>
             {rows.map(row => (
               <tr key={row.id}>
                 <td
-                  className={`p-3 border border-gray-200 text-center ${
+                  className={`p-3 border border-[#D9D9D9] text-center ${
                     row.type === '필수' ? 'text-red-500 font-medium' : ''
                   }`}
                 >
                   {row.type}
                 </td>
-                <td className="p-3 border border-gray-200">
+                <td className="p-3 border border-[#D9D9D9]">
                   <input
                     className="w-full px-2 py-1 text-gray-700 focus:outline-none"
                     placeholder="입력하기"

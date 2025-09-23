@@ -277,19 +277,19 @@ export default function CashbookPage() {
           <div className="flex gap-2">
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               조회하기
             </button>
             <button
               onClick={handleDownload}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               다운로드
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C]"
             >
               인쇄하기
             </button>
@@ -297,26 +297,26 @@ export default function CashbookPage() {
         </div>
 
         {/* 필터 영역 (1행) */}
-        <div className="bg-white border border-[#D9D9D9] rounded mb-6">
+        <div className="bg-white border border-[#D9D9D9] mb-6">
           <table className="w-full text-sm text-[#1e1616]">
             <tbody>
               <tr>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회월(필수)</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회월(필수)</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="month"
                     value={filters.period}
                     onChange={(e) => setFilters(prev => ({ ...prev, period: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                     placeholder="YYYY-MM"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
                     value={filters.accountCode || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                     style={{ minWidth: '150px' }}
                   >
                     <option value="">선택하기</option>
@@ -325,14 +325,14 @@ export default function CashbookPage() {
                     <option value="11113">보통예금 (11113)</option>
                   </select>
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.partnerId || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
                 <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최소금액</td>
@@ -366,13 +366,13 @@ export default function CashbookPage() {
           <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
             <thead>
               <tr>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">일자</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">입금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">출금</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">잔액</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">계정과목</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">적요</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">일자</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">입금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">출금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">잔액</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">계정과목</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">거래처</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">적요</th>
               </tr>
             </thead>
             <tbody>

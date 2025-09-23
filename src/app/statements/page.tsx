@@ -155,19 +155,19 @@ export default function StatementsPage() {
           <div className="flex gap-2">
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               조회하기
             </button>
             <button
               onClick={handleDownload}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               다운로드
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C]"
             >
               인쇄하기
             </button>
@@ -175,38 +175,38 @@ export default function StatementsPage() {
         </div>
 
         {/* 필터 영역 */}
-        <div className="bg-white border border-[#D9D9D9] rounded mb-6">
+        <div className="bg-white border border-[#D9D9D9] mb-6">
           <table className="w-full text-sm text-[#1e1616]">
             <tbody>
               <tr>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회일자(필수)</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회일자(필수)</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="date"
                     value={filters.date}
                     onChange={(e) => setFilters(prev => ({ ...prev, date: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                     placeholder="선택하기"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.accountCode || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.partnerId || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
               </tr>
@@ -216,43 +216,39 @@ export default function StatementsPage() {
 
         {/* 잔액명세서 데이터 */}
         {balanceData.length > 0 ? (
-          <div className="space-y-6">
-            {balanceData.map((item: BalanceAccount | BalancePartner, itemIndex: number) => (
-              <div key={itemIndex} className="bg-white border border-[#D9D9D9] rounded">
-                <div className="bg-[#F5F5F5] p-3 border-b border-[#D9D9D9]">
-                  <h3 className="font-medium">
-                    {'account' in item && item.account ? `${item.account.code} - ${item.account.name}` : 'partner' in item ? item.partner?.name : 'Unknown'}
-                    <span className="ml-4 text-sm text-gray-600">
-                      총잔액: {item.totalBalance.toLocaleString()}원 ({item.direction === 'DEBIT' ? '차변' : '대변'})
-                    </span>
-                  </h3>
-                </div>
-                <table className="w-full text-sm">
-                  <thead className="bg-[#F5F5F5]">
-                    <tr>
-                      <th className="p-2 border">일자</th>
-                      <th className="p-2 border">계정과목</th>
-                      <th className="p-2 border">거래처</th>
-                      <th className="p-2 border">잔액</th>
+          <div className="bg-white border border-[#D9D9D9]">
+            <table className="w-full text-sm text-[#757575]">
+              <thead className="bg-[#F5F5F5]">
+                <tr>
+                  <th className="p-3 border border-[#D9D9D9] font-medium">일자</th>
+                  <th className="p-3 border border-[#D9D9D9] font-medium">계정과목</th>
+                  <th className="p-3 border border-[#D9D9D9] font-medium">거래처</th>
+                  <th className="p-3 border border-[#D9D9D9] font-medium">잔액</th>
+                </tr>
+              </thead>
+              <tbody>
+                {balanceData.flatMap((item: BalanceAccount | BalancePartner, itemIndex: number) => 
+                  item.rows?.map((row: BalanceRow, rowIndex: number) => (
+                    <tr key={`${itemIndex}-${rowIndex}`} className="hover:bg-gray-50">
+                      <td className="p-3 border border-[#D9D9D9] text-center">{queryDate}</td>
+                      <td className="p-3 border border-[#D9D9D9]">
+                        {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9]">
+                        {row.partnerName ? (
+                          <button className="text-[#1ACCFF] underline bg-transparent border-none cursor-pointer">
+                            {row.partnerName}
+                          </button>
+                        ) : '-'}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9] text-right">
+                        {row.balance.toLocaleString()}원
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {item.rows?.map((row: BalanceRow, rowIndex: number) => (
-                      <tr key={rowIndex}>
-                        <td className="p-2 border text-center">{queryDate}</td>
-                        <td className="p-2 border">
-                          {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
-                        </td>
-                        <td className="p-2 border">{row.partnerName || '-'}</td>
-                        <td className="p-2 border text-right">
-                          {row.balance.toLocaleString()}원 ({row.direction === 'DEBIT' ? '차변' : '대변'})
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+                  )) || []
+                )}
+              </tbody>
+            </table>
           </div>
         ) : (
           !loading && (

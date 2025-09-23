@@ -201,13 +201,13 @@ function JournalPageContent() {
           <div className="flex gap-2">
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               조회하기
             </button>
             <button
               onClick={handleBatchSave}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               일괄 저장하기
             </button>
@@ -215,58 +215,58 @@ function JournalPageContent() {
         </div>
 
         {/* 필터 영역 (1행) */}
-        <div className="bg-white border border-[#D9D9D9] rounded mb-6">
+        <div className="bg-white border border-[#D9D9D9] mb-6">
           <table className="w-full text-sm text-[#1e1616]">
             <tbody>
               <tr>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">조회월(필수)</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium text-[#757575]">조회월(필수)</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="month"
                     value={filters.period}
                     onChange={(e) => setFilters(prev => ({ ...prev, period: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                     placeholder="선택하기"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">계정과목</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium text-[#757575]">계정과목</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.accountCode || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">거래처</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium text-[#757575]">거래처</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="text"
                     placeholder="선택하기"
                     value={filters.partnerId || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">최소금액</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium text-[#757575]">최소금액</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="number"
                     placeholder="입력하기"
                     value={filters.minAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium">최대금액</td>
+                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-32 font-medium text-[#757575]">최대금액</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
                     type="number"
                     placeholder="입력하기"
                     value={filters.maxAmount || ''}
                     onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent"
+                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3]"
                   />
                 </td>
               </tr>
@@ -282,24 +282,24 @@ function JournalPageContent() {
               <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
                 <thead>
                   <tr>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-20">일자</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center" colSpan={3}>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-20 font-medium">일자</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium" colSpan={3}>
                       차변
                     </td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center" colSpan={3}>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium" colSpan={3}>
                       대변
                     </td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/7">적요</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/7 font-medium">적요</td>
                   </tr>
                   <tr>
                     <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10"></td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">계정과목</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">금액</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">거래처</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">계정과목</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">금액</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">거래처</td>
-                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/10">적요</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">계정과목</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">금액</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">거래처</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">계정과목</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">금액</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10 font-medium">거래처</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/10 font-medium">적요</td>
                   </tr>
                 </thead>
                 <tbody>

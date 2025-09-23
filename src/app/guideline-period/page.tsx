@@ -201,10 +201,10 @@ export default function GuidelinePeriodPage() {
           </div>
           <div className="flex gap-3">
             <button
-              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] rounded ${
+              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] ${
                 hasData && !loading
-                  ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
-                  : 'bg-[#E6E6E6]'
+                  ? 'bg-[#2C2C2C] text-white'
+                  : 'bg-[#E6E6E6] text-[#1E1E1E]'
               }`}
               onClick={handleSave}
               disabled={!hasData || loading}
@@ -218,16 +218,16 @@ export default function GuidelinePeriodPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] mb-6">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 지침내용
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 반영여부(문제점)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
                 삭제
               </td>
             </tr>
@@ -240,7 +240,7 @@ export default function GuidelinePeriodPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.content}
                     readOnly

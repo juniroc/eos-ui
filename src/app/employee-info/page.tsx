@@ -281,21 +281,21 @@ export default function EmployeeInfoPage() {
         <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">이름</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">이름</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 주민등록번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 유형
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">월 급여</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">월 급여</td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
                 생산직 여부
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24">
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
                 관리
               </td>
             </tr>
@@ -308,7 +308,7 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.name}
                     onChange={e =>
@@ -322,7 +322,7 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     placeholder="입력하기"
                     value={row.residentNumber}
                     onChange={e =>
@@ -338,7 +338,7 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.employmentType || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -358,9 +358,11 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <div className="flex items-center w-full">
-                    <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    {!row.monthlySalary && (
+                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    )}
                     <input
-                      className="flex-1 focus:outline-none"
+                      className="flex-1 focus:outline-none text-[#B3B3B3]"
                       placeholder=""
                       value={row.monthlySalary || ''}
                       onChange={e =>
@@ -378,7 +380,7 @@ export default function EmployeeInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select
-                    className="w-full focus:outline-none"
+                    className="w-full focus:outline-none text-[#B3B3B3]"
                     value={row.isProduction || ''}
                     onChange={e =>
                       setRows(prev =>

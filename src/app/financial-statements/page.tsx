@@ -241,19 +241,19 @@ export default function FinancialStatementsPage() {
           <div className="flex gap-2">
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               조회하기
             </button>
             <button
               onClick={handleDownload}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#2C2C2C] text-white"
             >
               다운로드
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#1E1E1E] text-white rounded"
+              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C]"
             >
               인쇄하기
             </button>
@@ -261,7 +261,7 @@ export default function FinancialStatementsPage() {
         </div>
 
         {/* 날짜 선택 */}
-        <div className="bg-white border border-[#D9D9D9] rounded mb-6 p-4">
+        <div className="bg-white border border-[#D9D9D9] mb-6 p-4">
           <div className="flex items-center gap-4">
             {selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? (
               <>
@@ -360,23 +360,23 @@ export default function FinancialStatementsPage() {
 
             {/* 테이블 */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50">
+              <table className="w-full text-sm text-[#757575]">
+                <thead className="bg-[#F5F5F5]">
                   <tr>
-                    <th className="p-3 border text-left">과목</th>
+                    <th className="p-3 border border-[#D9D9D9] text-left font-medium">과목</th>
                     {selectedType === 'trial_balance' ? (
                       <>
-                        <th className="p-3 border text-right">차변합계</th>
-                        <th className="p-3 border text-right">대변합계</th>
-                        <th className="p-3 border text-right">잔액</th>
-                        <th className="p-3 border text-center">방향</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">차변합계</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">대변합계</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">잔액</th>
+                        <th className="p-3 border border-[#D9D9D9] text-center font-medium">방향</th>
                       </>
                     ) : selectedType === 'cash_flow' ? (
-                      <th className="p-3 border text-right">금액</th>
+                      <th className="p-3 border border-[#D9D9D9] text-right font-medium">금액</th>
                     ) : (
                       <>
-                        <th className="p-3 border text-right">제6(당)기 금액</th>
-                        <th className="p-3 border text-right">제5(전)기 금액</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">제6(당)기 금액</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">제5(전)기 금액</th>
                       </>
                     )}
                   </tr>
@@ -384,7 +384,7 @@ export default function FinancialStatementsPage() {
                 <tbody>
                   {statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="p-3 border">
+                      <td className="p-3 border border-[#D9D9D9]">
                         <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
                           {'label' in row ? row.label : 'account' in row ? row.account.name : 'Unknown'}
                         </span>

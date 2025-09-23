@@ -34,10 +34,10 @@ export default function SettlementInfoPage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
-  /** 저장 버튼 활성화 여부 → 파일이 하나라도 있으면 true */
-  const hasData = [...rows, ...additionalRows].some(row => 
-    row.fileName && row.fileName.trim() !== ''
-  );
+  /** 저장 버튼 활성화 여부 → 필수 항목들이 모두 채워져야 true */
+  const hasData = rows
+    .filter(row => row.type === '필수')
+    .every(row => row.fileName && row.fileName.trim() !== '');
 
   /** 전기결산정보 불러오기 */
   const fetchDocs = useCallback(async () => {

@@ -50,31 +50,53 @@ export default function AccountInfoPage() {
     
     try {
       const data = await getBankAccountDocs(token) as { success: boolean; data: AccountRow[] };
-      if (data.success && data.data && data.data.length > 0) {
-        // 실제 데이터만 필터링하여 설정
-        const validData = data.data.filter((acc: AccountRow) => 
-          acc.bankName?.trim() || acc.accountNumber?.trim()
-        );
-        
-        if (validData.length > 0) {
-          // 기존 빈 행을 제거하고 실제 데이터만 설정
-          setRows(
-            validData.map((acc: AccountRow) => ({
-              id: acc.id,
-              bankName: acc.bankName || '',
-              accountNumber: acc.accountNumber || '',
-              withdrawalFee: acc.withdrawalFee || '',
-              purpose: acc.purpose || '',
-              note: acc.note || '',
-            }))
+      if (data.success) {
+        // 서버에서 받은 데이터만 표시 (로컬 데이터는 완전히 교체)
+        if (data.data && data.data.length > 0) {
+          // 실제 데이터만 필터링하여 설정
+          const validData = data.data.filter((acc: AccountRow) => 
+            acc.bankName?.trim() || acc.accountNumber?.trim()
           );
+          
+          if (validData.length > 0) {
+            setRows(
+              validData.map((acc: AccountRow) => ({
+                id: acc.id,
+                bankName: acc.bankName || '',
+                accountNumber: acc.accountNumber || '',
+                withdrawalFee: acc.withdrawalFee || '',
+                purpose: acc.purpose || '',
+                note: acc.note || '',
+              }))
+            );
+          } else {
+            // 유효한 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
+            setRows([
+              { id: 1, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+              { id: 2, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+            ]);
+          }
+        } else {
+          // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
+          setRows([
+            { id: 1, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+            { id: 2, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+          ]);
         }
-        // 데이터가 없으면 기본 빈 행 유지
+      } else {
+        // API 호출 실패 시에도 빈 행으로 초기화
+        setRows([
+          { id: 1, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+          { id: 2, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+        ]);
       }
-      // API 호출 실패해도 기본 빈 행 유지
     } catch (err) {
       console.error('통장 정보 조회 에러:', err);
-      // 에러가 발생해도 기본 빈 행 유지
+      // 에러 발생 시에도 빈 행으로 초기화
+      setRows([
+        { id: 1, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+        { id: 2, bankName: '', accountNumber: '', withdrawalFee: '', purpose: '', note: '' },
+      ]);
     } finally {
       setFirstLoad(false);
     }
@@ -238,6 +260,7 @@ const handleFileUpload = async (file: File) => {
               onClick={() => document.getElementById('accountFile')?.click()}
               disabled={loading}
               loading={loading}
+              className="min-w-fit"
             >
               파일 업로드
             </Button>

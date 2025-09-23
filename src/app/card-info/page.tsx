@@ -50,21 +50,40 @@ export default function CardInfoPage() {
     
     try {
       const data = await getCardDocs(token) as { success: boolean; data: CardRow[] };
-      if (data.success && data.data.length > 0) {
-        setRows(
-          data.data.map((c: CardRow) => ({
-            id: c.id,
-            cardIssuer: c.cardIssuer || '',
-            cardNumber: c.cardNumber || '',
-            cardType: c.cardType || '',
-            purpose: c.purpose || '',
-            primaryUser: c.primaryUser || '',
-          }))
-        );
+      if (data.success) {
+        // 서버에서 받은 데이터만 표시 (로컬 데이터는 완전히 교체)
+        if (data.data && data.data.length > 0) {
+          setRows(
+            data.data.map((c: CardRow) => ({
+              id: c.id,
+              cardIssuer: c.cardIssuer || '',
+              cardNumber: c.cardNumber || '',
+              cardType: c.cardType || '',
+              purpose: c.purpose || '',
+              primaryUser: c.primaryUser || '',
+            }))
+          );
+        } else {
+          // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
+          setRows([
+            { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+            { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+          ]);
+        }
+      } else {
+        // API 호출 실패 시에도 빈 행으로 초기화
+        setRows([
+          { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+          { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+        ]);
       }
     } catch (err) {
       console.error('카드 정보 조회 에러:', err);
-      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
+      // 에러 발생 시에도 빈 행으로 초기화
+      setRows([
+        { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+        { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+      ]);
     } finally {
       setFirstLoad(false);
     }

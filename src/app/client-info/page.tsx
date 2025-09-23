@@ -63,21 +63,41 @@ export default function ClientInfoPage() {
     
     try {
       const data = await getPartnerDocs(token) as { success: boolean; data: ClientRow[] };
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        setRows(
-          data.data.map((client: ClientRow) => ({
-            id: client.id,
-            name: client.name || '',
-            businessNumber: client.businessNumber || '',
-            mainItems: client.mainItems || '',
-            relationship: client.relationship || '',
-            note: client.note || '',
-          }))
-        );
+      if (data.success) {
+        // 서버에서 받은 데이터만 표시 (로컬 데이터는 완전히 교체)
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          // 서버에 실제 데이터가 있으면 그것만 표시
+          setRows(
+            data.data.map((client: ClientRow) => ({
+              id: client.id,
+              name: client.name || '',
+              businessNumber: client.businessNumber || '',
+              mainItems: client.mainItems || '',
+              relationship: client.relationship || '',
+              note: client.note || '',
+            }))
+          );
+        } else {
+          // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
+          setRows([
+            { id: 1, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+            { id: 2, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+          ]);
+        }
+      } else {
+        // API 호출 실패 시에도 빈 행으로 초기화
+        setRows([
+          { id: 1, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+          { id: 2, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+        ]);
       }
     } catch (err) {
       console.error('거래처 정보 조회 에러:', err);
-      // 에러가 발생해도 조용히 처리 (사용자에게 알림하지 않음)
+      // 에러 발생 시에도 빈 행으로 초기화
+      setRows([
+        { id: 1, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+        { id: 2, name: '', businessNumber: '', mainItems: '', relationship: '', note: '' },
+      ]);
     } finally {
       setFirstLoad(false);
     }

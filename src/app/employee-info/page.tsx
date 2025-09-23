@@ -66,6 +66,7 @@ export default function EmployeeInfoPage() {
       if (!res.ok) throw new Error('불러오기 실패');
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
+        // 서버에서 받은 데이터만 표시 (로컬 데이터는 완전히 교체)
         setRows(
           data.map((emp: EmployeeRow) => ({
             id: emp.id,
@@ -76,9 +77,20 @@ export default function EmployeeInfoPage() {
             isProduction: emp.isProduction ? 'YES' : 'NO',
           }))
         );
+      } else {
+        // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
+        setRows([
+          { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+          { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+        ]);
       }
     } catch (err) {
       console.error(err);
+      // 에러 발생 시에도 빈 행으로 초기화
+      setRows([
+        { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+        { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+      ]);
     } finally {
       setFirstLoad(false);
     }

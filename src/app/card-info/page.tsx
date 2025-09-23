@@ -154,18 +154,9 @@ export default function CardInfoPage() {
       
       if (data.success) {
         alert('저장되었습니다!');
-        // 저장된 데이터로 업데이트
-        if (data.partners && Array.isArray(data.partners)) {
-          setRows(data.partners.map(card => ({
-            id: parseInt(card.id),
-            cardIssuer: card.cardIssuer,
-            cardNumber: card.cardNumber,
-            cardType: card.cardType,
-            purpose: card.purpose,
-            primaryUser: card.primaryUser,
-          })));
-        }
-        // 저장 후 리스팅 함수 다시 호출
+        // documentId 초기화
+        setDocumentId('');
+        // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchCards();
       } else {
         alert('저장 실패');

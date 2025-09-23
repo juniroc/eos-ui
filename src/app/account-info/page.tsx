@@ -147,16 +147,9 @@ const handleFileUpload = async (file: File) => {
       
       if (data.success) {
         alert('저장되었습니다!');
-        // 저장된 데이터로 업데이트 (API 명세에 따라 partners로 응답)
-        setRows(data.partners.map(account => ({
-          id: parseInt(account.id),
-          bankName: account.bankName,
-          accountNumber: account.accountNumber,
-          withdrawalFee: account.withdrawalFee,
-          purpose: account.purpose,
-          note: account.note,
-        })));
-        // 저장 후 리스팅 함수 다시 호출
+        // documentId 초기화
+        setDocumentId('');
+        // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchAccounts();
       } else {
         alert('저장 실패');

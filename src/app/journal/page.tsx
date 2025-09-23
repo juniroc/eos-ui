@@ -153,11 +153,7 @@ function JournalPageContent() {
 
       if (data.success) {
         alert('일괄 저장되었습니다.');
-        // 응답에서 업데이트된 전표 데이터로 상태 업데이트
-        if (data.vouchers && Array.isArray(data.vouchers)) {
-        setVouchers(data.vouchers);
-        }
-        // 저장 후 리스팅 함수 다시 호출
+        // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchJournal();
       } else {
         alert('저장 실패: ' + (data.message || '알 수 없는 오류'));

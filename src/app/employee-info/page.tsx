@@ -160,16 +160,9 @@ export default function EmployeeInfoPage() {
       
       if (data.success) {
         alert('저장되었습니다!');
-        // 저장된 데이터로 업데이트
-        setRows(data.employees.map(emp => ({
-          id: parseInt(emp.id),
-          name: emp.name,
-          residentNumber: emp.residentNumber,
-          employmentType: emp.employmentType,
-          monthlySalary: emp.monthlySalary,
-          isProduction: emp.isProduction,
-        })));
-        // 저장 후 리스팅 함수 다시 호출
+        // documentId 초기화
+        setDocumentId('');
+        // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchEmployees();
       } else {
         alert('저장 실패');

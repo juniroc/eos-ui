@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getPartnerDocs, extractPartnerDocs, deletePartner } from '@/services/api';
+import { getPartnerDocs, extractPartnerDocs, savePartnerDocs, deletePartner } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
 
 interface ClientRow {
@@ -38,6 +38,7 @@ export default function ClientInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+  const [documentId, setDocumentId] = useState<string>('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -88,8 +89,13 @@ export default function ClientInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractPartnerDocs(file, token) as { success: boolean; items: ClientRow[] };
+      const data = await extractPartnerDocs(file, token) as { success: boolean; documentId?: string; items: ClientRow[] };
       if (data.success && data.items) {
+        // documentId 저장
+        if (data.documentId) {
+          setDocumentId(data.documentId);
+        }
+        
         const extracted = data.items.map((item: ClientRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
@@ -111,7 +117,47 @@ export default function ClientInfoPage() {
 
   /** 저장 */
   const handleSave = async () => {
-    alert('저장 API는 추후 구현 예정입니다.');
+    if (!token || !documentId) return;
+    
+    try {
+      setLoading(true);
+      
+      // 유효한 데이터만 필터링
+      const validPartners = rows
+        .filter(row => row.name.trim())
+        .map(row => ({
+          name: row.name.trim(),
+          businessNumber: row.businessNumber.trim(),
+          mainItems: row.mainItems?.trim(),
+          relationship: row.relationship?.trim(),
+          note: row.note?.trim(),
+        }));
+      
+      const data = await savePartnerDocs({
+        documentId,
+        partners: validPartners
+      }, token);
+      
+      if (data.success) {
+        alert('저장되었습니다!');
+        // 저장된 데이터로 업데이트
+        setRows(data.partners.map(partner => ({
+          id: parseInt(partner.id),
+          name: partner.name,
+          businessNumber: partner.businessNumber,
+          mainItems: partner.mainItems,
+          relationship: partner.relationship,
+          note: partner.note,
+        })));
+      } else {
+        alert('저장 실패');
+      }
+    } catch (err) {
+      console.error('저장 에러:', err);
+      alert('저장 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 삭제 */

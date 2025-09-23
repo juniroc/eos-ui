@@ -15,7 +15,7 @@ const navigationItems = [
     iconGrey: '/icons/layout_grey.png',
     subItems: [
       { id: 'business-info', label: '사업자 정보' },
-      { id: 'settlement-info', label: '정기결산 정보' },
+      { id: 'settlement-info', label: '전기결산 정보' },
       { id: 'account-info', label: '통장 정보' },
       { id: 'card-info', label: '카드 정보' },
       { id: 'employee-info', label: '직원 정보' },

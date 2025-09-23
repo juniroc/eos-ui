@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkLoginId, extractBusinessInfo, registerUser } from '@/services/api';
@@ -25,7 +25,6 @@ interface BusinessInfo {
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 단계별 상태
   const [step, setStep] = useState<'type' | 'business' | 'phone' | 'form'>('type');
@@ -40,7 +39,6 @@ export default function RegisterPage() {
   // 전화번호 인증 관련
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [phoneVerified, setPhoneVerified] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [codeSent, setCodeSent] = useState(false);
 
@@ -55,19 +53,10 @@ export default function RegisterPage() {
     companyPhone: '',
     companyWebsite: '',
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isIdChecking, setIsIdChecking] = useState(false);
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
-  // 사업자등록증 파일 선택
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setBusinessFile(file);
-      setBusinessError('');
-    }
-  };
 
   // 사업자등록증 업로드 및 정보 추출
   const handleBusinessUpload = async () => {
@@ -77,7 +66,9 @@ export default function RegisterPage() {
     setBusinessError('');
 
     try {
+      // extractBusinessInfo 함수는 이미 세무대리인 정보를 포함하고 있음
       const result = await extractBusinessInfo(businessFile);
+        
       if (result.success) {
         setBusinessInfo(result.data);
         setStep('phone');
@@ -108,7 +99,6 @@ export default function RegisterPage() {
       setPhoneError('인증번호를 입력해주세요.');
       return;
     }
-    setPhoneVerified(true);
     setStep('form');
     setPhoneError('');
   };
@@ -130,18 +120,14 @@ export default function RegisterPage() {
 
   // 폼 유효성 검사
   const validateForm = () => {
-    const errors: Record<string, string> = {};
-    if (!formData.loginId) errors.loginId = '아이디를 입력해주세요.';
-    if (!formData.email) errors.email = '이메일을 입력해주세요.';
-    if (!formData.password) errors.password = '비밀번호를 입력해주세요.';
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-    }
-    if (!formData.name) errors.name = '이름을 입력해주세요.';
-    if (!formData.mobilePhone) errors.mobilePhone = '휴대폰 번호를 입력해주세요.';
-    if (!formData.companyPhone) errors.companyPhone = '회사 전화번호를 입력해주세요.';
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    if (!formData.loginId) return false;
+    if (!formData.email) return false;
+    if (!formData.password) return false;
+    if (formData.password !== formData.confirmPassword) return false;
+    if (!formData.name) return false;
+    if (!formData.mobilePhone) return false;
+    if (!formData.companyPhone) return false;
+    return true;
   };
 
   // 회원가입 처리
@@ -215,7 +201,7 @@ export default function RegisterPage() {
               <button
                 onClick={() => {
                   setMemberType('taxAgent');
-                  setStep('form');
+                  setStep('business');
                 }}
                 className="border border-gray-300 hover:border-black hover:bg-gray-50 transition h-[136px]"
               >
@@ -238,8 +224,14 @@ export default function RegisterPage() {
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 text-left">사업자등록증 인증</h3>
-                <p className="text-gray-600">사업자등록증을 인증하고 무료로 시작하세요.</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 text-left">
+                  {memberType === 'taxAgent' ? '세무대리인 인증' : '사업자등록증 인증'}
+                </h3>
+                <p className="text-gray-600">
+                  {memberType === 'taxAgent' 
+                    ? '사업자등록증을 업로드하여 세무대리인 자격을 확인하고 무료로 시작하세요.' 
+                    : '사업자등록증을 인증하고 무료로 시작하세요.'}
+                </p>
               </div>
               <button
                 onClick={() => document.getElementById('businessFile')?.click()}
@@ -288,8 +280,13 @@ export default function RegisterPage() {
             {businessInfo && (
               <div className="mb-6">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-green-800 font-medium">사업자등록증 인증 완료</p>
+                  <p className="text-sm text-green-800 font-medium">
+                    {memberType === 'taxAgent' ? '세무대리인 인증 완료' : '사업자등록증 인증 완료'}
+                  </p>
                   <p className="text-xs text-green-600 mt-1">회사명: {businessInfo.companyName}</p>
+                  {memberType === 'taxAgent' && businessInfo.isTaxAgent && (
+                    <p className="text-xs text-green-600 mt-1">세무대리인 자격 확인됨</p>
+                  )}
                 </div>
               </div>
             )}

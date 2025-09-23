@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getEmployees, extractEmployeeDocs, deleteEmployee } from '@/services/api';
+import { getEmployees, extractEmployeeDocs, saveEmployeeDocs, deleteEmployee } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
 
 interface EmployeeRow {
@@ -38,6 +38,7 @@ export default function EmployeeInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+  const [documentId, setDocumentId] = useState<string>('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -59,7 +60,7 @@ export default function EmployeeInfoPage() {
   /** 직원 목록 불러오기 */
   const fetchEmployees = useCallback(async () => {
     try {
-      const res = await fetch('/api/employees', {
+      const res = await fetch('https://api.eosxai.com/api/employees', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('불러오기 실패');
@@ -89,8 +90,13 @@ export default function EmployeeInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractEmployeeDocs(file, token) as { success: boolean; items: EmployeeRow[] };
+      const data = await extractEmployeeDocs(file, token) as { success: boolean; documentId?: string; items: EmployeeRow[] };
       if (data.success && data.items) {
+        // documentId 저장
+        if (data.documentId) {
+          setDocumentId(data.documentId);
+        }
+        
         const extracted = data.items.map((item: EmployeeRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
@@ -112,7 +118,66 @@ export default function EmployeeInfoPage() {
 
   /** 저장 */
   const handleSave = async () => {
-    alert('저장 API는 추후 구현 예정입니다.');
+    if (!token) return;
+    
+    if (!documentId) {
+      alert('먼저 파일을 업로드해주세요.');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      // 빈 행들을 필터링하고 유효한 데이터만 전송
+      const validEmployees = rows
+        .filter(row => row.name.trim() || row.residentNumber.trim())
+        .map(row => {
+          const employee: any = {
+            name: row.name.trim(),
+            residentNumber: row.residentNumber.trim(),
+          };
+          
+          // optional 필드들은 값이 있을 때만 포함
+          if (row.employmentType?.trim()) {
+            employee.employmentType = row.employmentType.trim();
+          }
+          if (row.monthlySalary?.trim()) {
+            employee.monthlySalary = row.monthlySalary.trim();
+          }
+          if (row.isProduction?.trim()) {
+            employee.isProduction = row.isProduction.trim();
+          }
+          
+          return employee;
+        });
+      
+      console.log('저장할 데이터:', { documentId, employees: validEmployees });
+      
+      const data = await saveEmployeeDocs({
+        documentId,
+        employees: validEmployees
+      }, token);
+      
+      if (data.success) {
+        alert('저장되었습니다!');
+        // 저장된 데이터로 업데이트
+        setRows(data.employees.map(emp => ({
+          id: parseInt(emp.id),
+          name: emp.name,
+          residentNumber: emp.residentNumber,
+          employmentType: emp.employmentType,
+          monthlySalary: emp.monthlySalary,
+          isProduction: emp.isProduction,
+        })));
+      } else {
+        alert('저장 실패');
+      }
+    } catch (err) {
+      console.error('저장 에러:', err);
+      alert('저장 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 삭제 */
@@ -290,20 +355,24 @@ export default function EmployeeInfoPage() {
                   </select>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.monthlySalary || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, monthlySalary: e.target.value }
-                            : r
+                  <div className="flex items-center w-full">
+                    <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                    <input
+                      className="flex-1 focus:outline-none"
+                      placeholder=""
+                      value={row.monthlySalary || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, monthlySalary: e.target.value }
+                              : r
+                          )
                         )
-                      )
-                    }
-                  />
+                      }
+                    />
+                    <span className="text-gray-400 text-sm ml-2">원</span>
+                  </div>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <select

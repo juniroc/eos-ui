@@ -7,7 +7,7 @@ import Breadcrumb from './Breadcrumb';
 const getBreadcrumbInfo = (pathname: string) => {
   const breadcrumbMap: Record<string, { mainMenu: string; subMenu: string }> = {
     '/': { mainMenu: '기초정보', subMenu: '사업자 정보' },
-    '/settlement-info': { mainMenu: '기초정보', subMenu: '정기결산 정보' },
+    '/settlement-info': { mainMenu: '기초정보', subMenu: '전기결산 정보' },
     '/account-info': { mainMenu: '기초정보', subMenu: '통장 정보' },
     '/card-info': { mainMenu: '기초정보', subMenu: '카드 정보' },
     '/employee-info': { mainMenu: '기초정보', subMenu: '직원 정보' },

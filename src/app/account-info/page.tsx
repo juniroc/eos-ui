@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
-import { getBankAccountDocs, extractBankAccountDocs, saveBankAccountDocs, deleteBankAccount } from '@/services/api';
+import { getBankAccountDocs, extractBankAccountDocs, saveBankAccountDocs } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
 
 interface AccountRow {
@@ -128,19 +128,34 @@ const handleFileUpload = async (file: File) => {
     
     try {
       setLoading(true);
+      
+      // 유효한 데이터만 필터링
+      const validAccounts = rows
+        .filter(row => row.bankName.trim() || row.accountNumber.trim())
+        .map(row => ({
+          bankName: row.bankName.trim(),
+          accountNumber: row.accountNumber.trim(),
+          withdrawalFee: row.withdrawalFee?.trim(),
+          purpose: row.purpose?.trim(),
+          note: row.note?.trim(),
+        }));
+      
       const data = await saveBankAccountDocs({
         documentId: documentId,
-        accounts: rows.map(r => ({
-          bankName: r.bankName,
-          accountNumber: r.accountNumber,
-          withdrawalFee: r.withdrawalFee,
-          purpose: r.purpose,
-          note: r.note,
-        })),
+        accounts: validAccounts,
       }, token);
       
       if (data.success) {
         alert('저장되었습니다!');
+        // 저장된 데이터로 업데이트 (API 명세에 따라 partners로 응답)
+        setRows(data.partners.map(account => ({
+          id: parseInt(account.id),
+          bankName: account.bankName,
+          accountNumber: account.accountNumber,
+          withdrawalFee: account.withdrawalFee,
+          purpose: account.purpose,
+          note: account.note,
+        })));
       } else {
         alert('저장 실패');
       }

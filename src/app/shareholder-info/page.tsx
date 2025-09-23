@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getShareholderDocs, extractShareholderDocs, deleteShareholder } from '@/services/api';
+import { getShareholderDocs, extractShareholderDocs } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
+import Button from '@/components/Button';
 
 interface ShareholderRow {
   id: number;
@@ -41,6 +42,7 @@ export default function ShareholderInfoPage() {
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
+  const [documentId, setDocumentId] = useState<string>('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -93,8 +95,13 @@ export default function ShareholderInfoPage() {
     
     try {
       setLoading(true);
-      const data = await extractShareholderDocs(file, token) as { success: boolean; items: ShareholderRow[] };
+      const data = await extractShareholderDocs(file, token) as { success: boolean; documentId?: string; items: ShareholderRow[] };
       if (data.success && data.items) {
+        // documentId 저장
+        if (data.documentId) {
+          setDocumentId(data.documentId);
+        }
+        
         const extracted = data.items.map((item: ShareholderRow) => ({
           id: Date.now() + Math.random(),
           name: item.name || '',
@@ -117,7 +124,62 @@ export default function ShareholderInfoPage() {
 
   /** 저장 */
   const handleSave = async () => {
-    alert('저장 API는 추후 구현 예정입니다.');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    
+    if (!documentId) {
+      alert('먼저 파일을 업로드해주세요.');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      
+      const res = await fetch(`https://api.eosxai.com/api/shareholder-docs/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          documentId,
+          shareholders: rows
+        }),
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('주주 정보 저장 실패:', res.status, errorText);
+        throw new Error(`주주 정보 저장에 실패했습니다. (${res.status}): ${errorText}`);
+      }
+      
+      const data = await res.json();
+      console.log('저장 응답:', data);
+      
+      if (data.success) {
+        alert('저장되었습니다!');
+        // 저장된 데이터로 업데이트
+        setRows(data.shareholders.map((shareholder: ShareholderRow) => ({
+          id: shareholder.id,
+          name: shareholder.name,
+          residentNumber: shareholder.residentNumber,
+          isRelatedParty: shareholder.isRelatedParty,
+          shares: shareholder.shares,
+          acquisitionDate: shareholder.acquisitionDate,
+          note: shareholder.note,
+        })));
+      } else {
+        alert('저장 실패');
+      }
+    } catch (err) {
+      console.error('저장 에러:', err);
+      alert('저장 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 삭제 */
@@ -126,8 +188,23 @@ export default function ShareholderInfoPage() {
     
     try {
       setLoading(true);
-      await deleteShareholder(id.toString(), token);
+      const res = await fetch(`https://api.eosxai.com/api/shareholders/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('주주 삭제 실패:', res.status, errorText);
+        throw new Error(`삭제에 실패했습니다. (${res.status}): ${errorText}`);
+      }
+      
+      const data = await res.json();
+      console.log('삭제 응답:', data);
+      
+      // 로컬 상태에서도 제거
       setRows(prev => prev.filter(r => r.id !== id));
+      alert('삭제되었습니다.');
     } catch (err) {
       console.error('삭제 에러:', err);
       alert('삭제 실패');
@@ -185,27 +262,25 @@ export default function ShareholderInfoPage() {
           </div>
           <div className="flex gap-3">
             {/* 파일 업로드 */}
-            <button
-              className="flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-              onClick={() =>
-                document.getElementById('shareholderFile')?.click()
-              }
+            <Button
+              variant="neutral"
+              size="small"
+              onClick={() => document.getElementById('shareholderFile')?.click()}
               disabled={loading}
+              loading={loading}
             >
               파일 업로드
-            </button>
+            </Button>
             {/* 저장하기 */}
-            <button
-              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] rounded ${
-                hasData && !loading
-                  ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
-                  : 'bg-[#E6E6E6]'
-              }`}
+            <Button
+              variant="neutral"
+              size="small"
               onClick={handleSave}
               disabled={!hasData || loading}
+              loading={loading}
             >
               저장하기
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -346,7 +421,14 @@ export default function ShareholderInfoPage() {
                 <td className="p-3 border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                    style={{
+                      border: 'none',
+                      padding: '8px 12px',
+                      background: '#F3F3F3',
+                      color: '#1E1E1E',
+                      fontSize: '12px',
+                      lineHeight: '12px',
+                    }}
                     disabled={loading}
                   >
                     삭제

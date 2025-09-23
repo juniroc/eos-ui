@@ -106,37 +106,65 @@ export default function CardInfoPage() {
   const handleSave = async () => {
     if (!token) return;
     
+    if (!documentId) {
+      alert('먼저 파일을 업로드해주세요.');
+      return;
+    }
+    
     try {
       setLoading(true);
-      const res = await fetch('https://api.eosxai.com/api/card-docs/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          documentId: documentId || 'temp-document-id', // documentId 사용
-          cards: rows.map(r => ({
-            cardName: r.cardIssuer,
-            cardNumber: r.cardNumber,
-            expiryDate: r.cardType,
-            purpose: r.purpose,
-            note: r.primaryUser,
-          })),
-        }),
-      });
       
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('저장 API 에러:', res.status, errorText);
-        throw new Error(`저장 실패: ${res.status}`);
-      }
+      // 빈 행들을 필터링하고 유효한 데이터만 전송
+      const validCards = rows
+        .filter(row => row.cardIssuer.trim() || row.cardNumber.trim())
+        .map(row => {
+          const card: {
+            cardIssuer: string;
+            cardNumber: string;
+            cardType?: string;
+            purpose?: string;
+            primaryUser?: string;
+          } = {
+            cardIssuer: row.cardIssuer.trim(),
+            cardNumber: row.cardNumber.trim(),
+          };
+          
+          // optional 필드들은 값이 있을 때만 포함
+          if (row.cardType?.trim()) {
+            card.cardType = row.cardType.trim();
+          }
+          if (row.purpose?.trim()) {
+            card.purpose = row.purpose.trim();
+          }
+          if (row.primaryUser?.trim()) {
+            card.primaryUser = row.primaryUser.trim();
+          }
+          
+          return card;
+        });
       
-      const data = await res.json();
+      console.log('저장할 데이터:', { documentId, cards: validCards });
+      
+      const data = await saveCardDocs({
+        documentId,
+        cards: validCards
+      }, token);
+      
       console.log('저장 응답:', data);
       
       if (data.success) {
         alert('저장되었습니다!');
+        // 저장된 데이터로 업데이트
+        if (data.partners && Array.isArray(data.partners)) {
+          setRows(data.partners.map(card => ({
+            id: parseInt(card.id),
+            cardIssuer: card.cardIssuer,
+            cardNumber: card.cardNumber,
+            cardType: card.cardType,
+            purpose: card.purpose,
+            primaryUser: card.primaryUser,
+          })));
+        }
       } else {
         alert('저장 실패');
       }
@@ -259,6 +287,9 @@ export default function CardInfoPage() {
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 주사용자
               </td>
+              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
+                삭제
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -350,13 +381,29 @@ export default function CardInfoPage() {
                     }
                   />
                 </td>
+                <td className="p-3 border border-[#D9D9D9] text-center">
+                  <button
+                    onClick={() => handleDelete(row.id)}
+                    style={{
+                      border: 'none',
+                      padding: '8px 12px',
+                      background: '#F3F3F3',
+                      color: '#1E1E1E',
+                      fontSize: '12px',
+                      lineHeight: '12px',
+                    }}
+                    disabled={loading}
+                  >
+                    삭제
+                  </button>
+                </td>
               </tr>
             ))}
 
             {/* 추가하기 */}
             <tr>
               <td
-                colSpan={6}
+                colSpan={7}
                 className="p-3 border border-[#D9D9D9] text-center"
               >
                 <button

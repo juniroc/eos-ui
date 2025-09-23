@@ -11,6 +11,7 @@ interface SettlementRow {
   value: string;
   fileName?: string;
   fileId?: string;
+  file?: File;
 }
 
 
@@ -79,36 +80,22 @@ export default function SettlementInfoPage() {
   const handleFileUpload = async (rowId: number, file: File) => {
     if (!token) return;
     
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
       setLoading(true);
-      const res = await fetch(`https://api.eosxai.com/api/previous-docs/upload?type=OTHER`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || '파일 업로드 실패');
-      }
-      const data = await res.json();
-
-      if (data.success) {
-        setRows(prev =>
-          prev.map(row =>
-            row.id === rowId
-              ? {
-                  ...row,
-                  value: data.data.originalName, // value 필드에도 파일명 저장
-                  fileName: data.data.originalName,
-                  fileId: data.data.id,
-                }
-              : row
-          )
-        );
-      }
+      
+      // 파일을 로컬 상태에만 저장 (증빙보관소에는 저장하지 않음)
+      setRows(prev =>
+        prev.map(row =>
+          row.id === rowId
+            ? {
+                ...row,
+                value: file.name, // 파일명만 저장
+                fileName: file.name,
+                file: file, // 파일 객체 저장
+              }
+            : row
+        )
+      );
     } catch (e) {
       console.error('파일 업로드 에러:', e);
       const errorMessage = e instanceof Error ? e.message : '파일 업로드 실패';
@@ -160,14 +147,49 @@ export default function SettlementInfoPage() {
     
     try {
       setLoading(true);
+      
+      // 먼저 파일들을 증빙보관소에 업로드
+      const updatedRows = await Promise.all(
+        rows.map(async (row) => {
+          if (row.file && !row.fileId) {
+            // 파일이 있고 아직 업로드되지 않은 경우
+            const formData = new FormData();
+            formData.append('file', row.file);
+            
+            const uploadRes = await fetch(`https://api.eosxai.com/api/previous-docs/upload?type=OTHER`, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` },
+              body: formData,
+            });
+            
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              return {
+                ...row,
+                fileId: uploadData.data.id,
+                fileName: uploadData.data.originalName,
+                value: uploadData.data.originalName,
+                file: undefined, // 파일 객체 제거
+              };
+            }
+          }
+          return row;
+        })
+      );
+      
+      // 업데이트된 행들로 상태 업데이트
+      setRows(updatedRows);
+      
+      // 비즈니스 정보 저장
       const res = await fetch(`https://api.eosxai.com/api/business-info`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ settlementDocs: rows }),
+        body: JSON.stringify({ settlementDocs: updatedRows }),
       });
+      
       if (!res.ok) throw new Error('저장 실패');
       const result = await res.json();
       if (result.success) {

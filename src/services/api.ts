@@ -89,7 +89,7 @@ export async function extractBusinessInfoWithAuth(file: File, token: string): Pr
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/api/ai/extract-business-info`, {
+  const response = await fetch(`https://api.eosxai.com/api/auth/extract-business-info`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -259,7 +259,8 @@ export async function extractCardDocs(file: File, token: string): Promise<unknow
   return response.json();
 }
 
-export async function saveCardDocs(data: { documentId: string; cards: Array<{ cardName: string; cardNumber: string; expiryDate?: string; purpose?: string; note?: string }> }, token: string): Promise<{ success: boolean; cards: Array<{ id: string; cardName: string; cardNumber: string; expiryDate: string; purpose: string; note: string; createdAt: string }> }> {
+
+export async function saveCardDocs(data: { documentId: string; cards: Array<{ cardIssuer: string; cardNumber: string; cardType?: string; purpose?: string; primaryUser?: string }> }, token: string): Promise<{ success: boolean; partners: Array<{ id: string; cardIssuer: string; cardNumber: string; cardType: string; purpose: string; primaryUser: string; createdAt: string }> }> {
   const response = await fetch(`${API_BASE_URL}/api/card-docs/save`, {
     method: 'POST',
     headers: {
@@ -270,7 +271,9 @@ export async function saveCardDocs(data: { documentId: string; cards: Array<{ ca
   });
 
   if (!response.ok) {
-    throw new Error('카드 정보 저장에 실패했습니다.');
+    const errorText = await response.text();
+    console.error('카드 정보 저장 실패:', response.status, errorText);
+    throw new Error(`카드 정보 저장에 실패했습니다. (${response.status}): ${errorText}`);
   }
 
   return response.json();
@@ -326,6 +329,25 @@ export async function extractEmployeeDocs(file: File, token: string): Promise<un
   return response.json();
 }
 
+export async function saveEmployeeDocs(data: { documentId: string; employees: Array<{ name: string; residentNumber: string; employmentType?: string; monthlySalary?: string; isProduction?: string }> }, token: string): Promise<{ success: boolean; employees: Array<{ id: string; name: string; residentNumber: string; employmentType: string; monthlySalary: string; isProduction: string; createdAt: string }> }> {
+  const response = await fetch(`${API_BASE_URL}/api/employee-docs/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('직원 정보 저장 실패:', response.status, errorText);
+    throw new Error(`직원 정보 저장에 실패했습니다. (${response.status}): ${errorText}`);
+  }
+
+  return response.json();
+}
+
 export async function deleteEmployee(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/employees/${id}`, {
     method: 'DELETE',
@@ -376,6 +398,23 @@ export async function extractPartnerDocs(file: File, token: string): Promise<unk
   return response.json();
 }
 
+export async function savePartnerDocs(data: { documentId: string; partners: Array<{ name: string; businessNumber?: string; mainItems?: string; relationship?: string; note?: string }> }, token: string): Promise<{ success: boolean; partners: Array<{ id: string; name: string; businessNumber: string; mainItems: string; relationship: string; note: string; createdAt: string }> }> {
+  const response = await fetch(`${API_BASE_URL}/api/partner-docs/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('거래처 정보 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
 export async function deletePartner(id: string, token: string): Promise<unknown> {
   const response = await fetch(`${API_BASE_URL}/api/partners/${id}`, {
     method: 'DELETE',
@@ -411,7 +450,7 @@ export async function extractShareholderDocs(file: File, token: string): Promise
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/api/shareholder-docs/extract-list`, {
+  const response = await fetch(`https://api.eosxai.com/api/shareholder-docs/extract-list`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -426,8 +465,27 @@ export async function extractShareholderDocs(file: File, token: string): Promise
   return response.json();
 }
 
+export async function saveShareholderDocs(data: { documentId: string; shareholders: Array<{ name: string; residentNumber?: string; isRelatedParty: string; shares?: string; acquisitionDate?: string; note?: string }> }, token: string): Promise<{ success: boolean; shareholders: Array<{ id: string; name: string; residentNumber: string; isRelatedParty: string; shares: string; acquisitionDate: string; note: string; createdAt: string }> }> {
+  const response = await fetch(`https://api.eosxai.com/api/shareholder-docs/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('주주 정보 저장 실패:', response.status, errorText);
+    throw new Error(`주주 정보 저장에 실패했습니다. (${response.status}): ${errorText}`);
+  }
+
+  return response.json();
+}
+
 export async function deleteShareholder(id: string, token: string): Promise<unknown> {
-  const response = await fetch(`${API_BASE_URL}/api/shareholders/${id}`, {
+  const response = await fetch(`https://api.eosxai.com/api/shareholders/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -474,7 +532,7 @@ export async function extractBusinessInfo(file: File): Promise<{
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/api/ai/extract-business-info-with-tax-agent`, {
+  const response = await fetch(`https://api.eosxai.com/api/auth/extract-business-info-with-tax-agent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',

@@ -342,7 +342,7 @@ export default function ManualJournalPage() {
                 <td className="p-3 border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0]"
                   >
                     삭제
                   </button>

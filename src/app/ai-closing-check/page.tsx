@@ -3,9 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { initClosingCheck } from '@/services/api';
-// import { getToken } from '@/services/api';
-
 interface CheckRow {
   id: number;
   key: string;
@@ -13,11 +10,6 @@ interface CheckRow {
   title: string;
   description: string;
   status: 'PENDING' | 'PROCESSING' | 'DONE' | 'NA';
-}
-
-interface ClosingCheckResponse {
-  closingDate: string;
-  items: CheckRow[];
 }
 
 interface AutoModeResponse {
@@ -34,9 +26,14 @@ export default function AIClosingCheckPage() {
   const [autoJobId, setAutoJobId] = useState<string | null>(null);
   const [closingDate, setClosingDate] = useState<string>('');
   const [streamStatus, setStreamStatus] = useState<string>('');
-  const [modalData, setModalData] = useState<Record<string, unknown> | null>(null);
+  const [modalData, setModalData] = useState<{
+    tangible?: Record<string, unknown>[];
+    intangible?: Record<string, unknown>[];
+    rows?: Record<string, unknown>[];
+  } | null>(null);
   const [selectedItemKey, setSelectedItemKey] = useState<string>('');
   const [allResults, setAllResults] = useState<Record<string, unknown> | null>(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -65,19 +62,18 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const data: ClosingCheckResponse = await initClosingCheck({ closingDate, mode: 'manual' }, accessToken) as ClosingCheckResponse;
-      
-      // API 응답을 CheckRow 형식으로 변환
-      const convertedRows = data.items.map((item, index) => ({
-        id: index + 1,
-        key: item.key,
-        category: item.category,
-        title: item.title,
-        description: item.description,
-        status: item.status as CheckRow['status']
-      }));
+      // 직접 점검용 하드코딩된 데이터
+      const manualCheckItems = [
+        { id: 1, key: 'depreciation', category: '필수', title: '감가상각처리', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 2, key: 'ending_inventory', category: '필수', title: '기말재고확인', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 3, key: 'bad_debt', category: '필수', title: '대손상각', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 4, key: 'retirement_benefit', category: '필수', title: '퇴직급여충당', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 5, key: 'suspense_clear', category: '필수', title: '가수, 가지급 정리', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 6, key: 'period_accrual', category: '외부감사시 필수', title: '기간귀속', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 7, key: 'negative_balance', category: '정합성', title: '마이너스잔액', description: '내용', status: 'PENDING' as CheckRow['status'] },
+      ];
 
-      setRows(convertedRows);
+      setRows(manualCheckItems);
     } catch (error) {
       console.error('직접 점검 API 호출 오류:', error);
       alert('점검 항목을 불러오는데 실패했습니다.');
@@ -241,6 +237,80 @@ export default function AIClosingCheckPage() {
     }
   };
 
+  /** 감가상각 점검 실행 */
+  const handleDepreciationCheck = async () => {
+    try {
+      setModalLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          closingDate: closingDate,
+          key: 'depreciation'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('감가상각 점검 API 호출에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      setModalData(data);
+    } catch (error) {
+      console.error('감가상각 점검 오류:', error);
+      alert('감가상각 점검을 실행하는데 실패했습니다.');
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  /** 기말재고 점검 실행 */
+  const handleEndingInventoryCheck = async () => {
+    try {
+      setModalLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          closingDate: closingDate,
+          key: 'ending_inventory'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('기말재고 점검 API 호출에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      setModalData(data);
+    } catch (error) {
+      console.error('기말재고 점검 오류:', error);
+      alert('기말재고 점검을 실행하는데 실패했습니다.');
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
   /** 상태 표시 스타일 */
   const renderStatus = (status: CheckRow['status']) => {
     switch (status) {
@@ -277,45 +347,33 @@ export default function AIClosingCheckPage() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">
-              AI 결산점검
+              AI결산점검
             </h2>
             <p className="text-[#767676]">
-              결산항목을 선택하고 결산점검을 시작하세요.
+              결산일자를 선택하고 결산점검을 시작하세요.
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            {/* 결산일 선택 */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-[#767676]">결산일:</label>
-              <input
-                type="date"
-                value={closingDate}
-                onChange={(e) => setClosingDate(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm"
-              />
-            </div>
-            
-          <div className="flex gap-3">
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={closingDate}
+              onChange={(e) => setClosingDate(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded text-sm"
+            />
             <button
-                onClick={handleManualCheck}
-                disabled={loading}
-              className="
-    flex items-center justify-center
-    min-w-[90px] h-[28px] px-3
-    rounded bg-[#2C2C2C] border border-[#2C2C2C]
-    text-xs font-medium leading-[100%] text-white
-      hover:bg-[#444444] transition disabled:opacity-50
-  "
+              onClick={handleManualCheck}
+              disabled={loading}
+              className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
             >
-                {loading ? '처리중...' : '직접 점검하기'}
+              {loading ? '처리중...' : '직접 점검하기'}
             </button>
             <button
-                onClick={handleAutoCheck}
-                disabled={loading}
+              onClick={handleAutoCheck}
+              disabled={loading}
               className="
     relative flex items-center justify-center
-    min-w-[90px] h-[28px] px-3
-    rounded bg-white
+    px-4 py-[12px] text-sm
+    bg-white
       hover:bg-gray-50 disabled:opacity-50
   "
             >
@@ -337,7 +395,6 @@ export default function AIClosingCheckPage() {
                   {loading ? '처리중...' : 'AI에게 맡기기'}
               </span>
             </button>
-            </div>
           </div>
         </div>
 
@@ -375,19 +432,22 @@ export default function AIClosingCheckPage() {
                   {r.category}
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">{r.title}</td>
-                <td className="p-3 border border-[#D9D9D9]">입력하기</td>
+                <td className="p-3 border border-[#D9D9D9]">내용</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   {renderStatus(r.status)}
                 </td>
                 <td className="p-3 border border-[#D9D9D9] text-center">
                   <button
-                    className="text-xs px-3 py-1 border rounded"
+                    className="px-3 py-1 text-xs bg-[#2C2C2C] text-white"
                     onClick={() => {
-                      console.log('선택된 항목:', r.key);
-                      console.log('전체 결과:', allResults);
-                      console.log('해당 항목 데이터:', allResults?.[r.key]);
                       setSelectedItemKey(r.key);
-                      setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
+                      if (r.key === 'depreciation') {
+                        handleDepreciationCheck();
+                      } else if (r.key === 'ending_inventory') {
+                        handleEndingInventoryCheck();
+                      } else {
+                        setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
+                      }
                       setShowModal(true);
                     }}
                   >
@@ -401,219 +461,548 @@ export default function AIClosingCheckPage() {
 
         {/* 모달 */}
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-lg max-w-6xl w-full p-6">
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="bg-white shadow-lg max-w-7xl w-full mx-4 max-h-[90vh] overflow-hidden">
               {/* 모달 헤더 */}
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">
-                  {selectedItemKey === 'depreciation' && '감가상각 점검'}
-                  {selectedItemKey === 'ending_inventory' && '재고자산 실사'}
-                  {selectedItemKey === 'bad_debt' && '매출채권 연령 분석'}
-                  {selectedItemKey === 'retirement_benefit' && '퇴직급여 충당금'}
-                  {selectedItemKey === 'suspense_clear' && '미결산 정리'}
-                  {selectedItemKey === 'period_accrual' && '기말수정분개'}
-                </h3>
+              <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">
+                    AI분개 &gt; AI결산점검 &gt; {selectedItemKey === 'depreciation' && '감가상각'}
+                    {selectedItemKey === 'ending_inventory' && '기말재고'}
+                    {selectedItemKey === 'bad_debt' && '매출채권 연령 분석'}
+                    {selectedItemKey === 'retirement_benefit' && '퇴직급여 충당금'}
+                    {selectedItemKey === 'suspense_clear' && '미결산 정리'}
+                    {selectedItemKey === 'period_accrual' && '기말수정분개'}
+                  </div>
+                  <h3 className="text-lg font-bold">
+                    {selectedItemKey === 'depreciation' && '감가상각'}
+                    {selectedItemKey === 'ending_inventory' && '기말재고'}
+                    {selectedItemKey === 'bad_debt' && '매출채권 연령 분석'}
+                    {selectedItemKey === 'retirement_benefit' && '퇴직급여 충당금'}
+                    {selectedItemKey === 'suspense_clear' && '미결산 정리'}
+                    {selectedItemKey === 'period_accrual' && '기말수정분개'}
+                  </h3>
+                </div>
                 <div className="flex gap-2">
                   <button
-                    className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+                    className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
                     onClick={() => {/* 인쇄 기능 */}}
                   >
                     인쇄하기
                   </button>
                   <button
-                    className="px-3 py-1 text-sm bg-black text-white rounded hover:bg-gray-800"
+                    className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
                     onClick={() => {/* 결산 반영 기능 */}}
                   >
                     결산 반영
                   </button>
+                  <button
+                    className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowModal(false)}
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
-              {modalData ? (
-                <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-4">
-                    AI가 수행한 {selectedItemKey === 'depreciation' ? '감가상각' : 
-                    selectedItemKey === 'ending_inventory' ? '재고자산 실사' :
-                    selectedItemKey === 'bad_debt' ? '매출채권 연령 분석' :
-                    selectedItemKey === 'retirement_benefit' ? '퇴직급여 충당금' :
-                    selectedItemKey === 'suspense_clear' ? '미결산 정리' :
-                    '기말수정분개'} 작업을 확인해주세요. 수정사항이 있으면 수정 후 &apos;결산 반영&apos;을 클릭해주세요.
-                  </p>
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <p className="text-sm text-gray-600 mb-4">
+                  {selectedItemKey === 'depreciation' && 'AI가 수행한 감가상각 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
+                  {selectedItemKey === 'ending_inventory' && '최종 실사 확인된 재고자산액과 장부상 재고액을 조정하여 원가를 계산합니다. 제조업과 상품의 품목별 단가, 원가율 등의 관리를 하고자 하는 회사는 원가관리 메뉴를 활용하여 기말재고작업을 진행하세요.'}
+                  {selectedItemKey === 'bad_debt' && 'AI가 수행한 매출채권 연령 분석 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
+                  {selectedItemKey === 'retirement_benefit' && 'AI가 수행한 퇴직급여 충당금 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
+                  {selectedItemKey === 'suspense_clear' && 'AI가 수행한 미결산 정리 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
+                  {selectedItemKey === 'period_accrual' && 'AI가 수행한 기말수정분개 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
+                </p>
                   
-                  {/* 감가상각 테이블 */}
-                  {selectedItemKey === 'depreciation' && (
-                    <table className="w-full border border-[#D9D9D9] text-sm">
+                {/* 감가상각 테이블 */}
+                {selectedItemKey === 'depreciation' && (
+                  <div>
+                    {modalLoading ? (
+                      <div className="text-center py-8">
+                        <div className="text-gray-500">감가상각 점검을 실행 중입니다...</div>
+                      </div>
+                    ) : modalData ? (
+                      <table className="w-full border border-[#D9D9D9] text-sm">
                 <thead>
-                        <tr className="bg-[#F5F5F5]">
-                          <th className="p-2 border border-[#D9D9D9]">계정과목</th>
-                          <th className="p-2 border border-[#D9D9D9]">품목</th>
-                          <th className="p-2 border border-[#D9D9D9]">매입일</th>
-                          <th className="p-2 border border-[#D9D9D9]">매입가</th>
-                          <th className="p-2 border border-[#D9D9D9]">감가상각 누계액</th>
-                          <th className="p-2 border border-[#D9D9D9]">전기상각액</th>
-                          <th className="p-2 border border-[#D9D9D9]">당기상각액</th>
-                          <th className="p-2 border border-[#D9D9D9]">생산원가 여부</th>
-                          <th className="p-2 border border-[#D9D9D9]">내용연수</th>
-                          <th className="p-2 border border-[#D9D9D9]">상각방법</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {modalData && modalData.tangible && Array.isArray(modalData.tangible) && modalData.tangible.length > 0 ? (
-                          (modalData.tangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
-                            <tr key={index}>
-                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={String(item.itemName || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={String(item.purchaseDate || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={typeof item.purchasePrice === 'number' ? item.purchasePrice.toLocaleString() : String(item.purchasePrice || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={typeof item.accumulatedDepreciation === 'number' ? item.accumulatedDepreciation.toLocaleString() : String(item.accumulatedDepreciation || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <div className="flex gap-1">
-                                  <input 
-                                    type="text" 
-                                    className="w-16 px-1 py-1 text-xs" 
-                                    defaultValue={String(item.previousDepreciationDate || '')}
-                                    placeholder="일자"
-                                  />
-                                  <input 
-                                    type="text" 
-                                    className="w-20 px-1 py-1 text-xs" 
-                                    defaultValue={typeof item.previousDepreciationAmount === 'number' ? item.previousDepreciationAmount.toLocaleString() : String(item.previousDepreciationAmount || '')}
-                                    placeholder="상각액"
-                                  />
-                                </div>
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <div className="flex gap-1">
-                                  <input 
-                                    type="text" 
-                                    className="w-16 px-1 py-1 text-xs" 
-                                    defaultValue={String(item.currentDepreciationDate || '')}
-                                    placeholder="일자"
-                                  />
-                                  <input 
-                                    type="text" 
-                                    className="w-20 px-1 py-1 text-xs" 
-                                    defaultValue={typeof item.currentDepreciationAmount === 'number' ? item.currentDepreciationAmount.toLocaleString() : String(item.currentDepreciationAmount || '')}
-                                    placeholder="상각액"
-                                  />
-                                </div>
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <select className="w-full px-1 py-1 text-xs">
-                                  <option value="no">부</option>
-                                  <option value="yes">여</option>
-                                </select>
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={String(item.usefulLife || '')}
-                                  placeholder="년"
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <select className="w-full px-1 py-1 text-xs">
-                                  <option value="straight">정액법</option>
-                                  <option value="declining">정률법</option>
-                                  <option value="sum">연수합계법</option>
-                                </select>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={10} className="p-4 text-center text-gray-500">데이터가 없습니다.</td>
+                          <tr className="bg-[#F5F5F5]">
+                            <th className="p-3 border border-[#D9D9D9] text-center">계정과목</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">품목</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">매입일</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">매입가</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">감가상각 누계액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center" colSpan={2}>전기상각액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center" colSpan={2}>당기상각액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">생산원가 여부</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">내용연수</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">상각방법</th>
                           </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  )}
-                  
-                  {/* 기말수정분개 테이블 */}
-                  {selectedItemKey === 'period_accrual' && (
-                    <table className="w-full border border-[#D9D9D9] text-sm">
-                      <thead>
-                        <tr className="bg-[#F5F5F5]">
-                          <th className="p-2 border border-[#D9D9D9]">계정코드</th>
-                          <th className="p-2 border border-[#D9D9D9]">계정명</th>
-                          <th className="p-2 border border-[#D9D9D9]">기말잔액</th>
-                          <th className="p-2 border border-[#D9D9D9]">추가금액</th>
-                          <th className="p-2 border border-[#D9D9D9]">대상계정</th>
-                          <th className="p-2 border border-[#D9D9D9]">메모</th>
+                          <tr className="bg-[#F5F5F5]">
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">일자</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">상각액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">일자</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">상각액</th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 유형자산 데이터 */}
+                          {modalData.tangible && Array.isArray(modalData.tangible) && modalData.tangible.length > 0 && (
+                            (modalData.tangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => {
+                              // 타입 오류 방지 및 안전한 접근을 위한 타입 단언 및 구조 분해
+                              const priorDep = item.priorDep as { date?: string; amount?: number };
+                              const currentDep = item.currentDep as { date?: string; amount?: number };
+                              return (
+                                <tr key={`tangible-${index}`}>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">{String(item.accountName ?? '-')}</td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={String(item.itemName ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={String(item.purchaseDate ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={typeof item.purchaseAmount === 'number' ? item.purchaseAmount.toLocaleString() : String(item.purchaseAmount ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={typeof item.accumulatedDep === 'number' ? item.accumulatedDep.toLocaleString() : String(item.accumulatedDep ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={String(priorDep?.date ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={typeof priorDep?.amount === 'number' ? priorDep.amount.toLocaleString() : String(priorDep?.amount ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={String(currentDep?.date ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={typeof currentDep?.amount === 'number' ? currentDep.amount.toLocaleString() : String(currentDep?.amount ?? '')}
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <select className="w-full px-2 py-1 text-xs border rounded" defaultValue={item.isProductionCost === true ? "true" : "false"}>
+                                      <option value="false">부</option>
+                                      <option value="true">여</option>
+                                    </select>
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full px-2 py-1 text-xs border rounded" 
+                                      defaultValue={String(item.usefulLifeMonths ?? '')}
+                                      placeholder="개월"
+                                    />
+                                  </td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <select className="w-full px-2 py-1 text-xs border rounded" defaultValue={String(item.method ?? 'straight')}>
+                                      <option value="straight">정액법</option>
+                                      <option value="declining">정률법</option>
+                                      <option value="sum">연수합계법</option>
+                                    </select>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                          
+                          {/* 무형자산 데이터 */}
+                          {modalData.intangible && Array.isArray(modalData.intangible) && modalData.intangible.length > 0 && (
+                            (modalData.intangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
+                              <tr key={`intangible-${index}`}>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{String(item.accountName || '-')}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.itemName || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.purchaseDate || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.purchaseAmount === 'number' ? item.purchaseAmount.toLocaleString() : String(item.purchaseAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.accumulatedDep === 'number' ? item.accumulatedDep.toLocaleString() : String(item.accumulatedDep || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String((item.priorDep as Record<string, unknown>)?.date || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof (item.priorDep as Record<string, unknown>)?.amount === 'number' ? ((item.priorDep as Record<string, unknown>).amount as number).toLocaleString() : String((item.priorDep as Record<string, unknown>)?.amount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String((item.currentDep as Record<string, unknown>)?.date || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof (item.currentDep as Record<string, unknown>)?.amount === 'number' ? ((item.currentDep as Record<string, unknown>).amount as number).toLocaleString() : String((item.currentDep as Record<string, unknown>)?.amount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <select className="w-full px-2 py-1 text-xs border rounded">
+                                    <option value="false" selected={item.isProductionCost === false}>부</option>
+                                    <option value="true" selected={item.isProductionCost === true}>여</option>
+                                  </select>
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.usefulLifeMonths || '')}
+                                    placeholder="개월"
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <select className="w-full px-2 py-1 text-xs border rounded">
+                                    <option value="straight" selected={item.method === 'straight'}>정액법</option>
+                                    <option value="declining" selected={item.method === 'declining'}>정률법</option>
+                                    <option value="sum" selected={item.method === 'sum'}>연수합계법</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="text-gray-500">감가상각 점검을 실행해주세요.</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* 기말재고 테이블 */}
+                {selectedItemKey === 'ending_inventory' && (
+                  <div>
+                    {modalLoading ? (
+                      <div className="text-center py-8">
+                        <div className="text-gray-500">기말재고 점검을 실행 중입니다...</div>
+                      </div>
+                    ) : modalData ? (
+                      <table className="w-full border border-[#D9D9D9] text-sm">
+                        <thead>
+                          <tr className="bg-[#F5F5F5]">
+                            <th className="p-3 border border-[#D9D9D9] text-center">계정과목</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">기초재고</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">기중매입</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">장부상재고액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center" colSpan={2}>기말실사액</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">매출 외 사용</th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">매출원가</th>
+                          </tr>
+                          <tr className="bg-[#F5F5F5]">
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9] text-center">사용불능재고(*)</th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                            <th className="p-3 border border-[#D9D9D9]"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 실제 데이터 또는 샘플 데이터 */}
+                          {modalData.rows && Array.isArray(modalData.rows) && modalData.rows.length > 0 ? (
+                            (modalData.rows as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
+                              <tr key={index}>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{String(item.itemName || '상품')}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.priorQty || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.priorAmount === 'number' ? item.priorAmount.toLocaleString() : String(item.priorAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.currentQty || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.currentAmount === 'number' ? item.currentAmount.toLocaleString() : String(item.currentAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.priorQty || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.priorAmount === 'number' ? item.priorAmount.toLocaleString() : String(item.priorAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.currentQty || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.currentAmount === 'number' ? item.currentAmount.toLocaleString() : String(item.currentAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.usageCount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.usageCount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.cogsAmount === 'number' ? item.cogsAmount.toLocaleString() : String(item.cogsAmount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={String(item.usageCount || '')}
+                                  />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="text" 
+                                    className="w-full px-2 py-1 text-xs border rounded" 
+                                    defaultValue={typeof item.cogsAmount === 'number' ? item.cogsAmount.toLocaleString() : String(item.cogsAmount || '')}
+                                  />
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            // 샘플 데이터
+                            <>
+                              <tr>
+                                <td className="p-3 border border-[#D9D9D9] text-center">상품</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="p-3 border border-[#D9D9D9] text-center">상품</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input type="text" className="w-full px-2 py-1 text-xs border rounded" defaultValue="000 원" />
+                                </td>
+                              </tr>
+                              <tr className="bg-gray-50">
+                                <td className="p-3 border border-[#D9D9D9] text-center font-medium">소계</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                              </tr>
+                            </>
+                          )}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="text-gray-500">기말재고 점검을 실행해주세요.</div>
+                      </div>
+                    )}
+                    
+                    {/* 각주 */}
+                    <div className="mt-4 text-xs text-gray-500">
+                      (*)사용불능재고는 유통기한경과, 마모, 손상, 분실 등으로 판매 불가한 재고가액을 의미합니다.
+                    </div>
+                  </div>
+                )}
+                
+                {/* 기말수정분개 테이블 */}
+                {selectedItemKey === 'period_accrual' && (
+                  <table className="w-full border border-[#D9D9D9] text-sm">
+                    <thead>
+                      <tr className="bg-[#F5F5F5]">
+                        <th className="p-2 border border-[#D9D9D9]">계정코드</th>
+                        <th className="p-2 border border-[#D9D9D9]">계정명</th>
+                        <th className="p-2 border border-[#D9D9D9]">기말잔액</th>
+                        <th className="p-2 border border-[#D9D9D9]">추가금액</th>
+                        <th className="p-2 border border-[#D9D9D9]">대상계정</th>
+                        <th className="p-2 border border-[#D9D9D9]">메모</th>
                   </tr>
                 </thead>
                 <tbody>
-                        {modalData && modalData.rows && Array.isArray(modalData.rows) && modalData.rows.length > 0 ? (
-                          (modalData.rows as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
-                            <tr key={index}>
-                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountCode || '-')}</td>
-                              <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={typeof item.endingBalance === 'number' ? item.endingBalance.toLocaleString() : String(item.endingBalance || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={typeof item.addAmount === 'number' ? item.addAmount.toLocaleString() : String(item.addAmount || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={String(item.counterAccountId || '')}
-                                />
-                              </td>
-                              <td className="p-2 border border-[#D9D9D9]">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-1 py-1 text-xs" 
-                                  defaultValue={String(item.memo || '')}
-                                />
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={6} className="p-4 text-center text-gray-500">데이터가 없습니다.</td>
+                      {modalData && modalData.rows && Array.isArray(modalData.rows) && modalData.rows.length > 0 ? (
+                        (modalData.rows as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
+                          <tr key={index}>
+                            <td className="p-2 border border-[#D9D9D9]">{String(item.accountCode || '-')}</td>
+                            <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
+                            <td className="p-2 border border-[#D9D9D9]">
+                              <input 
+                                type="text" 
+                                className="w-full px-1 py-1 text-xs" 
+                                defaultValue={typeof item.endingBalance === 'number' ? item.endingBalance.toLocaleString() : String(item.endingBalance || '')}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9]">
+                              <input 
+                                type="text" 
+                                className="w-full px-1 py-1 text-xs" 
+                                defaultValue={typeof item.addAmount === 'number' ? item.addAmount.toLocaleString() : String(item.addAmount || '')}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9]">
+                              <input 
+                                type="text" 
+                                className="w-full px-1 py-1 text-xs" 
+                                defaultValue={String(item.counterAccountId || '')}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9]">
+                              <input 
+                                type="text" 
+                                className="w-full px-1 py-1 text-xs" 
+                                defaultValue={String(item.memo || '')}
+                              />
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="p-4 text-center text-gray-500">데이터가 없습니다.</td>
                   </tr>
-                        )}
+                      )}
                 </tbody>
               </table>
-                  )}
+                )}
               </div>
-              ) : (
-                <p className="text-gray-500">데이터를 불러오는 중입니다...</p>
-              )}
             </div>
           </div>
         )}

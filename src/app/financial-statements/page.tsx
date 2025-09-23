@@ -116,7 +116,7 @@ export default function FinancialStatementsPage() {
 
   /** 다운로드 */
   const handleDownload = () => {
-    if (!statementData) return;
+    if (!statementData || !statementData.rows || !Array.isArray(statementData.rows)) return;
 
     let csvContent: string[][] = [];
     
@@ -270,7 +270,7 @@ export default function FinancialStatementsPage() {
 
 
         {/* 탭 메뉴 */}
-        <div className="flex border-b border-gray-200 mb-6">
+        <div className="flex border-b border-gray-200 mb-6 w-full justify-between">
           {statementTypes.map((type) => (
             <button
               key={type.key}
@@ -287,7 +287,7 @@ export default function FinancialStatementsPage() {
         </div>
 
         {/* 재무제표 데이터 */}
-        {statementData && statementData.rows.length > 0 ? (
+        {statementData && statementData.rows && Array.isArray(statementData.rows) && statementData.rows.length > 0 ? (
           <div className="bg-white border border-[#D9D9D9] rounded">
             {/* 제목 및 기간 정보 */}
             <div className="text-center py-6 border-b border-gray-200">
@@ -349,7 +349,7 @@ export default function FinancialStatementsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
+                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="p-3 border border-[#D9D9D9]">
                         <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
@@ -358,35 +358,35 @@ export default function FinancialStatementsPage() {
                       </td>
                       {selectedType === 'trial_balance' ? (
                         <>
-                          <td className="p-3 border text-right">
+                          <td className="p-3 border border-[#D9D9D9] text-right">
                             {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border text-right">
+                          <td className="p-3 border border-[#D9D9D9] text-right">
                             {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border text-right">
+                          <td className="p-3 border border-[#D9D9D9] text-right">
                             {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border text-center">
+                          <td className="p-3 border border-[#D9D9D9] text-center">
                             {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
                           </td>
                         </>
                       ) : selectedType === 'cash_flow' ? (
-                        <td className="p-3 border text-right">
+                        <td className="p-3 border border-[#D9D9D9] text-right">
                           {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                         </td>
                       ) : (
                         <>
-                          <td className="p-3 border text-right">
+                          <td className="p-3 border border-[#D9D9D9] text-right">
                             {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border text-right">
+                          <td className="p-3 border border-[#D9D9D9] text-right">
                             {'prior' in row ? row.prior?.toLocaleString() || '-' : '-'}
                           </td>
                         </>
                       )}
                     </tr>
-                  ))}
+                  )) : null}
                 </tbody>
               </table>
             </div>

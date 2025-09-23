@@ -76,8 +76,6 @@ export default function FinancialStatementsPage() {
   const [selectedType, setSelectedType] = useState<StatementType>('balance_sheet');
   const [date, setDate] = useState('');
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [costType, setCostType] = useState('');
   const [loading, setLoading] = useState(false);
   const [statementData, setStatementData] = useState<StatementData | null>(null);
 
@@ -99,8 +97,6 @@ export default function FinancialStatementsPage() {
       params.append('type', selectedType);
       if (date) params.append('date', date);
       if (startDate) params.append('startDate', startDate);
-      if (endDate) params.append('endDate', endDate);
-      if (costType) params.append('costType', costType);
 
       const url = `https://api.eosxai.com/api/statements?${params.toString()}`;
       console.log('API 호출 URL:', url);
@@ -116,7 +112,7 @@ export default function FinancialStatementsPage() {
     } finally {
       setLoading(false);
     }
-  }, [token, selectedType, date, startDate, endDate, costType]);
+  }, [token, selectedType, date, startDate]);
 
   /** 다운로드 */
   const handleDownload = () => {
@@ -176,7 +172,7 @@ export default function FinancialStatementsPage() {
         return;
       }
     } else {
-      if (!startDate || !endDate) {
+      if (!startDate) {
         alert('조회기간을 입력해주세요.');
         return;
       }
@@ -238,75 +234,40 @@ export default function FinancialStatementsPage() {
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">재무제표</h2>
             <p className="text-[#767676]">결산일자를 선택하고 결산점검을 시작하세요.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? date : startDate}
+              onChange={(e) => {
+                if (selectedType === 'balance_sheet' || selectedType === 'trial_balance') {
+                  setDate(e.target.value);
+                } else {
+                  setStartDate(e.target.value);
+                }
+              }}
+              className="border border-gray-300 rounded px-3 py-1 text-sm"
+            />
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-[#2C2C2C] text-white"
+              className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
             >
               조회하기
             </button>
             <button
               onClick={handleDownload}
-              className="px-4 py-2 bg-[#2C2C2C] text-white"
+              className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
             >
               다운로드
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C]"
+              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C] text-sm"
             >
               인쇄하기
             </button>
           </div>
         </div>
 
-        {/* 날짜 선택 */}
-        <div className="bg-white border border-[#D9D9D9] mb-6 p-4">
-          <div className="flex items-center gap-4">
-            {selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? (
-              <>
-                <label className="text-sm font-medium">조회일자:</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-1"
-                />
-              </>
-            ) : (
-              <>
-                <label className="text-sm font-medium">조회기간:</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-1"
-                  placeholder="시작일"
-                />
-                <span>~</span>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-1"
-                  placeholder="종료일"
-                />
-              </>
-            )}
-            {selectedType === 'cost_report' && (
-              <>
-                <label className="text-sm font-medium">원가유형:</label>
-                <input
-                  type="text"
-                  value={costType}
-                  onChange={(e) => setCostType(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-1"
-                  placeholder="원가유형"
-                />
-              </>
-            )}
-          </div>
-        </div>
 
         {/* 탭 메뉴 */}
         <div className="flex border-b border-gray-200 mb-6">
@@ -317,7 +278,7 @@ export default function FinancialStatementsPage() {
               className={`px-4 py-2 text-sm font-medium border-b-2 ${
                 selectedType === type.key
                   ? 'border-[#1E1E1E] text-[#1E1E1E]'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-[#757575] hover:text-gray-700'
               }`}
             >
               {type.label}
@@ -337,8 +298,8 @@ export default function FinancialStatementsPage() {
                formatDate(statementData.meta.periods.current) !== '날짜 정보 없음' && 
                formatDate(statementData.meta.periods.prior) !== '날짜 정보 없음' ? (
                 <div className="text-sm text-gray-600">
-                  <div>당기 {formatDate(statementData.meta.periods.current)} 현재</div>
-                  <div>전기 {formatDate(statementData.meta.periods.prior)} 현재</div>
+                  <div>제 6기 {formatDate(statementData.meta.periods.current)} 현재</div>
+                  <div>제 5기 {formatDate(statementData.meta.periods.prior)} 현재</div>
                 </div>
               ) : statementData.meta.asOfDate && formatDate(statementData.meta.asOfDate) !== '날짜 정보 없음' ? (
                 <div className="text-sm text-gray-600">
@@ -346,8 +307,8 @@ export default function FinancialStatementsPage() {
                 </div>
               ) : date ? (
                 <div className="text-sm text-gray-600">
-                  <div>당기 {date} 현재</div>
-                  <div>전기 {date} 현재</div>
+                  <div>제 6기 {date} 현재</div>
+                  <div>제 5기 {date} 현재</div>
                 </div>
               ) : null}
             </div>
@@ -375,8 +336,14 @@ export default function FinancialStatementsPage() {
                       <th className="p-3 border border-[#D9D9D9] text-right font-medium">금액</th>
                     ) : (
                       <>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">제6(당)기 금액</th>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">제5(전)기 금액</th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">
+                          <div>제6(당)기</div>
+                          <div className="text-xs font-normal">금액</div>
+                        </th>
+                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">
+                          <div>제5(전)기</div>
+                          <div className="text-xs font-normal">금액</div>
+                        </th>
                       </>
                     )}
                   </tr>

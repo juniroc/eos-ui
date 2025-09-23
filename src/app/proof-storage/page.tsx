@@ -117,11 +117,23 @@ export default function ProofStoragePage() {
   if (!isAuthenticated) return null;
 
   /** 검색 필터링 */
-  const filteredRows = rows.filter(r =>{
-    console.log(r.fileName, search);
-    return  r.fileName.includes(search)
-  }
-  );
+  const filteredRows = rows.filter(r => {
+    if (!search.trim()) return true;
+    
+    // 한글 정규화를 위한 함수
+    const normalize = (str: string) => {
+      return str.normalize('NFC').toLowerCase();
+    };
+    
+    const normalizedFileName = normalize(r.fileName);
+    const normalizedSearch = normalize(search);
+    
+    console.log('원본:', r.fileName, search);
+    console.log('정규화:', normalizedFileName, normalizedSearch);
+    console.log('결과:', normalizedFileName.includes(normalizedSearch));
+    
+    return normalizedFileName.includes(normalizedSearch);
+  });
 
 
   return (
@@ -185,7 +197,6 @@ export default function ProofStoragePage() {
                       fontSize: '12px',
                       lineHeight: '12px',
                       border: 'none',
-                      borderRadius: '4px',
                       cursor: (!row.voucherIds || row.voucherIds.length === 0) ? 'not-allowed' : 'pointer',
                     }}
                   >
@@ -205,7 +216,6 @@ export default function ProofStoragePage() {
                       fontSize: '12px',
                       lineHeight: '12px',
                       border: 'none',
-                      borderRadius: '4px',
                     }}
                   >
                     다운로드
@@ -224,7 +234,6 @@ export default function ProofStoragePage() {
                       fontSize: '12px',
                       lineHeight: '12px',
                       border: 'none',
-                      borderRadius: '4px',
                     }}
                   >
                     삭제

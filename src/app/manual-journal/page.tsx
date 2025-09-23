@@ -74,49 +74,83 @@ export default function ManualJournalPage() {
     ]);
   };
 
-  /** 행 삭제 */
-  const handleDelete = async (id: number) => {
-    const row = rows.find(r => r.id === id);
-    if (!row) return;
-
-    // 서버에 저장된 데이터인지 확인 (voucherId가 있으면 서버에 저장된 것)
-    if (row.voucherId) {
-      // 서버에 저장된 데이터는 API 호출로 삭제
-      try {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-          alert('로그인이 필요합니다.');
-          return;
-        }
-
-        const res = await fetch(`https://api.eosxai.com/api/journal/${row.voucherId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.error || '삭제 실패');
-        }
-
-        // 서버에서 삭제 성공하면 로컬에서도 제거
-        setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
-      } catch (err) {
-        console.error('삭제 에러:', err);
-        alert('삭제 실패');
-      }
-    } else {
-      // 로컬 데이터는 바로 제거
-      setRows(prev => prev.filter(r => r.id !== id));
-    }
-  };
 
   /** 저장 */
   const handleSave = async () => {
-    alert('저장 API 연결 예정');
+    if (!hasData) return;
+    
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      // 분개장 데이터를 API 형식으로 변환
+      const vouchers = rows.map(row => ({
+        id: row.voucherId || Date.now(), // 기존 voucherId가 있으면 사용, 없으면 새로 생성
+        date: row.date || undefined,
+        description: row.description || undefined,
+        transactions: [
+          // 차변 거래
+          ...(row.debitAccount && row.debitAmount ? [{
+            id: Date.now() + Math.random(), // 임시 ID
+            accountId: row.debitAccount,
+            partnerId: row.debitPartner || undefined,
+            amount: parseFloat(row.debitAmount) || undefined,
+            note: row.description || undefined,
+            debitCredit: true // 차변
+          }] : []),
+          // 대변 거래
+          ...(row.creditAccount && row.creditAmount ? [{
+            id: Date.now() + Math.random() + 1, // 임시 ID
+            accountId: row.creditAccount,
+            partnerId: row.creditPartner || undefined,
+            amount: parseFloat(row.creditAmount) || undefined,
+            note: row.description || undefined,
+            debitCredit: false // 대변
+          }] : [])
+        ]
+      }));
+
+      const res = await fetch('https://api.eosxai.com/api/journal/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ vouchers }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || '저장 실패');
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        alert('저장되었습니다!');
+        // 저장 후 로컬 데이터 초기화
+        setRows([
+          {
+            id: 1,
+            date: '',
+            debitAccount: '',
+            debitAmount: '',
+            debitPartner: '',
+            creditAccount: '',
+            creditAmount: '',
+            creditPartner: '',
+            description: '',
+          },
+        ]);
+      } else {
+        alert('저장 실패');
+      }
+    } catch (err) {
+      console.error('저장 에러:', err);
+      alert('저장 중 문제가 발생했습니다.');
+    }
   };
 
   // 로딩 중이거나 인증되지 않은 경우
@@ -189,12 +223,6 @@ export default function ManualJournalPage() {
               <td
                 rowSpan={2}
                 className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-              >
-                적요
-              </td>
-              <td
-                rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 text-center"
               >
                 적요
               </td>
@@ -368,15 +396,6 @@ export default function ManualJournalPage() {
                     }
                   />
                 </td>
-                {/* 관리 */}
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  <button
-                    onClick={async () => await handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0]"
-                  >
-                    삭제
-                  </button>
-                </td>
               </tr>
             ))}
             {/* 추가하기 버튼 */}
@@ -387,9 +406,10 @@ export default function ManualJournalPage() {
               >
                 <button
                   onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
+                  className="text-sm text-[#767676] hover:text-[#1E1E1E] flex items-center justify-center gap-1 w-full"
                 >
-                  + 추가하기
+                  <span className="w-4 h-4 rounded-full border border-[#767676] flex items-center justify-center text-xs">+</span>
+                  추가하기
                 </button>
               </td>
             </tr>

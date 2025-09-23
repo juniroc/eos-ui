@@ -9,7 +9,7 @@ interface Transaction {
   accountId?: string;
   accountCode?: string;
   accountName?: string;
-  debitCredit?: 'DEBIT' | 'CREDIT';
+  debitCredit?: boolean; // true = DEBIT, false = CREDIT
   amount?: number;
   partnerId?: string;
   partnerName?: string;
@@ -87,7 +87,21 @@ function JournalPageContent() {
 
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      setVouchers(data.vouchers || []);
+      console.log('API 응답 데이터:', data);
+      
+      if (data.vouchers && Array.isArray(data.vouchers)) {
+        // 날짜 포맷팅 및 데이터 구조 확인
+        const formattedVouchers = data.vouchers.map((voucher: any) => ({
+          ...voucher,
+          date: voucher.date ? new Date(voucher.date).toISOString().split('T')[0] : '',
+          transactions: voucher.transactions || []
+        }));
+        console.log('포맷된 전표 데이터:', formattedVouchers);
+        setVouchers(formattedVouchers);
+      } else {
+        console.log('전표 데이터가 없거나 형식이 올바르지 않습니다:', data);
+        setVouchers([]);
+      }
     } catch (err) {
       console.error('전표 조회 에러:', err);
     } finally {
@@ -97,26 +111,58 @@ function JournalPageContent() {
 
   /** 일괄 저장 */
   const handleBatchSave = async () => {
-    if (!token) return;
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    
+    if (vouchers.length === 0) {
+      alert('저장할 전표가 없습니다.');
+      return;
+    }
+
     try {
+      // API 명세에 맞게 데이터 구조 변환
+      const formattedVouchers = vouchers.map(voucher => ({
+        id: voucher.id,
+        date: voucher.date,
+        description: voucher.description,
+        transactions: voucher.transactions.map(transaction => ({
+          id: transaction.id,
+          accountId: transaction.accountId,
+          partnerId: transaction.partnerId,
+          amount: transaction.amount,
+          note: transaction.note,
+          debitCredit: transaction.debitCredit
+        }))
+      }));
+
+      console.log('저장할 데이터:', formattedVouchers);
+
       const res = await fetch(`https://api.eosxai.com/api/journal/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ vouchers }),
+        body: JSON.stringify({ vouchers: formattedVouchers }),
       });
+
       const data = await res.json();
+      console.log('저장 응답:', data);
+
       if (data.success) {
         alert('일괄 저장되었습니다.');
-        setVouchers(data.vouchers);
+        // 응답에서 업데이트된 전표 데이터로 상태 업데이트
+        if (data.vouchers && Array.isArray(data.vouchers)) {
+          setVouchers(data.vouchers);
+        }
       } else {
-        alert('저장 실패');
+        alert('저장 실패: ' + (data.message || '알 수 없는 오류'));
       }
     } catch (err) {
       console.error('저장 에러:', err);
-      alert('저장 실패');
+      alert('저장 실패: ' + err.message);
     }
   };
 
@@ -228,10 +274,257 @@ function JournalPageContent() {
 
         {/* 전표 리스트 */}
         {vouchers.length > 0 ? (
-          vouchers.map(v => (
-            <div key={v.id} className="mb-4 p-4 border rounded">
-              <div className="font-semibold mb-2">전표번호: {v.id}</div>
-              <div className="text-sm text-gray-600">총 차변 {v.debitTotal} / 총 대변 {v.creditTotal}</div>
+          vouchers.map((voucher, voucherIndex) => (
+            <div key={voucher.id} className="mb-6">
+              {/* 전표 테이블 */}
+              <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+                <thead>
+                  <tr>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-20">일자</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center" colSpan={3}>
+                      차변
+                    </td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center" colSpan={3}>
+                      대변
+                    </td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/7">적요</td>
+                  </tr>
+                  <tr>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10"></td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">계정과목</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">금액</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">거래처</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">계정과목</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">금액</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-1/10">거래처</td>
+                    <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-3/10">적요</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* 전표 데이터 행들 */}
+                  {voucher.transactions.map((transaction, index) => (
+                    <tr key={`${voucher.id}-${index}`}>
+                      <td className="p-3 border border-[#D9D9D9] text-center w-1/10">
+                        {index === 0 ? (
+                          <input
+                            type="date"
+                            className="w-full focus:outline-none text-center"
+                            value={voucher.date || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].date = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      {/* 차변 */}
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === true ? (
+                          <input
+                            className="w-full focus:outline-none"
+                            placeholder="입력하기"
+                            value={transaction.accountName || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].transactions[index].accountName = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === true ? (
+                          <div className="flex items-center w-full">
+                            {!transaction.amount && (
+                              <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                            )}
+                            <input
+                              className="flex-1 focus:outline-none"
+                              placeholder=""
+                              value={transaction.amount || ''}
+                              onChange={(e) => {
+                                const newVouchers = [...vouchers];
+                                newVouchers[voucherIndex].transactions[index].amount = Number(e.target.value);
+                                setVouchers(newVouchers);
+                              }}
+                            />
+                            <span className="text-gray-400 text-sm ml-2">원</span>
+                          </div>
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === true ? (
+                          <input
+                            className="w-full focus:outline-none"
+                            placeholder="입력하기"
+                            value={transaction.partnerName || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].transactions[index].partnerName = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      {/* 대변 */}
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === false ? (
+                          <input
+                            className="w-full focus:outline-none"
+                            placeholder="입력하기"
+                            value={transaction.accountName || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].transactions[index].accountName = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === false ? (
+                          <div className="flex items-center w-full">
+                            {!transaction.amount && (
+                              <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
+                            )}
+                            <input
+                              className="flex-1 focus:outline-none"
+                              placeholder=""
+                              value={transaction.amount || ''}
+                              onChange={(e) => {
+                                const newVouchers = [...vouchers];
+                                newVouchers[voucherIndex].transactions[index].amount = Number(e.target.value);
+                                setVouchers(newVouchers);
+                              }}
+                            />
+                            <span className="text-gray-400 text-sm ml-2">원</span>
+                          </div>
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      <td className="p-3 border border-[#D9D9D9] w-1/10">
+                        {transaction.debitCredit === false ? (
+                          <input
+                            className="w-full focus:outline-none"
+                            placeholder="입력하기"
+                            value={transaction.partnerName || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].transactions[index].partnerName = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                      {/* 적요 */}
+                      <td className="p-3 border border-[#D9D9D9] w-3/10">
+                        {index === 0 ? (
+                          <input
+                            className="w-full focus:outline-none"
+                            placeholder="입력하기"
+                            value={voucher.description || ''}
+                            onChange={(e) => {
+                              const newVouchers = [...vouchers];
+                              newVouchers[voucherIndex].description = e.target.value;
+                              setVouchers(newVouchers);
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-8"></div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  
+                  {/* 소계 행 */}
+                  <tr>
+                    <td className="p-3 border border-[#D9D9D9] text-center bg-gray-50 w-1/10">소계</td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        defaultValue=""
+                        readOnly
+                      />
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <div className="flex items-center w-full">
+                        <input
+                          className="flex-1 focus:outline-none text-right"
+                          placeholder=""
+                          value={voucher.transactions
+                            .filter((t: Transaction) => t.debitCredit === true)
+                            .reduce((sum: number, t: Transaction) => sum + (t.amount || 0), 0)
+                            .toLocaleString()}
+                          readOnly
+                        />
+                        <span className="text-gray-400 text-sm ml-2">원</span>
+                      </div>
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        defaultValue=""
+                        readOnly
+                      />
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        defaultValue=""
+                        readOnly
+                      />
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <div className="flex items-center w-full">
+                        <input
+                          className="flex-1 focus:outline-none text-right"
+                          placeholder=""
+                          value={voucher.transactions
+                            .filter((t: Transaction) => t.debitCredit === false)
+                            .reduce((sum: number, t: Transaction) => sum + (t.amount || 0), 0)
+                            .toLocaleString()}
+                          readOnly
+                        />
+                        <span className="text-gray-400 text-sm ml-2">원</span>
+                      </div>
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-1/10">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        defaultValue=""
+                        readOnly
+                      />
+                    </td>
+                    <td className="p-3 border border-[#D9D9D9] bg-gray-50 w-3/10">
+                      <input
+                        className="w-full focus:outline-none"
+                        placeholder="입력하기"
+                        defaultValue=""
+                        readOnly
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
             </div>
           ))
         ) : (

@@ -7,8 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 interface CashTransaction {
   id: number;
   date: string;
-  type: '입금' | '출금';
-  amount: number;
+  deposit?: number;
+  withdrawal?: number;
   balance: number;
   accountName: string;
   partnerName?: string;
@@ -55,7 +55,8 @@ export default function CashbookPage() {
     maxAmount: undefined,
   });
   const [loading, setLoading] = useState(false);
-  const [transactions, setTransactions] = useState<CashTransaction[]>([]);
+  const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
+  const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [showVoucherDetail, setShowVoucherDetail] = useState(false);
 
@@ -93,7 +94,62 @@ export default function CashbookPage() {
 
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      setTransactions(data.transactions || []);
+      console.log('API 응답 데이터:', data);
+      
+      // API 응답 구조에 맞게 데이터 파싱
+      let cashData: CashTransaction[] = [];
+      let depositData: CashTransaction[] = [];
+      
+      console.log('데이터 파싱 시작:', data);
+      
+      if (data.results && Array.isArray(data.results)) {
+        console.log('results 배열 길이:', data.results.length);
+        
+        data.results.forEach((result: any, index: number) => {
+          console.log(`결과 ${index}:`, result);
+          
+          if (result.result && result.result.type === 'CASH' && result.result.rows) {
+            console.log('현금 데이터 발견:', result.result.rows);
+            cashData = result.result.rows.map((row: any) => ({
+              id: row.transactionId,
+              date: row.date,
+              deposit: row.inAmount || 0,
+              withdrawal: row.outAmount || 0,
+              balance: row.balance,
+              accountName: row.accountName,
+              partnerName: row.partnerName,
+              note: row.note,
+              voucherId: row.voucherId
+            }));
+            console.log('파싱된 현금 데이터:', cashData);
+          } else if (result.result && result.result.type === 'DEPOSIT' && result.result.accounts) {
+            console.log('보통예금 데이터 발견:', result.result.accounts);
+            result.result.accounts.forEach((account: any) => {
+              if (account.rows) {
+                const accountData = account.rows.map((row: any) => ({
+                  id: row.transactionId,
+                  date: row.date,
+                  deposit: row.inAmount || 0,
+                  withdrawal: row.outAmount || 0,
+                  balance: row.balance,
+                  accountName: row.accountName,
+                  partnerName: row.partnerName,
+                  note: row.note,
+                  voucherId: row.voucherId
+                }));
+                depositData = [...depositData, ...accountData];
+              }
+            });
+            console.log('파싱된 보통예금 데이터:', depositData);
+          }
+        });
+      }
+      
+      console.log('최종 현금 데이터:', cashData);
+      console.log('최종 보통예금 데이터:', depositData);
+      
+      setCashTransactions(cashData);
+      setDepositTransactions(depositData);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
     } finally {
@@ -150,11 +206,22 @@ export default function CashbookPage() {
   const handleDownload = () => {
     // CSV 형태로 다운로드
     const csvContent = [
-      ['일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'],
-      ...transactions.map(tx => [
+      ['구분', '일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'],
+      ...cashTransactions.map(tx => [
+        '현금',
         tx.date,
-        tx.type === '입금' ? tx.amount.toLocaleString() : '',
-        tx.type === '출금' ? tx.amount.toLocaleString() : '',
+        tx.deposit ? tx.deposit.toLocaleString() : '',
+        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
+        tx.balance.toLocaleString(),
+        tx.accountName,
+        tx.partnerName || '',
+        tx.note || ''
+      ]),
+      ...depositTransactions.map(tx => [
+        '보통예금',
+        tx.date,
+        tx.deposit ? tx.deposit.toLocaleString() : '',
+        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
         tx.balance.toLocaleString(),
         tx.accountName,
         tx.partnerName || '',
@@ -291,44 +358,97 @@ export default function CashbookPage() {
           </table>
         </div>
 
-        {/* 거래내역 */}
-        {transactions.length > 0 ? (
-          <table className="w-full border text-sm">
-            <thead className="bg-[#F5F5F5]">
+        {/* 현금 테이블 */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">현금</h3>
+          <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+            <thead>
               <tr>
-                <th className="p-2 border">일자</th>
-                <th className="p-2 border">입금</th>
-                <th className="p-2 border">출금</th>
-                <th className="p-2 border">잔액</th>
-                <th className="p-2 border">계정과목</th>
-                <th className="p-2 border">거래처</th>
-                <th className="p-2 border">적요</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">일자</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">입금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">출금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">잔액</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">계정과목</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">적요</th>
               </tr>
             </thead>
             <tbody>
-              {transactions.map(tx => (
-                <tr 
-                  key={tx.id}
-                  onClick={() => handleRowClick(tx)}
-                  className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
-                >
-                  <td className="p-2 border text-center">{tx.date}</td>
-                  <td className="p-2 border text-right">{tx.type === '입금' ? tx.amount.toLocaleString() : '-'}</td>
-                  <td className="p-2 border text-right">{tx.type === '출금' ? tx.amount.toLocaleString() : '-'}</td>
-                  <td className="p-2 border text-right">{tx.balance.toLocaleString()}원</td>
-                  <td className="p-2 border">{tx.accountName}</td>
-                  <td className="p-2 border">{tx.partnerName || '-'}</td>
-                  <td className="p-2 border">{tx.note || '-'}</td>
+              {cashTransactions.length > 0 ? (
+                cashTransactions.map(tx => (
+                  <tr 
+                    key={tx.id}
+                    onClick={() => handleRowClick(tx)}
+                    className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
+                  >
+                    <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                    {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
-        ) : (
-          !loading && (
-            <div className="text-center text-gray-500 py-8">
-              조회된 내역이 없습니다.
-            </div>
-          )
+        </div>
+
+        {/* 보통예금 테이블 */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
+          <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
+            <thead>
+              <tr>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">일자</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">입금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">출금</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">잔액</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">계정과목</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">거래처</th>
+                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">적요</th>
+              </tr>
+            </thead>
+            <tbody>
+              {depositTransactions.length > 0 ? (
+                depositTransactions.map(tx => (
+                  <tr 
+                    key={tx.id}
+                    onClick={() => handleRowClick(tx)}
+                    className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
+                  >
+                    <td className="p-3 border border-[#D9D9D9] text-center">{tx.date}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                    <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                    {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 조회 전 메시지 */}
+        {cashTransactions.length === 0 && depositTransactions.length === 0 && !loading && (
+          <div className="text-center text-gray-500 py-8">
+            조회월을 선택하고 조회하기 버튼을 클릭하세요.
+          </div>
         )}
 
         {/* 전표 상세 모달 */}

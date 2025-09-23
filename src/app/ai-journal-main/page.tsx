@@ -55,7 +55,7 @@ export default function AIJournalMainPage() {
       // 업로드 API 호출
       const res = await fetch(`https://api.eosxai.com/api/ai/extract-raw-transactions/start`, {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` },
+        headers: { 'Authorization': `Bearer ${token}` },
         body: formData,
       });
       if (!res.ok) throw new Error('업로드 실패');
@@ -71,45 +71,14 @@ export default function AIJournalMainPage() {
       const data = await res.json();
       console.log('업로드 결과', data);
 
-      if (data.success && data.data) {
-        if (data.data.journals && Array.isArray(data.data.journals)) {
-          const newRows = data.data.journals.map(
-            (
-              journal: {
-                date?: string;
-                debitAccount?: string;
-                debitAmount?: string;
-                debitPartner?: string;
-                creditAccount?: string;
-                creditAmount?: string;
-                creditPartner?: string;
-                description?: string;
-              },
-              index: number
-            ) => ({
-              id: Date.now() + index,
-              date: journal.date || '',
-              debitAccount: journal.debitAccount || '',
-              debitAmount: journal.debitAmount || '',
-              debitPartner: journal.debitPartner || '',
-              creditAccount: journal.creditAccount || '',
-              creditAmount: journal.creditAmount || '',
-              creditPartner: journal.creditPartner || '',
-              description: journal.description || '',
-            })
-          );
-          setRows(newRows);
-        }
-
-        if (data.data.summary) {
-          setSummary({
-            transactionCount: data.data.summary.transactionCount || 0,
-            newPartnerCount: data.data.summary.newPartnerCount || 0,
-            totalDebit: data.data.summary.totalDebit || 0,
-            totalCredit: data.data.summary.totalCredit || 0,
-            accuracy: data.data.summary.accuracy || 0,
-          });
-        }
+      // API 명세에 따르면 { jobId } 형태로 응답
+      if (data.jobId) {
+        console.log('작업 ID:', data.jobId);
+        // TODO: jobId를 사용하여 SSE 스트림을 시작하거나 다른 처리를 해야 함
+        // 현재는 임시로 성공 메시지만 표시
+        alert('파일 업로드가 시작되었습니다. 작업 ID: ' + data.jobId);
+      } else {
+        throw new Error('작업 ID를 받지 못했습니다.');
       }
     } catch (err) {
       console.error(err);

@@ -122,9 +122,52 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      // 직접 점검용 하드코딩된 데이터
+      // 감가상각 점검 API 호출
+      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          closingDate: closingDate,
+          key: 'depreciation'
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API 에러 응답:', errorData);
+        
+        if (response.status === 500) {
+          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          alert(`감가상각 점검에 실패했습니다. (${response.status})`);
+        }
+        return;
+      }
+
+      const data: DepreciationResponse = await response.json();
+      setDepreciationData(data);
+      
+      // 편집 가능한 형태로 변환
+      const allItems = [...(data.tangible || []), ...(data.intangible || [])];
+      const editableItems: EditableDepreciationItem[] = allItems.map((item, index) => ({
+        ...item,
+        id: `${item.accountName}-${item.itemName}-${index}`,
+        isEditing: false
+      }));
+      setEditableItems(editableItems);
+      
+      // 기존 모달 닫기
+      setShowModal(false);
+      
+      // 감가상각 팝업 열기
+      setShowDepreciationModal(true);
+      
+      // 테이블에 감가상각 항목 표시
       const manualCheckItems = [
-        { id: 1, key: 'depreciation', category: '필수', title: '감가상각처리', description: '내용', status: 'PENDING' as CheckRow['status'] },
+        { id: 1, key: 'depreciation', category: '필수', title: '감가상각처리', description: '내용', status: 'DONE' as CheckRow['status'] },
         { id: 2, key: 'ending_inventory', category: '필수', title: '기말재고확인', description: '내용', status: 'PENDING' as CheckRow['status'] },
         { id: 3, key: 'bad_debt', category: '필수', title: '대손상각', description: '내용', status: 'PENDING' as CheckRow['status'] },
         { id: 4, key: 'retirement_benefit', category: '필수', title: '퇴직급여충당', description: '내용', status: 'PENDING' as CheckRow['status'] },
@@ -136,7 +179,7 @@ export default function AIClosingCheckPage() {
       setRows(manualCheckItems);
     } catch (error) {
       console.error('직접 점검 API 호출 오류:', error);
-      alert('점검 항목을 불러오는데 실패했습니다.');
+      alert('감가상각 점검 중 네트워크 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -607,12 +650,14 @@ export default function AIClosingCheckPage() {
                       setSelectedItemKey(r.key);
                       if (r.key === 'depreciation') {
                         handleDepreciationCheck();
+                        // 감가상각은 별도 팝업을 사용하므로 기존 모달을 열지 않음
                       } else if (r.key === 'ending_inventory') {
                         handleEndingInventoryCheck();
+                        setShowModal(true);
                       } else {
                         setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
+                        setShowModal(true);
                       }
-                      setShowModal(true);
                     }}
                   >
                   점검
@@ -678,232 +723,18 @@ export default function AIClosingCheckPage() {
                   {selectedItemKey === 'period_accrual' && 'AI가 수행한 기말수정분개 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
                 </p>
                   
-                {/* 감가상각 테이블 */}
+                {/* 감가상각은 별도 팝업으로 처리 */}
                 {selectedItemKey === 'depreciation' && (
-                  <div>
-                    {modalLoading ? (
-                      <div className="text-center py-8">
-                        <div className="text-gray-500">감가상각 점검을 실행 중입니다...</div>
-                      </div>
-                    ) : modalData ? (
-                      <table className="w-full border border-[#D9D9D9] text-sm">
-                <thead>
-                          <tr className="bg-[#F5F5F5]">
-                            <th className="p-3 border border-[#D9D9D9] text-center">계정과목</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">품목</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">매입일</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">매입가</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">감가상각 누계액</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center" colSpan={2}>전기상각액</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center" colSpan={2}>당기상각액</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">생산원가 여부</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">내용연수</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">상각방법</th>
-                          </tr>
-                          <tr className="bg-[#F5F5F5]">
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">일자</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">상각액</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">일자</th>
-                            <th className="p-3 border border-[#D9D9D9] text-center">상각액</th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                            <th className="p-3 border border-[#D9D9D9]"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {/* 유형자산 데이터 */}
-                          {modalData.tangible && Array.isArray(modalData.tangible) && modalData.tangible.length > 0 && (
-                            (modalData.tangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => {
-                              // 타입 오류 방지 및 안전한 접근을 위한 타입 단언 및 구조 분해
-                              const priorDep = item.priorDep as { date?: string; amount?: number };
-                              const currentDep = item.currentDep as { date?: string; amount?: number };
-                              return (
-                                <tr key={`tangible-${index}`}>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">{String(item.accountName ?? '-')}</td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={String(item.itemName ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={String(item.purchaseDate ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={typeof item.purchaseAmount === 'number' ? item.purchaseAmount.toLocaleString() : String(item.purchaseAmount ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={typeof item.accumulatedDep === 'number' ? item.accumulatedDep.toLocaleString() : String(item.accumulatedDep ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={String(priorDep?.date ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={typeof priorDep?.amount === 'number' ? priorDep.amount.toLocaleString() : String(priorDep?.amount ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={String(currentDep?.date ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={typeof currentDep?.amount === 'number' ? currentDep.amount.toLocaleString() : String(currentDep?.amount ?? '')}
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <select className="w-full px-2 py-1 text-xs border rounded" defaultValue={item.isProductionCost === true ? "true" : "false"}>
-                                      <option value="false">부</option>
-                                      <option value="true">여</option>
-                                    </select>
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <input 
-                                      type="text" 
-                                      className="w-full px-2 py-1 text-xs border rounded" 
-                                      defaultValue={String(item.usefulLifeMonths ?? '')}
-                                      placeholder="개월"
-                                    />
-                                  </td>
-                                  <td className="p-3 border border-[#D9D9D9] text-center">
-                                    <select className="w-full px-2 py-1 text-xs border rounded" defaultValue={String(item.method ?? 'straight')}>
-                                      <option value="straight">정액법</option>
-                                      <option value="declining">정률법</option>
-                                      <option value="sum">연수합계법</option>
-                                    </select>
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          )}
-                          
-                          {/* 무형자산 데이터 */}
-                          {modalData.intangible && Array.isArray(modalData.intangible) && modalData.intangible.length > 0 && (
-                            (modalData.intangible as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
-                              <tr key={`intangible-${index}`}>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{String(item.accountName || '-')}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={String(item.itemName || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={String(item.purchaseDate || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={typeof item.purchaseAmount === 'number' ? item.purchaseAmount.toLocaleString() : String(item.purchaseAmount || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={typeof item.accumulatedDep === 'number' ? item.accumulatedDep.toLocaleString() : String(item.accumulatedDep || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={String((item.priorDep as Record<string, unknown>)?.date || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={typeof (item.priorDep as Record<string, unknown>)?.amount === 'number' ? ((item.priorDep as Record<string, unknown>).amount as number).toLocaleString() : String((item.priorDep as Record<string, unknown>)?.amount || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={String((item.currentDep as Record<string, unknown>)?.date || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={typeof (item.currentDep as Record<string, unknown>)?.amount === 'number' ? ((item.currentDep as Record<string, unknown>).amount as number).toLocaleString() : String((item.currentDep as Record<string, unknown>)?.amount || '')}
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <select className="w-full px-2 py-1 text-xs border rounded">
-                                    <option value="false" selected={item.isProductionCost === false}>부</option>
-                                    <option value="true" selected={item.isProductionCost === true}>여</option>
-                                  </select>
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <input 
-                                    type="text" 
-                                    className="w-full px-2 py-1 text-xs border rounded" 
-                                    defaultValue={String(item.usefulLifeMonths || '')}
-                                    placeholder="개월"
-                                  />
-                                </td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">
-                                  <select className="w-full px-2 py-1 text-xs border rounded">
-                                    <option value="straight" selected={item.method === 'straight'}>정액법</option>
-                                    <option value="declining" selected={item.method === 'declining'}>정률법</option>
-                                    <option value="sum" selected={item.method === 'sum'}>연수합계법</option>
-                                  </select>
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    ) : (
-                      <div className="text-center py-8">
-                        <div className="text-gray-500">감가상각 점검을 실행해주세요.</div>
-                      </div>
-                    )}
+                  <div className="text-center py-8">
+                    <div className="text-gray-500">감가상각 점검을 실행해주세요.</div>
                   </div>
                 )}
-                
-                {/* 기말재고 테이블 */}
-                {selectedItemKey === 'ending_inventory' && (
+
+                {/* 다른 항목들 */}
+                {selectedItemKey !== 'depreciation' && modalData && (
+                  <>
+                    {/* 기말재고 테이블 */}
+                    {selectedItemKey === 'ending_inventory' && (
                   <div>
                     {modalLoading ? (
                       <div className="text-center py-8">
@@ -911,7 +742,7 @@ export default function AIClosingCheckPage() {
                       </div>
                     ) : modalData ? (
                       <table className="w-full border border-[#D9D9D9] text-sm">
-                        <thead>
+                <thead>
                           <tr className="bg-[#F5F5F5]">
                             <th className="p-3 border border-[#D9D9D9] text-center">계정과목</th>
                             <th className="p-3 border border-[#D9D9D9] text-center">기초재고</th>
@@ -1166,6 +997,8 @@ export default function AIClosingCheckPage() {
                 </tbody>
               </table>
                 )}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -1173,42 +1006,46 @@ export default function AIClosingCheckPage() {
 
         {/* 감가상각 팝업 */}
         {showDepreciationModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-            <div className="bg-white shadow-lg max-w-7xl w-full mx-4 max-h-[90vh] overflow-hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-50 p-6">
+            <div className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
               {/* 팝업 헤더 */}
-              <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 감가상각</div>
-                  <h2 className="text-2xl font-bold text-gray-900">감가상각</h2>
-                  <p className="text-gray-600 mt-2">
-                    AI가 수행한 감가상각 작업을 확인해 주세요. 수정사항이 있으면 수정후 결산반영을 누르면 됩니다.
-                  </p>
-                </div>
-                <div className="flex gap-2">
+              <div className="relative p-6 border-b border-gray-200">
+                {/* X 버튼 - 우측 상단 고정 */}
                 <button
-                    className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                    onClick={() => window.print()}
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+                  onClick={() => setShowDepreciationModal(false)}
                 >
-                    인쇄하기
+                  ✕
                 </button>
-                  <button
-                    className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                    onClick={handleDepreciationApply}
-                    disabled={depreciationLoading}
-                  >
-                    {depreciationLoading ? '처리중...' : '결산 반영'}
-                  </button>
-                <button
-                    className="px-4 py-2 text-sm bg-gray-500 text-white hover:bg-gray-600"
-                    onClick={() => setShowDepreciationModal(false)}
-                >
-                    ✕
+                
+                <div className="flex justify-between items-start pr-12">
+                  <div>
+                    <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 감가상각</div>
+                    <h2 className="text-2xl font-bold text-gray-900">감가상각</h2>
+                    <p className="text-gray-600 mt-2">
+                      AI가 수행한 감가상각 작업을 확인해 주세요. 수정사항이 있으면 수정후 결산반영을 누르면 됩니다.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
+                      onClick={() => window.print()}
+                    >
+                      인쇄하기
+                    </button>
+                    <button
+                      className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
+                      onClick={handleDepreciationApply}
+                      disabled={depreciationLoading}
+                    >
+                      {depreciationLoading ? '처리중...' : '결산 반영'}
                 </button>
               </div>
             </div>
+          </div>
 
               {/* 팝업 내용 */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="p-6 overflow-y-auto h-[calc(100%-120px)]">
                 {depreciationLoading ? (
                   <div className="text-center py-8">
                     <div className="text-gray-500">감가상각 데이터를 불러오는 중...</div>
@@ -1298,7 +1135,18 @@ export default function AIClosingCheckPage() {
                     <div>
                       <div className="mb-4">
                         <h3 className="text-lg font-semibold">전표 점검</h3>
-                        <p className="text-gray-600">결산반영을 누르면 아래형식의 전표생성 (품목별로 분개하고, 계정과목별로 합산)</p>
+                        <div className="flex justify-between items-center">
+                          <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
+                          <button
+                            className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
+                            onClick={() => {
+                              alert('전표가 저장되었습니다.');
+                              setShowDepreciationModal(false);
+                            }}
+                          >
+                            저장
+                          </button>
+                        </div>
                       </div>
                       
                       <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">

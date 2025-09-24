@@ -1,27 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import FileUploadBox from '@/components/FileUploadBox';
-
-interface JournalRow {
-  id: number;
-  date: string;
-  debitAccount: string;
-  debitAmount: string;
-  debitPartner: string;
-  creditAccount: string;
-  creditAmount: string;
-  creditPartner: string;
-  description: string;
-}
-
 
 export default function AIJournalMainPage() {
   const router = useRouter();
-  const { isAuthenticated, loading: authLoading, token } = useAuth();
-  const [rows] = useState<JournalRow[]>([]);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -29,74 +14,12 @@ export default function AIJournalMainPage() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [summary] = useState({
-    transactionCount: 0,
-    newPartnerCount: 0,
-    totalDebit: 0,
-    totalCredit: 0,
-    accuracy: 0,
-  });
-
-  const hasData = rows.length > 0;
-
-  /** 파일 업로드 */
-  const handleFileUpload = async (file: File) => {
-    if (!token) return;
-    
-    const formData = new FormData();
-    formData.append('files', file);
-
-    try {
-      setLoading(true);
-      setProgress({ current: 0, total: 200 }); // 예시 total (실제는 SSE로 받아올 수 있음)
-
-      // 업로드 API 호출
-      const res = await fetch(`https://api.eosxai.com/api/ai/extract-raw-transactions/start`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData,
-      });
-      if (!res.ok) throw new Error('업로드 실패');
-
-      // fake progress 증가 (실제는 SSE 이벤트로 업데이트)
-      let count = 0;
-      const interval = setInterval(() => {
-        count++;
-        setProgress({ current: count, total: 200 });
-        if (count >= 200) clearInterval(interval);
-      }, 50);
-
-      const data = await res.json();
-      console.log('업로드 결과', data);
-
-      // API 명세에 따르면 { jobId } 형태로 응답
-      if (data.jobId) {
-        console.log('작업 ID:', data.jobId);
-        // TODO: jobId를 사용하여 SSE 스트림을 시작하거나 다른 처리를 해야 함
-        // 현재는 임시로 성공 메시지만 표시
-        alert('파일 업로드가 시작되었습니다. 작업 ID: ' + data.jobId);
-      } else {
-        throw new Error('작업 ID를 받지 못했습니다.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('파일 업로드 실패');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    alert('저장 API는 추후 구현 예정입니다.');
-  };
 
   // 로딩 중이거나 인증되지 않은 경우
   if (authLoading) {
     return (
       <div className="p-8">
-        <div className="mx-auto w-full">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center py-8">로딩 중...</div>
         </div>
       </div>
@@ -109,202 +32,113 @@ export default function AIJournalMainPage() {
 
   return (
     <div className="p-8">
-      <div className="mx-auto w-full">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">AI 분개</h2>
-            <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 분개를 시작하세요.
-            </p>
-          </div>
-          {hasData && (
-            <div className="flex gap-3">
-              <button
-                className="flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-                onClick={() => document.getElementById('journalFile')?.click()}
-                disabled={loading}
-              >
-                파일 업로드
-              </button>
-              <button
-                className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] rounded ${
-                  hasData && !loading
-                    ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
-                    : 'bg-[#E6E6E6]'
-                }`}
-                onClick={handleSave}
-                disabled={!hasData || loading}
-              >
-                저장하기
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* 파일 업로드 박스 */}
         <div className="mb-6">
-          <FileUploadBox
-            id="journalFile"
-            onFileUpload={handleFileUpload}
-            loading={loading}
-            style={{
-              height: loading ? '80px' : '120px',
-            }}
-            customLoadingContent={
-              <div className="flex flex-col items-center justify-center h-full">
-                {/* Progress Bar */}
-                <div className="w-full bg-gray-100 rounded-full h-2 mb-2">
-                  <div
-                    className="bg-gradient-to-r from-sky-400 to-purple-500 h-2 rounded-full transition-all"
-                    style={{
-                      width: `${(progress.current / progress.total) * 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="text-sm text-[#767676]">
-                  파일 내용을 분석하고 분개작업을 진행중입니다. (
-                  {progress.current}/{progress.total})
-                </div>
-              </div>
-            }
-          />
+          <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">AI 분개</h2>
+          <p className="text-[#767676]">
+            증빙을 업로드하면 AI가 자동으로 분개를 생성합니다.
+          </p>
         </div>
 
-        {/* 업로드 완료 후 데이터 표시 */}
-        {hasData && !loading && (
-          <>
-            {/* 요약 영역 */}
-            <div className="grid grid-cols-5 gap-4 mb-6 text-center border border-[#D9D9D9]">
-              {[
-                { label: '거래건수', value: `${summary.transactionCount}건` },
-                {
-                  label: '신규거래처수',
-                  value: `${summary.newPartnerCount}개`,
-                },
-                {
-                  label: '차변합계',
-                  value: `${summary.totalDebit.toLocaleString()}원`,
-                },
-                {
-                  label: '대변합계',
-                  value: `${summary.totalCredit.toLocaleString()}원`,
-                },
-                { label: '분개 적중률', value: `${summary.accuracy}%` },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 border-r border-[#D9D9D9] last:border-r-0"
-                >
-                  <div className="text-sm text-[#767676]">{item.label}</div>
-                  <div className="text-lg font-bold text-[#1E1E1E]">
-                    {item.value}
-                  </div>
-                </div>
-              ))}
+        {/* 메인 컨텐츠 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 증빙 업로드 카드 */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-[#F5F5F5] rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-[#767676]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E1E1E]">증빙 업로드</h3>
+                <p className="text-sm text-[#767676]">증빙 파일을 업로드하여 AI 분개를 시작하세요</p>
+              </div>
             </div>
+            <button
+              onClick={() => router.push('/ai-journal')}
+              className="w-full bg-[#2C2C2C] text-white py-3 px-4 rounded-lg hover:bg-[#1E1E1E] transition-colors"
+            >
+              증빙 업로드하기
+            </button>
+          </div>
 
-            {/* 분개 테이블 */}
-            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-              <thead>
-                <tr>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    번호
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    일자
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    차변 계정과목
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    금액
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    거래처
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    대변 계정과목
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    금액
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    거래처
-                  </td>
-                  <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
-                    적요
-                  </td>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, idx) => (
-                  <tr key={row.id}>
-                    <td className="p-3 border border-[#D9D9D9] text-center">
-                      {idx + 1}
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.date}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.debitAccount}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.debitAmount}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.debitPartner}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.creditAccount}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.creditAmount}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.creditPartner}
-                      />
-                    </td>
-                    <td className="p-3 border border-[#D9D9D9]">
-                      <input
-                        className="w-full focus:outline-none"
-                        placeholder="입력하기"
-                        value={row.description}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
+          {/* 수동 분개 카드 */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-[#F5F5F5] rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-[#767676]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E1E1E]">수동 분개</h3>
+                <p className="text-sm text-[#767676]">직접 분개를 입력하여 전표를 생성하세요</p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/manual-journal')}
+              className="w-full bg-[#2C2C2C] text-white py-3 px-4 rounded-lg hover:bg-[#1E1E1E] transition-colors"
+            >
+              수동 분개하기
+            </button>
+          </div>
+
+          {/* 지침 주기 카드 */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-[#F5F5F5] rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-[#767676]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E1E1E]">지침 주기</h3>
+                <p className="text-sm text-[#767676]">AI 분개를 위한 지침을 관리하세요</p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/guideline-period')}
+              className="w-full bg-[#2C2C2C] text-white py-3 px-4 rounded-lg hover:bg-[#1E1E1E] transition-colors"
+            >
+              지침 관리하기
+            </button>
+          </div>
+
+          {/* AI 결산점검 카드 */}
+          <div className="bg-white border border-[#D9D9D9] rounded-lg p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-[#F5F5F5] rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-[#767676]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#1E1E1E]">AI 결산점검</h3>
+                <p className="text-sm text-[#767676]">AI가 자동으로 결산점검을 수행합니다</p>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/ai-closing-check')}
+              className="w-full bg-[#2C2C2C] text-white py-3 px-4 rounded-lg hover:bg-[#1E1E1E] transition-colors"
+            >
+              결산점검하기
+            </button>
+          </div>
+        </div>
+
+        {/* 최근 활동 */}
+        <div className="mt-8 bg-white border border-[#D9D9D9] rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-[#1E1E1E] mb-4">최근 활동</h3>
+          <div className="text-center py-8 text-[#767676]">
+            <svg className="w-12 h-12 mx-auto mb-4 text-[#D9D9D9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p>아직 활동 내역이 없습니다.</p>
+            <p className="text-sm mt-2">증빙을 업로드하거나 수동 분개를 시작해보세요.</p>
+          </div>
+        </div>
       </div>
     </div>
   );

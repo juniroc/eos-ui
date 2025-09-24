@@ -17,6 +17,40 @@ interface AutoModeResponse {
   closingDate: string;
 }
 
+interface DepreciationItem {
+  accountName: string;
+  itemName: string;
+  purchaseDate: string;
+  purchaseAmount: number;
+  accumulatedDep: number;
+  priorDep: { date: string; amount: number } | null;
+  currentDep: { date: string; amount: number } | null;
+  isProductionCost: boolean;
+  usefulLifeMonths: number;
+  method: string;
+}
+
+interface DepreciationResponse {
+  key: string;
+  status: string;
+  tangible: DepreciationItem[];
+  intangible: DepreciationItem[];
+}
+
+interface VoucherTransaction {
+  account: string;
+  partner: string;
+  amount: number;
+  debitCredit: 'DEBIT' | 'CREDIT';
+  note: string;
+}
+
+interface VoucherResponse {
+  voucher: {
+    transactions: VoucherTransaction[];
+  };
+}
+
 export default function AIClosingCheckPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -34,6 +68,12 @@ export default function AIClosingCheckPage() {
   const [selectedItemKey, setSelectedItemKey] = useState<string>('');
   const [allResults, setAllResults] = useState<Record<string, unknown> | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
+  
+  // 감가상각 팝업 상태
+  const [showDepreciationModal, setShowDepreciationModal] = useState(false);
+  const [depreciationData, setDepreciationData] = useState<DepreciationResponse | null>(null);
+  const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
+  const [depreciationLoading, setDepreciationLoading] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -240,7 +280,7 @@ export default function AIClosingCheckPage() {
   /** 감가상각 점검 실행 */
   const handleDepreciationCheck = async () => {
     try {
-      setModalLoading(true);
+      setDepreciationLoading(true);
       const accessToken = localStorage.getItem('accessToken');
       
       if (!accessToken) {
@@ -264,13 +304,54 @@ export default function AIClosingCheckPage() {
         throw new Error('감가상각 점검 API 호출에 실패했습니다.');
       }
 
-      const data = await response.json();
-      setModalData(data);
+      const data: DepreciationResponse = await response.json();
+      setDepreciationData(data);
+      setShowDepreciationModal(true);
     } catch (error) {
       console.error('감가상각 점검 오류:', error);
       alert('감가상각 점검을 실행하는데 실패했습니다.');
     } finally {
-      setModalLoading(false);
+      setDepreciationLoading(false);
+    }
+  };
+
+  /** 감가상각 결산반영 */
+  const handleDepreciationApply = async () => {
+    try {
+      setDepreciationLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          closingDate: closingDate,
+          key: 'depreciation',
+          description: '감가상각 처리',
+          tangible: depreciationData?.tangible,
+          intangible: depreciationData?.intangible
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('감가상각 결산반영 API 호출에 실패했습니다.');
+      }
+
+      const data: VoucherResponse = await response.json();
+      setVoucherData(data);
+    } catch (error) {
+      console.error('감가상각 결산반영 오류:', error);
+      alert('감가상각 결산반영에 실패했습니다.');
+    } finally {
+      setDepreciationLoading(false);
     }
   };
 
@@ -1001,6 +1082,342 @@ export default function AIClosingCheckPage() {
                       )}
                 </tbody>
               </table>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 감가상각 팝업 */}
+        {showDepreciationModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div className="bg-white shadow-lg max-w-7xl w-full mx-4 max-h-[90vh] overflow-hidden">
+              {/* 팝업 헤더 */}
+              <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 감가상각</div>
+                  <h2 className="text-2xl font-bold text-gray-900">감가상각</h2>
+                  <p className="text-gray-600 mt-2">
+                    AI가 수행한 감가상각 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
+                    onClick={() => window.print()}
+                  >
+                    인쇄하기
+                  </button>
+                  <button
+                    className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
+                    onClick={handleDepreciationApply}
+                    disabled={depreciationLoading}
+                  >
+                    {depreciationLoading ? '처리중...' : '결산 반영'}
+                  </button>
+                <button
+                    className="px-4 py-2 text-sm bg-gray-500 text-white hover:bg-gray-600"
+                    onClick={() => setShowDepreciationModal(false)}
+                >
+                    ✕
+                </button>
+                </div>
+              </div>
+
+              {/* 팝업 내용 */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                {depreciationLoading ? (
+                  <div className="text-center py-8">
+                    <div className="text-gray-500">감가상각 데이터를 불러오는 중...</div>
+                  </div>
+                ) : depreciationData ? (
+                  <>
+                    {/* 감가상각 테이블 */}
+                    <div className="mb-8">
+                      <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
+                        <thead>
+                          <tr>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">품목</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">매입일</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">매입가</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">감가상각 누계액</th>
+                            <th colSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">전기상각액</th>
+                            <th colSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">당기상각액</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">생산원가 여부</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">내용연수</th>
+                            <th rowSpan={2} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">상각방법</th>
+                          </tr>
+                          <tr>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">상각액</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">상각액</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[...(depreciationData.tangible || []), ...(depreciationData.intangible || [])].length > 0 ? (
+                            [...(depreciationData.tangible || []), ...(depreciationData.intangible || [])].map((item, index) => (
+                              <tr key={index}>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.accountName}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.itemName}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.purchaseDate}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.purchaseAmount.toLocaleString()} 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.accumulatedDep.toLocaleString()} 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.priorDep?.date || '-'}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.priorDep?.amount.toLocaleString() || '0'} 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.currentDep?.date || '-'}</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">{item.currentDep?.amount.toLocaleString() || '0'} 원</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                <select 
+                                  className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                  defaultValue={item.isProductionCost ? '예' : '부'}
+                                >
+                                  <option value="예">예</option>
+                                  <option value="부">부</option>
+                                </select>
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="number" 
+                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                    defaultValue={Math.floor(item.usefulLifeMonths / 12)}
+                                  />
+                                  <span className="ml-1">년</span>
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <select 
+                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                    defaultValue={item.method}
+                                  >
+                                    <option value="정액법">정액법</option>
+                                    <option value="정률법">정률법</option>
+                                    <option value="생산량비례법">생산량비례법</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            // 이미지에 맞는 예시 데이터 (5개 행)
+                            Array.from({ length: 5 }, (_, index) => (
+                              <tr key={index}>
+                                <td className="p-3 border border-[#D9D9D9] text-center">비품</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">책상</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">250000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000 000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">원 250000 000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">250000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">250000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">000</td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <select className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]" defaultValue="부">
+                                    <option value="예">예</option>
+                                    <option value="부">부</option>
+                                  </select>
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <input 
+                                    type="number" 
+                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                    defaultValue={0}
+                                  />
+                                  <span className="ml-1">년</span>
+                                </td>
+                                <td className="p-3 border border-[#D9D9D9] text-center">
+                                  <select className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]" defaultValue="정액법">
+                                    <option value="정액법">정액법</option>
+                                    <option value="정률법">정률법</option>
+                                    <option value="생산량비례법">생산량비례법</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* 전표 점검 섹션 */}
+                    <div>
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">전표 점검</h3>
+                        <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
+                      </div>
+                      
+                      <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
+                        <thead>
+                          <tr>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
+                            <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변</th>
+                            <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대변</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
+                          </tr>
+                          <tr>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
+                            <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* 이미지에 맞는 예시 데이터 (2개 행 + 소계) */}
+                          <tr>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                                defaultValue="000"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                              <span className="ml-1">원</span>
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                              <span className="ml-1">원</span>
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                                defaultValue="000"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                              <span className="ml-1">원</span>
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                              <span className="ml-1">원</span>
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                placeholder="입력하기"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">-</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">-</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">-</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">000 원</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">-</td>
+                            <td className="p-3 border border-[#D9D9D9] text-center">-</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      
+                      <div className="flex justify-end mt-4">
+                        <button
+                          className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
+                          onClick={() => {
+                            alert('전표가 저장되었습니다.');
+                            setShowDepreciationModal(false);
+                          }}
+                        >
+                          저장하기
+                </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-gray-500">감가상각 데이터가 없습니다.</div>
+                  </div>
                 )}
               </div>
             </div>

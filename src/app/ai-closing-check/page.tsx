@@ -301,7 +301,15 @@ export default function AIClosingCheckPage() {
       });
 
       if (!response.ok) {
-        throw new Error('감가상각 점검 API 호출에 실패했습니다.');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API 에러 응답:', errorData);
+        
+        if (response.status === 500) {
+          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          alert(`감가상각 점검에 실패했습니다. (${response.status})`);
+        }
+        return;
       }
 
       const data: DepreciationResponse = await response.json();
@@ -309,7 +317,7 @@ export default function AIClosingCheckPage() {
       setShowDepreciationModal(true);
     } catch (error) {
       console.error('감가상각 점검 오류:', error);
-      alert('감가상각 점검을 실행하는데 실패했습니다.');
+      alert('감가상각 점검 중 네트워크 오류가 발생했습니다.');
     } finally {
       setDepreciationLoading(false);
     }
@@ -336,20 +344,31 @@ export default function AIClosingCheckPage() {
           closingDate: closingDate,
           key: 'depreciation',
           description: '감가상각 처리',
-          tangible: depreciationData?.tangible,
-          intangible: depreciationData?.intangible
+          tangible: depreciationData?.tangible || [],
+          intangible: depreciationData?.intangible || []
         })
       });
 
       if (!response.ok) {
-        throw new Error('감가상각 결산반영 API 호출에 실패했습니다.');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API 에러 응답:', errorData);
+        
+        if (response.status === 500) {
+          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
+        }
+        return;
       }
 
       const data: VoucherResponse = await response.json();
       setVoucherData(data);
+      
+      // 성공 메시지 표시
+      alert('감가상각 결산반영이 완료되었습니다.');
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
-      alert('감가상각 결산반영에 실패했습니다.');
+      alert('감가상각 결산반영 중 네트워크 오류가 발생했습니다.');
     } finally {
       setDepreciationLoading(false);
     }

@@ -486,7 +486,7 @@ export default function AIClosingCheckPage() {
                 <div className="flex gap-2">
                   <button
                     className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                    onClick={() => {/* 인쇄 기능 */}}
+                    onClick={() => window.print()}
                   >
                     인쇄하기
                   </button>

@@ -89,7 +89,7 @@ export async function extractBusinessInfoWithAuth(file: File, token: string): Pr
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`https://api.eosxai.com/api/auth/extract-business-info`, {
+  const response = await fetch(`https://api.eosxai.com/api/ai/extract-business-info`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -532,7 +532,7 @@ export async function extractBusinessInfo(file: File): Promise<{
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`https://api.eosxai.com/api/auth/extract-business-info-with-tax-agent`, {
+  const response = await fetch(`https://api.eosxai.com/api/ai/extract-business-info-with-tax-agent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',

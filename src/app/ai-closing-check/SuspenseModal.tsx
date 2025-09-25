@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // 타입 정의
 interface SuspenseTransaction {
@@ -39,103 +39,140 @@ interface EditableSuspenseTransaction extends SuspenseTransaction {
 interface SuspenseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: SuspenseData | null;
   loading: boolean;
-  editableTransactions: EditableSuspenseTransaction[];
-  onTransactionChange: (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => void;
   onApply: (data: SuspenseData) => void;
   closingDate: string;
   onClosingDateChange: (date: string) => void;
+  onDirectCheck: (date: string) => void;
 }
 
 const SuspenseModal: React.FC<SuspenseModalProps> = ({
   isOpen,
   onClose,
-  data,
   loading,
-  editableTransactions,
-  onTransactionChange,
   onApply,
   closingDate,
   onClosingDateChange,
+  onDirectCheck,
 }) => {
-  // 더미 데이터 생성
-  const dummyData: SuspenseData = {
-    key: 'suspense_clear',
-    status: 'DONE',
-    vouchers: [
-      {
-        voucherId: 'V2024001',
-        date: '2024-12-31',
-        description: '가수가지급금 정리',
-        transactions: [
-          {
-            id: 'T001',
-            accountId: 'ACC001',
-            accountCode: '1310',
-            accountName: '가수금',
-            debitCredit: 'DEBIT',
-            amount: 500000,
-            partnerId: 'P001',
-            partnerName: '김철수',
-            note: '임시 지급금 정리'
-          },
-          {
-            id: 'T002',
-            accountId: 'ACC002',
-            accountCode: '2110',
-            accountName: '현금',
-            debitCredit: 'CREDIT',
-            amount: 500000,
-            partnerId: undefined,
-            partnerName: undefined,
-            note: '현금 출금'
-          },
-          {
-            id: 'T003',
-            accountId: 'ACC003',
-            accountCode: '1320',
-            accountName: '가지급금',
-            debitCredit: 'CREDIT',
-            amount: 300000,
-            partnerId: 'P002',
-            partnerName: '이영희',
-            note: '임시 차입금 정리'
-          },
-          {
-            id: 'T004',
-            accountId: 'ACC004',
-            accountCode: '4110',
-            accountName: '급여',
-            debitCredit: 'DEBIT',
-            amount: 300000,
-            partnerId: 'P002',
-            partnerName: '이영희',
-            note: '급여 지급'
-          }
-        ]
-      }
-    ],
-    period: {
-      start: '2024-01-01',
-      end: '2024-12-31'
-    }
-  };
+  // 내부 상태로 트랜잭션 데이터 관리
+  const [transactions, setTransactions] = useState<EditableSuspenseTransaction[]>([]);
+  const [data, setData] = useState<SuspenseData | null>(null);
 
-  // 더미 데이터를 편집 가능한 형태로 변환
-  const dummyEditableTransactions: EditableSuspenseTransaction[] = [];
-  dummyData.vouchers.forEach(voucher => {
-    voucher.transactions.forEach(transaction => {
-      dummyEditableTransactions.push({
-        ...transaction,
-        isEditing: false
+  // 컴포넌트 마운트 시 더미 데이터로 초기화
+  useEffect(() => {
+    // 더미 데이터 생성
+    const dummyData: SuspenseData = {
+      key: 'suspense_clear',
+      status: 'DONE',
+      vouchers: [
+        {
+          voucherId: 'V2024001',
+          date: '2024-12-31',
+          description: '가수가지급금 정리',
+          transactions: [
+            {
+              id: 'T001',
+              accountId: 'ACC001',
+              accountCode: '1310',
+              accountName: '가수금',
+              debitCredit: 'DEBIT',
+              amount: 500000,
+              partnerId: 'P001',
+              partnerName: '김철수',
+              note: '임시 지급금 정리'
+            },
+            {
+              id: 'T002',
+              accountId: 'ACC002',
+              accountCode: '2110',
+              accountName: '현금',
+              debitCredit: 'CREDIT',
+              amount: 500000,
+              partnerId: undefined,
+              partnerName: undefined,
+              note: '현금 출금'
+            },
+            {
+              id: 'T003',
+              accountId: 'ACC003',
+              accountCode: '1320',
+              accountName: '가지급금',
+              debitCredit: 'CREDIT',
+              amount: 300000,
+              partnerId: 'P002',
+              partnerName: '이영희',
+              note: '임시 차입금 정리'
+            },
+            {
+              id: 'T004',
+              accountId: 'ACC004',
+              accountCode: '4110',
+              accountName: '급여',
+              debitCredit: 'DEBIT',
+              amount: 300000,
+              partnerId: 'P002',
+              partnerName: '이영희',
+              note: '급여 지급'
+            }
+          ]
+        }
+      ],
+      period: {
+        start: '2024-01-01',
+        end: '2024-12-31'
+      }
+    };
+
+    const initialTransactions: EditableSuspenseTransaction[] = [];
+    dummyData.vouchers.forEach(voucher => {
+      voucher.transactions.forEach(transaction => {
+        initialTransactions.push({
+          ...transaction,
+          isEditing: false
+        });
       });
     });
-  });
+    setTransactions(initialTransactions);
+    setData(dummyData);
+  }, []);
 
-  // 실제 데이터가 없으면 더미 데이터 사용
-  const displayData = dummyData;
-  const displayTransactions = editableTransactions.length > 0 ? editableTransactions : dummyEditableTransactions;
+  // 트랜잭션 값 변경 핸들러
+  const handleTransactionChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
+    setTransactions(prev => 
+      prev.map(transaction => 
+        transaction.id === id 
+          ? { ...transaction, [field]: value }
+          : transaction
+      )
+    );
+  };
+
+  // 편집된 트랜잭션에서 값을 가져오는 헬퍼 함수
+  const getTransactionValue = (transactionId: string, field: keyof EditableSuspenseTransaction) => {
+    const transaction = transactions.find(t => t.id === transactionId);
+    return transaction ? transaction[field] : '';
+  };
+
+  // 저장 핸들러
+  const handleSave = () => {
+    if (!data) return;
+    
+    // 편집된 트랜잭션을 data에 반영
+    const updatedData = {
+      ...data,
+      vouchers: data.vouchers.map(voucher => ({
+        ...voucher,
+        transactions: voucher.transactions.map(transaction => {
+          const editedTransaction = transactions.find(t => t.id === transaction.id);
+          return editedTransaction || transaction;
+        })
+      }))
+    };
+    
+    alert('가수가지급금이 저장되었습니다');
+    // onApply(updatedData);
+  };
 
   if (!isOpen) return null;
 
@@ -198,7 +235,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
               
               {/* 직접 점검하기 버튼 */}
               <button
-                // onClick={onApply}
+                onClick={() => onDirectCheck(closingDate)}
                 disabled={loading}
                 className="flex items-center justify-center px-3 py-2 gap-2 w-[90px] h-7 bg-[#2C2C2C] text-white text-xs leading-3"
               >
@@ -211,7 +248,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                   WebkitBackgroundClip: 'text',
                   backgroundClip: 'text',
                 }}
-                onClick={() => onApply(displayData)}>
+                onClick={handleSave}>
                 저장
               </button>
             </div>
@@ -223,7 +260,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
               <div className="flex items-center justify-center h-full">
                 <div className="text-[#757575]">가수가지급금 데이터를 불러오는 중...</div>
               </div>
-            ) : displayData && displayTransactions.length > 0 ? (
+            ) : data && transactions.length > 0 ? (
               <div className="flex flex-col h-full">
                 {/* 테이블 헤더 - table 구조 사용 */}
                 <table className="w-full border-collapse">
@@ -267,11 +304,11 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
 
                 {/* 테이블 바디 */}
                 <div className="flex-1 overflow-y-auto">
-                  {displayTransactions.map((transaction, index) => (
+                  {transactions.map((transaction) => (
                     <div key={transaction.id} className="flex h-8">
                       {/* 일자 */}
                       <div className="w-[100px] min-w-[100px] h-8 flex items-center justify-center p-2 bg-white border-l border-r border-b border-[#D9D9D9]">
-                        <span className="text-xs text-[#757575]">{displayData.vouchers[0]?.date || '2024-12-31'}</span>
+                        <span className="text-xs text-[#757575]">{data?.vouchers[0]?.date || '2024-12-31'}</span>
                       </div>
                       
                       {/* 차변 섹션 */}
@@ -281,13 +318,27 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                           {transaction.debitCredit === 'DEBIT' ? (
                             <input
                               type="text"
-                              value={`${transaction.accountCode} ${transaction.accountName}`}
+                              value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
-                              readOnly
+                              onChange={(e) => {
+                                const [code, ...nameParts] = e.target.value.split(' ');
+                                handleTransactionChange(transaction.id, 'accountCode', code || '');
+                                handleTransactionChange(transaction.id, 'accountName', nameParts.join(' ') || '');
+                              }}
                             />
                           ) : (
-                            <span className="text-xs text-[#B3B3B3]">입력하기</span>
+                            <input
+                              type="text"
+                              value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
+                              className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
+                              placeholder="입력하기"
+                              onChange={(e) => {
+                                const [code, ...nameParts] = e.target.value.split(' ');
+                                handleTransactionChange(transaction.id, 'accountCode', code || '');
+                                handleTransactionChange(transaction.id, 'accountName', nameParts.join(' ') || '');
+                              }}
+                            />
                           )}
                         </div>
                         {/* 차변 금액 */}
@@ -296,10 +347,13 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                             <div className="w-full flex items-center">
                               <input
                                 type="text"
-                                value={transaction.amount.toLocaleString()}
+                                value={(getTransactionValue(transaction.id, 'amount') as number || 0).toLocaleString()}
                                 className="w-[calc(100%-15px)] text-xs text-[#B3B3B3] bg-transparent outline-none text-right"
                                 placeholder="입력하기"
-                                readOnly
+                                onChange={(e) => {
+                                  const numericValue = parseInt(e.target.value.replace(/,/g, '')) || 0;
+                                  handleTransactionChange(transaction.id, 'amount', numericValue);
+                                }}
                               />
                               <span className="text-xs text-[#B3B3B3] w-[15px] text-left">원</span>
                             </div>
@@ -307,8 +361,13 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                             <div className="w-full flex items-center">
                               <input
                                 type="text"
+                                value={(getTransactionValue(transaction.id, 'amount') as number || 0).toLocaleString()}
                                 className="w-[calc(100%-15px)] text-xs text-[#B3B3B3] bg-transparent outline-none text-right"
                                 placeholder="입력하기"
+                                onChange={(e) => {
+                                  const numericValue = parseInt(e.target.value.replace(/,/g, '')) || 0;
+                                  handleTransactionChange(transaction.id, 'amount', numericValue);
+                                }}
                               />
                               <span className="text-xs text-[#B3B3B3] w-[15px] text-left">원</span>
                             </div>
@@ -319,16 +378,18 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                           {transaction.debitCredit === 'DEBIT' ? (
                             <input
                               type="text"
-                              value={transaction.partnerName || ''}
+                              value={getTransactionValue(transaction.id, 'partnerName') as string || ''}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
-                              readOnly
+                              onChange={(e) => handleTransactionChange(transaction.id, 'partnerName', e.target.value)}
                             />
                           ) : (
                             <input
                               type="text"
+                              value={getTransactionValue(transaction.id, 'partnerName') as string || ''}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
+                              onChange={(e) => handleTransactionChange(transaction.id, 'partnerName', e.target.value)}
                             />
                           )}
                         </div>
@@ -341,16 +402,26 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                           {transaction.debitCredit === 'CREDIT' ? (
                             <input
                               type="text"
-                              value={`${transaction.accountCode} ${transaction.accountName}`}
+                              value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
-                              readOnly
+                              onChange={(e) => {
+                                const [code, ...nameParts] = e.target.value.split(' ');
+                                handleTransactionChange(transaction.id, 'accountCode', code || '');
+                                handleTransactionChange(transaction.id, 'accountName', nameParts.join(' ') || '');
+                              }}
                             />
                           ) : (
                             <input
                               type="text"
+                              value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
+                              onChange={(e) => {
+                                const [code, ...nameParts] = e.target.value.split(' ');
+                                handleTransactionChange(transaction.id, 'accountCode', code || '');
+                                handleTransactionChange(transaction.id, 'accountName', nameParts.join(' ') || '');
+                              }}
                             />
                           )}
                         </div>
@@ -360,10 +431,13 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                             <div className="w-full flex items-center">
                               <input
                                 type="text"
-                                value={transaction.amount.toLocaleString()}
+                                value={(getTransactionValue(transaction.id, 'amount') as number || 0).toLocaleString()}
                                 className="w-[calc(100%-15px)] text-xs text-[#B3B3B3] bg-transparent outline-none text-right"
                                 placeholder="입력하기"
-                                readOnly
+                                onChange={(e) => {
+                                  const numericValue = parseInt(e.target.value.replace(/,/g, '')) || 0;
+                                  handleTransactionChange(transaction.id, 'amount', numericValue);
+                                }}
                               />
                               <span className="text-xs text-[#B3B3B3] w-[15px] text-left">원</span>
                             </div>
@@ -371,8 +445,13 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                             <div className="w-full flex items-center">
                               <input
                                 type="text"
+                                value={(getTransactionValue(transaction.id, 'amount') as number || 0).toLocaleString()}
                                 className="w-[calc(100%-15px)] text-xs text-[#B3B3B3] bg-transparent outline-none text-right"
                                 placeholder="입력하기"
+                                onChange={(e) => {
+                                  const numericValue = parseInt(e.target.value.replace(/,/g, '')) || 0;
+                                  handleTransactionChange(transaction.id, 'amount', numericValue);
+                                }}
                               />
                               <span className="text-xs text-[#B3B3B3] w-[15px] text-left">원</span>
                             </div>
@@ -383,16 +462,18 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                           {transaction.debitCredit === 'CREDIT' ? (
                             <input
                               type="text"
-                              value={transaction.partnerName || ''}
+                              value={getTransactionValue(transaction.id, 'partnerName') as string || ''}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
-                              readOnly
+                              onChange={(e) => handleTransactionChange(transaction.id, 'partnerName', e.target.value)}
                             />
                           ) : (
                             <input
                               type="text"
+                              value={getTransactionValue(transaction.id, 'partnerName') as string || ''}
                               className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                               placeholder="입력하기"
+                              onChange={(e) => handleTransactionChange(transaction.id, 'partnerName', e.target.value)}
                             />
                           )}
                         </div>
@@ -402,10 +483,10 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                       <div className="w-[369.33px] min-w-[100px] h-8 flex items-center p-2 bg-white border-r border-b border-[#D9D9D9]">
                         <input
                           type="text"
-                          value={transaction.note || ''}
+                          value={getTransactionValue(transaction.id, 'note') as string || ''}
                           className="w-full text-xs text-[#B3B3B3] bg-transparent outline-none"
                           placeholder="입력하기"
-                          readOnly
+                          onChange={(e) => handleTransactionChange(transaction.id, 'note', e.target.value)}
                         />
                       </div>
                     </div>
@@ -422,7 +503,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                       <div className="w-[123.11px] min-w-[100px] h-8 p-2 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]"></div>
                       <div className="w-[123.11px] min-w-[100px] h-8 flex items-center justify-center p-2 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                         <span className="text-xs text-[#757575]">
-                          {displayTransactions
+                          {transactions
                             .filter(t => t.debitCredit === 'DEBIT')
                             .reduce((sum, t) => sum + t.amount, 0)
                             .toLocaleString()}
@@ -436,7 +517,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                       <div className="w-[123.11px] min-w-[100px] h-8 p-2 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]"></div>
                       <div className="w-[123.11px] min-w-[100px] h-8 flex items-center justify-center p-2 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                         <span className="text-xs text-[#757575]">
-                          {displayTransactions
+                          {transactions
                             .filter(t => t.debitCredit === 'CREDIT')
                             .reduce((sum, t) => sum + t.amount, 0)
                             .toLocaleString()}

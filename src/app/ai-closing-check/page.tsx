@@ -895,6 +895,53 @@ export default function AIClosingCheckPage() {
     }
   };
 
+  /** 가수가지급금 직접 점검 */
+  const callSuspenseAPI = async (date: string) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      // 가수가지급금 점검 API 호출
+      const requestBody = {
+        closingDate: date,
+        key: 'suspense_clear',
+      };
+
+      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API 에러 응답:', errorData);
+        
+        if (response.status === 500) {
+          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          alert(`가수가지급금 점검에 실패했습니다. (${response.status})`);
+        }
+        return;
+      }
+
+      const data: SuspenseResponse = await response.json();
+      setSuspenseData(data);
+
+      return data;
+    } catch (error) {
+      console.error('가수가지급금 직접 점검 API 호출 오류:', error);
+      alert('가수가지급금 직접 점검 중 네트워크 오류가 발생했습니다.');
+    }
+  };
+
   /** 가수가지급금 아이템 변경 핸들러 */
   const handleSuspenseItemChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
     setEditableSuspenseTransactions(prev => 
@@ -2731,6 +2778,7 @@ export default function AIClosingCheckPage() {
           onApply={(data: SuspenseResponse) => handleSuspenseApply(data)}
           closingDate={closingDate}
           onClosingDateChange={setClosingDate}
+          onDirectCheck={(date: string) => callSuspenseAPI(date)}
         />
 
         {/* 기간귀속 팝업 */}

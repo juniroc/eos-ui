@@ -91,36 +91,49 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   // 전표 저장 함수
   const handleSaveJournal = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
+      // 임의의 전표값 생성부탁
+      const dummyData: JournalEntry[] = [
+        {
+          id: '1',
+          date: '2024-01-01',
+          debit: { accountCode: '1000', accountName: '차변', amount: 100000, memo: '전표 저장' },
+          credit: { accountCode: '2000', accountName: '대변', amount: 100000, memo: '전표 저장' },
+          description: '기간귀속 결산반영'
+        }];
+      setJournalEntries(dummyData);
+
+      return dummyData;
+
+      // const token = localStorage.getItem('accessToken');
+      // if (!token) {
+      //   alert('로그인이 필요합니다.');
+      //   return;
+      // }
 
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ 
-          rows: data?.rows || [],
-          closingDate: closingDate,
-          key: 'period_accrual',
-        }),
-      });
+      // const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      //   body: JSON.stringify({ 
+      //     rows: data?.rows || [],
+      //     closingDate: closingDate,
+      //     key: 'period_accrual',
+      //   }),
+      // });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      // if (!response.ok) {
+      //   const errorData = await response.json();
 
-        throw new Error(errorData.error || '전표 조회 실패');
-      }
+      //   throw new Error(errorData.error || '전표 조회 실패');
+      // }
 
-      const result = await response.json();
-      console.log('전표 조회 결과:', result);
-      // 전표값 저장
-      return result;
+      // const result = await response.json();
+      // console.log('전표 조회 결과:', result);
+      // // 전표값 저장
+      // return result;
 
     } catch (error) {
       console.error('전표 저장 에러:', error);

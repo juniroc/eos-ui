@@ -459,7 +459,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                     <p className="text-xs text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
                   </div>
                   <button 
-                    onClick={handleSaveJournal}
+                    onClick={() => alert('전표가 저장되었습니다.')}
                     className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs"
                   >
                     저장

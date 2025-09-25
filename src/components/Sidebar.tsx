@@ -29,7 +29,7 @@ const navigationItems = [
     icon: '/icons/chart_black.png',
     iconGrey: '/icons/chart_grey.png',
     subItems: [
-      { id: 'ai-journal-main', label: 'AI 분개' },
+      { id: 'ai-journal', label: 'AI 분개' },
       { id: 'guideline-period', label: '지침 주기' },
       { id: 'manual-journal', label: '수동 분개' },
       { id: 'ai-closing-check', label: 'AI 결산점검' },

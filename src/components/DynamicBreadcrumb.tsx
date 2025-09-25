@@ -14,7 +14,7 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/client-info': { mainMenu: '기초정보', subMenu: '거래처 정보' },
     '/shareholder-info': { mainMenu: '기초정보', subMenu: '주주 정보' },
     '/doc-archive': { mainMenu: '기초정보', subMenu: '문서보관' },
-    '/ai-journal-main': { mainMenu: 'AI 분개', subMenu: 'AI 분개' },
+    '/ai-journal': { mainMenu: 'AI 분개', subMenu: 'AI 분개' },
     '/guideline-period': { mainMenu: 'AI 분개', subMenu: '지침 주기' },
     '/manual-journal': { mainMenu: 'AI 분개', subMenu: '수동 분개' },
     '/ai-closing-check': { mainMenu: 'AI 분개', subMenu: 'AI 결산점검' },

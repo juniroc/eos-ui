@@ -608,12 +608,18 @@ export default function AIClosingCheckPage() {
       }
 
       // API에서 요구하는 형태로 데이터 변환
-      const rows: BadDebtRow[] = editableBadDebtItems.map(item => ({
-        accountCode: item.accountCode,
-        amount: item.amount,
-        partnerId: item.partnerId || null,
-        reason: item.reason
-      }));
+      const rows: BadDebtRow[] = editableBadDebtItems.map(item => {
+        const row: BadDebtRow = {
+          accountCode: item.accountCode,
+          amount: item.amount,
+          reason: item.reason
+        };
+        // partnerId가 있는 경우에만 추가
+        if (item.partnerId) {
+          row.partnerId = item.partnerId;
+        }
+        return row;
+      });
 
       const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
         method: 'POST',
@@ -634,7 +640,10 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          const errorMessage = errorData.detail?.includes('name_userId') 
+            ? '서버 설정 오류가 발생했습니다. 관리자에게 문의해주세요.'
+            : '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          alert(errorMessage);
         } else {
           alert(`대손상각 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -774,7 +783,10 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          const errorMessage = errorData.detail?.includes('name_userId') 
+            ? '서버 설정 오류가 발생했습니다. 관리자에게 문의해주세요.'
+            : '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          alert(errorMessage);
         } else {
           alert(`퇴직급여충당금 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -980,12 +992,18 @@ export default function AIClosingCheckPage() {
       }
 
       // API에서 요구하는 형태로 데이터 변환
-      const rows: PeriodAccrualRow[] = editablePeriodAccrualItems.map(item => ({
-        accountCode: item.accountCode,
-        addAmount: item.addAmount,
-        counterAccountId: item.counterAccountId || null,
-        memo: item.memo
-      }));
+      const rows: PeriodAccrualRow[] = editablePeriodAccrualItems.map(item => {
+        const row: PeriodAccrualRow = {
+          accountCode: item.accountCode,
+          addAmount: item.addAmount,
+          memo: item.memo
+        };
+        // counterAccountId가 있는 경우에만 추가
+        if (item.counterAccountId) {
+          row.counterAccountId = item.counterAccountId;
+        }
+        return row;
+      });
 
       const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
         method: 'POST',
@@ -1006,7 +1024,10 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          const errorMessage = errorData.detail?.includes('name_userId') 
+            ? '서버 설정 오류가 발생했습니다. 관리자에게 문의해주세요.'
+            : '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          alert(errorMessage);
         } else {
           alert(`기간귀속 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -1317,7 +1338,10 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+          const errorMessage = errorData.detail?.includes('name_userId') 
+            ? '서버 설정 오류가 발생했습니다. 관리자에게 문의해주세요.'
+            : '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          alert(errorMessage);
         } else {
           alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
         }

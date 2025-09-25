@@ -496,36 +496,17 @@ export default function AIClosingCheckPage() {
           // 500 에러 시 임시 전표 데이터 표시
           const mockVoucherData: VoucherResponse = {
             voucher: {
-              id: 'voucher_mock_2',
-              date: closingDate,
-              description: '기말재고 조정',
               transactions: [
                 {
-                  id: 'trans_3',
-                  account: {
-                    id: 'acc_3',
-                    code: '11201',
-                    name: '기말재고자산'
-                  },
-                  partner: {
-                    id: 'partner_2',
-                    name: '기말결산'
-                  },
+                  account: '기말재고자산',
+                  partner: '기말결산',
                   amount: 1100000,
                   debitCredit: 'DEBIT',
                   note: '기말재고 조정'
                 },
                 {
-                  id: 'trans_4',
-                  account: {
-                    id: 'acc_4',
-                    code: '52001',
-                    name: '매출원가'
-                  },
-                  partner: {
-                    id: 'partner_2',
-                    name: '기말결산'
-                  },
+                  account: '매출원가',
+                  partner: '기말결산',
                   amount: 1100000,
                   debitCredit: 'CREDIT',
                   note: '기말재고 조정'
@@ -686,36 +667,17 @@ export default function AIClosingCheckPage() {
           // 500 에러 시 임시 전표 데이터 표시
           const mockVoucherData: VoucherResponse = {
             voucher: {
-              id: 'voucher_mock_3',
-              date: closingDate,
-              description: '대손상각 처리',
               transactions: [
                 {
-                  id: 'trans_5',
-                  account: {
-                    id: 'acc_5',
-                    code: '52009',
-                    name: '대손상각비'
-                  },
-                  partner: {
-                    id: 'partner_3',
-                    name: '기말결산'
-                  },
+                  account: '대손상각비',
+                  partner: '기말결산',
                   amount: 275000,
                   debitCredit: 'DEBIT',
                   note: '대손상각 처리'
                 },
                 {
-                  id: 'trans_6',
-                  account: {
-                    id: 'acc_6',
-                    code: '11201',
-                    name: '대손충당금'
-                  },
-                  partner: {
-                    id: 'partner_3',
-                    name: '기말결산'
-                  },
+                  account: '대손충당금',
+                  partner: '기말결산',
                   amount: 275000,
                   debitCredit: 'CREDIT',
                   note: '대손상각 처리'
@@ -867,36 +829,17 @@ export default function AIClosingCheckPage() {
           // 500 에러 시 임시 전표 데이터 표시
           const mockVoucherData: VoucherResponse = {
             voucher: {
-              id: 'voucher_mock_4',
-              date: closingDate,
-              description: '퇴직급여충당금 처리',
               transactions: [
                 {
-                  id: 'trans_7',
-                  account: {
-                    id: 'acc_7',
-                    code: '44006',
-                    name: '퇴직급여충당금'
-                  },
-                  partner: {
-                    id: 'partner_4',
-                    name: '기말결산'
-                  },
+                  account: '퇴직급여충당금',
+                  partner: '기말결산',
                   amount: 6666667,
                   debitCredit: 'DEBIT',
                   note: '퇴직급여충당금 처리'
                 },
                 {
-                  id: 'trans_8',
-                  account: {
-                    id: 'acc_8',
-                    code: '22006',
-                    name: '퇴직급여충당부채'
-                  },
-                  partner: {
-                    id: 'partner_4',
-                    name: '기말결산'
-                  },
+                  account: '퇴직급여충당부채',
+                  partner: '기말결산',
                   amount: 6666667,
                   debitCredit: 'CREDIT',
                   note: '퇴직급여충당금 처리'
@@ -1260,36 +1203,17 @@ export default function AIClosingCheckPage() {
           // 500 에러 시 임시 전표 데이터 표시
           const mockVoucherData: VoucherResponse = {
             voucher: {
-              id: 'voucher_mock_5',
-              date: closingDate,
-              description: '기간귀속 처리',
               transactions: [
                 {
-                  id: 'trans_9',
-                  account: {
-                    id: 'acc_9',
-                    code: '52001',
-                    name: '급여'
-                  },
-                  partner: {
-                    id: 'partner_5',
-                    name: '기말결산'
-                  },
+                  account: '급여',
+                  partner: '기말결산',
                   amount: 833333,
                   debitCredit: 'DEBIT',
                   note: '기간귀속 처리'
                 },
                 {
-                  id: 'trans_10',
-                  account: {
-                    id: 'acc_10',
-                    code: '22001',
-                    name: '미지급급여'
-                  },
-                  partner: {
-                    id: 'partner_5',
-                    name: '기말결산'
-                  },
+                  account: '미지급급여',
+                  partner: '기말결산',
                   amount: 833333,
                   debitCredit: 'CREDIT',
                   note: '기간귀속 처리'
@@ -1612,36 +1536,17 @@ export default function AIClosingCheckPage() {
           // 500 에러 시 임시 전표 데이터 표시
           const mockVoucherData: VoucherResponse = {
             voucher: {
-              id: 'voucher_mock_1',
-              date: closingDate,
-              description: '감가상각 처리',
               transactions: [
                 {
-                  id: 'trans_1',
-                  account: {
-                    id: 'acc_1',
-                    code: '52008',
-                    name: '감가상각비'
-                  },
-                  partner: {
-                    id: 'partner_1',
-                    name: '기말결산'
-                  },
+                  account: '감가상각비',
+                  partner: '기말결산',
                   amount: 8000000,
                   debitCredit: 'DEBIT',
                   note: '감가상각 처리'
                 },
                 {
-                  id: 'trans_2',
-                  account: {
-                    id: 'acc_2',
-                    code: '11201',
-                    name: '감가상각누계액'
-                  },
-                  partner: {
-                    id: 'partner_1',
-                    name: '기말결산'
-                  },
+                  account: '감가상각누계액',
+                  partner: '기말결산',
                   amount: 8000000,
                   debitCredit: 'CREDIT',
                   note: '감가상각 처리'
@@ -2143,9 +2048,9 @@ export default function AIClosingCheckPage() {
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2155,9 +2060,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2423,9 +2328,9 @@ export default function AIClosingCheckPage() {
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2435,9 +2340,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2663,9 +2568,9 @@ export default function AIClosingCheckPage() {
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2675,9 +2580,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2894,9 +2799,9 @@ export default function AIClosingCheckPage() {
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2906,9 +2811,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
 
                                     </>
                                   )}
@@ -2965,10 +2870,7 @@ export default function AIClosingCheckPage() {
         <SuspenseModal
           isOpen={showSuspenseModal}
           onClose={() => setShowSuspenseModal(false)}
-          data={suspenseData}
           loading={suspenseLoading}
-          editableTransactions={editableSuspenseTransactions}
-          onTransactionChange={handleSuspenseItemChange}
           onApply={(data: SuspenseResponse) => handleSuspenseApply(data)}
           closingDate={closingDate}
           onClosingDateChange={setClosingDate}

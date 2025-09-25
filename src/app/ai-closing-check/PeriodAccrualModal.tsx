@@ -60,21 +60,78 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   onDirectCheck,
 }) => {
   const [showJournalTable, setShowJournalTable] = useState(false);
-  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  const [editableData, setEditableData] = useState<PeriodAccrualItem[]>([]);
+  const [editableJournalEntries, setEditableJournalEntries] = useState<JournalEntry[]>([]);
+  
+  // data가 변경될 때마다 editableData 초기화
+  React.useEffect(() => {
+    if (data?.rows) {
+      setEditableData(data.rows.map(item => ({
+        accountCode: item.accountCode,
+        accountName: item.accountName,
+        endingBalance: item.endingBalance,
+        addAmount: item.addAmount,
+        actualBalance: item.endingBalance + item.addAmount,
+        memo: item.memo
+      })));
+    }
+  }, [data]);
+
+  // 개별 필드 수정 핸들러
+  const handleFieldChange = (index: number, field: keyof PeriodAccrualItem, value: string | number) => {
+    setEditableData(prev => {
+      const newData = [...prev];
+      if (field === 'endingBalance' || field === 'addAmount') {
+        const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) || 0 : value;
+        newData[index] = { ...newData[index], [field]: numValue };
+        // 실제 잔액 자동 계산
+        newData[index].actualBalance = newData[index].endingBalance + newData[index].addAmount;
+      } else {
+        newData[index] = { ...newData[index], [field]: value };
+      }
+      return newData;
+    });
+  };
+
+  // 숫자 포맷팅 함수
+  const formatNumber = (value: number): string => {
+    return value.toLocaleString();
+  };
+
+  // 숫자 입력 처리 함수
+  const handleNumberInput = (value: string): number => {
+    return parseFloat(value.replace(/,/g, '')) || 0;
+  };
+
+  // 전표 필드 수정 핸들러
+  const handleJournalFieldChange = (index: number, side: 'debit' | 'credit', field: string, value: string | number) => {
+    setEditableJournalEntries(prev => {
+      const newEntries = [...prev];
+      if (field === 'amount') {
+        const numValue = typeof value === 'string' ? handleNumberInput(value) : value;
+        newEntries[index] = {
+          ...newEntries[index],
+          [side]: { ...newEntries[index][side], [field]: numValue }
+        };
+      } else {
+        newEntries[index] = {
+          ...newEntries[index],
+          [side]: { ...newEntries[index][side], [field]: value }
+        };
+      }
+      return newEntries;
+    });
+  };
+
+  const handleJournalDescriptionChange = (index: number, value: string) => {
+    setEditableJournalEntries(prev => {
+      const newEntries = [...prev];
+      newEntries[index] = { ...newEntries[index], description: value };
+      return newEntries;
+    });
+  };
   
   if (!isOpen) return null;
-
-
-
-  const displayData = data || {
-    rows: [],
-    period: {
-      start: '',
-      end: '',
-    },
-    key: '',
-    status: '',
-  };
 
 
 
@@ -91,17 +148,65 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   // 전표 저장 함수
   const handleSaveJournal = async () => {
     try {
-      // 임의의 전표값 생성부탁
       const dummyData: JournalEntry[] = [
         {
           id: '1',
           date: '2024-01-01',
-          debit: { accountCode: '1000', accountName: '차변', amount: 100000, memo: '전표 저장' },
-          credit: { accountCode: '2000', accountName: '대변', amount: 100000, memo: '전표 저장' },
-          description: '기간귀속 결산반영'
-        }];
-      setJournalEntries(dummyData);
-
+          debit: { accountCode: '0', accountName: '선수금', amount: 0, memo: '' },
+          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          description: ''
+        },
+        {
+          id: '2',
+          date: '2024-01-02',
+          debit: { accountCode: '0', accountName: '선수수익', amount: 0, memo: '' },
+          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          description: ''
+        },
+        {
+          id: '3',
+          date: '2024-01-03',
+          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          credit: { accountCode: '10500500', accountName: '미수금', amount: 10500500, memo: '' },
+          description: ''
+        },
+        {
+          id: '4',
+          date: '2024-01-04',
+          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          credit: { accountCode: '0', accountName: '미수수익', amount: 0, memo: '' },
+          description: ''
+        },
+        {
+          id: '5',
+          date: '2024-01-05',
+          debit: { accountCode: '0', accountName: '선급금', amount: 0, memo: '' },
+          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          description: ''
+        },
+        {
+          id: '6',
+          date: '2024-01-06',
+          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          credit: { accountCode: '5000', accountName: '선급비용', amount: 100000, memo: '' },
+          description: ''
+        },
+        {
+          id: '7',
+          date: '2024-01-07',
+          debit: { accountCode: '7000', accountName: '미지지급금', amount: 100000, memo: '' },
+          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          description: ''
+        },
+        {
+          id: '8',
+          date: '2024-01-08',
+          debit: { accountCode: '8000', accountName: '미지급금비용', amount: 100000, memo: '' },
+          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
+          description: ''
+        },
+      ];
+      setEditableJournalEntries(dummyData);
       return dummyData;
 
       // const token = localStorage.getItem('accessToken');
@@ -238,8 +343,8 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
             </div>
 
             {/* 테이블 바디 */}
-            {displayData.rows && displayData.rows.length > 0 ? (
-              displayData.rows.map((item, index) => (
+            {editableData.length > 0 ? (
+              editableData.map((item, index) => (
                 <div key={index} className="flex border-b border-[#D9D9D9] last:border-b-0">
                   <div className="w-[100px] min-w-[100px] h-8 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
                     <span className="text-xs text-[#757575]">{item.accountCode}</span>
@@ -250,24 +355,35 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                   <div className="flex-1 h-8 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
                     <input 
                       type="text" 
-                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
-                      defaultValue={item.endingBalance.toLocaleString()}
+                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
+                      value={formatNumber(item.endingBalance)}
+                      onChange={(e) => handleFieldChange(index, 'endingBalance', e.target.value)}
+                      onBlur={(e) => {
+                        const numValue = handleNumberInput(e.target.value);
+                        handleFieldChange(index, 'endingBalance', numValue);
+                      }}
                     />
                     <span className="text-xs text-[#757575] ml-1">원</span>
                   </div>
                   <div className="flex-1 h-8 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
                     <input 
                       type="text" 
-                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
-                      defaultValue={item.addAmount.toLocaleString()}
+                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
+                      value={formatNumber(item.addAmount)}
+                      onChange={(e) => handleFieldChange(index, 'addAmount', e.target.value)}
+                      onBlur={(e) => {
+                        const numValue = handleNumberInput(e.target.value);
+                        handleFieldChange(index, 'addAmount', numValue);
+                      }}
                     />
                     <span className="text-xs text-[#757575] ml-1">원</span>
                   </div>
                   <div className="flex-1 h-8 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
                     <input 
                       type="text" 
-                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
-                      defaultValue={item.endingBalance.toLocaleString() + item.addAmount.toLocaleString()}
+                      className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
+                      value={formatNumber(item.actualBalance)}
+                      readOnly
                     />
                     <span className="text-xs text-[#757575] ml-1">원</span>
                   </div>
@@ -275,7 +391,8 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                     <input 
                       type="text" 
                       className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
-                      defaultValue={item.memo}
+                      value={item.memo}
+                      onChange={(e) => handleFieldChange(index, 'memo', e.target.value)}
                     />
                   </div>
                 </div>
@@ -296,19 +413,19 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
               </div>
               <div className="flex-1 h-8 flex items-center px-2 border-r border-[#D9D9D9]">
                 <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                  {displayData.rows.reduce((sum, item) => sum + item.endingBalance, 0).toLocaleString()}
+                  {editableData.reduce((sum, item) => sum + item.endingBalance, 0).toLocaleString()}
                 </span>
                 <span className="text-xs text-[#757575] ml-1">원</span>
               </div>
               <div className="flex-1 h-8 flex items-center px-2 border-r border-[#D9D9D9]">
                 <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                  {displayData.rows.reduce((sum, item) => sum + item.addAmount, 0).toLocaleString()}
+                  {editableData.reduce((sum, item) => sum + item.addAmount, 0).toLocaleString()}
                 </span>
                 <span className="text-xs text-[#757575] ml-1">원</span>
               </div>
               <div className="flex-1 h-8 flex items-center px-2 border-r border-[#D9D9D9]">
                 <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                  {displayData.rows.reduce((sum, item) => sum + item.endingBalance + item.addAmount, 0).toLocaleString()}
+                  {editableData.reduce((sum, item) => sum + item.actualBalance, 0).toLocaleString()}
                 </span>
                 <span className="text-xs text-[#757575] ml-1">원</span>
               </div>
@@ -393,37 +510,80 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                   </div>
 
                   {/* 전표 테이블 바디 */}
-                  {journalEntries.map((entry, index) => (
+                  {editableJournalEntries.map((entry, index) => (
                     <div key={entry.id} className="flex border-b border-[#D9D9D9] last:border-b-0">
                       <div className="w-[100px] min-w-[100px] h-8 flex items-center justify-center px-2 bg-white border-r border-[#D9D9D9]">
-                        <span className="text-xs text-[#757575]">{String(index + 1).padStart(3, '0')}</span>
+                        <span className="text-xs text-[#757575]">{closingDate}</span>
                       </div>
                       <div className="flex-1 h-8 flex border-r border-[#D9D9D9]">
                         <div className="flex-1 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
-                          <span className="text-xs text-[#757575]">{entry.debit.accountName}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
+                            value={entry.debit.accountName}
+                            onChange={(e) => handleJournalFieldChange(index, 'debit', 'accountName', e.target.value)}
+                          />
                         </div>
                         <div className="flex-1 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
-                          <span className="text-xs text-[#757575] flex-1 text-right">{entry.debit.amount.toLocaleString()}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
+                            value={formatNumber(entry.debit.amount)}
+                            onChange={(e) => handleJournalFieldChange(index, 'debit', 'amount', e.target.value)}
+                            onBlur={(e) => {
+                              const numValue = handleNumberInput(e.target.value);
+                              handleJournalFieldChange(index, 'debit', 'amount', numValue);
+                            }}
+                          />
                           <span className="text-xs text-[#757575] ml-1">원</span>
                         </div>
                         <div className="flex-1 flex items-center px-2 bg-white">
-                          <span className="text-xs text-[#757575]">{entry.debit.memo}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
+                            value={entry.debit.memo}
+                            onChange={(e) => handleJournalFieldChange(index, 'debit', 'memo', e.target.value)}
+                          />
                         </div>
                       </div>
                       <div className="flex-1 h-8 flex">
                         <div className="flex-1 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
-                          <span className="text-xs text-[#757575]">{entry.credit.accountName}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
+                            value={entry.credit.accountName}
+                            onChange={(e) => handleJournalFieldChange(index, 'credit', 'accountName', e.target.value)}
+                          />
                         </div>
                         <div className="flex-1 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
-                          <span className="text-xs text-[#757575] flex-1 text-right">{entry.credit.amount.toLocaleString()}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
+                            value={formatNumber(entry.credit.amount)}
+                            onChange={(e) => handleJournalFieldChange(index, 'credit', 'amount', e.target.value)}
+                            onBlur={(e) => {
+                              const numValue = handleNumberInput(e.target.value);
+                              handleJournalFieldChange(index, 'credit', 'amount', numValue);
+                            }}
+                          />
                           <span className="text-xs text-[#757575] ml-1">원</span>
                         </div>
                         <div className="flex-1 flex items-center px-2 bg-white">
-                          <span className="text-xs text-[#757575]">{entry.credit.memo}</span>
+                          <input
+                            type="text"
+                            className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
+                            value={entry.credit.memo}
+                            onChange={(e) => handleJournalFieldChange(index, 'credit', 'memo', e.target.value)}
+                          />
                         </div>
                       </div>
                       <div className="flex-1 h-8 flex items-center px-2 bg-white border-l border-[#D9D9D9]">
-                        <span className="text-xs text-[#757575]">{entry.description}</span>
+                        <input
+                          type="text"
+                          className="w-full text-xs text-[#757575] bg-transparent border-none outline-none"
+                          value={entry.description}
+                          onChange={(e) => handleJournalDescriptionChange(index, e.target.value)}
+                        />
                       </div>
                     </div>
                   ))}
@@ -439,7 +599,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                       </div>
                       <div className="flex-1 flex items-center px-2 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                         <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                          {journalEntries.reduce((sum, entry) => sum + entry.debit.amount, 0).toLocaleString()}
+                          {editableJournalEntries.reduce((sum, entry) => sum + entry.debit.amount, 0).toLocaleString()}
                         </span>
                         <span className="text-xs text-[#757575] ml-1">원</span>
                       </div>
@@ -453,7 +613,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                       </div>
                       <div className="flex-1 flex items-center px-2 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                         <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                          {journalEntries.reduce((sum, entry) => sum + entry.credit.amount, 0).toLocaleString()}
+                          {editableJournalEntries.reduce((sum, entry) => sum + entry.credit.amount, 0).toLocaleString()}
                         </span>
                         <span className="text-xs text-[#757575] ml-1">원</span>
                       </div>

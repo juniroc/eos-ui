@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SuspenseModal from './SuspenseModal';
+import PeriodAccrualModal from './PeriodAccrualModal';
 interface CheckRow {
   id: number;
   key: string;
@@ -228,7 +229,7 @@ interface PeriodAccrualItem {
   memo: string;
 }
 
-interface PeriodAccrualResponse {
+export interface PeriodAccrualResponse {
   key: string;
   status: string;
   rows: PeriodAccrualItem[];
@@ -238,7 +239,7 @@ interface PeriodAccrualResponse {
   };
 }
 
-interface EditablePeriodAccrualItem extends PeriodAccrualItem {
+export interface EditablePeriodAccrualItem extends PeriodAccrualItem {
   id: string;
   isEditing?: boolean;
 }
@@ -1058,21 +1059,23 @@ export default function AIClosingCheckPage() {
         }
         return;
       }
+      // 성공했습니다는 안내문구
+      alert('가수가지급금 결산 반영이 완료되었습니다.');
 
-      const data: SuspenseResponse = await response.json();
-      setSuspenseData(data);
+      // const data: SuspenseResponse = await response.json();
+      // setSuspenseData(data);
       
-      // 편집 가능한 형태로 변환
-      const allTransactions: EditableSuspenseTransaction[] = [];
-      data.vouchers.forEach(voucher => {
-        voucher.transactions.forEach(transaction => {
-          allTransactions.push({
-            ...transaction,
-            isEditing: false
-          });
-        });
-      });
-      setEditableSuspenseTransactions(allTransactions);
+      // // 편집 가능한 형태로 변환
+      // const allTransactions: EditableSuspenseTransaction[] = [];
+      // data.vouchers.forEach(voucher => {
+      //   voucher.transactions.forEach(transaction => {
+      //     allTransactions.push({
+      //       ...transaction,
+      //       isEditing: false
+      //     });
+      //   });
+      // });
+      // setEditableSuspenseTransactions(allTransactions);
       
     } catch (error) {
       console.error('가수가지급금 점검 API 호출 오류:', error);
@@ -1082,53 +1085,56 @@ export default function AIClosingCheckPage() {
     }
   };
 
+  /** 기간귀속 점검 API 호출 */
+  const callPeriodAccrualAPI = async (date: string): Promise<PeriodAccrualResponse> => {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      throw new Error('로그인이 필요합니다.');
+    }
+
+    // 기간귀속 점검 API 호출
+    const requestBody = {
+      closingDate: date,
+      key: 'period_accrual'
+    };
+    
+    console.log('기간귀속 점검 API 요청:', {
+      url: 'https://api.eosxai.com/api/closing-check/run-item',
+      method: 'POST',
+      body: requestBody,
+      closingDate: date
+    });
+
+    const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('API 에러 응답:', errorData);
+      
+      if (response.status === 500) {
+        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      } else {
+        throw new Error(`기간귀속 점검에 실패했습니다. (${response.status})`);
+      }
+    }
+
+    const data: PeriodAccrualResponse = await response.json();
+    setPeriodAccrualData(data);
+    return data;
+  };
+
   /** 기간귀속 점검 */
   const handlePeriodAccrualCheck = async () => {
     try {
-      setPeriodAccrualLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 기간귀속 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'period_accrual'
-      };
-      
-      console.log('기간귀속 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
-        closingDate: closingDate
-      });
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`기간귀속 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: PeriodAccrualResponse = await response.json();
-      setPeriodAccrualData(data);
+      const data = await callPeriodAccrualAPI(closingDate);
       
       // 편집 가능한 형태로 변환
       const editableItems: EditablePeriodAccrualItem[] = data.rows.map((item, index) => ({
@@ -1153,8 +1159,8 @@ export default function AIClosingCheckPage() {
       );
       setRows(updatedRows);
     } catch (error) {
-      console.error('기간귀속 점검 API 호출 오류:', error);
-      alert('기간귀속 점검 중 네트워크 오류가 발생했습니다.');
+      console.error('기간귀속 점검 오류:', error);
+      alert(error instanceof Error ? error.message : '기간귀속 점검 중 네트워크 오류가 발생했습니다.');
     } finally {
       setPeriodAccrualLoading(false);
     }
@@ -1763,6 +1769,9 @@ export default function AIClosingCheckPage() {
                       } else if (r.key === 'suspense_clear') {
                         handleSuspenseCheck();
                         // 가수가지급금은 별도 팝업을 사용하므로 기존 모달을 열지 않음
+                      } else if (r.key === 'period_accrual') {
+                        handlePeriodAccrualCheck();
+                        // 기간귀속은 별도 팝업을 사용하므로 기존 모달을 열지 않음
                       } else {
                         setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
                         setShowModal(true);
@@ -2916,6 +2925,20 @@ export default function AIClosingCheckPage() {
           onApply={(data: SuspenseResponse) => handleSuspenseApply(data)}
           closingDate={closingDate}
           onClosingDateChange={setClosingDate}
+        />
+
+        {/* 기간귀속 팝업 */}
+        <PeriodAccrualModal
+          isOpen={showPeriodAccrualModal}
+          onClose={() => setShowPeriodAccrualModal(false)}
+          data={periodAccrualData}
+          loading={periodAccrualLoading}
+          editableItems={editablePeriodAccrualItems}
+          onItemChange={handlePeriodAccrualItemChange}
+          onApply={handlePeriodAccrualApply}
+          closingDate={closingDate}
+          onClosingDateChange={setClosingDate}
+          onDirectCheck={(date: string) => callPeriodAccrualAPI(date)}
         />
       </div>
     </div>

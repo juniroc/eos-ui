@@ -2787,6 +2787,7 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
+
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>

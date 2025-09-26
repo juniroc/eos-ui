@@ -1881,8 +1881,8 @@ export default function AIClosingCheckPage() {
                       disabled={depreciationLoading}
                     >
                       {depreciationLoading ? '처리중...' : '결산 반영'}
-                </button>
-              </div>
+                    </button>
+                  </div>
             </div>
           </div>
 
@@ -1979,7 +1979,7 @@ export default function AIClosingCheckPage() {
                         <h3 className="text-lg font-semibold">전표 점검</h3>
                         <div className="flex justify-between items-center">
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
-                <button
+                          <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
                             onClick={() => {
                               alert('전표가 저장되었습니다.');
@@ -1987,7 +1987,7 @@ export default function AIClosingCheckPage() {
                             }}
                           >
                             저장
-                </button>
+                          </button>
                         </div>
                       </div>
                       

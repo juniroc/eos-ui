@@ -277,6 +277,17 @@ export default function AIJournalPage() {
                     </th>
                     <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">적요</th>
                   </tr>
+                  <tr className="bg-[#F5F5F5]">
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]"></th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]"></th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">계정과목</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">금액</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">거래처</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">계정과목</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">금액</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">거래처</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]"></th>
+                  </tr>
                 </thead>
                 <tbody>
                   {vouchers.map((voucher, idx) => {
@@ -294,49 +305,115 @@ export default function AIJournalPage() {
                             <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {r === 0 ? voucher.date : ''}
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {debit[r]?.accountName || ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {debit[r]?.amount
-                                ? `${debit[r].amount.toLocaleString()}원`
-                                : ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {debit[r]?.partnerName || ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {credit[r]?.accountName || ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {credit[r]?.amount
-                                ? `${credit[r].amount.toLocaleString()}원`
-                                : ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {credit[r]?.partnerName || ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
-                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
-                              {r === 0 ? voucher.description : ''}
+                            <td className="p-3 border border-[#d9d9d9]">
+                              <input
+                                type="text"
+                                placeholder="입력하기"
+                                className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
+                              />
                             </td>
                           </tr>
                         ))}
                         <tr>
                           <td className="p-3 border border-[#d9d9d9] bg-[#F5F5F5] font-medium text-sm text-[#757575]">소계</td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white font-medium text-sm text-[#757575]">
-                            {debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
-                            원
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
                           </td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white font-medium text-sm text-[#757575]">
-                            {credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
-                            원
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
                           </td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
-                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <input
+                              type="text"
+                              placeholder="입력하기"
+                              className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                            />
+                          </td>
                         </tr>
                       </React.Fragment>
                     );

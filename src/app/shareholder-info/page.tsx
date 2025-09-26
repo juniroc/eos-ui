@@ -13,7 +13,7 @@ interface ShareholderRow {
   residentNumber: string; // 주민등록번호
   isRelatedParty?: string; // 특수관계인 여부 ('YES'|'NO')
   shares?: string; // 주식수
-  acquisitionDate?: string; // 취득일자
+  acquisitionDate?: string; // 지분율
   note?: string; // 비고
   serverId?: number; // 서버에 저장된 데이터인지 구분
 }
@@ -421,8 +421,8 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
                   <input
-                    type="date"
                     className="w-full focus:outline-none text-[#B3B3B3]"
+                    placeholder="입력하기"
                     value={row.acquisitionDate || ''}
                     onChange={e =>
                       setRows(prev =>

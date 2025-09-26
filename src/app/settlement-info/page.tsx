@@ -541,7 +541,7 @@ export default function SettlementInfoPage() {
         <div className="flex flex-row items-center w-full min-w-[200px] border-t border-[#D9D9D9]">
           <button
             onClick={addRow}
-            className="flex flex-row justify-center items-center px-3 py-3 gap-1 w-full bg-white hover:bg-[#F9F9F9] cursor-pointer"
+            className="flex flex-row justify-center items-center px-3 py-3 gap-1 w-full bg-white cursor-pointer"
             style={{ height: '40px' }}
           >
             <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />

@@ -247,7 +247,7 @@ export default function CardInfoPage() {
   }
 
   return (
-    <div className="flex flex-col items-center p-0 bg-white min-h-screen">
+    <div className="flex flex-col items-center p-0 bg-white">
       <div className="flex flex-col items-center p-0 w-full">
         {/* Content */}
         <div className="flex flex-col items-start p-4 gap-4 w-full">

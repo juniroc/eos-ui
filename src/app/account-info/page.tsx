@@ -328,7 +328,7 @@ const handleFileUpload = async (file: File) => {
           <div className="flex flex-col items-start p-0 w-full">
             {/* 헤더 행 */}
             <div className="flex flex-row items-start p-0 w-full h-8">
-              <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+              <div className="flex flex-row items-center justify-center p-2 w-12 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0 flex-shrink-0">
                 <span className="text-xs leading-[100%] text-[#757575]">번호</span>
               </div>
               <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
@@ -338,7 +338,7 @@ const handleFileUpload = async (file: File) => {
                 <span className="text-xs leading-[100%] text-[#757575]">계좌번호</span>
               </div>
               <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
-                <span className="text-xs leading-[100%] text-[#757575]">출금수수료(원)</span>
+                <span className="text-xs leading-[100%] text-[#757575]">출금수수료</span>
               </div>
               <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
                 <span className="text-xs leading-[100%] text-[#757575]">용도</span>
@@ -346,7 +346,7 @@ const handleFileUpload = async (file: File) => {
               <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
                 <span className="text-xs leading-[100%] text-[#757575]">특이사항</span>
               </div>
-              <div className="flex flex-row items-center justify-center p-2 w-20 h-8 bg-[#F5F5F5] border border-[#D9D9D9]">
+              <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-[#F5F5F5] border border-[#D9D9D9] flex-shrink-0">
                 <span className="text-xs leading-[100%] text-[#757575]">삭제</span>
               </div>
             </div>
@@ -354,13 +354,13 @@ const handleFileUpload = async (file: File) => {
             {/* 데이터 행들 */}
             {rows.map((row, idx) => (
               <div key={row.id} className="flex flex-row items-start p-0 w-full h-8">
-                <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                <div className="flex flex-row items-center justify-center p-2 w-12 h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0 flex-shrink-0">
                   <span className="text-xs leading-[100%] text-[#757575]">{idx + 1}</span>
                 </div>
                 <div className="flex flex-col items-start p-0 gap-2 flex-1">
                   <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.bankName}
                       onChange={e =>
@@ -378,7 +378,7 @@ const handleFileUpload = async (file: File) => {
                 <div className="flex flex-col items-start p-0 gap-2 flex-1">
                   <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.accountNumber}
                       onChange={e =>
@@ -396,7 +396,7 @@ const handleFileUpload = async (file: File) => {
                 <div className="flex flex-col items-start p-0 gap-2 flex-1">
                   <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.withdrawalFee || 0}
                       onChange={e =>
@@ -409,13 +409,12 @@ const handleFileUpload = async (file: File) => {
                         )
                       }
                     />
-                    <span className="text-xs text-[#767676] ml-1">원</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-start p-0 gap-2 flex-1">
                   <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.purpose || ''}
                       onChange={e =>
@@ -433,7 +432,7 @@ const handleFileUpload = async (file: File) => {
                 <div className="flex flex-col items-start p-0 gap-2 flex-1">
                   <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.note || ''}
                       onChange={e =>
@@ -446,7 +445,7 @@ const handleFileUpload = async (file: File) => {
                     />
                   </div>
                 </div>
-                <div className="flex flex-row items-center justify-center p-2 w-20 h-8 bg-white border border-[#D9D9D9] border-t-0">
+                <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-white border border-[#D9D9D9] border-t-0 flex-shrink-0">
                   <button
                     onClick={() => handleDelete(row.id)}
                     className="text-xs leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] px-2 py-1.5"
@@ -459,12 +458,11 @@ const handleFileUpload = async (file: File) => {
             ))}
 
             {/* 추가하기 버튼 행 */}
-            <div className="flex flex-row items-start p-0 w-full h-8">
-              <div className="flex flex-row items-center justify-center gap-1 p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0">
+            <div className="flex flex-row items-start p-0 w-full h-8 cursor-pointer" onClick={addRow}>
+              <div className="flex flex-row items-center justify-center gap-1 p-3 w-full bg-white border border-[#D9D9D9] border-t-0">
                 <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
                 <button
-                  onClick={addRow}
-                  className="text-xs text-[#767676] hover:text-[#1E1E1E] flex items-center gap-1"
+                  className="text-xs text-[#767676] flex items-center gap-1"
                 >
                   추가하기
                 </button>

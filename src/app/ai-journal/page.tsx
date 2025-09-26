@@ -264,10 +264,10 @@ export default function AIJournalPage() {
             </div>
 
             <div className="bg-white border border-[#d9d9d9] overflow-hidden">
-              <table className="w-full">
+              <table className="w-full text-center">
                 <thead>
                   <tr className="bg-[#F5F5F5]">
-                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">번호</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575] w-[90px]">번호</th>
                     <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">일자</th>
                     <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]" colSpan={3}>
                       차변
@@ -309,6 +309,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={debit[r]?.accountName || ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -316,6 +317,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={debit[r]?.amount ? `${debit[r].amount.toLocaleString()}원` : ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -323,6 +325,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={debit[r]?.partnerName || ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -330,6 +333,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={credit[r]?.accountName || ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -337,6 +341,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={credit[r]?.amount ? `${credit[r].amount.toLocaleString()}원` : ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -344,6 +349,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={credit[r]?.partnerName || ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -351,6 +357,7 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
+                                defaultValue={r === 0 ? voucher.description : ''}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -362,6 +369,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -369,6 +377,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -376,6 +385,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue={`${debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}원`}
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -383,6 +393,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -390,6 +401,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -397,6 +409,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue={`${credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}원`}
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -404,6 +417,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>
@@ -411,6 +425,7 @@ export default function AIJournalPage() {
                             <input
                               type="text"
                               placeholder="입력하기"
+                              defaultValue=""
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
                             />
                           </td>

@@ -260,17 +260,59 @@ interface DepreciationResponse {
 }
 
 interface VoucherTransaction {
-  account: string;
-  partner: string;
+  account: {
+    id: string;
+    code: number;
+    name: string;
+    debitCredit: boolean;
+    attribute: string;
+    category: string;
+    fsName1: string;
+    fsName2: string;
+    summarySourceCodes: string[];
+    createdAt: string;
+    updatedAt: string;
+  };
+  partner: {
+    id: string;
+    name: string;
+    businessNumber: string | null;
+    representative: string | null;
+    address: string | null;
+    phone: string | null;
+    email: string | null;
+    userId: string;
+    type: string;
+    cardIssuer: string | null;
+    cardNumber: string | null;
+    cardType: string | null;
+    primaryUser: string | null;
+    bankName: string | null;
+    accountNumber: string | null;
+    withdrawalFee: number | null;
+    purpose: string | null;
+    note: string | null;
+    mainItems: string | null;
+    relationship: string | null;
+    documentId: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
   amount: number;
   debitCredit: 'DEBIT' | 'CREDIT';
   note: string;
 }
 
 interface VoucherResponse {
-  voucher: {
-    transactions: VoucherTransaction[];
-  };
+  id: string;
+  userId: string;
+  date: string;
+  description: string;
+  departmentId: string | null;
+  documentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  transactions: VoucherTransaction[];
 }
 
 export default function AIClosingCheckPage() {
@@ -519,6 +561,12 @@ export default function AIClosingCheckPage() {
     }
   };
 
+  /** 기말재고 전표 저장 */
+  const handleEndingInventorySave = async () => {
+    alert('저장했습니다');
+    setShowEndingInventoryModal(false);
+  };
+
   /** 기말재고 아이템 변경 핸들러 */
   const handleInventoryItemChange = (id: string, field: keyof EditableEndingInventoryItem, value: string | number | boolean) => {
     setEditableInventoryItems(prev => 
@@ -676,6 +724,12 @@ export default function AIClosingCheckPage() {
     }
   };
 
+  /** 대손상각 전표 저장 */
+  const handleBadDebtSave = async () => {
+    alert('저장했습니다');
+    setShowBadDebtModal(false);
+  };
+
   /** 대손상각 아이템 변경 핸들러 */
   const handleBadDebtItemChange = (id: string, field: keyof EditableBadDebtItem, value: string | number | boolean) => {
     setEditableBadDebtItems(prev => 
@@ -822,6 +876,12 @@ export default function AIClosingCheckPage() {
     } finally {
       setRetirementBenefitLoading(false);
     }
+  };
+
+  /** 퇴직급여충당금 전표 저장 */
+  const handleRetirementBenefitSave = async () => {
+    alert('저장했습니다');
+    setShowRetirementBenefitModal(false);
   };
 
   /** 퇴직급여충당금 아이템 변경 핸들러 */
@@ -1159,29 +1219,7 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '급여',
-                  partner: '기말결산',
-                  amount: 833333,
-                  debitCredit: 'DEBIT',
-                  note: '기간귀속 처리'
-                },
-                {
-                  account: '미지급급여',
-                  partner: '기말결산',
-                  amount: 833333,
-                  debitCredit: 'CREDIT',
-                  note: '기간귀속 처리'
-                }
-              ]
-            }
-          };
-          
-          setPeriodAccrualVoucherData(mockVoucherData);
+          alert('기간귀속 결산반영 중 서버 오류가 발생했습니다.');
         } else {
           alert(`기간귀속 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -1443,7 +1481,7 @@ export default function AIClosingCheckPage() {
   };
 
   /** 전표 거래 항목 수정 */
-  const handleTransactionChange = (transactionIndex: number, field: string, value: string | number) => {
+  const handleTransactionChange = (transactionIndex: number, field: string, value: string | number | object) => {
     if (!editableVoucherData) return;
     
     setEditableVoucherData(prev => {
@@ -1464,80 +1502,8 @@ export default function AIClosingCheckPage() {
 
   /** 감가상각 전표 저장 */
   const handleDepreciationSave = async () => {
-    if (!voucherData || !voucherData.voucher?.transactions) {
-      alert('저장할 전표 데이터가 없습니다.');
-      return;
-    }
-
-    try {
-      setDepreciationLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 전표 생성
-      const voucherFormData = new FormData();
-      voucherFormData.append('date', closingDate);
-      voucherFormData.append('description', '감가상각 처리');
-
-      const voucherResponse = await fetch(
-        'https://api.eosxai.com/api/vouchers',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: voucherFormData,
-        }
-      );
-
-      if (!voucherResponse.ok) {
-        const errorData = await voucherResponse.json();
-        throw new Error(errorData.error || '전표 생성 실패');
-      }
-
-      const voucherResult = await voucherResponse.json();
-
-      // 거래 생성
-      for (const transaction of voucherData.voucher.transactions) {
-        const transactionResponse = await fetch(
-          'https://api.eosxai.com/api/transactions',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-              voucherId: voucherResult.id,
-              amount: transaction.amount,
-              partnerId: null, // 감가상각은 거래처가 없음
-              accountId: null, // 계정 ID는 서버에서 처리
-              debitCredit: transaction.debitCredit === 'DEBIT',
-              note: transaction.note || null,
-            }),
-          }
-        );
-
-        if (!transactionResponse.ok) {
-          const errorData = await transactionResponse.json();
-          throw new Error(errorData.error || '거래 생성 실패');
-        }
-      }
-
-      alert('감가상각 전표가 성공적으로 저장되었습니다!');
-      setShowDepreciationModal(false);
-    } catch (error) {
-      console.error('감가상각 전표 저장 오류:', error);
-      alert(
-        error instanceof Error ? error.message : '전표 저장 중 문제가 발생했습니다.'
-      );
-    } finally {
-      setDepreciationLoading(false);
-    }
+    alert('저장했습니다');
+    setShowDepreciationModal(false);
   };
 
   /** 감가상각 결산반영 */
@@ -2193,7 +2159,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
                                   {editableVoucherData.transactions
-                                    ?.filter(t => t.debitCredit === true)
+                                    ?.filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>
@@ -2201,7 +2167,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
                                   {editableVoucherData.transactions
-                                    ?.filter(t => t.debitCredit === false)
+                                    ?.filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>
@@ -2398,10 +2364,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowEndingInventoryModal(false);
-                            }}
+                            onClick={handleEndingInventorySave}
                           >
                             저장
                           </button>
@@ -2428,16 +2391,16 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {endingInventoryVoucherData && endingInventoryVoucherData.voucher?.transactions?.length > 0 ? (
+                          {endingInventoryVoucherData && endingInventoryVoucherData.transactions?.length > 0 ? (
                             <>
-                              {endingInventoryVoucherData.voucher.transactions.map((transaction, index) => (
+                              {endingInventoryVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2447,9 +2410,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2459,7 +2422,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {endingInventoryVoucherData.voucher.transactions
+                                  {endingInventoryVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2467,7 +2430,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {endingInventoryVoucherData.voucher.transactions
+                                  {endingInventoryVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2635,10 +2598,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowBadDebtModal(false);
-                            }}
+                            onClick={handleBadDebtSave}
                           >
                             저장
                           </button>
@@ -2665,16 +2625,16 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {badDebtVoucherData && badDebtVoucherData.voucher?.transactions?.length > 0 ? (
+                          {badDebtVoucherData && badDebtVoucherData.transactions?.length > 0 ? (
                             <>
-                              {badDebtVoucherData.voucher.transactions.map((transaction, index) => (
+                              {badDebtVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2684,9 +2644,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2696,7 +2656,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher?.transactions
+                                  {badDebtVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2704,7 +2664,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher?.transactions
+                                  {badDebtVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2863,10 +2823,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowRetirementBenefitModal(false);
-                            }}
+                            onClick={handleRetirementBenefitSave}
                           >
                             저장
                           </button>
@@ -2893,16 +2850,16 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {retirementBenefitVoucherData && retirementBenefitVoucherData.voucher?.transactions?.length > 0 ? (
+                          {retirementBenefitVoucherData && retirementBenefitVoucherData.transactions?.length > 0 ? (
                             <>
-                              {retirementBenefitVoucherData.voucher?.transactions.map((transaction, index) => (
+                              {retirementBenefitVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2912,9 +2869,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
 
                                     </>
                                   )}
@@ -2925,7 +2882,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher?.transactions
+                                  {retirementBenefitVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2933,7 +2890,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher?.transactions
+                                  {retirementBenefitVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}

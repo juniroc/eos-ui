@@ -169,7 +169,7 @@ export default function AIJournalPage() {
         {step === 'processing' && (
           <div className="bg-white border border-[#D9D9D9] rounded-lg p-12 text-center mb-6">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 border-4 border-[#E6E6E6] border-t-[#2C2C2C] rounded-full animate-spin"></div>
+              <div className="w-16 h-16 border-4 border-[#E6E6E6] border-t-[#d9d9d9] rounded-full animate-spin"></div>
             </div>
             <div className="w-full bg-[#E6E6E6] rounded-full h-3 mb-4">
               <div
@@ -208,52 +208,74 @@ export default function AIJournalPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-5 gap-4 mb-6">
-              <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
-                <p className="text-sm text-[#767676] mb-1">거래건수</p>
-                <p className="text-xl font-bold text-[#1E1E1E]">
+            {/* Dashboard */}
+            <div className="flex items-center p-0 w-full h-[63px] bg-white border border-[#D9D9D9] mb-6">
+              {/* 거래건수 */}
+              <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
+                <p className="text-xs text-[#B3B3B3] leading-none">거래건수</p>
+                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
                   {stats.transactionCount}건
                 </p>
               </div>
-              <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
-                <p className="text-sm text-[#767676] mb-1">신규거래처수</p>
-                <p className="text-xl font-bold text-[#1E1E1E]">
+              
+              {/* 구분선 */}
+              <div className="w-10 h-0 border border-[#D9D9D9] rotate-90"></div>
+              
+              {/* 신규거래처수 */}
+              <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
+                <p className="text-xs text-[#B3B3B3] leading-none">신규거래처수</p>
+                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
                   {stats.newPartnerCount}개
                 </p>
               </div>
-              <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
-                <p className="text-sm text-[#767676] mb-1">차변합계</p>
-                <p className="text-xl font-bold text-[#1E1E1E]">
+              
+              {/* 구분선 */}
+              <div className="w-10 h-0 border border-[#D9D9D9] rotate-90"></div>
+              
+              {/* 차변합계 */}
+              <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
+                <p className="text-xs text-[#B3B3B3] leading-none">차변합계</p>
+                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
                   {stats.debitTotal.toLocaleString()}원
                 </p>
               </div>
-              <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
-                <p className="text-sm text-[#767676] mb-1">대변합계</p>
-                <p className="text-xl font-bold text-[#1E1E1E]">
+              
+              {/* 구분선 */}
+              <div className="w-10 h-0 border border-[#D9D9D9] rotate-90"></div>
+              
+              {/* 대변합계 */}
+              <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
+                <p className="text-xs text-[#B3B3B3] leading-none">대변합계</p>
+                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
                   {stats.creditTotal.toLocaleString()}원
                 </p>
               </div>
-              <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
-                <p className="text-sm text-[#767676] mb-1">분개 적중률</p>
-                <p className="text-xl font-bold text-[#1E1E1E]">
+              
+              {/* 구분선 */}
+              <div className="w-10 h-0 border border-[#D9D9D9] rotate-90"></div>
+              
+              {/* 분개 적중률 */}
+              <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
+                <p className="text-xs text-[#B3B3B3] leading-none">분개 적중률</p>
+                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
                   {stats.accuracy}%
                 </p>
               </div>
             </div>
 
-            <div className="bg-white border border-[#D9D9D9] rounded-lg overflow-hidden">
+            <div className="bg-white border border-[#d9d9d9] overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#F5F5F5]">
-                    <th className="p-3 border text-sm text-[#757575]">번호</th>
-                    <th className="p-3 border text-sm text-[#757575]">일자</th>
-                    <th className="p-3 border text-sm text-[#757575]" colSpan={3}>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">번호</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">일자</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]" colSpan={3}>
                       차변
                     </th>
-                    <th className="p-3 border text-sm text-[#757575]" colSpan={3}>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]" colSpan={3}>
                       대변
                     </th>
-                    <th className="p-3 border text-sm text-[#757575]">적요</th>
+                    <th className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">적요</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -266,55 +288,55 @@ export default function AIJournalPage() {
                       <React.Fragment key={voucher.id}>
                         {Array.from({ length: rows }).map((_, r) => (
                           <tr key={`${voucher.id}-${r}`}>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {r === 0 ? idx + 1 : ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {r === 0 ? voucher.date : ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {debit[r]?.accountName || ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {debit[r]?.amount
                                 ? `${debit[r].amount.toLocaleString()}원`
                                 : ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {debit[r]?.partnerName || ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {credit[r]?.accountName || ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {credit[r]?.amount
                                 ? `${credit[r].amount.toLocaleString()}원`
                                 : ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {credit[r]?.partnerName || ''}
                             </td>
-                            <td className="p-3 border text-sm text-[#757575]">
+                            <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {r === 0 ? voucher.description : ''}
                             </td>
                           </tr>
                         ))}
                         <tr className="bg-[#F5F5F5]">
-                          <td className="p-3 border font-medium text-sm">소계</td>
-                          <td className="p-3 border"></td>
-                          <td className="p-3 border"></td>
-                          <td className="p-3 border font-medium text-sm">
+                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">소계</td>
+                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">
                             {debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>
-                          <td className="p-3 border"></td>
-                          <td className="p-3 border"></td>
-                          <td className="p-3 border font-medium text-sm">
+                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">
                             {credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>
-                          <td className="p-3 border"></td>
-                          <td className="p-3 border"></td>
+                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9]"></td>
                         </tr>
                       </React.Fragment>
                     );

@@ -321,22 +321,22 @@ export default function AIJournalPage() {
                             </td>
                           </tr>
                         ))}
-                        <tr className="bg-[#F5F5F5]">
-                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">소계</td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
-                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">
+                        <tr>
+                          <td className="p-3 border border-[#d9d9d9] bg-[#F5F5F5] font-medium text-sm text-[#757575]">소계</td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white font-medium text-sm text-[#757575]">
                             {debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
-                          <td className="p-3 border border-[#d9d9d9] font-medium text-sm">
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white font-medium text-sm text-[#757575]">
                             {credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
-                          <td className="p-3 border border-[#d9d9d9]"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
+                          <td className="p-3 border border-[#d9d9d9] bg-white"></td>
                         </tr>
                       </React.Fragment>
                     );

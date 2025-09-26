@@ -6,6 +6,8 @@ import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { getBankAccountDocs, extractBankAccountDocs, saveBankAccountDocs } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
+import ToastMessage from '@/components/ToastMessage';
+import Image from 'next/image';
 
 interface AccountRow {
   id: number;
@@ -27,6 +29,8 @@ export default function AccountInfoPage() {
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
   const [documentId, setDocumentId] = useState<string>('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -145,11 +149,6 @@ const handleFileUpload = async (file: File) => {
   const handleSave = async () => {
     if (!token) return;
     
-    if (!documentId) {
-      alert('파일을 먼저 업로드해주세요.');
-      return;
-    }
-    
     try {
       setLoading(true);
       
@@ -170,7 +169,8 @@ const handleFileUpload = async (file: File) => {
       }, token);
       
       if (data.success) {
-        alert('저장되었습니다!');
+        setToastMessage('통장 정보가 저장되었습니다!');
+        setShowToast(true);
         // documentId 초기화
         setDocumentId('');
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
@@ -212,7 +212,8 @@ const handleFileUpload = async (file: File) => {
         
         // 서버에서 삭제 성공하면 로컬에서도 제거
         setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
+        setToastMessage('통장 정보가 삭제되었습니다!');
+        setShowToast(true);
       } catch (err) {
         console.error('삭제 에러:', err);
         alert('삭제 실패');
@@ -253,108 +254,151 @@ const handleFileUpload = async (file: File) => {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">통장 정보</h2>
-            <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
-              저장하세요.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            {/* 파일 업로드 */}
-            <Button
-              variant="neutral"
-              size="small"
-              onClick={() => document.getElementById('accountFile')?.click()}
-              disabled={loading}
-              loading={loading}
-              className="min-w-fit"
-            >
-              파일 업로드
-            </Button>
-            {/* 저장하기 */}
-            <Button
-              variant="neutral"
-              size="small"
-              onClick={handleSave}
-              disabled={!hasData || loading}
-              loading={loading}
-            >
-              저장하기
-            </Button>
-          </div>
-        </div>
+    <div className="flex flex-col items-center p-0 bg-white min-h-screen">
+      <div className="flex flex-col items-center p-0 w-full">
+        {/* Content */}
+        <div className="flex flex-col items-start p-4 gap-4 w-full">
+          {/* Title */}
+          <div className="flex flex-col items-start p-0 gap-4 w-full min-w-[520px]">
+            {/* Title Header */}
+            <div className="flex flex-row justify-between items-end p-0 gap-4 w-full">
+              <div className="flex flex-col items-start p-0">
+                <div className="flex flex-col items-start px-0 py-1.5 rounded-lg">
+                  <div className="flex flex-row items-start p-0">
+                    <span className="text-[15px] leading-[140%] text-[#1E1E1E] font-semibold">
+                      통장 정보
+                    </span>
+                  </div>
+                </div>
+                <span className="text-xs leading-[140%] text-center text-[#767676]">
+                  파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
+                </span>
+              </div>
+              <div className="flex flex-row justify-end items-center p-0 gap-2">
+                <Button
+                  variant="neutral"
+                  size="small"
+                  onClick={() => document.getElementById('accountFile')?.click()}
+                  disabled={loading}
+                  loading={loading}
+                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E]"
+                >
+                  파일 업로드
+                </Button>
+                <Button
+                  variant="neutral"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={!hasData || loading}
+                  loading={loading}
+                  className={`flex flex-row justify-center items-center px-3 py-2 gap-2 text-xs leading-[100%] ${
+                    !hasData || loading 
+                      ? 'bg-[#E6E6E6] text-[#B3B3B3]' 
+                      : 'bg-[#F3F3F3] text-[#1E1E1E]'
+                  }`}
+                >
+                  저장하기
+                </Button>
+              </div>
+            </div>
 
-        {/* 파일 업로드 박스 */}
-        <div className="mb-6">
-          <FileUploadBox
-            id="accountFile"
-            onFileUpload={handleFileUpload}
-            loading={loading}
-          />
-        </div>
+            {/* Upload */}
+            <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[400px] bg-white border border-dashed border-[#D9D9D9]">
+              <div className="flex items-center justify-center">
+                <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+              </div>
+              <div className="flex flex-col items-center p-0 gap-0.5">
+                <span className="text-xs leading-[140%] text-center text-[#303030]">
+                  파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
+                </span>
+                <span className="text-xs leading-[140%] text-center text-[#767676]">
+                  (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
+                </span>
+              </div>
+              <FileUploadBox
+                id="accountFile"
+                onFileUpload={handleFileUpload}
+                loading={loading}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+              />
+            </div>
+          </div>
 
-        {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="p-3 border border-[#D9D9D9] w-14 font-medium">번호</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">은행명</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">계좌번호</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">출금수수료(원)</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">용도</th>
-              <th className="p-3 border border-[#D9D9D9] font-medium">특이사항</th>
-              <th className="p-3 border border-[#D9D9D9] w-24 font-medium">삭제</th>
-            </tr>
-          </thead>
-          <tbody>
+          {/* 테이블 형태의 폼 */}
+          <div className="flex flex-col items-start p-0 w-full">
+            {/* 헤더 행 */}
+            <div className="flex flex-row items-start p-0 w-full h-8">
+              <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">번호</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">은행명</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">계좌번호</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">출금수수료(원)</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">용도</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 flex-1 h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
+                <span className="text-xs leading-[100%] text-[#757575]">특이사항</span>
+              </div>
+              <div className="flex flex-row items-center justify-center p-2 w-20 h-8 bg-[#F5F5F5] border border-[#D9D9D9]">
+                <span className="text-xs leading-[100%] text-[#757575]">삭제</span>
+              </div>
+            </div>
+
+            {/* 데이터 행들 */}
             {rows.map((row, idx) => (
-              <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  {idx + 1}
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.bankName}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, bankName: e.target.value }
-                            : r
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.accountNumber}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, accountNumber: e.target.value }
-                            : r
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <div className="flex items-center w-full">
+              <div key={row.id} className="flex flex-row items-start p-0 w-full h-8">
+                <div className="flex flex-row items-center justify-center p-2 w-16 h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                  <span className="text-xs leading-[100%] text-[#757575]">{idx + 1}</span>
+                </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
                     <input
-                      className="flex-1 px-2 py-1 text-[#B3B3B3] focus:outline-none"
+                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
-                      value={row.withdrawalFee || ''}
+                      value={row.bankName}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, bankName: e.target.value }
+                              : r
+                          )
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                    <input
+                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      placeholder="입력하기"
+                      value={row.accountNumber}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, accountNumber: e.target.value }
+                              : r
+                          )
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                    <input
+                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      placeholder="입력하기"
+                      value={row.withdrawalFee || 0}
                       onChange={e =>
                         setRows(prev =>
                           prev.map(r =>
@@ -365,77 +409,76 @@ const handleFileUpload = async (file: File) => {
                         )
                       }
                     />
-                    <span className="text-gray-400 text-sm ml-2">원</span>
+                    <span className="text-xs text-[#767676] ml-1">원</span>
                   </div>
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.purpose || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, purpose: e.target.value }
-                            : r
+                </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                    <input
+                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      placeholder="입력하기"
+                      value={row.purpose || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id
+                              ? { ...r, purpose: e.target.value }
+                              : r
+                          )
                         )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full px-2 py-1 text-[#B3B3B3] focus:outline-none"
-                    placeholder="입력하기"
-                    value={row.note || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, note: e.target.value } : r
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-r-0">
+                    <input
+                      className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      placeholder="입력하기"
+                      value={row.note || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id ? { ...r, note: e.target.value } : r
+                          )
                         )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row items-center justify-center p-2 w-20 h-8 bg-white border border-[#D9D9D9] border-t-0">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    style={{
-                      width: 'auto',
-                      minWidth: '66px',
-                      height: '28px',
-                      padding: '8px 12px',
-                      background: '#F3F3F3',
-                      color: '#1E1E1E',
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                    }}
+                    className="text-xs leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] px-2 py-1.5"
                     disabled={loading}
                   >
                     삭제
                   </button>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
 
             {/* 추가하기 버튼 행 */}
-            <tr>
-              <td
-                colSpan={7}
-                className="p-3 border border-[#D9D9D9] text-center"
-              >
+            <div className="flex flex-row items-start p-0 w-full h-8">
+              <div className="flex flex-row items-center justify-center gap-1 p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0">
+                <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
                 <button
                   onClick={addRow}
-                  className="text-sm text-[#767676] flex items-center gap-1 hover:text-[#1E1E1E] mx-auto"
+                  className="text-xs text-[#767676] hover:text-[#1E1E1E] flex items-center gap-1"
                 >
-                  + 추가하기
+                  추가하기
                 </button>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <ToastMessage 
+        message={toastMessage} 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

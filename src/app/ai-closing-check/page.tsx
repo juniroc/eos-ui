@@ -2335,10 +2335,7 @@ export default function AIClosingCheckPage() {
                           )}
                         </tbody>
                       </table>
-                      
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-500 mb-4">플로우 : - 기존에 작성되어있는 데이터 백 API 에서 가져옴</p>
-                      </div>
+
                     </div>
                   </>
                 ) : (
@@ -2576,9 +2573,6 @@ export default function AIClosingCheckPage() {
                         </tbody>
                       </table>
                       
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-500 mb-4">플로우 : - 기존에 작성되어있는 데이터 백 API 에서 가져옴</p>
-                      </div>
                     </div>
                   </>
                 ) : (
@@ -2808,9 +2802,6 @@ export default function AIClosingCheckPage() {
                         </tbody>
                       </table>
                       
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-500 mb-4">플로우 : - 기존에 작성되어있는 데이터 백 API 에서 가져옴</p>
-                      </div>
                     </div>
                   </>
                 ) : (

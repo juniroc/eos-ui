@@ -189,6 +189,25 @@ export default function AIJournalPage() {
         {/* 결과 */}
         {step === 'result' && (
           <>
+            {/* 결과 헤더 */}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-[#1E1E1E]">분개 결과</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-4 py-2 rounded text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
+                >
+                  인쇄하기
+                </button>
+                <button
+                  onClick={() => alert('저장했습니다')}
+                  className="px-4 py-2 rounded text-sm bg-[#2C2C2C] text-white hover:bg-[#1E1E1E]"
+                >
+                  저장하기
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-5 gap-4 mb-6">
               <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
                 <p className="text-sm text-[#767676] mb-1">거래건수</p>

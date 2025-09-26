@@ -371,7 +371,6 @@ export default function EmployeeInfoPage() {
                     <option value="">선택하기</option>
                     <option value="FULL_TIME">정규직</option>
                     <option value="CONTRACT">계약직</option>
-                    <option value="PART_TIME">파트타임</option>
                   </select>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
@@ -407,15 +406,14 @@ export default function EmployeeInfoPage() {
                       )
                     }
                   >
-                    <option value="">선택하기</option>
-                    <option value="YES">예</option>
-                    <option value="NO">아니오</option>
+                    <option value="NO">X</option>
+                    <option value="YES">O</option>
                   </select>
                 </td>
                 <td className="p-3 border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                    className="px-3 py-1 text-xs bg-[#F3F3F3] text-[#1E1E1E]"
                     disabled={loading}
                   >
                     삭제

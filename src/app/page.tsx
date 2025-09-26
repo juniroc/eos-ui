@@ -242,7 +242,13 @@ export default function BusinessInfoPage() {
                 법인/개인 구분
               </td>
               <td className="p-3 border border-[#D9D9D9]">
-                <select
+              <input
+                  className="w-full px-2 py-1"
+                  placeholder="입력하기"
+                  value={formData.businessCategory}
+                  onChange={e => handleChange('businessCategory', e.target.value)}
+                />
+                {/* <select
                   className="w-full px-2 py-1"
                   value={formData.businessCategory}
                   onChange={e =>
@@ -252,7 +258,7 @@ export default function BusinessInfoPage() {
                   <option value="">선택하기</option>
                   <option value="법인">법인</option>
                   <option value="개인">개인</option>
-                </select>
+                </select> */}
               </td>
               <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9]">
                 사업자등록번호

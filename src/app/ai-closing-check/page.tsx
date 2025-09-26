@@ -552,7 +552,6 @@ export default function AIClosingCheckPage() {
         row.key === 'ending_inventory' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('기말재고 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기말재고 결산 반영 API 호출 오류:', error);
       alert('기말재고 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -715,7 +714,6 @@ export default function AIClosingCheckPage() {
         row.key === 'bad_debt' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('대손상각 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('대손상각 결산 반영 API 호출 오류:', error);
       alert('대손상각 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -869,7 +867,6 @@ export default function AIClosingCheckPage() {
         row.key === 'retirement_benefit' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('퇴직급여충당금 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('퇴직급여충당금 결산 반영 API 호출 오류:', error);
       alert('퇴직급여충당금 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -1234,7 +1231,6 @@ export default function AIClosingCheckPage() {
         row.key === 'period_accrual' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('기간귀속 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기간귀속 결산 반영 API 호출 오류:', error);
       alert('기간귀속 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -1578,8 +1574,6 @@ export default function AIClosingCheckPage() {
         row.key === 'depreciation' ? { ...row, status: 'DONE' } : row
       ));
       
-      // 성공 메시지 표시
-      alert('감가상각 결산반영이 완료되었습니다.');
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
       alert('감가상각 결산반영 중 네트워크 오류가 발생했습니다.');
@@ -2850,9 +2844,11 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {retirementBenefitVoucherData && retirementBenefitVoucherData.transactions?.length > 0 ? (
+                          {retirementBenefitVoucherData ? (
                             <>
-                              {retirementBenefitVoucherData.transactions.map((transaction, index) => (
+                              {retirementBenefitVoucherData.transactions && retirementBenefitVoucherData.transactions.length > 0 ? (
+                                <>
+                                  {retirementBenefitVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
@@ -2898,6 +2894,14 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                               </tr>
+                                </>
+                              ) : (
+                                <tr>
+                                  <td colSpan={8} className="p-8 text-center text-gray-500">
+                                    생성된 거래 내역이 없습니다.
+                                  </td>
+                                </tr>
+                              )}
                             </>
                           ) : (
                             <tr>

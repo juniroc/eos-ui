@@ -1,10 +1,11 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 
 export default function DynamicSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const activeSection = pathname === '/' ? 'business-info' : pathname.slice(1);
 
   return (
@@ -12,9 +13,9 @@ export default function DynamicSidebar() {
       activeSection={activeSection}
       onSectionChange={section => {
         if (section === 'business-info') {
-          window.location.href = '/';
+          router.push('/');
         } else {
-          window.location.href = `/${section}`;
+          router.push(`/${section}`);
         }
       }}
     />

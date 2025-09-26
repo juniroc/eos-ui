@@ -294,6 +294,7 @@ export default function AIClosingCheckPage() {
   const [showDepreciationModal, setShowDepreciationModal] = useState(false);
   const [depreciationData, setDepreciationData] = useState<DepreciationResponse | null>(null);
   const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
+  const [editableVoucherData, setEditableVoucherData] = useState<VoucherResponse | null>(null);
   const [depreciationLoading, setDepreciationLoading] = useState(false);
   const [editableItems, setEditableItems] = useState<EditableDepreciationItem[]>([]);
 
@@ -1441,6 +1442,104 @@ export default function AIClosingCheckPage() {
     ));
   };
 
+  /** 전표 거래 항목 수정 */
+  const handleTransactionChange = (transactionIndex: number, field: string, value: string | number) => {
+    if (!editableVoucherData) return;
+    
+    setEditableVoucherData(prev => {
+      if (!prev) return null;
+      
+      const updatedTransactions = [...prev.transactions];
+      updatedTransactions[transactionIndex] = {
+        ...updatedTransactions[transactionIndex],
+        [field]: value
+      };
+      
+      return {
+        ...prev,
+        transactions: updatedTransactions
+      };
+    });
+  };
+
+  /** 감가상각 전표 저장 */
+  const handleDepreciationSave = async () => {
+    if (!voucherData || !voucherData.voucher?.transactions) {
+      alert('저장할 전표 데이터가 없습니다.');
+      return;
+    }
+
+    try {
+      setDepreciationLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      // 전표 생성
+      const voucherFormData = new FormData();
+      voucherFormData.append('date', closingDate);
+      voucherFormData.append('description', '감가상각 처리');
+
+      const voucherResponse = await fetch(
+        'https://api.eosxai.com/api/vouchers',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: voucherFormData,
+        }
+      );
+
+      if (!voucherResponse.ok) {
+        const errorData = await voucherResponse.json();
+        throw new Error(errorData.error || '전표 생성 실패');
+      }
+
+      const voucherResult = await voucherResponse.json();
+
+      // 거래 생성
+      for (const transaction of voucherData.voucher.transactions) {
+        const transactionResponse = await fetch(
+          'https://api.eosxai.com/api/transactions',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              voucherId: voucherResult.id,
+              amount: transaction.amount,
+              partnerId: null, // 감가상각은 거래처가 없음
+              accountId: null, // 계정 ID는 서버에서 처리
+              debitCredit: transaction.debitCredit === 'DEBIT',
+              note: transaction.note || null,
+            }),
+          }
+        );
+
+        if (!transactionResponse.ok) {
+          const errorData = await transactionResponse.json();
+          throw new Error(errorData.error || '거래 생성 실패');
+        }
+      }
+
+      alert('감가상각 전표가 성공적으로 저장되었습니다!');
+      setShowDepreciationModal(false);
+    } catch (error) {
+      console.error('감가상각 전표 저장 오류:', error);
+      alert(
+        error instanceof Error ? error.message : '전표 저장 중 문제가 발생했습니다.'
+      );
+    } finally {
+      setDepreciationLoading(false);
+    }
+  };
+
   /** 감가상각 결산반영 */
   const handleDepreciationApply = async () => {
     try {
@@ -1497,38 +1596,16 @@ export default function AIClosingCheckPage() {
         const errorData = await response.json().catch(() => ({}));
         console.error('API 에러 응답:', errorData);
         
-        if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '감가상각비',
-                  partner: '기말결산',
-                  amount: 8000000,
-                  debitCredit: 'DEBIT',
-                  note: '감가상각 처리'
-                },
-                {
-                  account: '감가상각누계액',
-                  partner: '기말결산',
-                  amount: 8000000,
-                  debitCredit: 'CREDIT',
-                  note: '감가상각 처리'
-                }
-              ]
-            }
-          };
-          
-          setVoucherData(mockVoucherData);
-        } else {
-          alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
-        }
+        alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
         return;
       }
 
-      const data: VoucherResponse = await response.json();
+      const data = await response.json();
+      console.log('감가상각 API 응답 데이터:', data);
+      
+      // API 응답을 그대로 사용 (이미 전표 형태로 반환됨)
       setVoucherData(data);
+      setEditableVoucherData(data);
       
       // 메인 테이블 상태 업데이트
       setRows(prev => prev.map(row => 
@@ -1979,15 +2056,13 @@ export default function AIClosingCheckPage() {
                         <h3 className="text-lg font-semibold">전표 점검</h3>
                         <div className="flex justify-between items-center">
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
-                          <button
+                <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowDepreciationModal(false);
-                            }}
-                          >
-                            저장
-                          </button>
+                            onClick={handleDepreciationSave}
+                            disabled={depreciationLoading}
+                >
+                            {depreciationLoading ? '저장중...' : '저장'}
+                </button>
                         </div>
                       </div>
                       
@@ -2011,16 +2086,49 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {voucherData && voucherData.voucher?.transactions?.length > 0 ? (
+                          {editableVoucherData ? (
                             <>
-                              {voucherData.voucher.transactions.map((transaction, index) => (
+                              {editableVoucherData.transactions?.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
-                                  {transaction.debitCredit === 'DEBIT' ? (
+                                  {transaction.debitCredit ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.account?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'account', {
+                                              ...transaction.account,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="number" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.amount}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.partner?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'partner', {
+                                              ...transaction.partner,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2030,28 +2138,70 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.account?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'account', {
+                                              ...transaction.account,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="number" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.amount}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.partner?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'partner', {
+                                              ...transaction.partner,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
                                     </>
                                   )}
-                                  <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                      value={transaction.note || ''}
+                                      onChange={(e) => {
+                                        handleTransactionChange(index, 'note', e.target.value);
+                                      }}
+                                    />
+                                  </td>
                                 </tr>
                               ))}
                               <tr>
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {voucherData.voucher.transactions
-                                    .filter(t => t.debitCredit === 'DEBIT')
+                                  {editableVoucherData.transactions
+                                    ?.filter(t => t.debitCredit === true)
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {voucherData.voucher.transactions
-                                    .filter(t => t.debitCredit === 'CREDIT')
+                                  {editableVoucherData.transactions
+                                    ?.filter(t => t.debitCredit === false)
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>

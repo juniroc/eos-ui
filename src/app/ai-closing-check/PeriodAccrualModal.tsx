@@ -287,8 +287,21 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
               </div>
               
               <div className="flex items-center gap-2">
+              {/* 버튼 영역 */}
+          <div className="flex justify-end gap-2 mt-4">
+            <button className="flex items-center justify-center px-4 py-2 h-8 bg-white border border-[#D9D9D9] text-[#757575] text-xs">
+              인쇄하기
+            </button>
+            <button 
+              onClick={handleGenerateJournal}
+              className="flex items-center justify-center px-4 py-2 h-8 bg-[#2C2C2C] text-white text-xs"
+            >
+              결산반영
+            </button>
+          </div>
+          
                 {/* 날짜 필드 */}
-                <div className="flex flex-col w-[150px] h-8 relative">
+                {/* <div className="flex flex-col w-[150px] h-8 relative">
                   <input
                     type="date"
                     value={closingDate}
@@ -304,16 +317,16 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                   </div>
                 </div>
                 
-                <div className="w-px h-5 bg-[#D9D9D9]"></div>
+                <div className="w-px h-5 bg-[#D9D9D9]"></div> */}
                 
                 {/* 직접 점검하기 버튼 */}
-                <button
+                {/* <button
                   onClick={() => onDirectCheck(closingDate)}
                   disabled={loading}
                   className="flex items-center justify-center px-3 py-2 gap-2 w-[90px] h-7 bg-[#2C2C2C] text-white text-xs leading-3"
                 >
                   {loading ? '처리중...' : '직접 점검하기'}
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -436,7 +449,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
           </div>
 
           {/* 버튼 영역 */}
-          <div className="flex justify-end gap-2 mt-4">
+          {/* <div className="flex justify-end gap-2 mt-4">
             <button className="flex items-center justify-center px-4 py-2 h-8 bg-white border border-[#D9D9D9] text-[#757575] text-xs">
               인쇄
             </button>
@@ -446,7 +459,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
             >
               결산반영
             </button>
-          </div>
+          </div> */}
 
           {/* 전표 테이블 */}
           {showJournalTable && (

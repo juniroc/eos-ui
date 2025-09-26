@@ -329,7 +329,7 @@ export async function extractEmployeeDocs(file: File, token: string): Promise<un
   return response.json();
 }
 
-export async function saveEmployeeDocs(data: { documentId: string; employees: Array<{ name: string; residentNumber: string; employmentType?: string; monthlySalary?: string; isProduction?: string }> }, token: string): Promise<{ success: boolean; employees: Array<{ id: string; name: string; residentNumber: string; employmentType: string; monthlySalary: string; isProduction: string; createdAt: string }> }> {
+export async function saveEmployeeDocs(data: { documentId?: string; employees: Array<{ name: string; residentNumber: string; employmentType?: string; monthlySalary?: string; isProduction?: boolean }> }, token: string): Promise<{ success: boolean; employees: Array<{ id: string; name: string; residentNumber: string; employmentType: string; monthlySalary: string; isProduction: boolean; createdAt: string }> }> {
   const response = await fetch(`${API_BASE_URL}/api/employee-docs/save`, {
     method: 'POST',
     headers: {

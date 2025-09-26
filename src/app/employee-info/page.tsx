@@ -61,6 +61,8 @@ export default function EmployeeInfoPage() {
   /** 직원 목록 불러오기 */
   const fetchEmployees = useCallback(async () => {
     try {
+      if (!token) return;
+
       const res = await fetch('https://api.eosxai.com/api/employees', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -134,11 +136,6 @@ export default function EmployeeInfoPage() {
   const handleSave = async () => {
     if (!token) return;
     
-    if (!documentId) {
-      alert('먼저 파일을 업로드해주세요.');
-      return;
-    }
-    
     try {
       setLoading(true);
       
@@ -146,9 +143,10 @@ export default function EmployeeInfoPage() {
       const validEmployees = rows
         .filter(row => row.name.trim() || row.residentNumber.trim())
         .map(row => {
-          const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: string } = {
+          const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: boolean } = {
             name: row.name.trim(),
             residentNumber: row.residentNumber.trim(),
+            isProduction: row.isProduction === 'YES',
           };
           
           // optional 필드들은 값이 있을 때만 포함
@@ -158,9 +156,6 @@ export default function EmployeeInfoPage() {
           if (row.monthlySalary?.trim()) {
             employee.monthlySalary = row.monthlySalary.trim();
           }
-          if (row.isProduction?.trim()) {
-            employee.isProduction = row.isProduction.trim();
-          }
           
           return employee;
         });
@@ -168,7 +163,7 @@ export default function EmployeeInfoPage() {
       console.log('저장할 데이터:', { documentId, employees: validEmployees });
       
       const data = await saveEmployeeDocs({
-        documentId,
+        // documentId,
         employees: validEmployees
       }, token);
       
@@ -224,9 +219,9 @@ export default function EmployeeInfoPage() {
         id: Date.now(),
         name: '',
         residentNumber: '',
-        employmentType: '',
+        employmentType: 'REGULAR',
         monthlySalary: '',
-        isProduction: '',
+        isProduction: 'YES',
       },
     ]);
   };
@@ -369,9 +364,8 @@ export default function EmployeeInfoPage() {
                     }
                   >
                     <option value="">선택하기</option>
-                    <option value="FULL_TIME">정규직</option>
-                    <option value="CONTRACT">계약직</option>
-                    <option value="PART_TIME">파트타임</option>
+                    <option value="REGULAR" selected>정규직</option>
+                    <option value="NON_REGULAR">계약직</option>
                   </select>
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">
@@ -379,7 +373,7 @@ export default function EmployeeInfoPage() {
                     <input
                       className="flex-1 focus:outline-none text-[#B3B3B3]"
                       placeholder="입력하기"
-                      value={row.monthlySalary || ''}
+                      value={row.monthlySalary || 0}
                       onChange={e =>
                         setRows(prev =>
                           prev.map(r =>
@@ -408,7 +402,7 @@ export default function EmployeeInfoPage() {
                     }
                   >
                     <option value="">선택하기</option>
-                    <option value="YES">예</option>
+                    <option value="YES" selected>예</option>
                     <option value="NO">아니오</option>
                   </select>
                 </td>
@@ -424,14 +418,13 @@ export default function EmployeeInfoPage() {
               </tr>
             ))}
             {/* 추가하기 */}
-            <tr>
+            <tr onClick={addRow} className="cursor-pointer">
               <td
                 colSpan={7}
                 className="p-3 border border-[#D9D9D9] text-center"
               >
                 <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
+                  className="text-sm text-[#767676] cursor-pointer"
                 >
                   + 추가하기
                 </button>

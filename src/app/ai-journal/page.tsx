@@ -443,6 +443,88 @@ export default function AIJournalPage() {
     }
   };
 
+  // 전표 저장
+  const handleSaveVouchers = async () => {
+    if (vouchers.length === 0) {
+      alert('저장할 전표가 없습니다.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('로그인이 필요합니다.');
+      }
+
+      // 각 전표를 순차적으로 저장
+      for (const voucher of vouchers) {
+        // 1. 전표 생성
+        const voucherFormData = new FormData();
+        voucherFormData.append('date', voucher.date);
+        if (voucher.description) {
+          voucherFormData.append('description', voucher.description);
+        }
+
+        const voucherResponse = await fetch(
+          'https://api.eosxai.com/api/vouchers',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: voucherFormData,
+          }
+        );
+
+        if (!voucherResponse.ok) {
+          const errorData = await voucherResponse.json();
+          throw new Error(errorData.error || '전표 생성 실패');
+        }
+
+        const voucherData = await voucherResponse.json();
+
+        // 2. 거래 생성
+        for (const transaction of voucher.transactions) {
+          const transactionResponse = await fetch(
+            'https://api.eosxai.com/api/transactions',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                voucherId: voucherData.id,
+                amount: transaction.amount,
+                partnerId: transaction.partnerId || null,
+                accountId: transaction.accountId || null,
+                debitCredit: transaction.debitCredit || false,
+                note: transaction.note || null,
+              }),
+            }
+          );
+
+          if (!transactionResponse.ok) {
+            const errorData = await transactionResponse.json();
+            throw new Error(errorData.error || '거래 생성 실패');
+          }
+        }
+      }
+
+      alert('전표가 성공적으로 저장되었습니다!');
+    } catch (err) {
+      console.error('전표 저장 에러:', err);
+      setError(
+        err instanceof Error ? err.message : '전표 저장 중 문제가 발생했습니다.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="p-8">
@@ -468,16 +550,20 @@ export default function AIJournalPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={handleExtractStart}
-              disabled={!files || files.length === 0 || loading}
-              className={`px-4 py-2 rounded text-sm ${
-                files && files.length > 0 && !loading
-                  ? 'bg-[#2C2C2C] text-white'
-                  : 'bg-[#E6E6E6] text-[#1E1E1E]'
-              }`}
+              onClick={() => window.print()}
+              className="px-4 py-2 rounded text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
             >
-              파일 업로드
+              인쇄하기
             </button>
+            {step === 'result' && vouchers.length > 0 && (
+              <button
+                onClick={handleSaveVouchers}
+                disabled={loading}
+                className="px-4 py-2 rounded text-sm bg-[#2C2C2C] text-white hover:bg-[#444444] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                저장하기
+              </button>
+            )}
           </div>
         </div>
 
@@ -502,12 +588,12 @@ export default function AIJournalPage() {
               className="hidden"
               id="file-upload"
             />
-            <label
-              htmlFor="file-upload"
+            <button
+              onClick={() => document.getElementById('file-upload')?.click()}
               className="inline-block px-6 py-3 bg-[#2C2C2C] text-white rounded-lg cursor-pointer hover:bg-[#1E1E1E] transition-colors"
             >
               파일 선택
-            </label>
+            </button>
             {files && (
               <div className="mt-4">
                 <p className="text-sm text-[#767676] mb-2">선택된 파일:</p>

@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { getBusinessInfo, saveBusinessInfo, extractBusinessInfoWithAuth } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
+import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
 
 interface FormData {
@@ -46,6 +47,7 @@ export default function BusinessInfoPage() {
   const [loading, setLoading] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const [isBusinessCategoryOpen, setIsBusinessCategoryOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function BusinessInfoPage() {
       const result = await saveBusinessInfo(formData, token);
 
       if (result.success) {
-        alert('저장되었습니다!');
+        setShowToast(true);
       } else {
         alert('저장에 실패했습니다.');
       }
@@ -471,6 +473,12 @@ export default function BusinessInfoPage() {
           </div>
         </div>
       </div>
+      
+      <ToastMessage 
+        message="사업자 정보가 저장되었습니다!" 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

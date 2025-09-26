@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
+import ToastMessage from '@/components/ToastMessage';
 
 interface SettlementRow {
   id: number;
@@ -26,6 +28,7 @@ export default function SettlementInfoPage() {
   const [additionalRows, setAdditionalRows] = useState<SettlementRow[]>([]);
   const [, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -106,7 +109,7 @@ export default function SettlementInfoPage() {
           otherDocs.map((doc: { id: string; type: string; originalName: string }) => ({
             id: doc.id,
             type: '선택' as const,
-            dataType: doc.originalName,
+            dataType: doc.originalName.split('.').slice(0, -1).join('.'),
             fileName: doc.originalName,
             fileId: doc.id,
           }))
@@ -303,8 +306,7 @@ export default function SettlementInfoPage() {
       if (!res.ok) throw new Error('저장 실패');
       const result = await res.json();
       if (result.success) {
-        alert('저장되었습니다!');
-        // 저장 후 최신 데이터 다시 불러오기
+        setShowToast(true);
         await fetchDocs();
       } else {
         alert('저장 실패');
@@ -322,127 +324,242 @@ export default function SettlementInfoPage() {
   }, [fetchDocs]);
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">
-              전기결산 정보
-            </h2>
-            <p className="text-[#767676]">
+    <div 
+      className="flex flex-col items-start p-4 gap-4"
+      style={{ margin: '0 auto' }}
+    >
+      {/* Title Section */}
+      <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">
+        <div className="flex flex-row justify-between items-end gap-4 w-full">
+          {/* Left side - Title */}
+          <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start pb-0.5 pt-1.5 rounded-lg">
+              <div className="flex flex-row items-start">
+                <h2 
+                  className="text-[#1E1E1E] font-semibold text-[15px] leading-[140%]"
+                  style={{ fontFamily: 'Pretendard' }}
+                >
+                  전기결산 정보
+                </h2>
+              </div>
+            </div>
+            <p 
+              className="text-[#767676] text-[12px] leading-[140%] text-center"
+              style={{ fontFamily: 'Pretendard' }}
+            >
               필요한 내용을 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <div className="flex gap-3">
+
+          {/* Right side - Buttons */}
+          <div className="flex flex-row justify-end items-center gap-2">
             <button
               onClick={handleSave}
               disabled={!hasData || loading}
-              className="px-4 py-2 bg-[#F3F3F3] text-[#1E1E1E] text-sm disabled:opacity-50"
+              className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] disabled:bg-[#E6E6E6] cursor-pointer disabled:cursor-not-allowed"
+              style={{ fontFamily: 'Pretendard' }}
             >
-              {loading ? '저장 중...' : '저장하기'}
+              <span 
+                className={`text-[12px] leading-[100%] font-medium ${
+                  !hasData || loading ? 'text-[#B3B3B3]' : 'text-[#1E1E1E]'
+                }`}
+              >
+                {loading ? '저장 중...' : '저장하기'}
+              </span>
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Table */}
-        <div className="bg-white border border-[#D9D9D9]">
-          <table className="w-full text-sm text-[#757575]">
-            <thead>
-              <tr>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[65px]">구분</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">자료종류</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" colSpan={2}>파일 업로드</th>
-                <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[85px]">삭제</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...rows, ...additionalRows].map(row => (
-                <tr key={row.id}>
-                  <td className="p-3 border border-[#D9D9D9] text-center">
-                    <span className={`${row.type === '필수' ? 'text-red-500 font-medium' : ''}`}>
-                      {row.type}
+      {/* Table Section */}
+      <div className="flex flex-col items-start w-full border border-[#D9D9D9]">
+        {/* Header Row */}
+        <div className="flex flex-row items-center w-full">
+          {/* 구분 Column */}
+          <div className="flex flex-col justify-center items-start min-w-[40px] w-[45px]">
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span 
+                className="text-[#757575] text-[12px] leading-[100%] font-medium"
+                style={{ fontFamily: 'Pretendard' }}
+              >
+                구분
+              </span>
+            </div>
+          </div>
+
+          {/* 자료종류 Column */}
+          <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span 
+                className="text-[#757575] text-[12px] leading-[100%] font-medium"
+                style={{ fontFamily: 'Pretendard' }}
+              >
+                자료종류
+              </span>
+            </div>
+          </div>
+
+          {/* 파일 업로드 Column */}
+          <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span 
+                className="text-[#757575] text-[12px] leading-[100%] font-medium"
+                style={{ fontFamily: 'Pretendard' }}
+              >
+                파일 업로드
+              </span>
+            </div>
+          </div>
+
+          {/* 삭제 Column */}
+          <div className="flex flex-col justify-center items-start min-w-[60px] w-[70px]">
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5]">
+              <span 
+                className="text-[#757575] text-[12px] leading-[100%] font-medium"
+                style={{ fontFamily: 'Pretendard' }}
+              >
+                삭제
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Data Rows */}
+        {[...rows, ...additionalRows].map(row => (
+          <div key={row.id} className="flex flex-row items-center w-full border-t border-[#D9D9D9]">
+            {/* 구분 Cell */}
+            <div className="flex flex-col justify-center items-start min-w-[40px]">
+              <div className="flex flex-col justify-center items-start px-3 py-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
+                <span 
+                  className={`text-[12px] leading-[100%] font-medium ${
+                    row.type === '필수' ? 'text-[#EC221F]' : 'text-[#757575]'
+                  }`}
+                  style={{ fontFamily: 'Pretendard' }}
+                >
+                  {row.type}
+                </span>
+              </div>
+            </div>
+
+            {/* 자료종류 Cell */}
+            <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+              <div className="flex flex-row items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
+                {['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType) ? (
+                  <span 
+                    className="text-[#757575] text-[12px] leading-[100%] font-medium flex-1"
+                    style={{ fontFamily: 'Pretendard' }}
+                  >
+                    {row.dataType}
+                  </span>
+                ) : (
+                  <input
+                    className="text-[#757575] text-[12px] leading-[100%] font-medium flex-1 bg-transparent border-none outline-none"
+                    style={{ fontFamily: 'Pretendard' }}
+                    placeholder="자료종류 입력"
+                    value={row.dataType}
+                    onChange={e =>
+                      setAdditionalRows(prev =>
+                        prev.map(r =>
+                          r.id === row.id ? { ...r, dataType: e.target.value } : r
+                        )
+                      )
+                    }
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* 파일 업로드 Cell */}
+            <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+              <div className="flex flex-row items-center p-2 gap-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
+                {row.fileName ? (
+                  <>
+                    <span 
+                      className="text-[#757575] text-[12px] leading-[100%] font-medium flex-1"
+                      style={{ fontFamily: 'Pretendard' }}
+                    >
+                      {row.fileName}
                     </span>
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]">
-                    {['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType) ? (
-                      row.dataType
-                    ) : (
+                    <label className="cursor-pointer text-[#B3B3B3] hover:text-[#757575] text-[10px]">
+                      변경
                       <input
-                        className="w-full px-2 py-1 text-gray-700 focus:outline-none"
-                        placeholder="자료종류 입력"
-                        value={row.dataType}
+                        type="file"
+                        accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
+                        className="hidden"
                         onChange={e =>
-                          setAdditionalRows(prev =>
-                            prev.map(r =>
-                              r.id === row.id ? { ...r, dataType: e.target.value } : r
-                            )
-                          )
+                          e.target.files &&
+                          handleFileUpload(row.id, e.target.files[0])
                         }
                       />
-                    )}
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" colSpan={2}>
-                    {row.fileName ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-700">{row.fileName}</span>
-                        <label className="cursor-pointer text-gray-400 hover:text-gray-600 text-xs">
-                          변경
-                          <input
-                            type="file"
-                            accept=".pdf,.xlsx,.csv,.jpg,.jpeg,.png"
-                            className="hidden"
-                            onChange={e =>
-                              e.target.files &&
-                              handleFileUpload(row.id, e.target.files[0])
-                            }
-                          />
-                        </label>
-                      </div>
-                    ) : (
-                      <label className="cursor-pointer text-gray-400 hover:text-gray-600 flex items-center gap-1">
-                        <img src="/icons/upload.png" alt="업로드" className="w-4 h-4" />
-                        <span>파일 업로드</span>
-                        <input
-                          type="file"
-                          accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={e =>
-                            e.target.files &&
-                            handleFileUpload(row.id, e.target.files[0])
-                          }
-                        />
-                      </label>
-                    )}
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9] text-center">
-                    <button
-                      onClick={() => handleDelete(row.id, row.fileId)}
-                      className="px-3 py-1 text-xs bg-[#F3F3F3] text-[#1E1E1E]"
-                      disabled={loading}
+                    </label>
+                  </>
+                ) : (
+                  <label className="cursor-pointer flex flex-row items-center gap-2 w-full">
+                    <Image src="/icons/upload_light_gray.svg" alt="업로드" width={16} height={16} />
+                    <span 
+                      className="text-[#B3B3B3] text-[12px] leading-[100%] font-medium flex-1"
+                      style={{ fontFamily: 'Pretendard' }}
                     >
-                      삭제
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      파일 업로드
+                    </span>
+                    <input
+                      type="file"
+                      accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={e =>
+                        e.target.files &&
+                        handleFileUpload(row.id, e.target.files[0])
+                      }
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
 
-              {/* 기타자료 추가하기 버튼 행 */}
-              <tr>
-                <td colSpan={5} className="p-3 border border-[#D9D9D9] text-center">
-                  <button
-                    onClick={addRow}
-                    className="text-sm text-[#767676] flex items-center justify-center gap-1 hover:text-[#1E1E1E] w-full"
+            {/* 삭제 Cell */}
+            <div className="flex flex-col justify-center items-start min-w-[60px] w-[70px]">
+              <div className="flex flex-col justify-center items-center w-full h-8 bg-white">
+                <button
+                  onClick={() => handleDelete(row.id, row.fileId)}
+                  className="flex flex-row justify-center items-center px-1.5 gap-2 bg-[#E6E6E6] cursor-pointer disabled:cursor-not-allowed"
+                  disabled={loading}
+                  style={{ height: '23px' }}
+                >
+                  <span 
+                    className="text-[#B3B3B3] text-[11px] leading-[100%] font-medium"
+                    style={{ fontFamily: 'Pretendard' }}
                   >
-                    <span className="w-4 h-4 rounded-full border border-[#767676] flex items-center justify-center text-xs">+</span>
-                    기타자료 추가하기
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    삭제
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* 기타자료 추가하기 Row */}
+        <div className="flex flex-row items-center w-full min-w-[200px] border-t border-[#D9D9D9]">
+          <button
+            onClick={addRow}
+            className="flex flex-row justify-center items-center px-3 py-3 gap-1 w-full bg-white hover:bg-[#F9F9F9] cursor-pointer"
+            style={{ height: '40px' }}
+          >
+            <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
+            <span 
+              className="text-[#757575] text-[12px] leading-[100%] font-medium text-center"
+              style={{ fontFamily: 'Pretendard' }}
+            >
+              기타자료 추가하기
+            </span>
+          </button>
         </div>
       </div>
+
+      <ToastMessage 
+        message="전기결산 정보가 저장되었습니다!" 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

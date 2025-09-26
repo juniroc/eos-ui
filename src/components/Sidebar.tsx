@@ -43,6 +43,7 @@ const navigationItems = [
     subItems: [
       { id: 'proof-storage', label: '증빙보관소' },
       { id: 'journal', label: '전표/수정' },
+      { id: 'account-ledger', label: '계정원장' },
       { id: 'cashbook', label: '현금출납장' },
       { id: 'ledger', label: '원장' },
       { id: 'statements', label: '명세서' },
@@ -116,99 +117,260 @@ export default function Sidebar({
   return (
     <div className="flex h-screen bg-[#F5F5F5]">
       {/* 왼쪽 큰 메뉴 */}
-      <div className="w-24 flex flex-col items-center py-3 space-y-3">
-        <div className="mb-6">
-            <Image src="/logo.png" alt="logo" width={56} height={32} />
+      <div className="w-[104px] flex flex-col items-start pb-3 bg-[#F5F5F5]">
+        {/* 로고 섹션 */}
+        <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
+          <div className="flex flex-col justify-center items-center w-20 h-7">
+            <Image src="/logo.png" alt="logo" width={80} height={26} className="w-20" />
+          </div>
         </div>
 
-        {navigationItems.map((item, index) => {
-          const isActive = getCurrentActiveMenu() === item.id;
-          const icon = isActive ? item.icon : item.iconGrey;
-          return (
-            <div key={item.id}>
+        {/* 메인 네비게이션 섹션 */}
+        <div className="flex flex-col items-center p-3 gap-3 w-full flex-1">
+          {/* 기초정보 섹션 */}
+          <div className="flex flex-col items-start gap-2 w-20">
+            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+              <span className="text-xs font-medium text-[#757575]">회계</span>
+            </div>
+            <div className="flex flex-col items-start gap-[2px] w-20">
               <button
-                onClick={() => handleMenuClick(item.id, !!item.subItems)}
-                onMouseEnter={() => setHoveredMenu(item.id)}
-                className={`w-[56px] h-[56px] flex flex-col items-center justify-center rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-[#E6E6E6] text-[#2C2C2C]'
-                    : 'bg-none text-[#757575] hover:bg-[#E6E6E6]'
+                onClick={() => handleMenuClick('basic-info', true)}
+                onMouseEnter={() => setHoveredMenu('basic-info')}
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                  getCurrentActiveMenu() === 'basic-info'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
                 }`}
               >
                 <Image
-                  src={icon}
-                  alt={item.label}
-                  width={24}
-                  height={24}
-                  className="w-6 h-6 mb-2"
+                  src={getCurrentActiveMenu() === 'basic-info' ? '/icons/layout_black.png' : '/icons/layout_grey.png'}
+                  alt="기초정보"
+                  width={16}
+                  height={16}
                 />
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'basic-info' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  기초정보
+                </span>
               </button>
-
-              {/* Divider */}
-              {(index === 2 || index === 4) && (
-                <div className="w-12 h-px bg-[#D9D9D9] mx-auto mt-3"></div>
-              )}
+              <button
+                onClick={() => handleMenuClick('ai-journal', true)}
+                onMouseEnter={() => setHoveredMenu('ai-journal')}
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                  getCurrentActiveMenu() === 'ai-journal'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'ai-journal' ? '/icons/chart_black.png' : '/icons/chart_grey.png'}
+                  alt="AI 분개"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'ai-journal' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  AI 분개
+                </span>
+              </button>
+              <button
+                onClick={() => handleMenuClick('accounting', true)}
+                onMouseEnter={() => setHoveredMenu('accounting')}
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                  getCurrentActiveMenu() === 'accounting'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'accounting' ? '/icons/book_black.png' : '/icons/book_grey.png'}
+                  alt="회계장부"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'accounting' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  회계장부
+                </span>
+              </button>
             </div>
-          );
-        })}
+          </div>
+
+          {/* 구분선 */}
+          <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
+
+          {/* 세무 섹션 */}
+          <div className="flex flex-col items-start gap-2 w-20">
+            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+              <span className="text-xs font-medium text-[#757575]">세무</span>
+            </div>
+            <button
+              onClick={() => handleMenuClick('ai-tax', false)}
+              onMouseEnter={() => setHoveredMenu('ai-tax')}
+              className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                getCurrentActiveMenu() === 'ai-tax'
+                  ? 'bg-[#E6E6E6]'
+                  : 'hover:bg-[#E6E6E6]'
+              }`}
+            >
+              <Image
+                src={getCurrentActiveMenu() === 'ai-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
+                alt="AI 세무"
+                width={16}
+                height={16}
+              />
+              <span className={`text-xs font-medium text-center ${
+                getCurrentActiveMenu() === 'ai-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+              }`}>
+                AI 세무
+              </span>
+            </button>
+          </div>
+
+          {/* 구분선 */}
+          <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
+
+          {/* ERP 섹션 */}
+          <div className="flex flex-col items-start gap-2 w-20">
+            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+              <span className="text-xs font-medium text-[#757575]">ERP</span>
+            </div>
+            <div className="flex flex-col items-start gap-[2px] w-20">
+              <button
+                onClick={() => handleMenuClick('cost-management', false)}
+                onMouseEnter={() => setHoveredMenu('cost-management')}
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                  getCurrentActiveMenu() === 'cost-management'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'cost-management' ? '/icons/trello_black.png' : '/icons/trello_grey.png'}
+                  alt="원가관리"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'cost-management' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  원가관리
+                </span>
+              </button>
+              <button
+                onClick={() => handleMenuClick('payroll', true)}
+                onMouseEnter={() => setHoveredMenu('payroll')}
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                  getCurrentActiveMenu() === 'payroll'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'payroll' ? '/icons/users_black.png' : '/icons/users_grey.png'}
+                  alt="급여관리"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'payroll' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  급여관리
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
         
-        {/* 계정관리 버튼 */}
-        <div className="mt-auto mb-4">
-          <button
-            onClick={() => {/* 계정관리 기능 구현 */}}
-            className="w-[56px] h-[56px] flex flex-col items-center justify-center rounded-lg transition-colors bg-none text-[#757575] hover:bg-[#E6E6E6]"
-            title="계정관리"
-          >
+        {/* 계정관리 섹션 */}
+        <div className="flex flex-col justify-center items-center p-3 gap-1 w-full h-[68px]">
+          <div className="flex flex-col justify-center items-center p-2 gap-[6px] w-7 h-7 bg-[#5A5A5A] rounded-full">
             <Image
               src="/user.png"
               alt="계정관리"
-              width={28}
-              height={28}
+              width={16}
+              height={16}
             />
-            <span className="text-xs font-medium text-[#757575] mt-[4px]">계정관리</span>
-          </button>
+          </div>
+          <span className="text-xs font-medium text-[#757575] text-center">계정관리</span>
         </div>
       </div>
 
-      {/* 오른쪽 서브메뉴 - 호버 시에만 표시, 위로 올라오도록 */}
+      {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}
       {hoveredMenu &&
         navigationItems.find(i => i.id === hoveredMenu)?.subItems && (
           <div 
-            className="absolute left-24 top-0 h-full p-6 w-max animate-in slide-in-from-left duration-300 ease-out z-10 bg-[#F5F5F5]"
+            className="absolute left-[104px] top-0 flex flex-col items-start w-[108px] h-full bg-[#F5F5F5] animate-in slide-in-from-left duration-300 ease-out z-10"
             onMouseEnter={() => setHoveredMenu(hoveredMenu)}
             onMouseLeave={() => setHoveredMenu(null)}
           >
-            <div>
-              <h2
-                className="text-lg font-semibold mb-4"
-                style={{ color: '#1E1E1E' }}
-              >
-                {
-                  navigationItems.find(i => i.id === hoveredMenu)
-                    ?.label
-                }
-              </h2>
-              {/* Divider */}
-              <div className="w-full h-px bg-[#D9D9D9] mb-6"></div>
-              <ul className="space-y-2">
+            {/* 헤더 섹션 */}
+            <div className="flex flex-col items-start py-3 px-3 pr-3 pl-1 w-full h-[41px]">
+              <div className="flex flex-row items-start w-[92px] h-[17px]">
+                <h2 className="text-xs font-semibold leading-[140%] text-[#1E1E1E]">
+                  {navigationItems.find(i => i.id === hoveredMenu)?.label}
+                </h2>
+              </div>
+            </div>
+
+            {/* 구분선 섹션 */}
+            <div className="flex flex-col items-start py-0 px-3 pr-3 pl-1 gap-[10px] w-full h-0">
+              <div className="w-[92px] h-px border-t border-[#D9D9D9]"></div>
+            </div>
+
+            {/* 네비게이션 버튼 리스트 */}
+            <div className="flex flex-col justify-center items-start py-3 px-3 pr-3 pl-1 gap-[10px] w-full">
+              <div className="flex flex-col items-start gap-[2px] w-[92px]">
                 {navigationItems
                   .find(i => i.id === hoveredMenu)
-                  ?.subItems?.map(sub => (
-                    <li key={sub.id}>
+                  ?.subItems?.map((sub) => {
+                    // 회계장부의 특별한 구조: 원장, 명세서, 재무제표는 들여쓰기
+                    const isIndented = hoveredMenu === 'accounting' && 
+                      (sub.id === 'ledger' || sub.id === 'statements' || sub.id === 'cashbook');
+                    
+                    if (isIndented) {
+                      return (
+                        <div key={sub.id} className="flex flex-col items-start pl-4 gap-[10px] w-[92px] h-7">
+                          <button
+                            onClick={() => onSectionChange(sub.id)}
+                            className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors ${
+                              activeSection === sub.id
+                                ? 'bg-[#E6E6E6]'
+                                : 'hover:bg-[#E6E6E6]'
+                            }`}
+                          >
+                            <span className={`text-xs font-medium leading-[100%] text-center ${
+                              activeSection === sub.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                            }`}>
+                              {sub.label}
+                            </span>
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
                       <button
+                        key={sub.id}
                         onClick={() => onSectionChange(sub.id)}
-                        className={`block w-full text-left px-3 py-2 rounded-md transition-colors ${
+                        className={`flex flex-row items-center p-2 gap-[6px] w-[92px] h-7 rounded transition-colors ${
                           activeSection === sub.id
-                            ? 'bg-[#E6E6E6] text-[#2C2C2C] font-medium'
-                            : 'text-[#757575] hover:bg-[#E6E6E6] hover:text-[#2C2C2C]'
+                            ? 'bg-[#E6E6E6]'
+                            : 'hover:bg-[#E6E6E6]'
                         }`}
                       >
-                        {sub.label}
+                        <span className={`text-xs font-medium leading-[100%] text-center ${
+                          activeSection === sub.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                        }`}>
+                          {sub.label}
+                        </span>
                       </button>
-                    </li>
-                  ))}
-              </ul>
+                    );
+                  })}
+              </div>
             </div>
           </div>
         )}

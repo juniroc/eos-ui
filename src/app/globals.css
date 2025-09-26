@@ -24,6 +24,8 @@
   --Space-200: 8px;
   --Background-Neutral-Tertiary: #f3f3f3;
   --Stroke-Border: #e5e5e5;
+  --text-gray-light: #B3B3B3;
+  --text-dark: #1E1E1E;
 }
 
 @theme inline {

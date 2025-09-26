@@ -26,7 +26,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col bg-white w-full">
         {/* Breadcrumb - 동적 변경 */}
-        <div className="h-16 bg-white flex items-center px-8">
+        <div className="bg-white flex items-center p-3">
           <DynamicBreadcrumb />
         </div>
 

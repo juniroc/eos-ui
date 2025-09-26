@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 interface BreadcrumbProps {
   mainMenu: string;
   subMenu: string;
@@ -7,8 +9,8 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ mainMenu, subMenu }: BreadcrumbProps) {
   return (
-    <div className="mb-4">
-      <p className="text-sm">
+    <div >
+      <p className="flex items-center text-sm">
         <span
           style={{
             color: '#B3B3B3',
@@ -22,20 +24,7 @@ export default function Breadcrumb({ mainMenu, subMenu }: BreadcrumbProps) {
         >
           {mainMenu}
         </span>
-        <span
-          style={{
-            color: '#B3B3B3',
-            fontFamily: 'var(--font-sans)',
-            fontWeight: 400,
-            fontStyle: 'normal',
-            fontSize: '12px',
-            lineHeight: '140%',
-            letterSpacing: '0%',
-          }}
-        >
-          {' '}
-          &gt;{' '}
-        </span>
+        <Image src="/icons/arrow_right.svg" alt="ArrowRight" width={16} height={16} />
         <span
           style={{
             color: '#1E1E1E',

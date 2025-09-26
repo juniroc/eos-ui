@@ -33,6 +33,8 @@ interface ProgressData {
   totalBatches?: number;
   totalVouchers?: number;
   totalNewPartners?: number;
+  message?: string;
+  timestamp?: string;
 }
 
 export default function AIJournalPage() {
@@ -193,6 +195,8 @@ export default function AIJournalPage() {
                     processed:
                       parsedData.processed ?? prev?.processed ?? 0,
                     total: parsedData.total ?? prev?.total ?? 1,
+                    message: parsedData.message || prev?.message,
+                    timestamp: new Date().toLocaleTimeString(),
                   }));
                 } else if (currentEvent === 'done') {
                   const extractedTransactions = parsedData.transactions || [];
@@ -324,6 +328,8 @@ export default function AIJournalPage() {
                     processed:
                       parsedData.processed ?? prev?.processed ?? 0,
                     total: parsedData.total ?? prev?.total ?? 1,
+                    message: parsedData.message || prev?.message,
+                    timestamp: new Date().toLocaleTimeString(),
                   }));
                  } else if (currentEvent === 'done') {
                    // ✅ done 단계: 표 데이터 최종 반영
@@ -521,9 +527,18 @@ export default function AIJournalPage() {
         {step === 'processing' && (
           <div className="bg-white border border-[#D9D9D9] rounded-lg p-12 text-center mb-6">
             <div className="mb-6">
-              <div className="w-full bg-[#E6E6E6] rounded-full h-2 mb-4">
+              {/* 스트리밍 로딩 애니메이션 */}
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-[#E6E6E6] border-t-[#2C2C2C] rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-r-[#2C2C2C] rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+                </div>
+              </div>
+              
+              {/* 진행률 바 */}
+              <div className="w-full bg-[#E6E6E6] rounded-full h-3 mb-4">
                 <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out"
                   style={{
                     width: `${
                       progress && progress.total && progress.total > 0
@@ -533,16 +548,91 @@ export default function AIJournalPage() {
                   }}
                 />
               </div>
-              <p className="text-lg text-[#1E1E1E]">
-                파일 내용을 분석하고 분개작업을 진행중입니다. (
-                {progress?.processed || 0}/{progress?.total || 0})
-              </p>
+              
+              {/* 진행 상태 텍스트 */}
+              <div className="space-y-2">
+                <p className="text-lg font-medium text-[#1E1E1E]">
+                  {progress?.stage === 'extract' ? '파일 내용을 분석하고 있습니다...' :
+                   progress?.stage === 'process' ? '분개 작업을 진행하고 있습니다...' :
+                   'AI가 작업을 처리하고 있습니다...'}
+                </p>
+                <p className="text-sm text-[#767676]">
+                  진행률: {progress?.processed || 0}/{progress?.total || 0} 
+                  {progress?.total && progress?.processed ? 
+                    ` (${Math.round((progress.processed / progress.total) * 100)}%)` : ''}
+                </p>
+                {progress?.totalExtracted && (
+                  <p className="text-sm text-[#767676]">
+                    추출된 거래: {progress.totalExtracted}건
+                  </p>
+                )}
+                {progress?.totalVouchers && (
+                  <p className="text-sm text-[#767676]">
+                    생성된 전표: {progress.totalVouchers}건
+                  </p>
+                )}
+                {progress?.totalNewPartners && (
+                  <p className="text-sm text-[#767676]">
+                    신규 거래처: {progress.totalNewPartners}개
+                  </p>
+                )}
+              </div>
+              
+              {/* 실시간 로그 스타일의 상태 표시 */}
+              <div className="mt-6 p-4 bg-[#F8F9FA] rounded-lg text-left">
+                <div className="text-xs text-[#6C757D] font-mono">
+                  <div className="flex items-center mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                    <span>스트리밍 연결 활성화</span>
+                  </div>
+                  {progress?.stage && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                      <span>현재 단계: {progress.stage}</span>
+                    </div>
+                  )}
+                  {progress?.message && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                      <span>상태: {progress.message}</span>
+                    </div>
+                  )}
+                  {progress?.batchNumber && progress?.totalBatches && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                      <span>배치 처리: {progress.batchNumber}/{progress.totalBatches}</span>
+                    </div>
+                  )}
+                  {progress?.totalExtracted && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
+                      <span>추출 완료: {progress.totalExtracted}건</span>
+                    </div>
+                  )}
+                  {progress?.totalVouchers && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-pink-500 rounded-full mr-2"></div>
+                      <span>전표 생성: {progress.totalVouchers}건</span>
+                    </div>
+                  )}
+                  {progress?.totalNewPartners && (
+                    <div className="flex items-center mb-1">
+                      <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
+                      <span>신규 거래처: {progress.totalNewPartners}개</span>
+                    </div>
+                  )}
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                    <span>마지막 업데이트: {progress?.timestamp || new Date().toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* 결과 */}
-        {step === 'result' && vouchers.length > 0 && (
+        {step === 'result' && (
           <>
             <div className="grid grid-cols-5 gap-4 mb-6">
               <div className="bg-white border border-[#D9D9D9] rounded-lg p-4 text-center">
@@ -593,7 +683,7 @@ export default function AIJournalPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {vouchers.map((voucher, idx) => {
+                  {vouchers.length > 0 ? vouchers.map((voucher, idx) => {
                     const debit = voucher.transactions.filter((t) => t.debitCredit);
                     const credit = voucher.transactions.filter((t) => !t.debitCredit);
                     const rows = Math.max(debit.length, credit.length);
@@ -659,7 +749,13 @@ export default function AIJournalPage() {
                         </tr>
                       </React.Fragment>
                     );
-                  })}
+                  }) : (
+                    <tr>
+                      <td colSpan={9} className="p-8 text-center text-[#757575]">
+                        분개 데이터가 없습니다.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -493,29 +493,8 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '기말재고자산',
-                  partner: '기말결산',
-                  amount: 1100000,
-                  debitCredit: 'DEBIT',
-                  note: '기말재고 조정'
-                },
-                {
-                  account: '매출원가',
-                  partner: '기말결산',
-                  amount: 1100000,
-                  debitCredit: 'CREDIT',
-                  note: '기말재고 조정'
-                }
-              ]
-            }
-          };
-          
-          setEndingInventoryVoucherData(mockVoucherData);
+          // 500 에러 시 얼럿 표시
+          alert('기말재고 결산반영 중 서버 오류가 발생했습니다.');
         } else {
           alert(`기말재고 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -524,6 +503,13 @@ export default function AIClosingCheckPage() {
 
       const data: VoucherResponse = await response.json();
       setEndingInventoryVoucherData(data);
+      
+      // 메인 테이블 상태 업데이트
+      setRows(prev => prev.map(row => 
+        row.key === 'ending_inventory' ? { ...row, status: 'DONE' } : row
+      ));
+      
+      alert('기말재고 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기말재고 결산 반영 API 호출 오류:', error);
       alert('기말재고 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -664,29 +650,8 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '대손상각비',
-                  partner: '기말결산',
-                  amount: 275000,
-                  debitCredit: 'DEBIT',
-                  note: '대손상각 처리'
-                },
-                {
-                  account: '대손충당금',
-                  partner: '기말결산',
-                  amount: 275000,
-                  debitCredit: 'CREDIT',
-                  note: '대손상각 처리'
-                }
-              ]
-            }
-          };
-          
-          setBadDebtVoucherData(mockVoucherData);
+          // 500 에러 시 얼럿 표시
+          alert('대손상각 결산반영 중 서버 오류가 발생했습니다.');
         } else {
           alert(`대손상각 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -695,6 +660,13 @@ export default function AIClosingCheckPage() {
 
       const data: VoucherResponse = await response.json();
       setBadDebtVoucherData(data);
+      
+      // 메인 테이블 상태 업데이트
+      setRows(prev => prev.map(row => 
+        row.key === 'bad_debt' ? { ...row, status: 'DONE' } : row
+      ));
+      
+      alert('대손상각 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('대손상각 결산 반영 API 호출 오류:', error);
       alert('대손상각 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -826,29 +798,8 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '퇴직급여충당금',
-                  partner: '기말결산',
-                  amount: 6666667,
-                  debitCredit: 'DEBIT',
-                  note: '퇴직급여충당금 처리'
-                },
-                {
-                  account: '퇴직급여충당부채',
-                  partner: '기말결산',
-                  amount: 6666667,
-                  debitCredit: 'CREDIT',
-                  note: '퇴직급여충당금 처리'
-                }
-              ]
-            }
-          };
-          
-          setRetirementBenefitVoucherData(mockVoucherData);
+          // 500 에러 시 얼럿 표시
+          alert('퇴직급여충당금 결산반영 중 서버 오류가 발생했습니다.');
         } else {
           alert(`퇴직급여충당금 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -857,6 +808,13 @@ export default function AIClosingCheckPage() {
 
       const data: VoucherResponse = await response.json();
       setRetirementBenefitVoucherData(data);
+      
+      // 메인 테이블 상태 업데이트
+      setRows(prev => prev.map(row => 
+        row.key === 'retirement_benefit' ? { ...row, status: 'DONE' } : row
+      ));
+      
+      alert('퇴직급여충당금 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('퇴직급여충당금 결산 반영 API 호출 오류:', error);
       alert('퇴직급여충당금 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -1231,6 +1189,13 @@ export default function AIClosingCheckPage() {
 
       const data: VoucherResponse = await response.json();
       setPeriodAccrualVoucherData(data);
+      
+      // 메인 테이블 상태 업데이트
+      setRows(prev => prev.map(row => 
+        row.key === 'period_accrual' ? { ...row, status: 'DONE' } : row
+      ));
+      
+      alert('기간귀속 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기간귀속 결산 반영 API 호출 오류:', error);
       alert('기간귀속 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -1564,6 +1529,11 @@ export default function AIClosingCheckPage() {
 
       const data: VoucherResponse = await response.json();
       setVoucherData(data);
+      
+      // 메인 테이블 상태 업데이트
+      setRows(prev => prev.map(row => 
+        row.key === 'depreciation' ? { ...row, status: 'DONE' } : row
+      ));
       
       // 성공 메시지 표시
       alert('감가상각 결산반영이 완료되었습니다.');
@@ -1917,7 +1887,7 @@ export default function AIClosingCheckPage() {
           </div>
 
               {/* 팝업 내용 */}
-              <div className="p-6 overflow-y-auto h-[calc(100%-120px)]">
+              <div className="p-6 overflow-y-auto" style={{height: 'calc(100vh - 200px)'}}>
                 {depreciationLoading ? (
                   <div className="text-center py-8">
                     <div className="text-gray-500">감가상각 데이터를 불러오는 중...</div>
@@ -2041,7 +2011,7 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {voucherData && voucherData.voucher.transactions.length > 0 ? (
+                          {voucherData && voucherData.voucher?.transactions?.length > 0 ? (
                             <>
                               {voucherData.voucher.transactions.map((transaction, index) => (
                                 <tr key={index}>
@@ -2099,20 +2069,7 @@ export default function AIClosingCheckPage() {
                         </tbody>
                       </table>
                       
-                      <div className="mt-4">
-                        <p className="text-sm text-gray-500 mb-4">플로우 : - 기존에 작성되어있는 데이터 백 API 에서 가져옴</p>
-                        <div className="flex justify-end">
-                          <button
-                            className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowDepreciationModal(false);
-                            }}
-                          >
-                            저장
-                </button>
-                        </div>
-                      </div>
+                  
                     </div>
                   </>
                 ) : (
@@ -2146,7 +2103,7 @@ export default function AIClosingCheckPage() {
                     <p className="text-gray-600 mt-2">
                       최종 실사 확인된 재고자산액과 장부상 재고액을 조정하여 원가를 계산합니다. 제조업과 상품의 품목별 단가, 원가율 등의 관리를 하고자 하는 회사는 원가관리 메뉴를 활용하여 기말재고작업을 진행하세요.
                     </p>
-                  </div>
+              </div>
                   <div className="flex gap-2">
                     <button
                       className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
@@ -2161,8 +2118,8 @@ export default function AIClosingCheckPage() {
                     >
                       {endingInventoryLoading ? '처리중...' : '결산 반영'}
                     </button>
-                  </div>
-                </div>
+            </div>
+          </div>
               </div>
 
               {/* 팝업 내용 */}
@@ -2321,7 +2278,7 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {endingInventoryVoucherData && endingInventoryVoucherData.voucher.transactions.length > 0 ? (
+                          {endingInventoryVoucherData && endingInventoryVoucherData.voucher?.transactions?.length > 0 ? (
                             <>
                               {endingInventoryVoucherData.voucher.transactions.map((transaction, index) => (
                                 <tr key={index}>
@@ -2561,7 +2518,7 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {badDebtVoucherData && badDebtVoucherData.voucher.transactions.length > 0 ? (
+                          {badDebtVoucherData && badDebtVoucherData.voucher?.transactions?.length > 0 ? (
                             <>
                               {badDebtVoucherData.voucher.transactions.map((transaction, index) => (
                                 <tr key={index}>
@@ -2592,7 +2549,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher.transactions
+                                  {badDebtVoucherData.voucher?.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2600,7 +2557,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher.transactions
+                                  {badDebtVoucherData.voucher?.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2792,9 +2749,9 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {retirementBenefitVoucherData && retirementBenefitVoucherData.voucher.transactions.length > 0 ? (
+                          {retirementBenefitVoucherData && retirementBenefitVoucherData.voucher?.transactions?.length > 0 ? (
                             <>
-                              {retirementBenefitVoucherData.voucher.transactions.map((transaction, index) => (
+                              {retirementBenefitVoucherData.voucher?.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
@@ -2824,7 +2781,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher.transactions
+                                  {retirementBenefitVoucherData.voucher?.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2832,7 +2789,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher.transactions
+                                  {retirementBenefitVoucherData.voucher?.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}

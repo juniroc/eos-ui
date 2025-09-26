@@ -252,8 +252,8 @@ export default function CardInfoPage() {
           <div>
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">카드 정보</h2>
             <p className="text-[#767676]">
-            카드리스트 정보 파일을 업로드하거나 직접 입력하세요.
-
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
+              저장하세요.
             </p>
           </div>
           <div className="flex gap-3">

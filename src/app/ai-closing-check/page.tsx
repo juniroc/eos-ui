@@ -260,17 +260,59 @@ interface DepreciationResponse {
 }
 
 interface VoucherTransaction {
-  account: string;
-  partner: string;
+  account: {
+    id: string;
+    code: number;
+    name: string;
+    debitCredit: boolean;
+    attribute: string;
+    category: string;
+    fsName1: string;
+    fsName2: string;
+    summarySourceCodes: string[];
+    createdAt: string;
+    updatedAt: string;
+  };
+  partner: {
+    id: string;
+    name: string;
+    businessNumber: string | null;
+    representative: string | null;
+    address: string | null;
+    phone: string | null;
+    email: string | null;
+    userId: string;
+    type: string;
+    cardIssuer: string | null;
+    cardNumber: string | null;
+    cardType: string | null;
+    primaryUser: string | null;
+    bankName: string | null;
+    accountNumber: string | null;
+    withdrawalFee: number | null;
+    purpose: string | null;
+    note: string | null;
+    mainItems: string | null;
+    relationship: string | null;
+    documentId: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
   amount: number;
   debitCredit: 'DEBIT' | 'CREDIT';
   note: string;
 }
 
 interface VoucherResponse {
-  voucher: {
-    transactions: VoucherTransaction[];
-  };
+  id: string;
+  userId: string;
+  date: string;
+  description: string;
+  departmentId: string | null;
+  documentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  transactions: VoucherTransaction[];
 }
 
 export default function AIClosingCheckPage() {
@@ -294,6 +336,7 @@ export default function AIClosingCheckPage() {
   const [showDepreciationModal, setShowDepreciationModal] = useState(false);
   const [depreciationData, setDepreciationData] = useState<DepreciationResponse | null>(null);
   const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
+  const [editableVoucherData, setEditableVoucherData] = useState<VoucherResponse | null>(null);
   const [depreciationLoading, setDepreciationLoading] = useState(false);
   const [editableItems, setEditableItems] = useState<EditableDepreciationItem[]>([]);
 
@@ -509,13 +552,18 @@ export default function AIClosingCheckPage() {
         row.key === 'ending_inventory' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('기말재고 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기말재고 결산 반영 API 호출 오류:', error);
       alert('기말재고 결산 반영 중 네트워크 오류가 발생했습니다.');
     } finally {
       setEndingInventoryLoading(false);
     }
+  };
+
+  /** 기말재고 전표 저장 */
+  const handleEndingInventorySave = async () => {
+    alert('저장했습니다');
+    setShowEndingInventoryModal(false);
   };
 
   /** 기말재고 아이템 변경 핸들러 */
@@ -666,13 +714,18 @@ export default function AIClosingCheckPage() {
         row.key === 'bad_debt' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('대손상각 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('대손상각 결산 반영 API 호출 오류:', error);
       alert('대손상각 결산 반영 중 네트워크 오류가 발생했습니다.');
     } finally {
       setBadDebtLoading(false);
     }
+  };
+
+  /** 대손상각 전표 저장 */
+  const handleBadDebtSave = async () => {
+    alert('저장했습니다');
+    setShowBadDebtModal(false);
   };
 
   /** 대손상각 아이템 변경 핸들러 */
@@ -814,13 +867,18 @@ export default function AIClosingCheckPage() {
         row.key === 'retirement_benefit' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('퇴직급여충당금 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('퇴직급여충당금 결산 반영 API 호출 오류:', error);
       alert('퇴직급여충당금 결산 반영 중 네트워크 오류가 발생했습니다.');
     } finally {
       setRetirementBenefitLoading(false);
     }
+  };
+
+  /** 퇴직급여충당금 전표 저장 */
+  const handleRetirementBenefitSave = async () => {
+    alert('저장했습니다');
+    setShowRetirementBenefitModal(false);
   };
 
   /** 퇴직급여충당금 아이템 변경 핸들러 */
@@ -1158,29 +1216,7 @@ export default function AIClosingCheckPage() {
         console.error('API 에러 응답:', errorData);
         
         if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '급여',
-                  partner: '기말결산',
-                  amount: 833333,
-                  debitCredit: 'DEBIT',
-                  note: '기간귀속 처리'
-                },
-                {
-                  account: '미지급급여',
-                  partner: '기말결산',
-                  amount: 833333,
-                  debitCredit: 'CREDIT',
-                  note: '기간귀속 처리'
-                }
-              ]
-            }
-          };
-          
-          setPeriodAccrualVoucherData(mockVoucherData);
+          alert('기간귀속 결산반영 중 서버 오류가 발생했습니다.');
         } else {
           alert(`기간귀속 결산 반영에 실패했습니다. (${response.status})`);
         }
@@ -1195,7 +1231,6 @@ export default function AIClosingCheckPage() {
         row.key === 'period_accrual' ? { ...row, status: 'DONE' } : row
       ));
       
-      alert('기간귀속 결산반영이 성공적으로 완료되었습니다.');
     } catch (error) {
       console.error('기간귀속 결산 반영 API 호출 오류:', error);
       alert('기간귀속 결산 반영 중 네트워크 오류가 발생했습니다.');
@@ -1441,6 +1476,32 @@ export default function AIClosingCheckPage() {
     ));
   };
 
+  /** 전표 거래 항목 수정 */
+  const handleTransactionChange = (transactionIndex: number, field: string, value: string | number | object) => {
+    if (!editableVoucherData) return;
+    
+    setEditableVoucherData(prev => {
+      if (!prev) return null;
+      
+      const updatedTransactions = [...prev.transactions];
+      updatedTransactions[transactionIndex] = {
+        ...updatedTransactions[transactionIndex],
+        [field]: value
+      };
+      
+      return {
+        ...prev,
+        transactions: updatedTransactions
+      };
+    });
+  };
+
+  /** 감가상각 전표 저장 */
+  const handleDepreciationSave = async () => {
+    alert('저장했습니다');
+    setShowDepreciationModal(false);
+  };
+
   /** 감가상각 결산반영 */
   const handleDepreciationApply = async () => {
     try {
@@ -1497,46 +1558,22 @@ export default function AIClosingCheckPage() {
         const errorData = await response.json().catch(() => ({}));
         console.error('API 에러 응답:', errorData);
         
-        if (response.status === 500) {
-          // 500 에러 시 임시 전표 데이터 표시
-          const mockVoucherData: VoucherResponse = {
-            voucher: {
-              transactions: [
-                {
-                  account: '감가상각비',
-                  partner: '기말결산',
-                  amount: 8000000,
-                  debitCredit: 'DEBIT',
-                  note: '감가상각 처리'
-                },
-                {
-                  account: '감가상각누계액',
-                  partner: '기말결산',
-                  amount: 8000000,
-                  debitCredit: 'CREDIT',
-                  note: '감가상각 처리'
-                }
-              ]
-            }
-          };
-          
-          setVoucherData(mockVoucherData);
-        } else {
-          alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
-        }
+        alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
         return;
       }
 
-      const data: VoucherResponse = await response.json();
+      const data = await response.json();
+      console.log('감가상각 API 응답 데이터:', data);
+      
+      // API 응답을 그대로 사용 (이미 전표 형태로 반환됨)
       setVoucherData(data);
+      setEditableVoucherData(data);
       
       // 메인 테이블 상태 업데이트
       setRows(prev => prev.map(row => 
         row.key === 'depreciation' ? { ...row, status: 'DONE' } : row
       ));
       
-      // 성공 메시지 표시
-      alert('감가상각 결산반영이 완료되었습니다.');
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
       alert('감가상각 결산반영 중 네트워크 오류가 발생했습니다.');
@@ -1881,8 +1918,8 @@ export default function AIClosingCheckPage() {
                       disabled={depreciationLoading}
                     >
                       {depreciationLoading ? '처리중...' : '결산 반영'}
-                </button>
-              </div>
+                    </button>
+                  </div>
             </div>
           </div>
 
@@ -1981,12 +2018,10 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                 <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowDepreciationModal(false);
-                            }}
-                          >
-                            저장
+                            onClick={handleDepreciationSave}
+                            disabled={depreciationLoading}
+                >
+                            {depreciationLoading ? '저장중...' : '저장'}
                 </button>
                         </div>
                       </div>
@@ -2011,16 +2046,49 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {voucherData && voucherData.voucher?.transactions?.length > 0 ? (
+                          {editableVoucherData ? (
                             <>
-                              {voucherData.voucher.transactions.map((transaction, index) => (
+                              {editableVoucherData.transactions?.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
-                                  {transaction.debitCredit === 'DEBIT' ? (
+                                  {transaction.debitCredit ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.account?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'account', {
+                                              ...transaction.account,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="number" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.amount}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.partner?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'partner', {
+                                              ...transaction.partner,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2030,28 +2098,70 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.account?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'account', {
+                                              ...transaction.account,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="number" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.amount}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">
+                                        <input 
+                                          type="text" 
+                                          className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                          value={transaction.partner?.name || ''}
+                                          onChange={(e) => {
+                                            handleTransactionChange(index, 'partner', {
+                                              ...transaction.partner,
+                                              name: e.target.value
+                                            });
+                                          }}
+                                        />
+                                      </td>
                                     </>
                                   )}
-                                  <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
+                                  <td className="p-3 border border-[#D9D9D9] text-center">
+                                    <input 
+                                      type="text" 
+                                      className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                      value={transaction.note || ''}
+                                      onChange={(e) => {
+                                        handleTransactionChange(index, 'note', e.target.value);
+                                      }}
+                                    />
+                                  </td>
                                 </tr>
                               ))}
                               <tr>
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {voucherData.voucher.transactions
-                                    .filter(t => t.debitCredit === 'DEBIT')
+                                  {editableVoucherData.transactions
+                                    ?.filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {voucherData.voucher.transactions
-                                    .filter(t => t.debitCredit === 'CREDIT')
+                                  {editableVoucherData.transactions
+                                    ?.filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
                                 </td>
@@ -2248,10 +2358,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowEndingInventoryModal(false);
-                            }}
+                            onClick={handleEndingInventorySave}
                           >
                             저장
                           </button>
@@ -2278,16 +2385,16 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {endingInventoryVoucherData && endingInventoryVoucherData.voucher?.transactions?.length > 0 ? (
+                          {endingInventoryVoucherData && endingInventoryVoucherData.transactions?.length > 0 ? (
                             <>
-                              {endingInventoryVoucherData.voucher.transactions.map((transaction, index) => (
+                              {endingInventoryVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2297,9 +2404,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2309,7 +2416,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {endingInventoryVoucherData.voucher.transactions
+                                  {endingInventoryVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2317,7 +2424,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {endingInventoryVoucherData.voucher.transactions
+                                  {endingInventoryVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2485,10 +2592,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowBadDebtModal(false);
-                            }}
+                            onClick={handleBadDebtSave}
                           >
                             저장
                           </button>
@@ -2515,16 +2619,16 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {badDebtVoucherData && badDebtVoucherData.voucher?.transactions?.length > 0 ? (
+                          {badDebtVoucherData && badDebtVoucherData.transactions?.length > 0 ? (
                             <>
-                              {badDebtVoucherData.voucher.transactions.map((transaction, index) => (
+                              {badDebtVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2534,9 +2638,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                     </>
                                   )}
                                   <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
@@ -2546,7 +2650,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher?.transactions
+                                  {badDebtVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2554,7 +2658,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {badDebtVoucherData.voucher?.transactions
+                                  {badDebtVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2713,10 +2817,7 @@ export default function AIClosingCheckPage() {
                           <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
                           <button
                             className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                            onClick={() => {
-                              alert('전표가 저장되었습니다.');
-                              setShowRetirementBenefitModal(false);
-                            }}
+                            onClick={handleRetirementBenefitSave}
                           >
                             저장
                           </button>
@@ -2743,16 +2844,18 @@ export default function AIClosingCheckPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {retirementBenefitVoucherData && retirementBenefitVoucherData.voucher?.transactions?.length > 0 ? (
+                          {retirementBenefitVoucherData ? (
                             <>
-                              {retirementBenefitVoucherData.voucher?.transactions.map((transaction, index) => (
+                              {retirementBenefitVoucherData.transactions && retirementBenefitVoucherData.transactions.length > 0 ? (
+                                <>
+                                  {retirementBenefitVoucherData.transactions.map((transaction, index) => (
                                 <tr key={index}>
                                   <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
                                   {transaction.debitCredit === 'DEBIT' ? (
                                     <>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
@@ -2762,9 +2865,9 @@ export default function AIClosingCheckPage() {
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
                                       <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner || '-'}</td>
+                                      <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
 
                                     </>
                                   )}
@@ -2775,7 +2878,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher?.transactions
+                                  {retirementBenefitVoucherData.transactions
                                     .filter(t => t.debitCredit === 'DEBIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2783,7 +2886,7 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">
-                                  {retirementBenefitVoucherData.voucher?.transactions
+                                  {retirementBenefitVoucherData.transactions
                                     .filter(t => t.debitCredit === 'CREDIT')
                                     .reduce((sum, t) => sum + t.amount, 0)
                                     .toLocaleString()}
@@ -2791,6 +2894,14 @@ export default function AIClosingCheckPage() {
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                                 <td className="p-3 border border-[#D9D9D9] text-center">-</td>
                               </tr>
+                                </>
+                              ) : (
+                                <tr>
+                                  <td colSpan={8} className="p-8 text-center text-gray-500">
+                                    생성된 거래 내역이 없습니다.
+                                  </td>
+                                </tr>
+                              )}
                             </>
                           ) : (
                             <tr>

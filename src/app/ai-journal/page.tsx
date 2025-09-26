@@ -195,13 +195,13 @@ export default function AIJournalPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => window.print()}
-                  className="px-4 py-2 rounded text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
+                  className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
                 >
                   인쇄하기
                 </button>
                 <button
                   onClick={() => alert('저장했습니다')}
-                  className="px-4 py-2 rounded text-sm bg-[#2C2C2C] text-white hover:bg-[#1E1E1E]"
+                  className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#1E1E1E]"
                 >
                   저장하기
                 </button>
@@ -245,15 +245,15 @@ export default function AIJournalPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#F5F5F5]">
-                    <th className="p-3 border">번호</th>
-                    <th className="p-3 border">일자</th>
-                    <th className="p-3 border" colSpan={3}>
+                    <th className="p-3 border text-sm text-[#757575]">번호</th>
+                    <th className="p-3 border text-sm text-[#757575]">일자</th>
+                    <th className="p-3 border text-sm text-[#757575]" colSpan={3}>
                       차변
                     </th>
-                    <th className="p-3 border" colSpan={3}>
+                    <th className="p-3 border text-sm text-[#757575]" colSpan={3}>
                       대변
                     </th>
-                    <th className="p-3 border">적요</th>
+                    <th className="p-3 border text-sm text-[#757575]">적요</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -300,16 +300,16 @@ export default function AIJournalPage() {
                           </tr>
                         ))}
                         <tr className="bg-[#F5F5F5]">
-                          <td className="p-3 border font-medium">소계</td>
+                          <td className="p-3 border font-medium text-sm">소계</td>
                           <td className="p-3 border"></td>
                           <td className="p-3 border"></td>
-                          <td className="p-3 border font-medium">
+                          <td className="p-3 border font-medium text-sm">
                             {debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>
                           <td className="p-3 border"></td>
                           <td className="p-3 border"></td>
-                          <td className="p-3 border font-medium">
+                          <td className="p-3 border font-medium text-sm">
                             {credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}
                             원
                           </td>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractEmployeeDocs, saveEmployeeDocs, deleteEmployee } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
+import Image from 'next/image';
 
 interface EmployeeRow {
   id: number;
@@ -61,6 +62,8 @@ export default function EmployeeInfoPage() {
   /** 직원 목록 불러오기 */
   const fetchEmployees = useCallback(async () => {
     try {
+      if (!token) return;
+
       const res = await fetch('https://api.eosxai.com/api/employees', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -134,11 +137,6 @@ export default function EmployeeInfoPage() {
   const handleSave = async () => {
     if (!token) return;
     
-    if (!documentId) {
-      alert('먼저 파일을 업로드해주세요.');
-      return;
-    }
-    
     try {
       setLoading(true);
       
@@ -146,9 +144,10 @@ export default function EmployeeInfoPage() {
       const validEmployees = rows
         .filter(row => row.name.trim() || row.residentNumber.trim())
         .map(row => {
-          const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: string } = {
+          const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: boolean } = {
             name: row.name.trim(),
             residentNumber: row.residentNumber.trim(),
+            isProduction: row.isProduction === 'YES',
           };
           
           // optional 필드들은 값이 있을 때만 포함
@@ -158,9 +157,6 @@ export default function EmployeeInfoPage() {
           if (row.monthlySalary?.trim()) {
             employee.monthlySalary = row.monthlySalary.trim();
           }
-          if (row.isProduction?.trim()) {
-            employee.isProduction = row.isProduction.trim();
-          }
           
           return employee;
         });
@@ -168,7 +164,7 @@ export default function EmployeeInfoPage() {
       console.log('저장할 데이터:', { documentId, employees: validEmployees });
       
       const data = await saveEmployeeDocs({
-        documentId,
+        // documentId,
         employees: validEmployees
       }, token);
       
@@ -224,9 +220,9 @@ export default function EmployeeInfoPage() {
         id: Date.now(),
         name: '',
         residentNumber: '',
-        employmentType: '',
+        employmentType: 'REGULAR',
         monthlySalary: '',
-        isProduction: '',
+        isProduction: 'YES',
       },
     ]);
   };
@@ -251,29 +247,36 @@ export default function EmployeeInfoPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">직원 정보</h2>
-            <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
-              저장하세요.
+    <div className="flex flex-col items-start p-4 gap-4 w-full mx-auto">
+      {/* Header */}
+      <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">
+        <div className="flex flex-row justify-between items-end gap-4 w-full">
+          <div className="flex flex-col items-start w-[346px]">
+            <div className="flex flex-col items-start p-[6px_0px_2px] w-64 rounded-lg">
+              <div className="flex flex-row items-start w-14">
+                <h2 className="w-14 font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+                  직원 정보
+                </h2>
+              </div>
+            </div>
+            <p className="w-[346px] font-['Pretendard'] text-[12px] leading-[140%] text-center text-[#767676]">
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-row justify-end items-center gap-2 w-[153px]">
             {/* 파일 업로드 */}
             <button
-              className="flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+              className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] hover:bg-[#E0E0E0]"
               onClick={() => document.getElementById('employeeFile')?.click()}
               disabled={loading}
             >
-              파일 업로드
+              <span className="w-[55px] font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#1E1E1E]">
+                파일 업로드
+              </span>
             </button>
             {/* 저장하기 */}
             <button
-              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] rounded ${
+              className={`flex flex-row justify-center items-center px-3 py-2 min-w-[79px] h-7 gap-2 ${
                 hasData && !loading
                   ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
                   : 'bg-[#E6E6E6]'
@@ -281,165 +284,215 @@ export default function EmployeeInfoPage() {
               onClick={handleSave}
               disabled={!hasData || loading}
             >
-              저장하기
+              <span className={` font-['Pretendard'] font-medium text-[12px] leading-[100%] ${
+                hasData && !loading ? 'text-[#1E1E1E]' : 'text-[#B3B3B3]'
+              }`}>
+                저장하기
+              </span>
             </button>
           </div>
         </div>
 
-        {/* 파일 업로드 박스 */}
-        <div className="mb-6">
+        {/* Upload */}
+        <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[400px] bg-white border border-dashed border-[#D9D9D9]">
+          <div className="flex items-center justify-center">
+            <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+          </div>
+          <div className="flex flex-col items-center p-0 gap-0.5">
+            <span className="text-xs leading-[140%] text-center text-[#303030]">
+              파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
+            </span>
+            <span className="text-xs leading-[140%] text-center text-[#767676]">
+              (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
+            </span>
+          </div>
           <FileUploadBox
             id="employeeFile"
             onFileUpload={handleFileUpload}
             loading={loading}
+            className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </div>
 
-        {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead>
-            <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 font-medium">
-                번호
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">이름</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                주민등록번호
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                유형
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">월 급여</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                생산직 여부
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
-                관리
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  {idx + 1}
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.name}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, name: e.target.value } : r
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.residentNumber}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, residentNumber: e.target.value }
-                            : r
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <select
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    value={row.employmentType || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, employmentType: e.target.value }
-                            : r
-                        )
-                      )
-                    }
-                  >
-                    <option value="">선택하기</option>
-                    <option value="FULL_TIME">정규직</option>
-                    <option value="CONTRACT">계약직</option>
-                    <option value="PART_TIME">파트타임</option>
-                  </select>
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <div className="flex items-center w-full">
-                    <input
-                      className="flex-1 focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.monthlySalary || ''}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, monthlySalary: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                    <span className="text-gray-400 text-sm ml-2">원</span>
-                  </div>
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <select
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    value={row.isProduction || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, isProduction: e.target.value }
-                            : r
-                        )
-                      )
-                    }
-                  >
-                    <option value="">선택하기</option>
-                    <option value="YES">예</option>
-                    <option value="NO">아니오</option>
-                  </select>
-                </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  <button
-                    onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-                    disabled={loading}
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {/* 추가하기 */}
-            <tr>
-              <td
-                colSpan={7}
-                className="p-3 border border-[#D9D9D9] text-center"
-              >
-                <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
-                >
-                  + 추가하기
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
+
+        {/* 테이블 */}
+        <div className="flex flex-col items-start w-full">
+          {/* 테이블 헤더 */}
+          <div className="flex flex-row items-center w-full h-8">
+            {/* 번호 컴럼 */}
+            <div className="flex flex-row justify-center items-center w-12 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  번호
+                </span>
+            </div>
+            {/* 이름 컴럼 */}
+            <div className="flex flex-row justify-center items-center flex-1 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                직원명
+                </span>
+            </div>
+            {/* 주민등록번호 컴럼 */}
+            <div className="flex flex-row justify-center items-center flex-1 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  주민등록번호
+                </span>
+            </div>
+            {/* 유형 컴럼 */}
+            <div className="flex flex-row justify-center items-center flex-1 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  유형
+                </span>
+            </div>
+            {/* 월 급여 컴럼 */}
+            <div className="flex flex-row justify-center items-center flex-1 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  월 급여
+                </span>
+            </div>
+            {/* 생산직 여부 컴럼 */}
+            <div className="flex flex-row justify-center items-center flex-1 h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  생산직 여부
+                </span>
+            </div>
+            {/* 관리 컴럼 */}
+            <div className="flex flex-row justify-center items-center w-17 h-8 bg-[#F5F5F5] border border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  삭제
+                </span>
+            </div>
+          </div>
+          {/* 데이터 행들 */}
+          {rows.map((row, idx) => (
+            <div key={row.id} className="flex flex-row items-center w-full h-8">
+              {/* 번호 컴럼 */}
+              <div className="flex flex-row justify-center items-center w-12 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
+                  {String(idx + 1).padStart(3, '0')}
+                </span>
+              </div>
+              {/* 이름 컴럼 */}
+              <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <input
+                  className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  placeholder="입력하기"
+                  value={row.name}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id ? { ...r, name: e.target.value } : r
+                      )
+                    )
+                  }
+                />
+              </div>
+              {/* 주민등록번호 컴럼 */}
+              <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <input
+                  className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  placeholder="입력하기"
+                  value={row.residentNumber}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, residentNumber: e.target.value }
+                          : r
+                      )
+                    )
+                  }
+                />
+              </div>
+              {/* 유형 컴럼 */}
+              <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  value={row.employmentType || ''}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, employmentType: e.target.value }
+                          : r
+                      )
+                    )
+                  }
+                >
+                  <option value="">선택하기</option>
+                  <option value="REGULAR">정규직</option>
+                  <option value="NON_REGULAR">계약직</option>
+                </select>
+              </div>
+              {/* 월 급여 컴럼 */}
+              <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <input
+                  className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  placeholder="입력하기"
+                  value={row.monthlySalary || 0}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, monthlySalary: e.target.value }
+                          : r
+                      )
+                    )
+                  }
+                />
+                <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3]">
+                  원
+                </span>
+              </div>
+              {/* 생산직 여부 컴럼 */}
+              <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  value={row.isProduction || ''}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, isProduction: e.target.value }
+                          : r
+                      )
+                    )
+                  }
+                >
+                  <option value="">선택하기</option>
+                  <option value="YES">예</option>
+                  <option value="NO">아니오</option>
+                </select>
+              </div>
+              {/* 관리 컴럼 */}
+              <div className="flex flex-row justify-center items-center w-17 h-8 bg-white border-x border-b border-[#D9D9D9]">
+                <button
+                  onClick={() => handleDelete(row.id)}
+                  className="flex flex-row justify-center items-center px-2 py-1.5 bg-[#F3F3F3] hover:bg-[#E0E0E0]"
+                  disabled={loading}
+                >
+                  <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#1E1E1E]">
+                    삭제
+                  </span>
+                </button>
+              </div>
+            </div>
+          ))}
+          {/* 추가하기 */}
+          <div className="flex flex-row items-center w-full min-w-[200px] h-10">
+            <button
+              onClick={addRow}
+              className="flex flex-row justify-center items-center p-3 gap-1 w-full min-w-[200px] h-10 bg-white border-l border-r border-b border-[#D9D9D9] cursor-pointer "
+            >
+              <div className="w-4 h-4">
+                <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
+              </div>
+              <span className="w-[42px] font-['Pretendard'] font-medium text-[12px] leading-[100%] text-center text-[#757575]">
+                추가하기
+              </span>
+            </button>
+          </div>
+        </div>
     </div>
   );
 }

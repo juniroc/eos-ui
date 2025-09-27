@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import FileUploadBox from '@/components/FileUploadBox';
 import { 
   startExtractRawTransactions, 
   getExtractRawTransactionsStream,
@@ -38,8 +39,8 @@ export default function AIJournalPage() {
     accuracy: 95,
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentStage, setCurrentStage] = useState<string>('');
+  const [_error, setError] = useState<string | null>(null);
+  const [_currentStage, _setCurrentStage] = useState<string>('');
 
   // RawTransaction을 AIJournalTransaction으로 변환하는 함수
   const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
@@ -240,7 +241,6 @@ export default function AIJournalPage() {
       
       // 1단계: 증빙 추출 시작
       setStep('extracting');
-      setCurrentStage('증빙 추출 중...');
       setProgress({ processed: 0, total: 100 });
       
       const extractJob = await startExtractRawTransactions(fileArray, token);
@@ -253,12 +253,7 @@ export default function AIJournalPage() {
         (data) => {
           // 진행률 업데이트
           setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
-          setCurrentStage(`증빙 추출 중... (${data.processed}/${data.total})`);
-          
-          // extracted 정보가 있으면 표시
-          if (data.extracted) {
-            setCurrentStage(`증빙 추출 중... (${data.processed}/${data.total}) - 추출된 거래: ${data.extracted}건`);
-          }
+      
         },
         (data) => {
           // 추출 완료
@@ -286,7 +281,6 @@ export default function AIJournalPage() {
             try {
               console.log('setTimeout 콜백 실행됨');
     setStep('processing');
-              setCurrentStage('분개 처리 중...');
     setProgress({ processed: 0, total: 100 });
 
               console.log('=== 2단계 분개 처리 시작 ===');
@@ -318,7 +312,6 @@ export default function AIJournalPage() {
                 (data) => {
                   // 진행률 업데이트
                   setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
-                  setCurrentStage(`분개 처리 중... (${data.processed}/${data.total})`);
                 },
                 (data) => {
                   // 분개 처리 완료
@@ -389,21 +382,19 @@ export default function AIJournalPage() {
     }
   };
 
-  // 파일 선택
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (selectedFiles && selectedFiles.length > 0) {
-      processFiles(selectedFiles);
-    }
-  };
-
-  // 드래그 앤 드롭
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const droppedFiles = e.dataTransfer.files;
-    if (droppedFiles && droppedFiles.length > 0) {
-      processFiles(droppedFiles);
-    }
+  // 파일 업로드 핸들러 (FileUploadBox용)
+  const handleFileUpload = (file: File) => {
+    // 단일 파일을 FileList로 변환
+    const fileList = {
+      0: file,
+      length: 1,
+      item: (index: number) => index === 0 ? file : null,
+      [Symbol.iterator]: function* () {
+        yield file;
+      }
+    } as FileList;
+    
+    processFiles(fileList);
   };
 
   // 표 데이터 수정 핸들러
@@ -476,7 +467,7 @@ export default function AIJournalPage() {
   };
 
   // 새로 시작 핸들러
-  const handleReset = () => {
+  const _handleReset = () => {
     setStep('upload');
     setFiles(null);
     setVouchers([]);
@@ -494,65 +485,23 @@ export default function AIJournalPage() {
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">AI 분개</h2>
-            <p className="text-[#767676]">파일을 업로드해서 자동으로 분개를 시작하세요.</p>
-          </div>
-          {step === 'result' && (
-            <button
-              onClick={handleReset}
-              className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200 rounded-lg"
-            >
-              새로 시작
-            </button>
-          )}
-        </div>
-
-        {/* 에러 메시지 */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
-          </div>
-        )}
-
         {/* 업로드 단계 */}
         {step === 'upload' && (
-          <div
-            className="bg-white border-2 border-dashed border-[#D9D9D9] rounded-lg p-12 text-center mb-6"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-          >
-            <p className="text-lg text-[#1E1E1E] mb-2">
-              파일을 선택하거나 드래그하여 업로드하세요.
-            </p>
-            <p className="text-sm text-[#767676] mb-6">
-              (JPG, PNG, PDF, DOC, DOCX, XLSX, XLS 파일만 지원됩니다.)
-            </p>
-            <input
-              id="file-upload"
-              type="file"
-              multiple
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.xls"
-              onChange={handleFileSelect}
-              className="hidden"
+          <div className="mb-6">
+            <FileUploadBox
+              id="ai-journal-file-upload"
+              onFileUpload={handleFileUpload}
+              loading={loading}
+              uploadText="파일을 선택하거나 드래그하여 업로드하세요"
+              showFileTypeInfo={true}
+              
             />
-            <label
-              htmlFor="file-upload"
-              className="inline-block px-6 py-3 bg-[#2C2C2C] text-white rounded-lg cursor-pointer hover:bg-[#1E1E1E] transition-colors"
-            >
-              파일 선택
-            </label>
           </div>
         )}
 
         {/* 처리 중 */}
         {(step === 'extracting' || step === 'processing') && (
-          <div className="bg-white border border-[#D9D9D9] rounded-lg p-12 text-center mb-6">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 border-4 border-[#E6E6E6] border-t-[#d9d9d9] rounded-full animate-spin"></div>
-            </div>
+          <div className="bg-white border border-[#D9D9D9] border-dashed p-12 text-center mb-6">
             <div className="w-full bg-[#E6E6E6] rounded-full h-3 mb-4">
               <div
                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-200 ease-out"
@@ -562,22 +511,9 @@ export default function AIJournalPage() {
               />
             </div>
             <p className="text-sm text-[#767676]">
-              진행률: {progress.processed}/{progress.total} (
+            파일 내용을 분석하고 분개작업을 진행중입니다. {progress.processed}/{progress.total} (
               {Math.round((progress.processed / progress.total) * 100)}%)
             </p>
-            <p className="text-sm text-[#767676] mt-2">
-              {currentStage}
-            </p>
-            {step === 'extracting' && (
-              <p className="text-xs text-[#B3B3B3] mt-1">
-                1단계: 증빙서류에서 거래내역을 추출하고 있습니다...
-              </p>
-            )}
-            {step === 'processing' && (
-              <p className="text-xs text-[#B3B3B3] mt-1">
-                2단계: 추출된 거래내역을 분개로 변환하고 있습니다...
-              </p>
-            )}
           </div>
         )}
 

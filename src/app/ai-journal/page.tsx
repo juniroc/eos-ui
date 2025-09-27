@@ -40,7 +40,6 @@ export default function AIJournalPage() {
   });
   const [loading, setLoading] = useState(false);
   const [_error, setError] = useState<string | null>(null);
-  const [_currentStage, _setCurrentStage] = useState<string>('');
 
   // RawTransaction을 AIJournalTransaction으로 변환하는 함수
   const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
@@ -485,6 +484,18 @@ export default function AIJournalPage() {
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col items-start p-0">
+                <div className="flex flex-col items-start px-0 py-1.5 rounded-lg">
+                  <div className="flex flex-row items-start p-0">
+                    <span className="text-[15px] leading-[140%] text-[#1E1E1E] font-semibold">
+                      AI 분개
+                    </span>
+                  </div>
+                </div>
+                <span className="text-xs leading-[140%] text-center text-[#767676] mb-[16px]">
+                파일을 업로드해서 자동으로 분개를 시작하세요.
+                </span>
+              </div>
         {/* 업로드 단계 */}
         {step === 'upload' && (
           <div className="mb-6">

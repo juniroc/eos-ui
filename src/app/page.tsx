@@ -157,7 +157,7 @@ export default function BusinessInfoPage() {
 
   // dropdown 외부 클릭 시 닫기
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: MouseEvent) => {
       if (isBusinessCategoryOpen) {
         setIsBusinessCategoryOpen(false);
       }

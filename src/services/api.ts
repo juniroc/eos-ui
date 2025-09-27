@@ -972,20 +972,109 @@ export async function getProcessJournalEntriesStream(jobId: string, token: strin
   return response.body;
 }
 
-// AI 분개 결과 저장 API
-export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean }> {
-  const response = await fetch(`${API_BASE_URL}/api/ai-journal/save`, {
+// 전표 생성 API
+export async function createVoucher(voucherData: {
+  date: string;
+  description?: string;
+  departmentId?: string;
+  proof?: File;
+}, token: string): Promise<{ id: string; [key: string]: unknown }> {
+  const formData = new FormData();
+  formData.append('date', voucherData.date);
+  
+  if (voucherData.description) {
+    formData.append('description', voucherData.description);
+  }
+  if (voucherData.departmentId) {
+    formData.append('departmentId', voucherData.departmentId);
+  }
+  if (voucherData.proof) {
+    formData.append('proof', voucherData.proof);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/vouchers`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || '전표 생성에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 거래 생성 API
+export async function createTransaction(transactionData: {
+  voucherId: string;
+  amount: number;
+  partnerId?: string;
+  accountId: string;
+  debitCredit: boolean;
+  note?: string;
+}, token: string): Promise<{ id: string; [key: string]: unknown }> {
+  const response = await fetch(`${API_BASE_URL}/api/transactions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ vouchers }),
+    body: JSON.stringify(transactionData),
   });
 
   if (!response.ok) {
-    throw new Error('AI 분개 저장에 실패했습니다.');
+    const errorData = await response.json();
+    throw new Error(errorData.error || '거래 생성에 실패했습니다.');
   }
 
   return response.json();
+}
+
+// AI 분개 결과 저장 API (새로운 2단계 방식)
+export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean; voucherIds: string[] }> {
+  const voucherIds: string[] = [];
+  
+  try {
+    // 각 voucher에 대해 전표 생성 후 거래들 생성
+    for (const voucher of vouchers) {
+      console.log('전표 생성 중:', voucher);
+      
+      // 1단계: 전표 생성
+      const voucherResult = await createVoucher({
+        date: voucher.date,
+        description: voucher.description,
+      }, token);
+      
+      const voucherId = voucherResult.id;
+      voucherIds.push(voucherId);
+      
+      console.log('전표 생성 완료:', voucherId);
+      
+      // 2단계: 각 거래 생성
+      for (const transaction of voucher.transactions) {
+        console.log('거래 생성 중:', transaction);
+        
+        await createTransaction({
+          voucherId: voucherId,
+          amount: transaction.amount,
+          accountId: transaction.accountName || '', // 계정과목을 accountId로 사용
+          debitCredit: transaction.debitCredit || false,
+          note: transaction.note,
+          partnerId: transaction.partnerName, // 거래처명을 partnerId로 사용 (실제로는 ID가 필요할 수 있음)
+        }, token);
+        
+        console.log('거래 생성 완료');
+      }
+    }
+    
+    return { success: true, voucherIds };
+  } catch (error) {
+    console.error('저장 중 오류:', error);
+    throw error;
+  }
 }

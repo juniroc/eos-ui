@@ -50,7 +50,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   isOpen,
   onClose,
   loading,
-  onApply,
+  onApply: _onApply,
   closingDate,
   onClosingDateChange,
   onDirectCheck,
@@ -159,7 +159,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
     if (!data) return;
     
     // 편집된 트랜잭션을 data에 반영
-    const updatedData = {
+    const _updatedData = {
       ...data,
       vouchers: data.vouchers.map(voucher => ({
         ...voucher,

@@ -7,7 +7,7 @@ import {
   getExtractRawTransactionsStream,
   startProcessJournalEntries,
   getProcessJournalEntriesStream,
-  saveAIJournal, 
+  saveAIJournal,
   type AIJournalVoucher, 
   type AIJournalTransaction,
   type RawTransaction,
@@ -55,6 +55,54 @@ export default function AIJournalPage() {
       accountName: isDebit ? '현금' : '매출', // 기본값, 사용자가 수정 가능
       debitCredit: isDebit,
       note: rawTransaction.items.join(', '),
+    };
+  };
+
+  // API 응답의 voucher를 UI 구조로 변환하는 함수
+  const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>): AIJournalVoucher => {
+    console.log('변환할 API voucher:', apiVoucher);
+    
+    const transactions: AIJournalTransaction[] = [];
+    
+    // debits 배열 처리 (차변)
+    if (apiVoucher.debits && Array.isArray(apiVoucher.debits)) {
+      (apiVoucher.debits as Record<string, unknown>[]).forEach((debit: Record<string, unknown>, index: number) => {
+        transactions.push({
+          id: `debit-${apiVoucher.transactionId || index}-${index}`,
+          date: (apiVoucher.date as string) || '',
+          description: (apiVoucher.description as string) || '',
+          amount: (debit.amount as number) || 0,
+          partnerName: (debit.partner as string) || '',
+          accountName: (debit.account as string) || '',
+          debitCredit: true, // 차변
+          note: (debit.note as string) || '',
+        });
+      });
+    }
+    
+    // credits 배열 처리 (대변)
+    if (apiVoucher.credits && Array.isArray(apiVoucher.credits)) {
+      (apiVoucher.credits as Record<string, unknown>[]).forEach((credit: Record<string, unknown>, index: number) => {
+        transactions.push({
+          id: `credit-${apiVoucher.transactionId || index}-${index}`,
+          date: (apiVoucher.date as string) || '',
+          description: (apiVoucher.description as string) || '',
+          amount: (credit.amount as number) || 0,
+          partnerName: (credit.partner as string) || '',
+          accountName: (credit.account as string) || '',
+          debitCredit: false, // 대변
+          note: (credit.note as string) || '',
+        });
+      });
+    }
+    
+    console.log('변환된 transactions:', transactions);
+    
+    return {
+      id: `voucher-${apiVoucher.transactionId || 'unknown'}`,
+      date: (apiVoucher.date as string) || '',
+      description: (apiVoucher.description as string) || (apiVoucher.explanation as string) || '',
+      transactions: transactions,
     };
   };
 
@@ -237,10 +285,10 @@ export default function AIJournalPage() {
           setTimeout(async () => {
             try {
               console.log('setTimeout 콜백 실행됨');
-              setStep('processing');
+    setStep('processing');
               setCurrentStage('분개 처리 중...');
-              setProgress({ processed: 0, total: 100 });
-              
+    setProgress({ processed: 0, total: 100 });
+
               console.log('=== 2단계 분개 처리 시작 ===');
               console.log('전달할 원본 거래내역 개수:', rawTransactions.length);
               console.log('전달할 변환된 거래내역 개수:', convertedTransactions.length);
@@ -274,31 +322,53 @@ export default function AIJournalPage() {
                 },
                 (data) => {
                   // 분개 처리 완료
-                  setVouchers((data.vouchers as AIJournalVoucher[]) || []);
+                  console.log('=== 2단계 완료 데이터 ===');
+                  console.log('전체 데이터:', data);
+                  console.log('vouchers 타입:', typeof data.vouchers);
+                  
+                  const vouchersData = data.vouchers as unknown[];
+                  console.log('vouchers 길이:', vouchersData?.length);
+                  console.log('첫 번째 voucher:', vouchersData?.[0]);
+                  console.log('첫 번째 voucher의 키들:', vouchersData?.[0] ? Object.keys(vouchersData[0] as Record<string, unknown>) : '없음');
+                  
+                  // API 응답의 vouchers를 UI 구조로 변환
+                  const apiVouchers = (data.vouchers as Record<string, unknown>[]) || [];
+                  const convertedVouchers = apiVouchers.map(convertApiVoucherToUI);
+                  
+                  console.log('변환된 vouchers:', convertedVouchers);
+                  
+                  setVouchers(convertedVouchers);
                   setNewPartners((data.newPartners as NewPartner[]) || []);
                   
                   // 통계 계산
                   let debitTotal = 0, creditTotal = 0;
-                  ((data.vouchers as AIJournalVoucher[]) || []).forEach((v: AIJournalVoucher) =>
-                    v.transactions.forEach((t: AIJournalTransaction) =>
-                      t.debitCredit ? (debitTotal += t.amount) : (creditTotal += t.amount)
-                    )
-                  );
-                  
-                  setStats({
+                  convertedVouchers.forEach((v: AIJournalVoucher, index: number) => {
+                    console.log(`Voucher ${index}:`, v);
+                    console.log(`Voucher ${index} transactions:`, v.transactions);
+                    
+                    if (v.transactions && Array.isArray(v.transactions)) {
+                      v.transactions.forEach((t: AIJournalTransaction) =>
+              t.debitCredit ? (debitTotal += t.amount) : (creditTotal += t.amount)
+          );
+                    } else {
+                      console.warn(`Voucher ${index}에 transactions가 없습니다:`, v);
+                    }
+                  });
+
+          setStats({
                     transactionCount: Number(data.totalVouchers) || 0,
                     newPartnerCount: Number(data.totalNewPartners) || 0,
-                    debitTotal,
-                    creditTotal,
+            debitTotal,
+            creditTotal,
                     accuracy: 95, // 기본값
-                  });
+          });
                   
                   setProgress({ processed: 100, total: 100 });
                   
                   // 잠시 후 결과 화면으로 전환
                   setTimeout(() => {
-                    setStep('result');
-                  }, 500);
+          setStep('result');
+        }, 500);
                 }
               );
             } catch (err) {
@@ -370,19 +440,30 @@ export default function AIJournalPage() {
     );
   };
 
-  // 저장 핸들러
+  // 저장 핸들러 (새로운 2단계 API 사용)
   const handleSave = async () => {
     if (!token) {
       setError('로그인이 필요합니다.');
       return;
     }
 
+    if (vouchers.length === 0) {
+      setError('저장할 데이터가 없습니다.');
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(null);
+      
+      console.log('=== 저장 시작 ===');
+      console.log('저장할 vouchers:', vouchers);
+      
       const result = await saveAIJournal(vouchers, token);
       
       if (result.success) {
-        alert('저장되었습니다.');
+        console.log('저장 완료:', result.voucherIds);
+        alert(`저장되었습니다. (전표 ${result.voucherIds.length}개 생성)`);
       } else {
         setError('저장에 실패했습니다.');
       }
@@ -550,7 +631,7 @@ export default function AIJournalPage() {
               {/* 차변합계 */}
               <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
                 <p className="text-xs text-[#B3B3B3] leading-none">차변합계</p>
-                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
+                <p className="text-[15px] font-semibold text-[#b3b3b3] leading-[140%]">
                   {stats.debitTotal.toLocaleString()}원
                 </p>
               </div>
@@ -561,7 +642,7 @@ export default function AIJournalPage() {
               {/* 대변합계 */}
               <div className="flex flex-col justify-center items-center px-6 py-3 gap-1.5 flex-1">
                 <p className="text-xs text-[#B3B3B3] leading-none">대변합계</p>
-                <p className="text-[15px] font-semibold text-[#1E1E1E] leading-[140%]">
+                <p className="text-[15px] font-semibold text-[#b3b3b3] leading-[140%]">
                   {stats.creditTotal.toLocaleString()}원
                 </p>
               </div>
@@ -606,14 +687,22 @@ export default function AIJournalPage() {
                 </thead>
                 <tbody>
                   {vouchers.map((voucher, idx) => {
-                    const debit = voucher.transactions.filter((t) => t.debitCredit);
-                    const credit = voucher.transactions.filter((t) => !t.debitCredit);
+                    console.log(`렌더링 중인 voucher ${idx}:`, voucher);
+                    console.log(`voucher.transactions:`, voucher.transactions);
+                    
+                    // transactions가 없거나 배열이 아닌 경우 빈 배열로 처리
+                    const transactions = voucher.transactions && Array.isArray(voucher.transactions) 
+                      ? voucher.transactions 
+                      : [];
+                    
+                    const debit = transactions.filter((t) => t.debitCredit);
+                    const credit = transactions.filter((t) => !t.debitCredit);
                     const rows = Math.max(debit.length, credit.length);
 
                     return (
-                      <React.Fragment key={voucher.id}>
+                      <React.Fragment key={`voucher-${idx}`}>
                         {Array.from({ length: rows }).map((_, r) => (
-                          <tr key={`${voucher.id}-${r}`}>
+                          <tr key={`voucher-${idx}-row-${r}`}>
                             <td className="p-3 border border-[#d9d9d9] text-sm text-[#757575]">
                               {r === 0 ? idx + 1 : ''}
                             </td>
@@ -630,18 +719,21 @@ export default function AIJournalPage() {
                               />
                             </td>
                             <td className="p-3 border border-[#d9d9d9]">
+                              <div className="flex items-center">
                               <input
                                 type="text"
-                                placeholder="입력하기"
-                                value={debit[r]?.amount ? `${debit[r].amount.toLocaleString()}원` : ''}
-                                onChange={(e) => {
-                                  if (debit[r]) {
-                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                                    handleCellChange(voucher.id, debit[r].id, 'amount', parseInt(numericValue) || 0);
-                                  }
-                                }}
+                                  placeholder="0"
+                                  value={debit[r]?.amount ? debit[r].amount.toLocaleString() : ''}
+                                  onChange={(e) => {
+                                    if (debit[r]) {
+                                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                      handleCellChange(voucher.id, debit[r].id, 'amount', parseInt(numericValue) || 0);
+                                    }
+                                  }}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
+                                <span className="text-sm text-[#b3b3b3] ml-1">원</span>
+                              </div>
                             </td>
                             <td className="p-3 border border-[#d9d9d9]">
                               <input
@@ -662,18 +754,21 @@ export default function AIJournalPage() {
                               />
                             </td>
                             <td className="p-3 border border-[#d9d9d9]">
+                              <div className="flex items-center">
                               <input
                                 type="text"
-                                placeholder="입력하기"
-                                value={credit[r]?.amount ? `${credit[r].amount.toLocaleString()}원` : ''}
-                                onChange={(e) => {
-                                  if (credit[r]) {
-                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                                    handleCellChange(voucher.id, credit[r].id, 'amount', parseInt(numericValue) || 0);
-                                  }
-                                }}
+                                  placeholder="0"
+                                  value={credit[r]?.amount ? credit[r].amount.toLocaleString() : ''}
+                                  onChange={(e) => {
+                                    if (credit[r]) {
+                                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                      handleCellChange(voucher.id, credit[r].id, 'amount', parseInt(numericValue) || 0);
+                                    }
+                                  }}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
+                                <span className="text-sm text-[#b3b3b3] ml-1">원</span>
+                              </div>
                             </td>
                             <td className="p-3 border border-[#d9d9d9]">
                               <input
@@ -714,12 +809,16 @@ export default function AIJournalPage() {
                             />
                           </td>
                           <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <div className="flex items-center">
                             <input
                               type="text"
-                              placeholder="입력하기"
-                              defaultValue={`${debit.reduce((s, t) => s + t.amount, 0).toLocaleString()}원`}
+                                placeholder="0"
+                                defaultValue={debit.reduce((s, t) => s + (t.amount || 0), 0).toLocaleString()}
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                                readOnly
                             />
+                              <span className="text-sm text-[#b3b3b3] ml-1">원</span>
+                            </div>
                           </td>
                           <td className="p-3 border border-[#d9d9d9] bg-white">
                             <input
@@ -738,12 +837,16 @@ export default function AIJournalPage() {
                             />
                           </td>
                           <td className="p-3 border border-[#d9d9d9] bg-white">
+                            <div className="flex items-center">
                             <input
                               type="text"
-                              placeholder="입력하기"
-                              defaultValue={`${credit.reduce((s, t) => s + t.amount, 0).toLocaleString()}원`}
+                                placeholder="0"
+                                defaultValue={credit.reduce((s, t) => s + (t.amount || 0), 0).toLocaleString()}
                               className="w-full bg-white text-sm text-[#757575] focus:outline-none"
+                                readOnly
                             />
+                              <span className="text-sm text-[#b3b3b3] ml-1">원</span>
+                            </div>
                           </td>
                           <td className="p-3 border border-[#d9d9d9] bg-white">
                             <input

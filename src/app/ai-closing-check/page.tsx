@@ -335,7 +335,7 @@ export default function AIClosingCheckPage() {
   // 감가상각 팝업 상태
   const [showDepreciationModal, setShowDepreciationModal] = useState(false);
   const [depreciationData, setDepreciationData] = useState<DepreciationResponse | null>(null);
-  const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
+  const [_voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
   const [editableVoucherData, setEditableVoucherData] = useState<VoucherResponse | null>(null);
   const [depreciationLoading, setDepreciationLoading] = useState(false);
   const [editableItems, setEditableItems] = useState<EditableDepreciationItem[]>([]);
@@ -363,14 +363,14 @@ export default function AIClosingCheckPage() {
 
   // 가수가지급금 팝업 상태
   const [showSuspenseModal, setShowSuspenseModal] = useState(false);
-  const [suspenseData, setSuspenseData] = useState<SuspenseResponse | null>(null);
+  const [_suspenseData, setSuspenseData] = useState<SuspenseResponse | null>(null);
   const [suspenseLoading, setSuspenseLoading] = useState(false);
-  const [editableSuspenseTransactions, setEditableSuspenseTransactions] = useState<EditableSuspenseTransaction[]>([]);
+  const [_editableSuspenseTransactions, setEditableSuspenseTransactions] = useState<EditableSuspenseTransaction[]>([]);
 
   // 기간귀속 팝업 상태
   const [showPeriodAccrualModal, setShowPeriodAccrualModal] = useState(false);
   const [periodAccrualData, setPeriodAccrualData] = useState<PeriodAccrualResponse | null>(null);
-  const [periodAccrualVoucherData, setPeriodAccrualVoucherData] = useState<VoucherResponse | null>(null);
+  const [_periodAccrualVoucherData, setPeriodAccrualVoucherData] = useState<VoucherResponse | null>(null);
   const [periodAccrualLoading, setPeriodAccrualLoading] = useState(false);
   const [editablePeriodAccrualItems, setEditablePeriodAccrualItems] = useState<EditablePeriodAccrualItem[]>([]);
 
@@ -1019,7 +1019,7 @@ export default function AIClosingCheckPage() {
   };
 
   /** 가수가지급금 아이템 변경 핸들러 */
-  const handleSuspenseItemChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
+  const _handleSuspenseItemChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
     setEditableSuspenseTransactions(prev => 
       prev.map(item => 
         item.id === id ? { ...item, [field]: value } : item

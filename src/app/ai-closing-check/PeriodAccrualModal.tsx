@@ -51,13 +51,13 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   isOpen,
   onClose,
   data,
-  loading,
+  loading: _loading,
   // editableItems, // 현재 사용하지 않음
   // onItemChange, // 현재 사용하지 않음
   // onApply, // 현재 사용하지 않음
   closingDate,
-  onClosingDateChange,
-  onDirectCheck,
+  onClosingDateChange: _onClosingDateChange,
+  onDirectCheck: _onDirectCheck,
 }) => {
   const [showJournalTable, setShowJournalTable] = useState(false);
   const [editableData, setEditableData] = useState<PeriodAccrualItem[]>([]);

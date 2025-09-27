@@ -842,3 +842,150 @@ export async function deleteProof(id: string, token: string): Promise<unknown> {
 
   return response.json();
 }
+
+// AI 분개 관련 API
+export interface RawTransaction {
+  date: string;
+  description: string;
+  counterpartyName: string;
+  counterpartyBusinessNumber?: string;
+  counterpartyRepresentative?: string;
+  counterpartyAddress?: string;
+  counterpartyPhone?: string;
+  counterpartyEmail?: string;
+  cardApprovalNumber?: string;
+  cardNumberInText?: string;
+  bankAccountInText?: string;
+  isCancelled: boolean;
+  totalAmount: number;
+  vatAmount: number;
+  items: string[];
+  documentType: string;
+  transactionType: string;
+  groundRuleNumber: string;
+  fileName: string;
+}
+
+export interface AIJournalTransaction {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  partnerName?: string;
+  accountName?: string;
+  debitCredit?: boolean; // true: 차변, false: 대변
+  note?: string;
+}
+
+export interface AIJournalVoucher {
+  id: string;
+  date: string;
+  description: string;
+  transactions: AIJournalTransaction[];
+}
+
+export interface NewPartner {
+  id: string;
+  name: string;
+  businessNumber?: string;
+  mainItems?: string;
+  relationship?: string;
+  note?: string;
+}
+
+// 1단계: 증빙 추출 시작
+export async function startExtractRawTransactions(files: File[], token: string): Promise<{ jobId: string }> {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('files', file);
+  });
+
+  const response = await fetch(`${API_BASE_URL}/api/ai/extract-raw-transactions/start`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || '증빙 추출 시작에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 1단계: 증빙 추출 진행률 스트림
+export async function getExtractRawTransactionsStream(jobId: string, token: string): Promise<ReadableStream<Uint8Array> | null> {
+  const response = await fetch(`${API_BASE_URL}/api/ai/extract-raw-transactions/stream?jobId=${jobId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'text/event-stream',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('증빙 추출 스트림 조회에 실패했습니다.');
+  }
+
+  return response.body;
+}
+
+// 2단계: 분개 처리 시작
+export async function startProcessJournalEntries(transactions: RawTransaction[], token: string): Promise<{ jobId: string }> {
+  console.log('분개 처리 API 호출 - 전달할 데이터:', { transactions });
+  
+  const response = await fetch(`${API_BASE_URL}/api/ai/process-journal-entries/start`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ transactions }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('분개 처리 API 에러:', errorData);
+    throw new Error(errorData.error || '분개 처리 시작에 실패했습니다.');
+  }
+
+  const result = await response.json();
+  console.log('분개 처리 API 응답:', result);
+  return result;
+}
+
+// 2단계: 분개 처리 진행률 스트림
+export async function getProcessJournalEntriesStream(jobId: string, token: string): Promise<ReadableStream<Uint8Array> | null> {
+  const response = await fetch(`${API_BASE_URL}/api/ai/process-journal-entries/stream?jobId=${jobId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'text/event-stream',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('분개 처리 스트림 조회에 실패했습니다.');
+  }
+
+  return response.body;
+}
+
+// AI 분개 결과 저장 API
+export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean }> {
+  const response = await fetch(`${API_BASE_URL}/api/ai-journal/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ vouchers }),
+  });
+
+  if (!response.ok) {
+    throw new Error('AI 분개 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}

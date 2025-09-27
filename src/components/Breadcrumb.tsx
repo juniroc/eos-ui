@@ -24,7 +24,7 @@ export default function Breadcrumb({ mainMenu, subMenu }: BreadcrumbProps) {
         >
           {mainMenu}
         </span>
-        <Image src="/icons/arrow_right.svg" alt="ArrowRight" width={16} height={16} />
+        <Image src="/icons/arrow_right.svg" alt="ArrowRight" width={16} height={16} style={{ width: 'auto', height: 'auto' }} />
         <span
           style={{
             color: '#1E1E1E',

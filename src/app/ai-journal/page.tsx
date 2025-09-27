@@ -1,25 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { 
+  startExtractRawTransactions, 
+  getExtractRawTransactionsStream,
+  startProcessJournalEntries,
+  getProcessJournalEntriesStream,
+  saveAIJournal, 
+  type AIJournalVoucher, 
+  type AIJournalTransaction,
+  type RawTransaction,
+  type NewPartner
+} from '@/services/api';
 
-interface Transaction {
-  id: string;
-  date: string;
-  description: string;
-  amount: number;
-  partnerName?: string;
-  accountName?: string;
-  debitCredit?: boolean; // true: 차변, false: 대변
-  note?: string;
-}
-
-interface Voucher {
-  id: string;
-  date: string;
-  description: string;
-  transactions: Transaction[];
-}
+// 기존 인터페이스는 API에서 가져온 타입으로 대체
 
 interface ProgressData {
   processed: number;
@@ -27,12 +22,14 @@ interface ProgressData {
 }
 
 export default function AIJournalPage() {
-  const router = useRouter();
+  const { token } = useAuth();
 
-  const [step, setStep] = useState<'upload' | 'processing' | 'result'>('upload');
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [step, setStep] = useState<'upload' | 'extracting' | 'processing' | 'result'>('upload');
+  const [, setFiles] = useState<FileList | null>(null);
   const [progress, setProgress] = useState<ProgressData>({ processed: 0, total: 100 });
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [vouchers, setVouchers] = useState<AIJournalVoucher[]>([]);
+  const [, setRawTransactions] = useState<RawTransaction[]>([]);
+  const [, setNewPartners] = useState<NewPartner[]>([]);
   const [stats, setStats] = useState({
     transactionCount: 0,
     newPartnerCount: 0,
@@ -40,78 +37,293 @@ export default function AIJournalPage() {
     creditTotal: 0,
     accuracy: 95,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentStage, setCurrentStage] = useState<string>('');
 
-  // 업로드 시뮬레이션
-  const simulateProgress = (selectedFiles: FileList) => {
-    setFiles(selectedFiles);
-    setStep('processing');
-    setProgress({ processed: 0, total: 100 });
+  // RawTransaction을 AIJournalTransaction으로 변환하는 함수
+  const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
+    // transactionType에 따라 차변/대변 결정
+    const isDebit = rawTransaction.transactionType === '출금' || rawTransaction.transactionType === '출금 – 기타거래처';
+    
+    return {
+      id: `${rawTransaction.date}_${rawTransaction.counterpartyName}_${rawTransaction.totalAmount}_${Math.random()}`,
+      date: rawTransaction.date,
+      description: rawTransaction.description,
+      amount: rawTransaction.totalAmount,
+      partnerName: rawTransaction.counterpartyName,
+      accountName: isDebit ? '현금' : '매출', // 기본값, 사용자가 수정 가능
+      debitCredit: isDebit,
+      note: rawTransaction.items.join(', '),
+    };
+  };
 
-    let current = 0;
-    const timer = setInterval(() => {
-      current += 2;
-      if (current >= 100) {
-        clearInterval(timer);
-        setProgress({ processed: 100, total: 100 });
-
-        setTimeout(() => {
-          const demo: Voucher[] = [
-            {
-              id: 'demo-1',
-              date: '2025-09-26',
-              description: '임시 전표',
-              transactions: [
-                {
-                  id: 't1',
-                  date: '2025-09-26',
-                  description: '매출',
-                  amount: 100000,
-                  accountName: '매출',
-                  partnerName: '거래처A',
-                  debitCredit: false,
-                },
-                {
-                  id: 't2',
-                  date: '2025-09-26',
-                  description: '현금',
-                  amount: 100000,
-                  accountName: '현금',
-                  partnerName: '거래처A',
-                  debitCredit: true,
-                },
-              ],
-            },
-          ];
-
-          let debitTotal = 0,
-            creditTotal = 0;
-          demo.forEach((v) =>
-            v.transactions.forEach((t) =>
-              t.debitCredit ? (debitTotal += t.amount) : (creditTotal += t.amount)
-            )
-          );
-
-          setVouchers(demo);
-          setStats({
-            transactionCount: demo.length,
-            newPartnerCount: 1,
-            debitTotal,
-            creditTotal,
-            accuracy: 95,
-          });
-          setStep('result');
-        }, 500);
+  // SSE 메시지 처리 헬퍼 함수
+  const processSSEMessage = (eventType: string, dataBuffer: string, onProgress: (data: Record<string, unknown>) => void, onComplete: (data: Record<string, unknown>) => void) => {
+    console.log(`=== SSE 메시지 처리 시작 ===`);
+    console.log(`이벤트 타입: "${eventType}"`);
+    console.log(`데이터 길이: ${dataBuffer.length}`);
+    console.log(`데이터 시작: ${dataBuffer.substring(0, 100)}...`);
+    
+    try {
+      const parsedData = JSON.parse(dataBuffer);
+      console.log(`SSE 이벤트 [${eventType}] 파싱 성공:`, parsedData);
+      
+      if (eventType === 'progress') {
+        console.log('→ progress 콜백 호출');
+        onProgress(parsedData);
+      } else if (eventType === 'done') {
+        console.log('→ done 콜백 호출 (2단계 API 시작)');
+        onComplete(parsedData);
+      } else if (eventType === 'connected') {
+        console.log('SSE 연결됨:', parsedData);
       } else {
-        setProgress({ processed: current, total: 100 });
+        console.log('알 수 없는 SSE 이벤트:', eventType, parsedData);
       }
-    }, 50);
+    } catch (e) {
+      console.error('SSE 데이터 파싱 에러:', e);
+      console.error('이벤트 타입:', eventType);
+      console.error('데이터 길이:', dataBuffer.length);
+      console.error('데이터 시작 부분:', dataBuffer.substring(0, 200));
+      console.error('데이터 끝 부분:', dataBuffer.substring(Math.max(0, dataBuffer.length - 200)));
+    }
+    console.log(`=== SSE 메시지 처리 완료 ===`);
+  };
+
+  // SSE 스트림 처리 헬퍼 함수
+  const processSSEStream = async (stream: ReadableStream<Uint8Array> | null, onProgress: (data: Record<string, unknown>) => void, onComplete: (data: Record<string, unknown>) => void) => {
+    if (!stream) {
+      console.error('SSE 스트림이 null입니다');
+      return;
+    }
+
+    console.log('=== SSE 스트림 처리 시작 ===');
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log('SSE 스트림 읽기 완료');
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        console.log(`SSE 청크 수신 (${chunk.length} bytes):`, chunk.substring(0, 200) + '...');
+        buffer += chunk;
+        
+        // 완전한 SSE 메시지를 찾아서 처리
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // 마지막 불완전한 줄은 버퍼에 보관
+        
+        console.log(`처리할 줄 수: ${lines.length}, 버퍼에 남은 줄: ${buffer ? '있음' : '없음'}`);
+        
+        let currentEventType = '';
+        let currentDataBuffer = '';
+        
+        for (const line of lines) {
+          console.log(`처리 중인 줄: "${line}"`);
+          
+          if (line.startsWith('event:')) {
+            // 이전 메시지가 완료되지 않았다면 처리
+            if (currentEventType && currentDataBuffer) {
+              console.log(`이전 메시지 처리: ${currentEventType}`);
+              processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
+            }
+            currentEventType = line.substring(6).trim();
+            currentDataBuffer = '';
+            console.log(`새 이벤트 타입 설정: "${currentEventType}"`);
+            continue;
+          }
+          if (line.startsWith('data:')) {
+            currentDataBuffer += line.substring(5);
+            console.log(`데이터 추가, 현재 길이: ${currentDataBuffer.length}`);
+            continue;
+          }
+          if (line === '') {
+            // 빈 줄이면 메시지 완료
+            if (currentEventType && currentDataBuffer) {
+              console.log(`메시지 완료 처리: ${currentEventType}`);
+              processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
+            } else if (currentDataBuffer && !currentEventType) {
+              // event: 없이 data:만 있는 경우 (기본적으로 'done' 이벤트로 처리)
+              console.log(`이벤트 타입 없이 데이터만 있음 - 'done'으로 처리`);
+              processSSEMessage('done', currentDataBuffer, onProgress, onComplete);
+            }
+            currentEventType = '';
+            currentDataBuffer = '';
+          }
+        }
+        
+        // 마지막 메시지 처리
+        if (currentEventType && currentDataBuffer) {
+          console.log(`마지막 메시지 처리: ${currentEventType}`);
+          processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
+        } else if (currentDataBuffer && !currentEventType) {
+          // event: 없이 data:만 있는 경우 (기본적으로 'done' 이벤트로 처리)
+          console.log(`마지막 메시지 - 이벤트 타입 없이 데이터만 있음 - 'done'으로 처리`);
+          processSSEMessage('done', currentDataBuffer, onProgress, onComplete);
+        }
+      }
+    } catch (error) {
+      console.error('SSE 스트림 처리 에러:', error);
+    } finally {
+      reader.releaseLock();
+      console.log('=== SSE 스트림 처리 완료 ===');
+    }
+  };
+
+  // 실제 API 호출로 파일 처리 (2단계 프로세스)
+  const processFiles = async (selectedFiles: FileList) => {
+    if (!token) {
+      setError('로그인이 필요합니다.');
+      return;
+    }
+
+    setFiles(selectedFiles);
+    setError(null);
+    setLoading(true);
+
+    try {
+      // 파일 배열로 변환
+      const fileArray = Array.from(selectedFiles);
+      
+      // 1단계: 증빙 추출 시작
+      setStep('extracting');
+      setCurrentStage('증빙 추출 중...');
+      setProgress({ processed: 0, total: 100 });
+      
+      const extractJob = await startExtractRawTransactions(fileArray, token);
+      
+      // 1단계: 증빙 추출 진행률 스트림
+      const extractStream = await getExtractRawTransactionsStream(extractJob.jobId, token);
+      
+      await processSSEStream(
+        extractStream,
+        (data) => {
+          // 진행률 업데이트
+          setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
+          setCurrentStage(`증빙 추출 중... (${data.processed}/${data.total})`);
+          
+          // extracted 정보가 있으면 표시
+          if (data.extracted) {
+            setCurrentStage(`증빙 추출 중... (${data.processed}/${data.total}) - 추출된 거래: ${data.extracted}건`);
+          }
+        },
+        (data) => {
+          // 추출 완료
+          console.log('=== onComplete 콜백 호출됨 ===');
+          console.log('추출 완료 데이터:', data);
+          console.log('데이터 타입:', typeof data);
+          console.log('데이터 키들:', Object.keys(data));
+          
+          // transactions 필드에서 RawTransaction 배열 가져오기
+          const rawTransactions = (data.transactions as RawTransaction[]) || [];
+          console.log('추출된 원본 거래내역 개수:', rawTransactions.length);
+          console.log('첫 번째 거래내역:', rawTransactions[0]);
+          
+          // RawTransaction을 AIJournalTransaction으로 변환
+          const convertedTransactions = rawTransactions.map(convertRawTransactionToAIJournal);
+          console.log('변환된 거래내역 개수:', convertedTransactions.length);
+          
+          setRawTransactions(rawTransactions);
+          setProgress({ processed: 100, total: 100 });
+          console.log('상태 업데이트 완료');
+          
+          // 2단계: 분개 처리 시작
+          console.log('=== 2단계 분개 처리 시작 (setTimeout) ===');
+          setTimeout(async () => {
+            try {
+              console.log('setTimeout 콜백 실행됨');
+              setStep('processing');
+              setCurrentStage('분개 처리 중...');
+              setProgress({ processed: 0, total: 100 });
+              
+              console.log('=== 2단계 분개 처리 시작 ===');
+              console.log('전달할 원본 거래내역 개수:', rawTransactions.length);
+              console.log('전달할 변환된 거래내역 개수:', convertedTransactions.length);
+              console.log('토큰 존재 여부:', !!token);
+              console.log('토큰 길이:', token?.length);
+              
+              if (!token) {
+                throw new Error('토큰이 없습니다.');
+              }
+              
+              if (rawTransactions.length === 0) {
+                console.log('거래내역이 비어있지만 API 호출을 시도합니다.');
+                // 빈 배열이라도 API 호출을 시도 (API가 다른 방식으로 처리할 수 있음)
+              }
+              
+              console.log('startProcessJournalEntries API 호출 시작...');
+              console.log('API 호출 전 마지막 확인 - rawTransactions:', rawTransactions.slice(0, 2));
+              
+              const processJob = await startProcessJournalEntries(rawTransactions, token);
+              console.log('startProcessJournalEntries API 응답:', processJob);
+              
+              // 2단계: 분개 처리 진행률 스트림
+              const processStream = await getProcessJournalEntriesStream(processJob.jobId, token);
+              
+              await processSSEStream(
+                processStream,
+                (data) => {
+                  // 진행률 업데이트
+                  setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
+                  setCurrentStage(`분개 처리 중... (${data.processed}/${data.total})`);
+                },
+                (data) => {
+                  // 분개 처리 완료
+                  setVouchers((data.vouchers as AIJournalVoucher[]) || []);
+                  setNewPartners((data.newPartners as NewPartner[]) || []);
+                  
+                  // 통계 계산
+                  let debitTotal = 0, creditTotal = 0;
+                  ((data.vouchers as AIJournalVoucher[]) || []).forEach((v: AIJournalVoucher) =>
+                    v.transactions.forEach((t: AIJournalTransaction) =>
+                      t.debitCredit ? (debitTotal += t.amount) : (creditTotal += t.amount)
+                    )
+                  );
+                  
+                  setStats({
+                    transactionCount: Number(data.totalVouchers) || 0,
+                    newPartnerCount: Number(data.totalNewPartners) || 0,
+                    debitTotal,
+                    creditTotal,
+                    accuracy: 95, // 기본값
+                  });
+                  
+                  setProgress({ processed: 100, total: 100 });
+                  
+                  // 잠시 후 결과 화면으로 전환
+                  setTimeout(() => {
+                    setStep('result');
+                  }, 500);
+                }
+              );
+            } catch (err) {
+              console.error('분개 처리 에러:', err);
+              setError(err instanceof Error ? err.message : '분개 처리 중 오류가 발생했습니다.');
+              setStep('upload');
+            }
+          }, 500);
+        }
+      );
+      
+    } catch (err) {
+      console.error('AI 분개 처리 에러:', err);
+      setError(err instanceof Error ? err.message : 'AI 분개 처리 중 오류가 발생했습니다.');
+      setStep('upload');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 파일 선택
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (selectedFiles && selectedFiles.length > 0) {
-      simulateProgress(selectedFiles);
+      processFiles(selectedFiles);
     }
   };
 
@@ -120,8 +332,82 @@ export default function AIJournalPage() {
     e.preventDefault();
     const droppedFiles = e.dataTransfer.files;
     if (droppedFiles && droppedFiles.length > 0) {
-      simulateProgress(droppedFiles);
+      processFiles(droppedFiles);
     }
+  };
+
+  // 표 데이터 수정 핸들러
+  const handleCellChange = (
+    voucherId: string,
+    transactionId: string,
+    field: keyof AIJournalTransaction,
+    value: string | number | boolean
+  ) => {
+    setVouchers(prev => 
+      prev.map(voucher => 
+        voucher.id === voucherId
+          ? {
+              ...voucher,
+              transactions: voucher.transactions.map(transaction =>
+                transaction.id === transactionId
+                  ? { ...transaction, [field]: value }
+                  : transaction
+              )
+            }
+          : voucher
+      )
+    );
+  };
+
+  // 전표 설명 수정 핸들러
+  const handleVoucherDescriptionChange = (voucherId: string, value: string) => {
+    setVouchers(prev => 
+      prev.map(voucher => 
+        voucher.id === voucherId
+          ? { ...voucher, description: value }
+          : voucher
+      )
+    );
+  };
+
+  // 저장 핸들러
+  const handleSave = async () => {
+    if (!token) {
+      setError('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await saveAIJournal(vouchers, token);
+      
+      if (result.success) {
+        alert('저장되었습니다.');
+      } else {
+        setError('저장에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('저장 에러:', err);
+      setError(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 새로 시작 핸들러
+  const handleReset = () => {
+    setStep('upload');
+    setFiles(null);
+    setVouchers([]);
+    setStats({
+      transactionCount: 0,
+      newPartnerCount: 0,
+      debitTotal: 0,
+      creditTotal: 0,
+      accuracy: 95,
+    });
+    setError(null);
+    setProgress({ processed: 0, total: 100 });
   };
 
   return (
@@ -133,7 +419,22 @@ export default function AIJournalPage() {
             <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">AI 분개</h2>
             <p className="text-[#767676]">파일을 업로드해서 자동으로 분개를 시작하세요.</p>
           </div>
+          {step === 'result' && (
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200 rounded-lg"
+            >
+              새로 시작
+            </button>
+          )}
         </div>
+
+        {/* 에러 메시지 */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
 
         {/* 업로드 단계 */}
         {step === 'upload' && (
@@ -166,7 +467,7 @@ export default function AIJournalPage() {
         )}
 
         {/* 처리 중 */}
-        {step === 'processing' && (
+        {(step === 'extracting' || step === 'processing') && (
           <div className="bg-white border border-[#D9D9D9] rounded-lg p-12 text-center mb-6">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 border-4 border-[#E6E6E6] border-t-[#d9d9d9] rounded-full animate-spin"></div>
@@ -183,6 +484,19 @@ export default function AIJournalPage() {
               진행률: {progress.processed}/{progress.total} (
               {Math.round((progress.processed / progress.total) * 100)}%)
             </p>
+            <p className="text-sm text-[#767676] mt-2">
+              {currentStage}
+            </p>
+            {step === 'extracting' && (
+              <p className="text-xs text-[#B3B3B3] mt-1">
+                1단계: 증빙서류에서 거래내역을 추출하고 있습니다...
+              </p>
+            )}
+            {step === 'processing' && (
+              <p className="text-xs text-[#B3B3B3] mt-1">
+                2단계: 추출된 거래내역을 분개로 변환하고 있습니다...
+              </p>
+            )}
           </div>
         )}
 
@@ -200,10 +514,11 @@ export default function AIJournalPage() {
                   인쇄하기
                 </button>
                 <button
-                  onClick={() => alert('저장했습니다')}
-                  className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#1E1E1E]"
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#1E1E1E] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  저장하기
+                  {loading ? '저장 중...' : '저장하기'}
                 </button>
               </div>
             </div>
@@ -309,7 +624,8 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={debit[r]?.accountName || ''}
+                                value={debit[r]?.accountName || ''}
+                                onChange={(e) => debit[r] && handleCellChange(voucher.id, debit[r].id, 'accountName', e.target.value)}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -317,7 +633,13 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={debit[r]?.amount ? `${debit[r].amount.toLocaleString()}원` : ''}
+                                value={debit[r]?.amount ? `${debit[r].amount.toLocaleString()}원` : ''}
+                                onChange={(e) => {
+                                  if (debit[r]) {
+                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                    handleCellChange(voucher.id, debit[r].id, 'amount', parseInt(numericValue) || 0);
+                                  }
+                                }}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -325,7 +647,8 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={debit[r]?.partnerName || ''}
+                                value={debit[r]?.partnerName || ''}
+                                onChange={(e) => debit[r] && handleCellChange(voucher.id, debit[r].id, 'partnerName', e.target.value)}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -333,7 +656,8 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={credit[r]?.accountName || ''}
+                                value={credit[r]?.accountName || ''}
+                                onChange={(e) => credit[r] && handleCellChange(voucher.id, credit[r].id, 'accountName', e.target.value)}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -341,7 +665,13 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={credit[r]?.amount ? `${credit[r].amount.toLocaleString()}원` : ''}
+                                value={credit[r]?.amount ? `${credit[r].amount.toLocaleString()}원` : ''}
+                                onChange={(e) => {
+                                  if (credit[r]) {
+                                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                    handleCellChange(voucher.id, credit[r].id, 'amount', parseInt(numericValue) || 0);
+                                  }
+                                }}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -349,7 +679,8 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={credit[r]?.partnerName || ''}
+                                value={credit[r]?.partnerName || ''}
+                                onChange={(e) => credit[r] && handleCellChange(voucher.id, credit[r].id, 'partnerName', e.target.value)}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>
@@ -357,7 +688,8 @@ export default function AIJournalPage() {
                               <input
                                 type="text"
                                 placeholder="입력하기"
-                                defaultValue={r === 0 ? voucher.description : ''}
+                                value={r === 0 ? voucher.description : ''}
+                                onChange={(e) => r === 0 && handleVoucherDescriptionChange(voucher.id, e.target.value)}
                                 className="w-full bg-transparent text-sm text-[#757575] focus:outline-none"
                               />
                             </td>

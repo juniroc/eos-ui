@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getPartnerDocs, extractPartnerDocs, savePartnerDocs, deletePartner } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
-
+import ToastMessage from '@/components/ToastMessage';
+import Image from 'next/image';
 interface ClientRow {
   id: number;
   name: string; // 거래처명
@@ -40,6 +41,9 @@ export default function ClientInfoPage() {
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
   const [documentId, setDocumentId] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -139,7 +143,7 @@ export default function ClientInfoPage() {
 
   /** 저장 */
   const handleSave = async () => {
-    if (!token || !documentId) return;
+    if (!token) return;
     
     try {
       setLoading(true);
@@ -161,13 +165,14 @@ export default function ClientInfoPage() {
       }, token);
       
       if (data.success) {
-        alert('저장되었습니다!');
+        setToastMessage('거래처 정보가 저장되었습니다!');
+        setShowToast(true);
         // documentId 초기화
         setDocumentId('');
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchClients();
       } else {
-        alert('저장 실패');
+        alert('저장 중 문제가 발생했습니다.');
       }
     } catch (err) {
       console.error('저장 에러:', err);
@@ -191,10 +196,11 @@ export default function ClientInfoPage() {
         setLoading(true);
         await deletePartner(row.serverId.toString(), token);
         setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
+        setToastMessage('거래처 정보가 삭제되었습니다!');
+        setShowToast(true);
       } catch (err) {
         console.error('삭제 에러:', err);
-        alert('삭제 실패');
+        alert('삭제 중 문제가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -239,185 +245,220 @@ export default function ClientInfoPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">
-              거래처 정보
-            </h2>
-            <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
-              저장하세요.
+    <div className="flex flex-col items-start p-4 gap-4">
+      {/* content */}
+      <div className="flex flex-col items-start gap-4 w-full">
+        {/* title */}
+        <div className="flex flex-row justify-between items-end gap-4 w-full">
+          {/* Frame 56 */}
+          <div className="flex flex-col items-start">
+            {/* Menu Heading */}
+            <div className="flex flex-col items-start py-[6px_0px_2px] rounded-lg">
+              {/* Text Strong */}
+              <div className="flex flex-row items-start">
+                <h2 className="font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+                  거래처 정보
+                </h2>
+              </div>
+            </div>
+            <p className="text-[12px] leading-[140%] text-center text-[#767676]">
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <div className="flex gap-3">
-            {/* 파일 업로드 */}
-            <button
-              className="flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-              onClick={() => document.getElementById('clientFile')?.click()}
-              disabled={loading}
-            >
-              파일 업로드
-            </button>
-            {/* 저장하기 */}
-            <button
-              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] text-[#1E1E1E] rounded ${
-                hasData && !loading
-                  ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0]'
-                  : 'bg-[#E6E6E6]'
-              }`}
-              onClick={handleSave}
-              disabled={!hasData || loading}
-            >
-              저장하기
-            </button>
+
+          {/* title - buttons type */}
+          <div className="flex flex-row justify-end items-center gap-2">
+            {/* Button medium - 파일 업로드 */}
+            <div className="flex flex-row items-start">
+              <button
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] hover:bg-[#E0E0E0] text-[12px] leading-[100%] text-[#1E1E1E]"
+                onClick={() => document.getElementById('clientFile')?.click()}
+                disabled={loading}
+              >
+                파일 업로드
+              </button>
+            </div>
+
+            {/* Button medium - 저장하기 */}
+            <div className="flex flex-row items-start">
+              <button
+                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 text-[12px] leading-[100%] ${
+                  hasData && !loading
+                    ? 'bg-[#F3F3F3] hover:bg-[#E0E0E0] text-[#1E1E1E]'
+                    : 'bg-[#E6E6E6] text-[#B3B3B3]'
+                }`}
+                onClick={handleSave}
+                disabled={!hasData || loading}
+              >
+                저장하기
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 파일 업로드 박스 */}
-        <div className="mb-6">
+
+        {/* Upload */}
+        <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[400px] bg-white border border-dashed border-[#D9D9D9]">
+          <div className="flex items-center justify-center">
+            <Image src="/icons/upload.png" alt="upload" width={24} height={24} />
+          </div>
+          <div className="flex flex-col items-center p-0 gap-0.5">
+            <span className="text-xs leading-[140%] text-center text-[#303030]">
+              파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
+            </span>
+            <span className="text-xs leading-[140%] text-center text-[#767676]">
+              (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
+            </span>
+          </div>
           <FileUploadBox
             id="clientFile"
             onFileUpload={handleFileUpload}
             loading={loading}
+            className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </div>
 
         {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead>
-            <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 font-medium">
-                번호
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                거래처명
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                사업자등록번호(주민등록번호)
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                주요거래품목
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">우리회사와의 관계</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">기타 거래처 이해를 위한 참고사항</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
-                삭제
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  {idx + 1}
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.name}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, name: e.target.value } : r
-                        )
+        <div className="w-full border border-[#D9D9D9]">
+          {/* Header Row */}
+          <div className="flex w-full h-8">
+            <div className="flex items-center justify-center w-[56px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">번호</span>
+            </div>
+            <div className="flex items-center justify-center min-w-[100px] w-[150px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">거래처명</span>
+            </div>
+            <div className="flex items-center justify-center min-w-[150px] w-[200px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">사업자등록번호(주민등록번호)</span>
+            </div>
+            <div className="flex items-center justify-center min-w-[100px] w-[150px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">주요거래품목</span>
+            </div>
+            <div className="flex items-center justify-center min-w-[100px] w-[150px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">우리회사와의 관계</span>
+            </div>
+            <div className="flex items-center justify-center min-w-[150px] flex-1 bg-[#F5F5F5] border-r border-[#D9D9D9]">
+              <span className="text-[12px] font-medium text-[#757575]">기타 거래처 이해를 위한 참고사항</span>
+            </div>
+            <div className="flex items-center justify-center w-[96px] bg-[#F5F5F5]">
+              <span className="text-[12px] font-medium text-[#757575]">삭제</span>
+            </div>
+          </div>
+
+          {/* Data Rows */}
+          {rows.map((row, idx) => (
+            <div key={row.id} className="flex w-full h-8 border-t border-[#D9D9D9]">
+              <div className="flex items-center justify-center w-[56px] bg-white border-r border-[#D9D9D9]">
+                <span className="text-[12px] text-[#757575]">{idx + 1}</span>
+              </div>
+              <div className="flex items-center px-2 min-w-[100px] w-[150px] bg-white border-r border-[#D9D9D9]">
+                <input
+                  className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
+                  placeholder="입력하기"
+                  value={row.name}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id ? { ...r, name: e.target.value } : r
                       )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.businessNumber}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, businessNumber: e.target.value }
-                            : r
-                        )
+                    )
+                  }
+                />
+              </div>
+              <div className="flex items-center px-2 min-w-[150px] w-[200px] bg-white border-r border-[#D9D9D9]">
+                <input
+                  className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
+                  placeholder="입력하기"
+                  value={row.businessNumber}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, businessNumber: e.target.value }
+                          : r
                       )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.mainItems || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, mainItems: e.target.value }
-                            : r
-                        )
+                    )
+                  }
+                />
+              </div>
+              <div className="flex items-center px-2 min-w-[100px] w-[150px] bg-white border-r border-[#D9D9D9]">
+                <input
+                  className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
+                  placeholder="입력하기"
+                  value={row.mainItems || ''}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, mainItems: e.target.value }
+                          : r
                       )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.relationship || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, relationship: e.target.value }
-                            : r
-                        )
+                    )
+                  }
+                />
+              </div>
+              <div className="flex items-center px-2 min-w-[100px] w-[150px] bg-white border-r border-[#D9D9D9]">
+                <input
+                  className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
+                  placeholder="입력하기"
+                  value={row.relationship || ''}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id
+                          ? { ...r, relationship: e.target.value }
+                          : r
                       )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.note || ''}
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id ? { ...r, note: e.target.value } : r
-                        )
+                    )
+                  }
+                />
+              </div>
+              <div className="flex items-center px-2 min-w-[150px] flex-1 bg-white border-r border-[#D9D9D9]">
+                <input
+                  className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
+                  placeholder="입력하기"
+                  value={row.note || ''}
+                  onChange={e =>
+                    setRows(prev =>
+                      prev.map(r =>
+                        r.id === row.id ? { ...r, note: e.target.value } : r
                       )
-                    }
-                  />
-                </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  <button
-                    onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-                    disabled={loading}
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {/* 추가하기 */}
-            <tr>
-              <td
-                colSpan={7}
-                className="p-3 border border-[#D9D9D9] text-center"
-              >
+                    )
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-center w-[96px] bg-white">
                 <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
+                  className="flex items-center justify-center px-2 py-1 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                  onClick={() => handleDelete(row.id)}
+                  disabled={loading}
                 >
-                  + 추가하기
+                  삭제
                 </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+          ))}
+
+          {/* 추가하기 Row */}
+          <div className="flex w-full h-8 border-t border-[#D9D9D9]">
+            <div className="flex items-center justify-center w-full bg-white">
+              <button
+                onClick={addRow}
+                className="flex items-center gap-1 text-[12px] text-[#767676] hover:text-[#1E1E1E]"
+              >
+                <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
+                <span>추가하기</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <ToastMessage 
+        message={toastMessage} 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractEmployeeDocs, saveEmployeeDocs, deleteEmployee } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
+import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
 
 interface EmployeeRow {
@@ -41,6 +42,12 @@ export default function EmployeeInfoPage() {
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
   const [documentId, setDocumentId] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+
+  const hideToast = () => {
+    setShowToast(false);
+  };
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -169,13 +176,14 @@ export default function EmployeeInfoPage() {
       }, token);
       
       if (data.success) {
-        alert('저장되었습니다!');
+        setToastMessage('직원 정보가 저장되었습니다!');
+        setShowToast(true);
         // documentId 초기화
         setDocumentId('');
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchEmployees();
       } else {
-        alert('저장 실패');
+        alert('저장 중 문제가 발생했습니다.');
       }
     } catch (err) {
       console.error('저장 에러:', err);
@@ -199,10 +207,11 @@ export default function EmployeeInfoPage() {
         setLoading(true);
         await deleteEmployee(row.serverId.toString(), token);
         setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
+        setToastMessage('직원 정보가 삭제되었습니다!');
+        setShowToast(true);
       } catch (err) {
         console.error('삭제 에러:', err);
-        alert('삭제 실패');
+        alert('삭제 중 문제가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -493,6 +502,12 @@ export default function EmployeeInfoPage() {
             </button>
           </div>
         </div>
+      
+      <ToastMessage 
+        message={toastMessage}
+        isVisible={showToast}
+        onHide={hideToast}
+      />
     </div>
   );
 }

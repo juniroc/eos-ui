@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getShareholderDocs, extractShareholderDocs } from '@/services/api';
 import FileUploadBox from '@/components/FileUploadBox';
-import Button from '@/components/Button';
+import Image from 'next/image';
+import ToastMessage from '@/components/ToastMessage';
 
 interface ShareholderRow {
   id: number;
@@ -13,7 +14,8 @@ interface ShareholderRow {
   residentNumber: string; // 주민등록번호
   isRelatedParty?: string; // 특수관계인 여부 ('YES'|'NO')
   shares?: string; // 주식수
-  acquisitionDate?: string; // 취득일자
+  sharePercentage?: string; // 지분율
+  acquisitionDate?: string; // 주식인수일자
   note?: string; // 비고
   serverId?: number; // 서버에 저장된 데이터인지 구분
 }
@@ -28,6 +30,7 @@ export default function ShareholderInfoPage() {
       residentNumber: '',
       isRelatedParty: '',
       shares: '',
+      sharePercentage: '',
       acquisitionDate: '',
       note: '',
     },
@@ -37,6 +40,7 @@ export default function ShareholderInfoPage() {
       residentNumber: '',
       isRelatedParty: '',
       shares: '',
+      sharePercentage: '',
       acquisitionDate: '',
       note: '',
     },
@@ -44,6 +48,8 @@ export default function ShareholderInfoPage() {
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
   const [documentId, setDocumentId] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState<string>('');
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -59,6 +65,7 @@ export default function ShareholderInfoPage() {
       r.residentNumber.trim() ||
       r.isRelatedParty?.trim() ||
       r.shares?.trim() ||
+      r.sharePercentage?.trim() ||
       r.acquisitionDate?.trim() ||
       r.note?.trim()
   );
@@ -79,6 +86,7 @@ export default function ShareholderInfoPage() {
               residentNumber: s.residentNumber || '',
               isRelatedParty: s.isRelatedParty ? 'YES' : 'NO',
               shares: s.shares || '',
+              sharePercentage: s.sharePercentage || '',
               acquisitionDate: s.acquisitionDate || '',
               note: s.note || '',
               serverId: s.id, // 서버 ID 설정
@@ -87,8 +95,8 @@ export default function ShareholderInfoPage() {
         } else {
           // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
           setRows([
-            { id: 1, name: '', residentNumber: '', isRelatedParty: '', shares: '', acquisitionDate: '', note: '' },
-            { id: 2, name: '', residentNumber: '', isRelatedParty: '', shares: '', acquisitionDate: '', note: '' },
+            { id: 1, name: '', residentNumber: '', isRelatedParty: '', shares: '', sharePercentage: '', acquisitionDate: '', note: '' },
+            { id: 2, name: '', residentNumber: '', isRelatedParty: '', shares: '', sharePercentage: '', acquisitionDate: '', note: '' },
           ]);
         }
       } else {
@@ -129,6 +137,7 @@ export default function ShareholderInfoPage() {
           residentNumber: item.residentNumber || '',
           isRelatedParty: item.isRelatedParty ? 'YES' : 'NO',
           shares: item.shares || '',
+          sharePercentage: item.sharePercentage || '',
           acquisitionDate: item.acquisitionDate || '',
           note: item.note || '',
         }));
@@ -147,11 +156,6 @@ export default function ShareholderInfoPage() {
   const handleSave = async () => {
     if (!token) {
       alert('로그인이 필요합니다.');
-      return;
-    }
-    
-    if (!documentId) {
-      alert('먼저 파일을 업로드해주세요.');
       return;
     }
     
@@ -181,7 +185,8 @@ export default function ShareholderInfoPage() {
       console.log('저장 응답:', data);
       
       if (data.success) {
-        alert('저장되었습니다!');
+        setToastMessage('주주 정보가 저장되었습니다!');
+        setShowToast(true);
         // documentId 초기화
         setDocumentId('');
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
@@ -225,7 +230,8 @@ export default function ShareholderInfoPage() {
         
         // 서버에서 삭제 성공하면 로컬에서도 제거
         setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
+        setToastMessage('주주 정보가 삭제되었습니다!');
+        setShowToast(true);
       } catch (err) {
         console.error('삭제 에러:', err);
         alert('삭제 실패');
@@ -248,6 +254,7 @@ export default function ShareholderInfoPage() {
         residentNumber: '',
         isRelatedParty: '',
         shares: '',
+        sharePercentage: '',
         acquisitionDate: '',
         note: '',
       },
@@ -274,85 +281,115 @@ export default function ShareholderInfoPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="p-4">
+      <div className="mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">주주 정보</h2>
-            <p className="text-[#767676]">
-              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를
-              저장하세요.
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end p-0 gap-4 w-full min-h-[46px] mb-4">
+          {/* Title Group */}
+          <div className="flex flex-col items-start p-0 w-full sm:w-[346px] h-[46px]">
+            {/* Menu Heading */}
+            <div className="flex flex-col items-start py-[6px] px-0 pb-[2px] w-64 h-[29px] rounded-lg">
+              <div className="flex flex-row items-start p-0 w-14 h-[21px]">
+                <h2 className="w-14 h-[21px] font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+                  주주 정보
+                </h2>
+              </div>
+            </div>
+            <p className="w-full sm:w-[346px] h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
+              파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <div className="flex gap-3">
-            {/* 파일 업로드 */}
-            <Button
-              variant="neutral"
-              size="small"
-              onClick={() => document.getElementById('shareholderFile')?.click()}
-              disabled={loading}
-              loading={loading}
-            >
-              파일 업로드
-            </Button>
-            {/* 저장하기 */}
-            <Button
-              variant="neutral"
-              size="small"
-              onClick={handleSave}
-              disabled={!hasData || loading}
-              loading={loading}
-            >
-              저장하기
-            </Button>
+
+          {/* Buttons */}
+          <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-full sm:w-[153px] h-7">
+            {/* 파일 업로드 버튼 */}
+            <div className="flex flex-row items-start p-0 w-[79px] h-7">
+              <button
+                onClick={() => document.getElementById('shareholderFile')?.click()}
+                disabled={loading}
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[79px] h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
+              >
+                파일 업로드
+              </button>
+            </div>
+            
+            {/* 저장하기 버튼 */}
+            <div className="flex flex-row items-start p-0 w-[66px] h-7">
+              <button
+                onClick={handleSave}
+                disabled={!hasData || loading}
+                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[66px] h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
+                  !hasData || loading 
+                    ? 'bg-[#E6E6E6] text-[#B3B3B3]' 
+                    : 'bg-[#F3F3F3] text-[#1E1E1E]'
+                }`}
+              >
+                저장하기
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 파일 업로드 박스 */}
-        <div className="mb-6">
+        {/* Upload */}
+        <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[400px] bg-white border border-dashed border-[#D9D9D9] mb-4">
+          <div className="flex items-center justify-center">
+            <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+          </div>
+          <div className="flex flex-col items-center p-0 gap-0.5">
+            <span className="text-xs leading-[140%] text-center text-[#303030]">
+              파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
+            </span>
+            <span className="text-xs leading-[140%] text-center text-[#767676]">
+              (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
+            </span>
+          </div>
           <FileUploadBox
-            id="shareholderFile"
+            id="clientFile"
             onFileUpload={handleFileUpload}
             loading={loading}
+            className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </div>
 
         {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] text-center">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px] border border-[#D9D9D9] text-xs text-[#757575] text-center" style={{tableLayout: 'fixed'}}>
           <thead>
             <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-14 font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: '40px'}}>
                 번호
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">주주명</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>주주명</td>
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                 주민등록번호(사업자등록번호)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                 특수관계자 여부
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                 주식수
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                 지분율(%)
               </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">기타사항</td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
+                주식인수일자
+              </td>
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: 'calc((100% - 110px) / 7)'}}>기타사항</td>
+              <td className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium h-8" style={{width: '70px'}}>
                 삭제
               </td>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, idx) => (
-              <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+              <tr key={row.id} className="h-8">
+                <td className="p-2 border border-[#D9D9D9] text-center h-8" style={{width: '40px'}}>
                   {idx + 1}
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
                     placeholder="입력하기"
                     value={row.name}
                     onChange={e =>
@@ -364,9 +401,9 @@ export default function ShareholderInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
                     placeholder="입력하기"
                     value={row.residentNumber}
                     onChange={e =>
@@ -380,9 +417,9 @@ export default function ShareholderInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <select
-                    className="w-full focus:outline-none text-[#B3B3B3]"
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
                     value={row.isRelatedParty || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -399,14 +436,11 @@ export default function ShareholderInfoPage() {
                     <option value="NO">아니오</option>
                   </select>
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <div className="flex items-center w-full">
-                    {!row.shares && (
-                      <span className="text-gray-400 text-sm mr-2 w-max">입력하기</span>
-                    )}
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
+                  <div className="flex items-center w-full h-full">
                     <input
-                      className="flex-1 focus:outline-none text-[#B3B3B3]"
-                      placeholder=""
+                      className="flex-1 h-full focus:outline-none text-[#B3B3B3] text-xs"
+                      placeholder="입력하기"
                       value={row.shares || ''}
                       onChange={e =>
                         setRows(prev =>
@@ -416,13 +450,30 @@ export default function ShareholderInfoPage() {
                         )
                       }
                     />
-                    <span className="text-gray-400 text-sm ml-2">주</span>
+                    <span className="text-gray-400 text-xs ml-2">주</span>
                   </div>
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
+                  <div className="flex items-center w-full h-full">
+                    <input
+                      className="flex-1 h-full focus:outline-none text-[#B3B3B3] text-xs"
+                      placeholder="입력하기"
+                      value={row.sharePercentage || ''}
+                      onChange={e =>
+                        setRows(prev =>
+                          prev.map(r =>
+                            r.id === row.id ? { ...r, sharePercentage: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <span className="text-gray-400 text-xs ml-2">%</span>
+                  </div>
+                </td>
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    type="date"
-                    className="w-full focus:outline-none text-[#B3B3B3]"
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
+                    placeholder="입력하기"
                     value={row.acquisitionDate || ''}
                     onChange={e =>
                       setRows(prev =>
@@ -435,9 +486,9 @@ export default function ShareholderInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9]">
+                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
                     placeholder="입력하기"
                     value={row.note || ''}
                     onChange={e =>
@@ -449,12 +500,12 @@ export default function ShareholderInfoPage() {
                     }
                   />
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+                <td className="p-2 border border-[#D9D9D9] text-center h-8" style={{width: '70px'}}>
                   <button
                     onClick={() => handleDelete(row.id)}
+                    className="h-full px-2 text-xs"
                     style={{
                       border: 'none',
-                      padding: '8px 12px',
                       background: '#F3F3F3',
                       color: '#1E1E1E',
                       fontSize: '12px',
@@ -468,22 +519,29 @@ export default function ShareholderInfoPage() {
               </tr>
             ))}
             {/* 추가하기 */}
-            <tr>
+            <tr className="h-8">
               <td
-                colSpan={8}
-                className="p-3 border border-[#D9D9D9] text-center"
+                colSpan={9}
+                className="p-2 border border-[#D9D9D9] text-center h-8"
               >
                 <button
                   onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E]"
+                  className="text-sm text-[#767676] hover:text-[#1E1E1E] h-full"
                 >
                   + 추가하기
                 </button>
               </td>
             </tr>
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
+
+      <ToastMessage 
+        message={toastMessage}
+        isVisible={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

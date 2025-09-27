@@ -440,14 +440,13 @@ export default function ClientInfoPage() {
           ))}
 
           {/* 추가하기 Row */}
-          <div className="flex w-full h-8 border-t border-[#D9D9D9]">
-            <div className="flex items-center justify-center w-full bg-white">
+          <div className="flex w-full p-3 border-t border-[#D9D9D9]">
+            <div className="flex items-center justify-center w-full bg-white cursor-pointer" onClick={addRow}>
               <button
-                onClick={addRow}
-                className="flex items-center gap-1 text-[12px] text-[#767676] hover:text-[#1E1E1E]"
+                className="flex items-center gap-1 text-[12px] text-[#757575]"
               >
                 <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
-                <span>추가하기</span>
+                <span className="text-xs text-[#757575]">추가하기</span>
               </button>
             </div>
           </div>

@@ -146,6 +146,12 @@ export default function EmployeeInfoPage() {
     
     try {
       setLoading(true);
+
+      // 이름, 주민등록번호, 유형 선택 필수로, 선택 안한경우 alert 알림
+      if (!rows.some(row => row.name.trim() && row.residentNumber.trim() && row.employmentType?.trim())) {
+        alert('직원명, 주민등록번호, 유형은 필수입니다.');
+        return;
+      }
       
       // 빈 행들을 필터링하고 유효한 데이터만 전송
       const validEmployees = rows
@@ -378,7 +384,7 @@ export default function EmployeeInfoPage() {
               {/* 번호 컴럼 */}
               <div className="flex flex-row justify-center items-center w-12 h-8 bg-white border-l border-b border-[#D9D9D9]">
                 <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
-                  {String(idx + 1).padStart(3, '0')}
+                  {String(idx + 1)}
                 </span>
               </div>
               {/* 이름 컴럼 */}

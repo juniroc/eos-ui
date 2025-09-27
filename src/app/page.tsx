@@ -46,7 +46,6 @@ export default function BusinessInfoPage() {
 
   const [loading, setLoading] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
-  const [isBusinessCategoryOpen, setIsBusinessCategoryOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
@@ -155,19 +154,6 @@ export default function BusinessInfoPage() {
     }
   }, [isAuthenticated, token, fetchBusinessInfo]);
 
-  // dropdown 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (_event: MouseEvent) => {
-      if (isBusinessCategoryOpen) {
-        setIsBusinessCategoryOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isBusinessCategoryOpen]);
 
   return (
     <div className="flex flex-col items-center p-0 bg-white">
@@ -300,51 +286,18 @@ export default function BusinessInfoPage() {
                 <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
                   <span className="text-xs leading-[100%] text-[#757575] font-medium">법인/개인 구분</span>
                 </div>
-                <div className="flex flex-col items-start p-0 gap-2 flex-1 relative">
-                  <div 
-                    className="flex flex-row items-center justify-between p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsBusinessCategoryOpen(!isBusinessCategoryOpen);
-                    }}
-                  >
-                    <span className={`text-xs leading-[100%] font-medium text-[#B3B3B3]`}>
-                      {formData.businessCategory || '선택하기'}
-                    </span>
-                    <div className="w-4 h-4 flex items-center justify-center">
-                      <Image 
-                        src="/icons/arrow_down.svg" 
-                        alt="arrow_down" 
-                        width={16} 
-                        height={16}
-                        className={`transition-transform duration-200 ${isBusinessCategoryOpen ? 'rotate-180' : ''}`}
-                      />
-                    </div>
+                <div className="flex flex-col items-start p-0 gap-2 flex-1">
+                  <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
+                    <select
+                      className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                      value={formData.businessCategory || ''}
+                      onChange={e => handleChange('businessCategory', e.target.value)}
+                    >
+                      <option value="">선택하기</option>
+                      <option value="개인">개인</option>
+                      <option value="법인">법인</option>
+                    </select>
                   </div>
-                  {isBusinessCategoryOpen && (
-                    <div className="absolute top-8 left-0 right-0 z-10 bg-white border border-[#D9D9D9] border-t-0 shadow-lg">
-                      <div 
-                        className="flex flex-row items-center p-2 h-8 hover:bg-[#F5F5F5] cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleChange('businessCategory', '개인');
-                          setIsBusinessCategoryOpen(false);
-                        }}
-                      >
-                        <span className="text-xs leading-[100%] text-[#B3B3B3] font-medium">개인</span>
-                      </div>
-                      <div 
-                        className="flex flex-row items-center p-2 h-8 hover:bg-[#F5F5F5] cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleChange('businessCategory', '법인');
-                          setIsBusinessCategoryOpen(false);
-                        }}
-                      >
-                        <span className="text-xs leading-[100%] text-[#B3B3B3] font-medium">법인</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

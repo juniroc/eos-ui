@@ -79,19 +79,19 @@ export default function ShareholderInfoPage() {
       if (data.success) {
         // 서버에서 받은 데이터만 표시 (로컬 데이터는 완전히 교체)
         if (Array.isArray(data.data) && data.data.length > 0) {
-          setRows(
-            data.data.map((s: ShareholderRow) => ({
-              id: s.id,
-              name: s.name || '',
-              residentNumber: s.residentNumber || '',
-              isRelatedParty: s.isRelatedParty ? 'YES' : 'NO',
-              shares: s.shares || '',
-              sharePercentage: s.sharePercentage || '',
-              acquisitionDate: s.acquisitionDate || '',
-              note: s.note || '',
-              serverId: s.id, // 서버 ID 설정
-            }))
-          );
+          const mappedRows = data.data.map((s: ShareholderRow) => ({
+            id: s.id,
+            name: s.name || '',
+            residentNumber: s.residentNumber || '',
+            isRelatedParty: s.isRelatedParty ? 'YES' : 'NO',
+            shares: s.shares || '',
+            sharePercentage: s.sharePercentage || '',
+            acquisitionDate: s.acquisitionDate || '',
+            note: s.note || '',
+            serverId: s.id, // 서버 ID 설정
+          }));
+          // 지분율 자동 계산 적용
+          setRows(calculateSharePercentages(mappedRows));
         } else {
           // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
           setRows([
@@ -141,8 +141,8 @@ export default function ShareholderInfoPage() {
           acquisitionDate: item.acquisitionDate || '',
           note: item.note || '',
         }));
-        // 기존 빈 행을 제거하고 추출된 데이터만 설정
-        setRows(extracted);
+        // 기존 빈 행을 제거하고 추출된 데이터만 설정하며 지분율 자동 계산
+        setRows(calculateSharePercentages(extracted));
       }
     } catch (err) {
       console.error('파일 업로드 에러:', err);
@@ -242,6 +242,39 @@ export default function ShareholderInfoPage() {
       // 로컬 데이터는 바로 제거
       setRows(prev => prev.filter(r => r.id !== id));
     }
+  };
+
+  /** 지분율 자동 계산 */
+  const calculateSharePercentages = (updatedRows: ShareholderRow[]) => {
+    // 모든 주주들의 주식수 총합 계산
+    const totalShares = updatedRows.reduce((sum, row) => {
+      const shares = parseFloat(row.shares || '0');
+      return sum + (isNaN(shares) ? 0 : shares);
+    }, 0);
+
+    // 각 주주의 지분율 계산
+    return updatedRows.map(row => {
+      const shares = parseFloat(row.shares || '0');
+      const sharePercentage = totalShares > 0 && !isNaN(shares) 
+        ? ((shares / totalShares) * 100).toFixed(2)
+        : '';
+      
+      return {
+        ...row,
+        sharePercentage
+      };
+    });
+  };
+
+  /** 주식수 변경 핸들러 */
+  const handleSharesChange = (rowId: number, value: string) => {
+    setRows(prev => {
+      const updatedRows = prev.map(r =>
+        r.id === rowId ? { ...r, shares: value } : r
+      );
+      // 지분율 자동 계산
+      return calculateSharePercentages(updatedRows);
+    });
   };
 
   /** 행 추가 */
@@ -436,39 +469,23 @@ export default function ShareholderInfoPage() {
                     <option value="NO">아니오</option>
                   </select>
                 </td>
-                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
-                  <div className="flex items-center w-full h-full">
-                    <input
-                      className="flex-1 h-full focus:outline-none text-[#B3B3B3] text-xs"
-                      placeholder="입력하기"
-                      value={row.shares || ''}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id ? { ...r, shares: e.target.value } : r
-                          )
-                        )
-                      }
-                    />
-                    <span className="text-gray-400 text-xs ml-2">주</span>
-                  </div>
+                <td className="p-2 border border-[#D9D9D9] h-8 relative" style={{width: 'calc((100% - 110px) / 7)'}}>
+                  <input
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs pr-6"
+                    placeholder="입력하기"
+                    value={row.shares || ''}
+                    onChange={e => handleSharesChange(row.id, e.target.value)}
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none">주</span>
                 </td>
-                <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
-                  <div className="flex items-center w-full h-full">
-                    <input
-                      className="flex-1 h-full focus:outline-none text-[#B3B3B3] text-xs"
-                      placeholder="입력하기"
-                      value={row.sharePercentage || ''}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id ? { ...r, sharePercentage: e.target.value } : r
-                          )
-                        )
-                      }
-                    />
-                    <span className="text-gray-400 text-xs ml-2">%</span>
-                  </div>
+                <td className="p-2 border border-[#D9D9D9] h-8 relative" style={{width: 'calc((100% - 110px) / 7)'}}>
+                  <input
+                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
+                    placeholder="입력하기"
+                    value={row.sharePercentage || ''}
+                    readOnly
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none">%</span>
                 </td>
                 <td className="p-2 border border-[#D9D9D9] h-8" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input

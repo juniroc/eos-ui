@@ -384,7 +384,7 @@ export default function EmployeeInfoPage() {
               {/* 번호 컴럼 */}
               <div className="flex flex-row justify-center items-center w-12 h-8 bg-white border-l border-b border-[#D9D9D9]">
                 <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#757575]">
-                  {String(idx + 1).padStart(3, '0')}
+                  {String(idx + 1)}
                 </span>
               </div>
               {/* 이름 컴럼 */}

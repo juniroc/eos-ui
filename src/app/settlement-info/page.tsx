@@ -376,7 +376,7 @@ export default function SettlementInfoPage() {
         {/* Header Row */}
         <div className="flex flex-row items-center w-full">
           {/* 구분 Column */}
-          <div className="flex flex-col justify-center items-start min-w-[40px] w-[45px]">
+          <div className="flex flex-col justify-center items-start w-[45px]">
             <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span 
                 className="text-[#757575] text-[12px] leading-[100%] font-medium"
@@ -388,7 +388,7 @@ export default function SettlementInfoPage() {
           </div>
 
           {/* 자료종류 Column */}
-          <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+          <div className="flex flex-col justify-center items-start flex-1 min-w-[120px]">
             <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span 
                 className="text-[#757575] text-[12px] leading-[100%] font-medium"
@@ -400,7 +400,7 @@ export default function SettlementInfoPage() {
           </div>
 
           {/* 파일 업로드 Column */}
-          <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+          <div className="flex flex-col justify-center items-start flex-1 min-w-[120px]">
             <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span 
                 className="text-[#757575] text-[12px] leading-[100%] font-medium"
@@ -412,7 +412,7 @@ export default function SettlementInfoPage() {
           </div>
 
           {/* 삭제 Column */}
-          <div className="flex flex-col justify-center items-start min-w-[60px] w-[70px]">
+          <div className="flex flex-col justify-center items-start w-[70px]">
             <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5]">
               <span 
                 className="text-[#757575] text-[12px] leading-[100%] font-medium"
@@ -428,8 +428,8 @@ export default function SettlementInfoPage() {
         {[...rows, ...additionalRows].map(row => (
           <div key={row.id} className="flex flex-row items-center w-full border-t border-[#D9D9D9]">
             {/* 구분 Cell */}
-            <div className="flex flex-col justify-center items-start min-w-[40px]">
-              <div className="flex flex-col justify-center items-start px-3 py-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
+            <div className="flex flex-col justify-center items-start w-[45px]">
+              <div className="flex flex-col justify-center items-center py-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                 <span 
                   className={`text-[12px] leading-[100%] font-medium ${
                     row.type === '필수' ? 'text-[#EC221F]' : 'text-[#757575]'
@@ -442,7 +442,7 @@ export default function SettlementInfoPage() {
             </div>
 
             {/* 자료종류 Cell */}
-            <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+            <div className="flex flex-col justify-center items-start flex-1 min-w-[120px]">
               <div className="flex flex-row items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                 {['재무상태표', '손익계산서', '계정(잔액)명세서', '분개장'].includes(row.dataType) ? (
                   <span 
@@ -470,7 +470,7 @@ export default function SettlementInfoPage() {
             </div>
 
             {/* 파일 업로드 Cell */}
-            <div className="flex flex-col justify-center items-start flex-1 min-w-[100px]">
+            <div className="flex flex-col justify-center items-start flex-1 min-w-[120px]">
               <div className="flex flex-row items-center p-2 gap-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                 {row.fileName ? (
                   <>
@@ -517,7 +517,7 @@ export default function SettlementInfoPage() {
             </div>
 
             {/* 삭제 Cell */}
-            <div className="flex flex-col justify-center items-start min-w-[60px] w-[70px]">
+            <div className="flex flex-col justify-center items-start w-[70px]">
               <div className="flex flex-col justify-center items-center w-full h-8 bg-white">
                 <button
                   onClick={() => handleDelete(row.id, row.fileId)}

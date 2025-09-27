@@ -3,23 +3,27 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import ToastMessage from '@/components/ToastMessage';
 
 interface GuidelineRow {
   id: number;
   content: string;
   status: string; // ACTIVE | INACTIVE
   problem?: string;
+  providedAt?: string;
 }
 
 export default function GuidelinePeriodPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<GuidelineRow[]>([
-    { id: 1, content: '', status: 'ACTIVE', problem: '' },
+    { id: 1, content: '', status: 'ACTIVE', problem: '', providedAt: new Date().toISOString().split('T')[0] },
   ]);
   const [loading, setLoading] = useState(false);
   const [newGuideline, setNewGuideline] = useState('');
-
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  
   // 로컬스토리지에서 토큰 가져오기
   const getToken = () => {
     if (typeof window !== 'undefined') {
@@ -65,18 +69,20 @@ export default function GuidelinePeriodPage() {
               content?: string;
               status?: string;
               problem?: string;
+              providedAt?: string;
             }) => ({
               id: g.id,
               content: g.content || '',
               status: g.status || 'ACTIVE',
               problem: g.problem || '',
+              providedAt: g.providedAt || new Date().toISOString().split('T')[0],
             })
           )
         );
       }
     } catch (err) {
       console.error('지침 불러오기 실패:', err);
-      alert('지침을 불러오는데 실패했습니다.');
+      alert('지침을 불러오는데 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -95,7 +101,7 @@ export default function GuidelinePeriodPage() {
       return;
     }
     
-    if (!confirm('정말로 이 지침을 삭제하시겠습니까?')) return;
+    // if (!confirm('정말로 이 지침을 삭제하시겠습니까?')) return;
     
     try {
       setLoading(true);
@@ -110,10 +116,11 @@ export default function GuidelinePeriodPage() {
       
       // 로컬 상태에서도 제거
       setRows(prev => prev.filter(r => r.id !== id));
-      alert('지침이 삭제되었습니다.');
+      setToastMessage('지침이 삭제되었습니다!');
+      setShowToast(true);
     } catch (err) {
       console.error('삭제 실패:', err);
-      alert('삭제에 실패했습니다.');
+      alert('지침 삭제중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -124,11 +131,6 @@ export default function GuidelinePeriodPage() {
     const token = getToken();
     if (!token) {
       alert('인증이 필요합니다.');
-      return;
-    }
-    
-    if (!newGuideline.trim()) {
-      alert('지침 내용을 입력해주세요.');
       return;
     }
 
@@ -157,10 +159,11 @@ export default function GuidelinePeriodPage() {
       
       setRows(prev => [newGuidelineData, ...prev]);
       setNewGuideline('');
-      alert('지침이 추가되었습니다.');
+      setToastMessage('지침이 추가되었습니다!');
+      setShowToast(true);
     } catch (err) {
       console.error('추가 실패:', err);
-      alert('지침 추가에 실패했습니다.');
+      alert('지침 추가중 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -188,108 +191,231 @@ export default function GuidelinePeriodPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">지침 주기</h2>
-            <p className="text-[#767676]">
-            EOS는 각 고개별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른 우리 회사만의 특별한 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을 알려주실 수 있습니다.
-            특별한 사항이 없으면 사용하지 않아도 됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요. 업무지시를 받는 AI는 상단 지시창을 이용해주세요.
-            </p>
+    <div className="flex flex-col items-start p-4 gap-4 w-full min-h-[175px]">
+      {/* Title Section */}
+      <div className="flex flex-col items-start gap-4 w-full min-w-[520px] h-[63px]">
+        <div className="flex flex-row justify-between items-end gap-4 w-full h-[63px]">
+          {/* Left Content */}
+          <div className="flex flex-col items-start flex-1 h-[63px]">
+            {/* Menu Heading */}
+            <div className="flex flex-col items-start pt-1.5 pb-0.5 w-64 rounded-lg">
+              <div className="flex flex-row items-start w-14 h-[21px]">
+                <span className="font-pretendard font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+                  지침 주기
+                </span>
+              </div>
+            </div>
+            {/* Description */}
+            <div className="w-full h-[34px] font-pretendard text-[12px] leading-[140%] text-[#767676]">
+              EOS는 각 고개별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른 우리 회사만의 특별한 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을 알려주실 수 있습니다.<br/>
+              특별한 사항이 없으면 사용하지 않아도 됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요. 업무지시를 받는 AI는 상단 지시창을 이용해주세요.
+            </div>
           </div>
-          <div className="flex gap-3">
+          
+          {/* Right Buttons */}
+          <div className="flex flex-row justify-end items-center gap-2 h-7">
             <button
-              className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] leading-[12px] ${
+              className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[66px] h-7 font-pretendard text-[12px] leading-[100%] border-none ${
                 hasData && !loading
-                  ? 'bg-[#2C2C2C] text-white'
-                  : 'bg-[#E6E6E6] text-[#1E1E1E]'
+                  ? 'bg-[#F3F3F3] text-[#1E1E1E] cursor-pointer'
+                  : 'bg-[#E6E6E6] text-[#B3B3B3] cursor-not-allowed'
               }`}
               onClick={handleSave}
               disabled={!hasData || loading}
             >
-              {loading ? '처리중...' : '저장하기'}
+              {loading ? '처리중' : '저장하기'}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] mb-6">
-          <thead>
-            <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-12 font-medium">
-                번호
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                지침내용
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium">
-                반영여부(문제점)
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] w-24 font-medium">
-                삭제
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  {idx + 1}
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  <input
-                    className="w-full focus:outline-none text-[#B3B3B3]"
-                    placeholder="입력하기"
-                    value={row.content}
-                    readOnly
-                    onChange={e =>
-                      setRows(prev =>
-                        prev.map(r =>
-                          r.id === row.id
-                            ? { ...r, content: e.target.value }
-                            : r
-                        )
-                      )
-                    }
+      {/* Table Section */}
+      <div className="flex flex-col items-start w-full min-h-16">
+        {/* Table Header */}
+        <div className="flex flex-row items-center w-full h-8">
+          {/* 번호 Column - 고정 */}
+          <div className="flex flex-row justify-center items-center p-2 gap-2 w-10 min-w-[40px] h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9] flex-shrink-0">
+            <span className="font-pretendard text-[12px] leading-[100%] text-[#757575]">
+              번호
+            </span>
+          </div>
+
+          {/* 제공일자 Column - 고정 */}
+          <div className="flex flex-row justify-center items-center p-2 gap-2 w-[100px] h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9] flex-shrink-0">
+            <span className="font-pretendard text-[12px] leading-[100%] text-[#757575]">
+              제공일자
+            </span>
+          </div>
+
+          {/* 지침내용 Column - 가변 (2/3 비율) */}
+          <div className="flex flex-row justify-center items-center p-2 flex-[2] min-w-[200px] h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+            <span className="font-pretendard text-[12px] leading-[100%] text-[#757575]">
+              내용
+            </span>
+          </div>
+
+          {/* 반영여부 Column - 가변 (1/3 비율) */}
+          <div className="flex flex-row justify-center items-center py-2 px-3 flex-1 min-w-[120px] h-8 bg-[#F5F5F5] border-t border-l border-b border-[#D9D9D9]">
+            <span className="font-pretendard text-[12px] leading-[100%] text-[#757575]">
+              반영여부(문제점)
+            </span>
+          </div>
+
+          {/* 삭제 Column - 고정 */}
+          <div className="flex flex-row justify-center items-center p-2 gap-2 w-[70px] min-w-[60px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] flex-shrink-0">
+            <span className="font-pretendard text-[12px] leading-[100%] text-[#757575]">
+              삭제
+            </span>
+          </div>
+        </div>
+
+        {/* First Data Row */}
+        {rows.length > 0 && (
+          <div className="flex flex-row items-center w-full h-8">
+            {/* 번호 - 고정 */}
+            <div className="flex flex-col justify-center items-center py-2 px-3 w-10 min-w-[40px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
+              <span className="font-pretendard text-[12px] leading-[100%] text-[#757575] text-center">
+                1
+              </span>
+            </div>
+
+            {/* 제공일자 - 고정 */}
+            <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
+              <span className="font-pretendard text-[12px] leading-[100%] text-[#B3B3B3]">
+                {rows[0].providedAt ? new Date(rows[0].providedAt).toLocaleDateString('ko-KR') : '2024-01-01'}
+              </span>
+            </div>
+
+            {/* 지침내용 - 가변 (2/3 비율) */}
+            <div className="flex flex-row items-center p-2 flex-[2] min-w-[200px] h-8 bg-white border-l border-b border-[#D9D9D9]">
+              <span className="font-pretendard text-[12px] leading-[100%] flex-1 truncate text-[#B3B3B3]">
+                {rows[0].content || '입력하기'}
+              </span>
+            </div>
+
+            {/* 반영여부 - 가변 (1/3 비율) */}
+            <div className="flex flex-row items-center py-2 px-3 flex-1 min-w-[120px] h-8 bg-white border-l border-b border-[#D9D9D9]">
+              <span className={`font-pretendard text-[12px] leading-[100%] truncate ${
+                (rows[0].problem || '반영중') === '반영중' ? 'text-[#1E1E1E]' : 'text-[#B3B3B3]'
+              }`}>
+                {rows[0].problem || '반영중'}
+              </span>
+            </div>
+
+            {/* 삭제 버튼 - 고정 */}
+            <div className="flex flex-col justify-center items-center py-2 px-3 w-[70px] min-w-[70px] h-8 bg-white border-l border-r border-b border-[#D9D9D9] flex-shrink-0">
+              <div className="flex flex-row items-start w-[46px] h-[23px]">
+                <button
+                  className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#E6E6E6] border-none font-pretendard text-[11px] leading-[100%] text-[#B3B3B3] cursor-pointer"
+                  onClick={() => handleDelete(rows[0].id)}
+                  disabled={loading}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Additional Rows */}
+        {rows.slice(1).map((row, idx) => (
+          <div key={row.id} className="flex flex-row items-center w-full h-8">
+            {/* 번호 - 고정 */}
+            <div className="flex flex-col justify-center items-center py-2 px-3 w-10 min-w-[40px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
+              <span className="font-pretendard text-[12px] leading-[100%] text-[#757575] text-center">
+                {idx + 2}
+              </span>
+            </div>
+
+            {/* 제공일자 - 고정 */}
+            <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
+              <span className="font-pretendard text-[12px] leading-[100%] text-[#B3B3B3]">
+                {row.providedAt ? new Date(row.providedAt).toLocaleDateString('ko-KR') : '2024-01-01'}
+              </span>
+            </div>
+
+            {/* 지침내용 - 가변 (2/3 비율) */}
+            <div className="flex flex-row items-center p-2 flex-[2] min-w-[200px] h-8 bg-white border-l border-b border-[#D9D9D9]">
+              <span className="font-pretendard text-[12px] leading-[100%] flex-1 truncate text-[#B3B3B3]">
+                {row.content || '입력하기'}
+              </span>
+            </div>
+
+            {/* 반영여부 - 가변 (1/3 비율) */}
+            <div className="flex flex-row items-center py-2 px-3 flex-1 min-w-[120px] h-8 bg-white border-l border-b border-[#D9D9D9]">
+              <span className={`font-pretendard text-[12px] leading-[100%] truncate ${
+                (row.problem || '반영중') === '반영중' ? 'text-[#1E1E1E]' : 'text-[#B3B3B3]'
+              }`}>
+                {row.problem || '반영중'}
+              </span>
+            </div>
+
+            {/* 삭제 버튼 - 고정 */}
+            <div className="flex flex-col justify-center items-center py-2 px-3 w-[70px] min-w-[70px] h-8 bg-white border-l border-r border-b border-[#D9D9D9] flex-shrink-0">
+              <div className="flex flex-row items-start w-[46px] h-[23px]">
+                <button
+                className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#E6E6E6] border-none font-pretendard text-[11px] leading-[100%] text-[#B3B3B3] cursor-pointer"
+                  onClick={() => handleDelete(row.id)}
+                  disabled={loading}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Input Section */}
+      <div className="flex flex-col items-center py-4 w-full h-[68px]">
+        <div className="flex flex-col items-start gap-4 w-full max-w-[520px] min-w-[320px] h-9">
+          {/* Chat Input Box */}
+          <div className="flex flex-row items-start w-full h-9" style={{filter: 'drop-shadow(0px 1px 4px rgba(12, 12, 13, 0.1)) drop-shadow(0px 1px 4px rgba(12, 12, 13, 0.05))'}}>
+            <div className="flex flex-row items-center pl-3 pr-1 py-1 gap-3 w-full h-9 bg-white border border-[#757575]">
+              {/* Input Field */}
+              <input
+                type="text"
+                value={newGuideline}
+                onChange={(e) => setNewGuideline(e.target.value)}
+                placeholder="지침을 입력하고 추가해주세요."
+                className={`flex-1 h-3 font-pretendard text-[12px] leading-[100%] border-none outline-none bg-transparent ${
+                  newGuideline ? 'text-[#1E1E1E]' : 'text-[#B3B3B3] placeholder-[#B3B3B3]'
+                }`}
+              />
+              
+              {/* Divider Line */}
+              <div className="w-5 h-0 border border-[#D9D9D9] rotate-90 flex-shrink-0" />
+              
+              {/* Add Button */}
+              <button 
+                type="button"
+                className={`flex flex-row justify-end items-center p-[6px] gap-2 w-7 h-7 border-none flex-shrink-0 ${
+                  (!newGuideline.trim() || loading) 
+                    ? 'bg-[#E6E6E6] cursor-not-allowed' 
+                    : 'bg-[#2C2C2C] cursor-pointer hover:bg-[#1A1A1A]'
+                }`}
+                onClick={handleAddGuideline}
+                disabled={!newGuideline.trim() || loading}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path 
+                    d="M8 3.33333V12.6667M3.33333 8H12.6667" 
+                    stroke={(!newGuideline.trim() || loading) ? '#B3B3B3' : '#F3F3F3'} 
+                    strokeWidth="1.2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
                   />
-                </td>
-                <td className="p-3 border border-[#D9D9D9]">
-                  {row.problem ? row.problem : '반영중'}
-                </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
-                  <button
-                    onClick={() => handleDelete(row.id)}
-                    className="flex items-center justify-center min-w-[66px] h-[28px] px-3 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
-                    disabled={loading}
-                  >
-                    삭제
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* 입력 + 추가 */}
-        <div className="flex items-center gap-2 border border-[#D9D9D9] rounded p-2 max-w-xl">
-          <input
-            type="text"
-            className="flex-1 focus:outline-none"
-            placeholder="지침을 입력하고 추가해주세요."
-            value={newGuideline}
-            onChange={e => setNewGuideline(e.target.value)}
-          />
-          <button
-            onClick={handleAddGuideline}
-            className="min-w-[32px] h-[32px] flex items-center justify-center bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded text-lg text-[#1E1E1E]"
-            disabled={loading}
-          >
-            {loading ? '...' : '+'}
-          </button>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+      <ToastMessage 
+        message={toastMessage}
+        isVisible={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

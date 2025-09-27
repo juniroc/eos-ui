@@ -340,7 +340,7 @@ export default function ClientInfoPage() {
             <div className="flex items-center justify-center min-w-[150px] flex-1 bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span className="text-[12px] font-medium text-[#757575]">기타 거래처 이해를 위한 참고사항</span>
             </div>
-            <div className="flex items-center justify-center w-[96px] bg-[#F5F5F5]">
+            <div className="flex items-center justify-center w-[64px] bg-[#F5F5F5]">
               <span className="text-[12px] font-medium text-[#757575]">삭제</span>
             </div>
           </div>
@@ -427,9 +427,9 @@ export default function ClientInfoPage() {
                   }
                 />
               </div>
-              <div className="flex items-center justify-center w-[96px] bg-white">
+              <div className="flex items-center justify-center w-[64px] bg-white">
                 <button
-                  className="flex items-center justify-center px-2 py-1 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0] rounded"
+                  className="flex items-center justify-center px-2 py-1 text-[12px] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E0E0E0]"
                   onClick={() => handleDelete(row.id)}
                   disabled={loading}
                 >

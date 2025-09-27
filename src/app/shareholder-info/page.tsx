@@ -146,7 +146,7 @@ export default function ShareholderInfoPage() {
       }
     } catch (err) {
       console.error('파일 업로드 에러:', err);
-      alert('파일 업로드 실패');
+      alert('파일 업로드 중에 문제가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -192,7 +192,7 @@ export default function ShareholderInfoPage() {
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchShareholders();
       } else {
-        alert('저장 실패');
+        alert('저장 중 문제가 발생했습니다.');
       }
     } catch (err) {
       console.error('저장 에러:', err);
@@ -234,7 +234,7 @@ export default function ShareholderInfoPage() {
         setShowToast(true);
       } catch (err) {
         console.error('삭제 에러:', err);
-        alert('삭제 실패');
+        alert('삭제 중 문제가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -538,15 +538,18 @@ export default function ShareholderInfoPage() {
             {/* 추가하기 */}
             <tr className="h-8">
               <td
+                onClick={addRow}
                 colSpan={9}
-                className="p-2 border border-[#D9D9D9] text-center h-8"
+                className="p-3 border border-[#D9D9D9] text-center h-8 cursor-pointer"
               >
-                <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E] h-full"
-                >
-                  + 추가하기
-                </button>
+                <div className="flex items-center justify-center gap-1">
+                  <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
+                  <button
+                    className="text-xs text-[#767676] h-full"
+                  >
+                    추가하기
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>

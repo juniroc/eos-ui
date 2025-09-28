@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import ToastMessage from '@/components/ToastMessage';
 
 interface ManualJournalRow {
   id: number;
@@ -20,6 +21,8 @@ interface ManualJournalRow {
 export default function ManualJournalPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
   const [rows, setRows] = useState<ManualJournalRow[]>([
     {
       id: 1,
@@ -113,13 +116,13 @@ export default function ManualJournalPage() {
         ]
       }));
 
-      const res = await fetch('https://api.eosxai.com/api/journal/save', {
+      const res = await fetch('https://api.eosxai.com/api/vouchers/upsert-with-transactions/batch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ vouchers }),
+        body: JSON.stringify({ items: vouchers }),
       });
 
       if (!res.ok) {
@@ -129,7 +132,9 @@ export default function ManualJournalPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert('저장되었습니다!');
+        setToastMessage(`${vouchers.length}개의 전표가 생성되었습니다!`);
+        setShowToast(true);
+
         // 저장 후 로컬 데이터 초기화
         setRows([
           {
@@ -145,7 +150,7 @@ export default function ManualJournalPage() {
           },
         ]);
       } else {
-        alert('저장 실패');
+        alert('저장 중 문제가 발생했습니다.');
       }
     } catch (err) {
       console.error('저장 에러:', err);
@@ -481,6 +486,12 @@ export default function ManualJournalPage() {
           </tbody>
         </table>
       </div>
+
+      <ToastMessage 
+        message={toastMessage}
+        isVisible={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

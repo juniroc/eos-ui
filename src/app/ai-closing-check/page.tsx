@@ -5,6 +5,16 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SuspenseModal from './SuspenseModal';
 import PeriodAccrualModal from './PeriodAccrualModal';
+import {
+  initClosingCheck,
+  checkDepreciation,
+  applyDepreciation,
+  checkEndingInventory,
+  applyEndingInventory,
+  checkBadDebt,
+  applyBadDebt,
+  getClosingCheckStream
+} from '@/services/api';
 interface CheckRow {
   id: number;
   key: string;
@@ -12,6 +22,12 @@ interface CheckRow {
   title: string;
   description: string;
   status: 'PENDING' | 'PROCESSING' | 'DONE' | 'NA';
+}
+
+
+interface ManualModeResponse {
+  closingDate: string;
+  items: CheckRow[];
 }
 
 interface AutoModeResponse {
@@ -321,7 +337,6 @@ export default function AIClosingCheckPage() {
   const [rows, setRows] = useState<CheckRow[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [autoJobId, setAutoJobId] = useState<string | null>(null);
   const [closingDate, setClosingDate] = useState<string>('');
   const [streamStatus, setStreamStatus] = useState<string>('');
   const [modalData, setModalData] = useState<{
@@ -390,31 +405,6 @@ export default function AIClosingCheckPage() {
     setClosingDate(`${year}-${month}-${day}`);
   }, []);
 
-  /** 직접 점검하기 */
-  const handleManualCheck = async () => {
-    try {
-      setLoading(true);
-      
-      // 직접 점검을 위한 기본 항목들 설정
-      const manualCheckItems = [
-        { id: 1, key: 'depreciation', category: '필수', title: '감가상각처리', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 2, key: 'ending_inventory', category: '필수', title: '기말재고확인', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 3, key: 'bad_debt', category: '필수', title: '대손상각', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 4, key: 'retirement_benefit', category: '필수', title: '퇴직급여충당금', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 5, key: 'suspense_clear', category: '필수', title: '가수, 가지급 정리', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 6, key: 'period_accrual', category: '외부감사시 필수', title: '기간귀속', description: '내용', status: 'PENDING' as CheckRow['status'] },
-        { id: 7, key: 'negative_balance', category: '정합성', title: '마이너스잔액', description: '내용', status: 'PENDING' as CheckRow['status'] },
-      ];
-
-      setRows(manualCheckItems);
-    } catch (error) {
-      console.error('직접 점검 설정 오류:', error);
-      alert('직접 점검 설정 중 오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   /** 기말재고 점검 */
   const handleEndingInventoryCheck = async () => {
     try {
@@ -426,41 +416,11 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      // 기말재고 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'ending_inventory'
-      };
-      
       console.log('기말재고 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
         closingDate: closingDate
       });
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`기말재고 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: EndingInventoryResponse = await response.json();
+      const data: EndingInventoryResponse = await checkEndingInventory(closingDate, accessToken) as EndingInventoryResponse;
       setEndingInventoryData(data);
       
       // 편집 가능한 형태로 변환
@@ -486,7 +446,7 @@ export default function AIClosingCheckPage() {
       setRows(updatedRows);
     } catch (error) {
       console.error('기말재고 점검 API 호출 오류:', error);
-      alert('기말재고 점검 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '기말재고 점검 중 오류가 발생했습니다.');
     } finally {
       setEndingInventoryLoading(false);
     }
@@ -517,34 +477,10 @@ export default function AIClosingCheckPage() {
         cogsAmount: item.cogsAmount
       }));
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          key: 'ending_inventory',
-          description: '기말재고 결산 반영',
-          rows: rows
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          // 500 에러 시 얼럿 표시
-          alert('기말재고 결산반영 중 서버 오류가 발생했습니다.');
-        } else {
-          alert(`기말재고 결산 반영에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: VoucherResponse = await response.json();
+      const data: VoucherResponse = await applyEndingInventory({
+        closingDate: closingDate,
+        rows: rows
+      }, accessToken) as VoucherResponse;
       setEndingInventoryVoucherData(data);
       
       // 메인 테이블 상태 업데이트
@@ -554,7 +490,7 @@ export default function AIClosingCheckPage() {
       
     } catch (error) {
       console.error('기말재고 결산 반영 API 호출 오류:', error);
-      alert('기말재고 결산 반영 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '기말재고 결산 반영 중 오류가 발생했습니다.');
     } finally {
       setEndingInventoryLoading(false);
     }
@@ -586,41 +522,11 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      // 대손상각 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'bad_debt'
-      };
-      
       console.log('대손상각 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
         closingDate: closingDate
       });
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`대손상각 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: BadDebtResponse = await response.json();
+      const data: BadDebtResponse = await checkBadDebt(closingDate, accessToken) as BadDebtResponse;
       setBadDebtData(data);
       
       // 편집 가능한 형태로 변환
@@ -648,7 +554,7 @@ export default function AIClosingCheckPage() {
       setRows(updatedRows);
     } catch (error) {
       console.error('대손상각 점검 API 호출 오류:', error);
-      alert('대손상각 점검 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '대손상각 점검 중 오류가 발생했습니다.');
     } finally {
       setBadDebtLoading(false);
     }
@@ -679,34 +585,10 @@ export default function AIClosingCheckPage() {
         return row;
       });
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          key: 'bad_debt',
-          description: '대손상각 결산 반영',
-          rows: rows
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          // 500 에러 시 얼럿 표시
-          alert('대손상각 결산반영 중 서버 오류가 발생했습니다.');
-        } else {
-          alert(`대손상각 결산 반영에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: VoucherResponse = await response.json();
+      const data: VoucherResponse = await applyBadDebt({
+        closingDate: closingDate,
+        rows: rows
+      }, accessToken) as VoucherResponse;
       setBadDebtVoucherData(data);
       
       // 메인 테이블 상태 업데이트
@@ -716,7 +598,7 @@ export default function AIClosingCheckPage() {
       
     } catch (error) {
       console.error('대손상각 결산 반영 API 호출 오류:', error);
-      alert('대손상각 결산 반영 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '대손상각 결산 반영 중 오류가 발생했습니다.');
     } finally {
       setBadDebtLoading(false);
     }
@@ -1018,15 +900,6 @@ export default function AIClosingCheckPage() {
     }
   };
 
-  /** 가수가지급금 아이템 변경 핸들러 */
-  const _handleSuspenseItemChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
-    setEditableSuspenseTransactions(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
-  };
-
   /** 가수가지급금 결산 반영 */
   const handleSuspenseApply = async (newData: SuspenseResponse) => {
     try {
@@ -1248,8 +1121,8 @@ export default function AIClosingCheckPage() {
     );
   };
 
-  /** AI 자동 점검 */
-  const handleAutoCheck = async () => {
+  /** 직접 점검 */
+  const handleCheck = async (mode: 'manual' | 'auto') => {
     try {
       setLoading(true);
       const accessToken = localStorage.getItem('accessToken');
@@ -1259,42 +1132,23 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/init', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          mode: 'auto',
-        })
-      });
+      const data = await initClosingCheck({
+        closingDate: closingDate,
+        mode,
+      }, accessToken) 
+      
 
-      if (!response.ok) {
-        throw new Error('API 호출에 실패했습니다.');
+      if (mode === 'manual') {
+        const manulData = data as ManualModeResponse;
+        setRows(manulData.items);
+      } else {
+        const autoData = data as AutoModeResponse;
+        setStreamStatus('AI 점검을 시작합니다...');
+        startSSEStream(autoData.jobId, accessToken);
       }
-
-      const data: AutoModeResponse = await response.json();
-      setAutoJobId(data.jobId);
-      setStreamStatus('AI 점검을 시작합니다...');
-      
-      // AI 점검 항목들을 미리 테이블에 표시
-      const aiCheckItems = [
-        { id: 1, key: 'depreciation', category: '필수', title: '감가상각 누계 확인', description: '감가상각 누계 확인', status: 'PENDING' as CheckRow['status'] },
-        { id: 2, key: 'ending_inventory', category: '필수', title: '재고자산 실사', description: '재고자산 실사', status: 'PENDING' as CheckRow['status'] },
-        { id: 3, key: 'bad_debt', category: '필수', title: '매출채권 연령 분석', description: '매출채권 연령 분석', status: 'PENDING' as CheckRow['status'] },
-        { id: 4, key: 'retirement_benefit', category: '필수', title: '퇴직급여 충당금', description: '퇴직급여 충당금', status: 'PENDING' as CheckRow['status'] },
-        { id: 5, key: 'suspense_clear', category: '정합성', title: '미결산 정리', description: '미결산 정리', status: 'PENDING' as CheckRow['status'] },
-        { id: 6, key: 'period_accrual', category: '정합성', title: '기말수정분개', description: '기말수정분개', status: 'PENDING' as CheckRow['status'] },
-      ];
-      setRows(aiCheckItems);
-      
-      // SSE 스트림 시작
-      startSSEStream(data.jobId, accessToken);
     } catch (error) {
       console.error('AI 자동 점검 API 호출 오류:', error);
-      alert('AI 점검을 시작하는데 실패했습니다.');
+      alert(error instanceof Error ? error.message : 'AI 점검을 시작하는데 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -1303,21 +1157,13 @@ export default function AIClosingCheckPage() {
   /** SSE 스트림 처리 */
   const startSSEStream = async (jobId: string, accessToken: string) => {
     try {
-      const response = await fetch(`https://api.eosxai.com/api/closing-check/stream?jobId=${jobId}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'text/event-stream',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const stream = await getClosingCheckStream(jobId, accessToken);
+      
+      if (!stream) {
+        throw new Error('스트림을 가져올 수 없습니다.');
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No reader available');
-      }
+      const reader = stream.getReader();
 
       const decoder = new TextDecoder();
       let buffer = '';
@@ -1414,40 +1260,11 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'depreciation'
-      };
-      
       console.log('감가상각 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
         closingDate: closingDate
       });
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`감가상각 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: DepreciationResponse = await response.json();
+      const data: DepreciationResponse = await checkDepreciation(closingDate, accessToken) as DepreciationResponse;
       setDepreciationData(data);
       
       // 편집 가능한 형태로 변환
@@ -1462,7 +1279,7 @@ export default function AIClosingCheckPage() {
       setShowDepreciationModal(true);
     } catch (error) {
       console.error('감가상각 점검 오류:', error);
-      alert('감가상각 점검 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '감가상각 점검 중 오류가 발생했습니다.');
     } finally {
       setDepreciationLoading(false);
     }
@@ -1513,61 +1330,46 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          key: 'depreciation',
-          description: '감가상각 처리',
-          tangible: editableItems.filter(item => 
-            depreciationData?.tangible?.some(t => t.accountName === item.accountName && t.itemName === item.itemName)
-          ).map(item => ({
-            accountName: item.accountName,
-            itemName: item.itemName,
-            purchaseDate: item.purchaseDate,
-            purchaseAmount: item.purchaseAmount,
-            accumulatedDep: item.accumulatedDep,
-            priorDep: item.priorDep,
-            currentDep: item.currentDep,
-            isProductionCost: item.isProductionCost,
-            usefulLifeMonths: item.usefulLifeMonths,
-            method: item.method
-          } as DepRow)),
-          intangible: editableItems.filter(item => 
-            depreciationData?.intangible?.some(i => i.accountName === item.accountName && i.itemName === item.itemName)
-          ).map(item => ({
-            accountName: item.accountName,
-            itemName: item.itemName,
-            purchaseDate: item.purchaseDate,
-            purchaseAmount: item.purchaseAmount,
-            accumulatedDep: item.accumulatedDep,
-            priorDep: item.priorDep,
-            currentDep: item.currentDep,
-            isProductionCost: item.isProductionCost,
-            usefulLifeMonths: item.usefulLifeMonths,
-            method: item.method
-          } as DepRow))
-        })
-      });
+      const tangible = editableItems.filter(item => 
+        depreciationData?.tangible?.some(t => t.accountName === item.accountName && t.itemName === item.itemName)
+      ).map(item => ({
+        accountName: item.accountName,
+        itemName: item.itemName,
+        purchaseDate: item.purchaseDate,
+        purchaseAmount: item.purchaseAmount,
+        accumulatedDep: item.accumulatedDep,
+        priorDep: item.priorDep,
+        currentDep: item.currentDep,
+        isProductionCost: item.isProductionCost,
+        usefulLifeMonths: item.usefulLifeMonths,
+        method: item.method
+      } as DepRow));
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        alert(`감가상각 결산반영에 실패했습니다. (${response.status})`);
-        return;
-      }
+      const intangible = editableItems.filter(item => 
+        depreciationData?.intangible?.some(i => i.accountName === item.accountName && i.itemName === item.itemName)
+      ).map(item => ({
+        accountName: item.accountName,
+        itemName: item.itemName,
+        purchaseDate: item.purchaseDate,
+        purchaseAmount: item.purchaseAmount,
+        accumulatedDep: item.accumulatedDep,
+        priorDep: item.priorDep,
+        currentDep: item.currentDep,
+        isProductionCost: item.isProductionCost,
+        usefulLifeMonths: item.usefulLifeMonths,
+        method: item.method
+      } as DepRow));
 
-      const data = await response.json();
+      const data = await applyDepreciation({
+        closingDate: closingDate,
+        tangible: tangible,
+        intangible: intangible
+      }, accessToken);
       console.log('감가상각 API 응답 데이터:', data);
       
       // API 응답을 그대로 사용 (이미 전표 형태로 반환됨)
-      setVoucherData(data);
-      setEditableVoucherData(data);
+      setVoucherData(data as VoucherResponse);
+      setEditableVoucherData(data as VoucherResponse);
       
       // 메인 테이블 상태 업데이트
       setRows(prev => prev.map(row => 
@@ -1576,7 +1378,7 @@ export default function AIClosingCheckPage() {
       
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
-      alert('감가상각 결산반영 중 네트워크 오류가 발생했습니다.');
+      alert(error instanceof Error ? error.message : '감가상각 결산반영 중 오류가 발생했습니다.');
     } finally {
       setDepreciationLoading(false);
     }
@@ -1633,14 +1435,14 @@ export default function AIClosingCheckPage() {
               className="px-3 py-1 border border-gray-300 rounded text-sm"
             />
             <button
-              onClick={handleManualCheck}
+              onClick={() => handleCheck('manual')}
               disabled={loading}
               className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
             >
               {loading ? '처리중...' : '직접 점검하기'}
             </button>
             <button
-              onClick={handleAutoCheck}
+              onClick={() => handleCheck('auto')}
               disabled={loading}
               className="
     relative flex items-center justify-center
@@ -1671,7 +1473,7 @@ export default function AIClosingCheckPage() {
         </div>
 
         {/* 스트림 상태 표시 */}
-        {autoJobId && streamStatus && (
+        {streamStatus && (
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -1704,7 +1506,7 @@ export default function AIClosingCheckPage() {
                   {r.category}
                 </td>
                 <td className="p-3 border border-[#D9D9D9]">{r.title}</td>
-                <td className="p-3 border border-[#D9D9D9]">내용</td>
+                <td className="p-3 border border-[#D9D9D9]">{r.description}</td>
                 <td className="p-3 border border-[#D9D9D9]">
                   {renderStatus(r.status)}
                 </td>

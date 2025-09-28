@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import ToastMessage from '@/components/ToastMessage';
+import Image from 'next/image';
 
 interface ManualJournalRow {
   id: number;
@@ -18,15 +19,317 @@ interface ManualJournalRow {
   voucherId?: string;
 }
 
+interface JournalGroup {
+  id: number;
+  rows: [ManualJournalRow, ManualJournalRow]; // 각 그룹은 정확히 2개의 행을 가짐
+}
+
+interface JournalGroupComponentProps {
+  group: JournalGroup;
+  groupIndex: number;
+  isFirstGroup: boolean;
+  onUpdateRow: (rowId: number, field: keyof ManualJournalRow, value: string) => void;
+  debitSubtotal: number;
+  creditSubtotal: number;
+}
+
+// 분개 그룹 컴포넌트
+const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
+  group,
+  groupIndex,
+  isFirstGroup,
+  onUpdateRow,
+  debitSubtotal,
+  creditSubtotal
+}) => {
+  const [firstRow, secondRow] = group.rows;
+
+  return (
+    <div className="flex flex-row items-start w-full">
+      {/* 번호 + 일자 그룹 */}
+      <div className="flex flex-col items-start w-[140px] min-w-[140px]">
+        <div className="flex flex-row items-center w-full">
+          {/* 번호 컬럼 */}
+          <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
+            {isFirstGroup && (
+              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
+              </div>
+            )}
+            <div className="flex flex-col justify-center items-center px-3 py-2 w-full h-[64px] bg-white border-l border-r border-b border-[#D9D9D9]">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
+            </div>
+          </div>
+          {/* 일자 컬럼 */}
+          <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px]">
+            {isFirstGroup && (
+              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
+              </div>
+            )}
+            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9] relative">
+              <input
+                type="date"
+                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none opacity-0 absolute inset-0 cursor-pointer" 
+                value={firstRow.date || ''}
+                onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
+              />
+              <div className="flex items-center gap-1 pointer-events-none">
+                <span className="text-[10px] text-[#757575]">
+                  {firstRow.date ? new Date(firstRow.date).toLocaleDateString('ko-KR', {year: 'numeric', month: '2-digit', day: '2-digit'}) : ''}
+                </span>
+                <Image src="/icons/calendar.svg" alt="calendar" width={12} height={12} />
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* 소계 */}
+        <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9]">
+          <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
+        </div>
+      </div>
+      
+      {/* 차변 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[241px]">
+        {isFirstGroup && (
+          <>
+            {/* 차변 헤더 */}
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">차변</span>
+            </div>
+            {/* 차변 세부 헤더 */}
+            <div className="flex flex-row items-start w-full">
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* 차변 첫 번째 입력 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.debitAccount || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'debitAccount', e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              type="number"
+              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.debitAmount || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'debitAmount', e.target.value)}
+            />
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.debitPartner || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'debitPartner', e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {/* 차변 두 번째 입력 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.debitAccount || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'debitAccount', e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              type="number"
+              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.debitAmount || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'debitAmount', e.target.value)}
+            />
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.debitPartner || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'debitPartner', e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {/* 차변 소계 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+              {debitSubtotal.toLocaleString()}
+            </span>
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </div>
+        </div>
+      </div>
+      
+      {/* 대변 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[241px]">
+        {isFirstGroup && (
+          <>
+            {/* 대변 헤더 */}
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
+            </div>
+            {/* 대변 세부 헤더 */}
+            <div className="flex flex-row items-start w-full">
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* 대변 첫 번째 입력 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.creditAccount || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'creditAccount', e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              type="number"
+              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.creditAmount || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'creditAmount', e.target.value)}
+            />
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.creditPartner || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'creditPartner', e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {/* 대변 두 번째 입력 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.creditAccount || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'creditAccount', e.target.value)}
+            />
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              type="number"
+              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.creditAmount || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'creditAmount', e.target.value)}
+            />
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.creditPartner || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'creditPartner', e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {/* 대변 소계 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+              {creditSubtotal.toLocaleString()}
+            </span>
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+          </div>
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </div>
+        </div>
+      </div>
+      
+      {/* 적요 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[120px]">
+        {isFirstGroup && (
+          <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
+          </div>
+        )}
+        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          <input
+            className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            placeholder="입력하기"
+            value={firstRow.description || ''}
+            onChange={e => onUpdateRow(firstRow.id, 'description', e.target.value)}
+          />
+        </div>
+        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          <input 
+            className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            placeholder="입력하기"
+            value={secondRow.description || ''}
+            onChange={e => onUpdateRow(secondRow.id, 'description', e.target.value)}
+          />
+        </div>
+        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function ManualJournalPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  const [rows, setRows] = useState<ManualJournalRow[]>([
-    {
-      id: 1,
-      date: '',
+  
+  // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
+  const createEmptyRow = (id: number): ManualJournalRow => ({
+    id,
+      date: getTodayDate(),
       debitAccount: '',
       debitAmount: '',
       debitPartner: '',
@@ -34,7 +337,16 @@ export default function ManualJournalPage() {
       creditAmount: '',
       creditPartner: '',
       description: '',
-    },
+  });
+
+  const createEmptyGroup = (groupId: number): JournalGroup => ({
+    id: groupId,
+    rows: [createEmptyRow(groupId * 10 + 1), createEmptyRow(groupId * 10 + 2)]
+  });
+
+  const [journalGroups, setJournalGroups] = useState<JournalGroup[]>([
+    createEmptyGroup(1),
+    createEmptyGroup(2)
   ]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
@@ -46,8 +358,12 @@ export default function ManualJournalPage() {
 
   const [loading] = useState(false);
 
+  // 모든 행을 평면화하여 가져오는 헬퍼 함수
+  const getAllRows = (): ManualJournalRow[] => 
+    journalGroups.flatMap(group => group.rows);
+
   /** 저장 버튼 활성화 여부 */
-  const hasData = rows.some(
+  const hasData = getAllRows().some(
     r =>
       r.date.trim() ||
       r.debitAccount.trim() ||
@@ -59,24 +375,24 @@ export default function ManualJournalPage() {
       r.description.trim()
   );
 
-  /** 행 추가 */
-  const addRow = () => {
-    setRows(prev => [
-      ...prev,
-      {
-        id: Date.now(),
-        date: '',
-        debitAccount: '',
-        debitAmount: '',
-        debitPartner: '',
-        creditAccount: '',
-        creditAmount: '',
-        creditPartner: '',
-        description: '',
-      },
-    ]);
+
+  /** 그룹 추가 */
+  const addGroup = () => {
+    const newGroupId = Math.max(...journalGroups.map(g => g.id)) + 1;
+    setJournalGroups(prev => [...prev, createEmptyGroup(newGroupId)]);
   };
 
+  /** 특정 행 업데이트 */
+  const updateRow = (rowId: number, field: keyof ManualJournalRow, value: string) => {
+    setJournalGroups(prev => 
+      prev.map(group => ({
+        ...group,
+        rows: group.rows.map(row => 
+          row.id === rowId ? { ...row, [field]: value } : row
+        ) as [ManualJournalRow, ManualJournalRow]
+      }))
+    );
+  };
 
   /** 저장 */
   const handleSave = async () => {
@@ -90,31 +406,58 @@ export default function ManualJournalPage() {
       }
 
       // 분개장 데이터를 API 형식으로 변환
-      const vouchers = rows.map(row => ({
-        id: row.voucherId || Date.now(), // 기존 voucherId가 있으면 사용, 없으면 새로 생성
-        date: row.date || undefined,
-        description: row.description || undefined,
-        transactions: [
+      const allVouchers = getAllRows().map(row => {
+        const transactions = [
           // 차변 거래
           ...(row.debitAccount && row.debitAmount ? [{
-            id: Date.now() + Math.random(), // 임시 ID
+            // id: String(Math.floor(Date.now() + Math.random() * 1000)),
             accountId: row.debitAccount,
             partnerId: row.debitPartner || undefined,
             amount: parseFloat(row.debitAmount) || undefined,
             note: row.description || undefined,
-            debitCredit: true // 차변
+            debitCredit: true
           }] : []),
           // 대변 거래
           ...(row.creditAccount && row.creditAmount ? [{
-            id: Date.now() + Math.random() + 1, // 임시 ID
+            // id: String(Math.floor(Date.now() + Math.random() * 1000) + 1),
             accountId: row.creditAccount,
             partnerId: row.creditPartner || undefined,
             amount: parseFloat(row.creditAmount) || undefined,
             note: row.description || undefined,
-            debitCredit: false // 대변
+            debitCredit: false
           }] : [])
-        ]
-      }));
+        ];
+
+        return {
+          voucher: {
+          //   id: row.voucherId || String(Date.now()),
+            date: row.date || undefined,
+          //   description: row.description || undefined,
+          },
+          transactions
+        };
+      });
+
+      // transaction 검증: 빈 배열이 아니면서 amount나 debitCredit이 없는 경우 체크
+      for (const voucher of allVouchers) {
+        if (voucher.transactions.length > 0) {
+          for (const transaction of voucher.transactions) {
+            if (!transaction.amount || transaction.debitCredit === undefined) {
+              alert('거래 내역에 필수 항목(금액, 차변/대변 구분)이 누락되었습니다.');
+              return;
+            }
+          }
+        }
+      }
+
+      // 빈 transactions 배열인 voucher 제거
+      const vouchers = allVouchers.filter(voucher => voucher.transactions.length > 0);
+
+      // 저장할 voucher가 없는 경우
+      if (vouchers.length === 0) {
+        alert('저장할 거래 내역이 없습니다.');
+        return;
+      }
 
       const res = await fetch('https://api.eosxai.com/api/vouchers/upsert-with-transactions/batch', {
         method: 'POST',
@@ -132,22 +475,21 @@ export default function ManualJournalPage() {
 
       const data = await res.json();
       if (data.success) {
+        // data.results 배열의 각 항목에서 error 여부 확인
+        const hasErrors = data.results && data.results.some((result: { error?: boolean | string }) => result.error);
+        
+        if (hasErrors) {
+          alert('저장 중 문제가 발생했습니다.');
+          return;
+        }
+
         setToastMessage(`${vouchers.length}개의 전표가 생성되었습니다!`);
         setShowToast(true);
 
         // 저장 후 로컬 데이터 초기화
-        setRows([
-          {
-            id: 1,
-            date: '',
-            debitAccount: '',
-            debitAmount: '',
-            debitPartner: '',
-            creditAccount: '',
-            creditAmount: '',
-            creditPartner: '',
-            description: '',
-          },
+        setJournalGroups([
+          createEmptyGroup(1),
+          createEmptyGroup(2)
         ]);
       } else {
         alert('저장 중 문제가 발생했습니다.');
@@ -170,321 +512,86 @@ export default function ManualJournalPage() {
   }
 
   if (!isAuthenticated) {
-    return null; // 리다이렉트가 처리됨
+    return null;
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">수동분개</h2>
-            <p className="text-[#767676]">
+    <div className="flex flex-col items-start p-4 gap-4 w-full mx-auto">
+      {/* Header */}
+      <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">
+        <div className="flex flex-row justify-between items-end gap-4 w-full">
+          {/* Title Section */}
+          <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start p-[6px_0px_2px] rounded-lg">
+              <div className="flex flex-row items-start">
+                <h2 className="font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+                  수동분개
+                </h2>
+              </div>
+            </div>
+            <p className="font-normal text-[12px] leading-[140%] text-[#767676]">
               필요한 내용을 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <button
-            className={`flex items-center justify-center min-w-[79px] h-[28px] px-3 text-[12px] ${
-              hasData && !loading
-                ? 'bg-[#2C2C2C] text-white'
-                : 'bg-[#E6E6E6] text-[#1E1E1E]'
-            }`}
-            disabled={!hasData || loading}
-            onClick={handleSave}
-          >
-            저장하기
-          </button>
+          
+          {/* Buttons */}
+          <div className="flex flex-row justify-end items-center gap-2">
+            <button
+              className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[28px] font-medium text-[12px] leading-[100%] cursor-pointer ${
+                hasData && !loading
+                  ? 'bg-[#F3F3F3] text-[#1E1E1E]'
+                  : 'bg-[#E6E6E6] text-[#B3B3B3]'
+              }`}
+              disabled={!hasData || loading}
+              onClick={handleSave}
+            >
+              저장하기
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead>
-            <tr>
-              <td
-                rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-                style={{width: '60px'}}
-              >
-                번호
-              </td>
-              <td
-                rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-                style={{width: '80px'}}
-              >
-                일자
-              </td>
-              <td
-                colSpan={3}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-              >
-                차변
-              </td>
-              <td
-                colSpan={3}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-              >
-                대변
-              </td>
-              <td
-                rowSpan={2}
-                className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"
-              >
-                적요
-              </td>
-            </tr>
-            <tr>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
-                계정과목
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium" style={{width: '100px'}}>
-                금액
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
-                거래처
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
-                계정과목
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium" style={{width: '100px'}}>
-                금액
-              </td>
-              <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">
-                거래처
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <>
-                <tr key={row.id}>
-                  <td className="p-3 border border-[#D9D9D9] text-center" style={{width: '60px'}}>
-                    {idx + 1}
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" style={{width: '80px'}}>
-                    <input
-                      type="date"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      value={row.date}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id ? { ...r, date: e.target.value } : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  {/* 차변 */}
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.debitAccount}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, debitAccount: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" style={{width: '100px'}}>
-                    <div className="flex items-center w-full">
-                      <input
-                        type="number"
-                        className="flex-1 focus:outline-none text-[#B3B3B3]"
-                        placeholder="입력하기"
-                        value={row.debitAmount}
-                        onChange={e =>
-                          setRows(prev =>
-                            prev.map(r =>
-                              r.id === row.id
-                                ? { ...r, debitAmount: e.target.value }
-                                : r
-                            )
-                          )
-                        }
-                      />
-                      <span className="text-gray-400 text-sm ml-2">원</span>
-                    </div>
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.debitPartner}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, debitPartner: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  {/* 대변 */}
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.creditAccount}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, creditAccount: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" style={{width: '100px'}}>
-                    <div className="flex items-center w-full">
-                      <input
-                        type="number"
-                        className="flex-1 focus:outline-none text-[#B3B3B3]"
-                        placeholder="입력하기"
-                        value={row.creditAmount}
-                        onChange={e =>
-                          setRows(prev =>
-                            prev.map(r =>
-                              r.id === row.id
-                                ? { ...r, creditAmount: e.target.value }
-                                : r
-                            )
-                          )
-                        }
-                      />
-                      <span className="text-gray-400 text-sm ml-2">원</span>
-                    </div>
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.creditPartner}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, creditPartner: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  {/* 적요 */}
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                      value={row.description}
-                      onChange={e =>
-                        setRows(prev =>
-                          prev.map(r =>
-                            r.id === row.id
-                              ? { ...r, description: e.target.value }
-                              : r
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                </tr>
-                {/* 소계 행 */}
-                <tr>
-                  <td 
-                    colSpan={2}
-                    className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]"
-                  >
-                    소계
-                  </td>
-                  {/* 차변 소계 */}
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                    />
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" style={{width: '100px'}}>
-                    <div className="flex items-center w-full">
-                      <input
-                        type="number"
-                        className="flex-1 focus:outline-none text-[#B3B3B3]"
-                        placeholder="입력하기"
-                      />
-                      <span className="text-gray-400 text-sm ml-2">원</span>
-                    </div>
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                    />
-                  </td>
-                  {/* 대변 소계 */}
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                    />
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]" style={{width: '100px'}}>
-                    <div className="flex items-center w-full">
-                      <input
-                        type="number"
-                        className="flex-1 focus:outline-none text-[#B3B3B3]"
-                        placeholder="입력하기"
-                      />
-                      <span className="text-gray-400 text-sm ml-2">원</span>
-                    </div>
-                  </td>
-                  <td className="p-3 border border-[#D9D9D9]">
-                    <input
-                      type="text"
-                      className="w-full focus:outline-none text-[#B3B3B3]"
-                      placeholder="입력하기"
-                    />
-                  </td>
-                  {/* 적요는 비어있음 */}
-                  <td className="p-3 border border-[#D9D9D9]"></td>
-                </tr>
-              </>
-            ))}
-            {/* 추가하기 버튼 */}
-            <tr>
-              <td
-                colSpan={10}
-                className="p-3 border border-[#D9D9D9] text-center"
-              >
-                <button
-                  onClick={addRow}
-                  className="text-sm text-[#767676] hover:text-[#1E1E1E] flex items-center justify-center gap-1 w-full"
-                >
-                  <span className="w-4 h-4 rounded-full border border-[#767676] flex items-center justify-center text-xs">+</span>
-                  추가하기
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      {/* 반응형 테이블 컨테이너 */}
+      <div className="w-full overflow-x-auto">
+        <div className="flex flex-col items-start">
+          {/* 분개 그룹들 렌더링 */}
+          {journalGroups.map((group, index) => {
+            const groupDebitSubtotal = group.rows.reduce((sum, row) => 
+              sum + (parseFloat(row.debitAmount) || 0), 0);
+            const groupCreditSubtotal = group.rows.reduce((sum, row) => 
+              sum + (parseFloat(row.creditAmount) || 0), 0);
+
+            return (
+              <JournalGroupComponent
+                key={group.id}
+                group={group}
+                groupIndex={index}
+                isFirstGroup={index === 0}
+                onUpdateRow={updateRow}
+                debitSubtotal={groupDebitSubtotal}
+                creditSubtotal={groupCreditSubtotal}
+              />
+            );
+          })}
+
+          {/* 추가하기 버튼 */}
+          <div className="flex flex-row items-center w-full min-w-[200px] h-[40px]">
+            <button
+              onClick={addGroup}
+              className="flex flex-row justify-center items-center px-3 py-2 gap-1 w-full min-w-[200px] h-[40px] bg-white border-l border-r border-b border-[#D9D9D9] cursor-pointer"
+            >
+              <div className="w-4 h-4">
+                <svg className="w-4 h-4" fill="none" stroke="#757575" strokeWidth="1" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v8M8 12h8"/>
+                </svg>
+              </div>
+              <span className="font-medium text-[12px] leading-[100%] text-center text-[#757575]">
+                추가하기
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <ToastMessage 

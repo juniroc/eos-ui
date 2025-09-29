@@ -177,10 +177,10 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="relative w-[1240px] h-[800px] bg-white flex flex-col">
+    <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
+      <div className="relative w-full h-full bg-white flex flex-col">
         {/* 상단 헤더 */}
-        <div className="flex justify-between items-center p-3 h-[41px] border-b border-[#D9D9D9]">
+        <div className="flex justify-between items-center p-3 h-[41px]">
           {/* 브레드크럼 */}
           <div className="flex items-center gap-1 flex-1">
             <span className="text-xs text-[#B3B3B3]">AI분개</span>

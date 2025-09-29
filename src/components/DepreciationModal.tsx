@@ -237,6 +237,9 @@ export default function DepreciationModal({
       // API 응답을 그대로 사용 (이미 전표 형태로 반환됨)
       setVoucherData(data as VoucherResponse);
       setEditableVoucherData(data as VoucherResponse);
+
+      setToastMessage('감가삼각의 결산반영이 완료되었습니다.');
+      setShowToast(true);
       
       // 메인 테이블 상태 업데이트
       onStatusUpdate('DONE');

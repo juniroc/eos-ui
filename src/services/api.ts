@@ -1,5 +1,5 @@
-// 실제 API 서버 호스트 (명세서에 따라 수정 필요)
-const API_BASE_URL = 'https://api.eosxai.com'; // 실제 API 서버 URL로 변경 필요
+// API 서버 호스트
+const API_BASE_URL = 'https://api.eosxai.com';
 
 export interface LoginRequest {
   loginId: string;
@@ -89,7 +89,7 @@ export async function extractBusinessInfoWithAuth(file: File, token: string): Pr
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`https://api.eosxai.com/api/ai/extract-business-info`, {
+  const response = await fetch(`${API_BASE_URL}/api/ai/extract-business-info`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -450,7 +450,7 @@ export async function extractShareholderDocs(file: File, token: string): Promise
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`https://api.eosxai.com/api/shareholder-docs/extract-list`, {
+  const response = await fetch(`${API_BASE_URL}/api/shareholder-docs/extract-list`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -466,7 +466,7 @@ export async function extractShareholderDocs(file: File, token: string): Promise
 }
 
 export async function saveShareholderDocs(data: { documentId: string; shareholders: Array<{ name: string; residentNumber?: string; isRelatedParty: string; shares?: string; acquisitionDate?: string; note?: string }> }, token: string): Promise<{ success: boolean; shareholders: Array<{ id: string; name: string; residentNumber: string; isRelatedParty: string; shares: string; acquisitionDate: string; note: string; createdAt: string }> }> {
-  const response = await fetch(`https://api.eosxai.com/api/shareholder-docs/save`, {
+  const response = await fetch(`${API_BASE_URL}/api/shareholder-docs/save`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -485,7 +485,7 @@ export async function saveShareholderDocs(data: { documentId: string; shareholde
 }
 
 export async function deleteShareholder(id: string, token: string): Promise<unknown> {
-  const response = await fetch(`https://api.eosxai.com/api/shareholders/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/shareholders/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -532,7 +532,7 @@ export async function extractBusinessInfo(file: File): Promise<{
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`https://api.eosxai.com/api/ai/extract-business-info-with-tax-agent`, {
+  const response = await fetch(`${API_BASE_URL}/api/ai/extract-business-info-with-tax-agent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -1077,4 +1077,193 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
     console.error('저장 중 오류:', error);
     throw error;
   }
+}
+
+// ===== AI 결산점검 관련 API =====
+
+// 결산점검 항목별 실행 API
+export async function runClosingCheckItem(data: { closingDate: string; key: string }, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/closing-check/run-item`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('API 에러 응답:', errorData);
+    
+    if (response.status === 500) {
+      throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } else {
+      throw new Error(`결산점검 항목 실행에 실패했습니다. (${response.status})`);
+    }
+  }
+
+  return response.json();
+}
+
+// 결산점검 결산반영 API
+export async function applyClosingCheck(data: { 
+  closingDate: string; 
+  key: string; 
+  description: string; 
+  rows?: unknown[];
+  tangible?: unknown[];
+  intangible?: unknown[];
+  vouchers?: unknown[];
+}, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/closing-check/apply`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('API 에러 응답:', errorData);
+    
+    if (response.status === 500) {
+      throw new Error('결산반영 중 서버 오류가 발생했습니다.');
+    } else {
+      throw new Error(`결산 반영에 실패했습니다. (${response.status})`);
+    }
+  }
+
+  return response.json();
+}
+
+// 감가상각 점검 API
+export async function checkDepreciation(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'depreciation' }, token);
+}
+
+// 감가상각 결산반영 API
+export async function applyDepreciation(data: {
+  closingDate: string;
+  tangible: unknown[];
+  intangible: unknown[];
+}, token: string): Promise<unknown> {
+  return applyClosingCheck({
+    closingDate: data.closingDate,
+    key: 'depreciation',
+    description: '감가상각 처리',
+    tangible: data.tangible,
+    intangible: data.intangible,
+  }, token);
+}
+
+// 기말재고 점검 API
+export async function checkEndingInventory(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'ending_inventory' }, token);
+}
+
+// 기말재고 결산반영 API
+export async function applyEndingInventory(data: {
+  closingDate: string;
+  rows: unknown[];
+}, token: string): Promise<unknown> {
+  return applyClosingCheck({
+    closingDate: data.closingDate,
+    key: 'ending_inventory',
+    description: '기말재고 결산 반영',
+    rows: data.rows,
+  }, token);
+}
+
+// 대손상각 점검 API
+export async function checkBadDebt(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'bad_debt' }, token);
+}
+
+// 대손상각 결산반영 API
+export async function applyBadDebt(data: {
+  closingDate: string;
+  rows: unknown[];
+}, token: string): Promise<unknown> {
+  return applyClosingCheck({
+    closingDate: data.closingDate,
+    key: 'bad_debt',
+    description: '대손상각 결산 반영',
+    rows: data.rows,
+  }, token);
+}
+
+// 퇴직급여충당금 점검 API
+export async function checkRetirementBenefit(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'retirement_benefit' }, token);
+}
+
+// 퇴직급여충당금 결산반영 API
+export async function applyRetirementBenefit(data: {
+  closingDate: string;
+  rows: unknown[];
+}, token: string): Promise<unknown> {
+  return applyClosingCheck({
+    closingDate: data.closingDate,
+    key: 'retirement_benefit',
+    description: '퇴직급여충당금 결산 반영',
+    rows: data.rows,
+  }, token);
+}
+
+// 가수가지급금 점검 API
+export async function checkSuspense(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'suspense_clear' }, token);
+}
+
+// 가수가지급금 결산반영 API
+export async function applySuspense(data: {
+  closingDate: string;
+  vouchers: unknown[];
+}, token: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/api/closing-check/run-item`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      closingDate: data.closingDate,
+      key: 'suspense_clear',
+      vouchers: data.vouchers,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('API 에러 응답:', errorData);
+    
+    if (response.status === 500) {
+      throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } else {
+      throw new Error(`가수가지급금 결산반영에 실패했습니다. (${response.status})`);
+    }
+  }
+
+  return response.json();
+}
+
+// 기간귀속 점검 API
+export async function checkPeriodAccrual(closingDate: string, token: string): Promise<unknown> {
+  return runClosingCheckItem({ closingDate, key: 'period_accrual' }, token);
+}
+
+// 기간귀속 결산반영 API
+export async function applyPeriodAccrual(data: {
+  closingDate: string;
+  rows: unknown[];
+}, token: string): Promise<unknown> {
+  return applyClosingCheck({
+    closingDate: data.closingDate,
+    key: 'period_accrual',
+    description: '기간귀속 결산 반영',
+    rows: data.rows,
+  }, token);
 }

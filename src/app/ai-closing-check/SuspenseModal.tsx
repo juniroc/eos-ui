@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import ToastMessage from '@/components/ToastMessage';
 
 // 타입 정의
 interface SuspenseTransaction {
@@ -59,6 +60,8 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   // 내부 상태로 트랜잭션 데이터 관리
   const [transactions, setTransactions] = useState<EditableSuspenseTransaction[]>([]);
   const [data, setData] = useState<SuspenseData | null>(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // 컴포넌트 마운트 시 더미 데이터로 초기화
   useEffect(() => {
@@ -171,7 +174,8 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
       }))
     };
     
-    alert('가수가지급금이 저장되었습니다');
+    setToastMessage('가수가지급금의 전표 저장이 완료되었습니다.');
+    setShowToast(true);
     // onApply(updatedData);
   };
 
@@ -537,6 +541,11 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
           </div>
         </div>
       </div>
+      <ToastMessage 
+        message={toastMessage} 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 };

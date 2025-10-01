@@ -8,6 +8,7 @@ import PeriodAccrualModal from './PeriodAccrualModal';
 import DepreciationModal from '@/components/DepreciationModal';
 import EndingInventoryModal from '@/components/EndingInventoryModal';
 import BadDebtModal from '@/components/BadDebtModal';
+import RetirementBenefitModal from '@/components/RetirementBenefitModal';
 import {
   initClosingCheck,
   getClosingCheckStream
@@ -35,53 +36,6 @@ interface AutoModeResponse {
 
 
 
-// 퇴직급여충당금 관련 타입
-interface RetirementBenefitItem {
-  label: string;
-  paidTotal: number;
-  ratioText: string;
-  provisionAmount: number;
-  note: string;
-  debitAccountCode: string;
-}
-
-interface RetirementBenefitResponse {
-  key: string;
-  status: string;
-  rows: RetirementBenefitItem[];
-  meta: {
-    period: {
-      start: string;
-      end: string;
-    };
-    allowanceBalance: {
-      prior: number;
-      current: number;
-    };
-    codes: {
-      EXEC_SALARY_PAN: string;
-      STAFF_SALARY_PAN: string;
-      SALARY_PRODUCT: string;
-      SALARY_SERVICE: string;
-      RETIRE_EXP_PAN: string;
-      RETIRE_EXP_PRODUCT: string;
-      RETIRE_EXP_SERVICE: string;
-      RETIRE_ALLOW_LIAB: string;
-    };
-  };
-}
-
-interface EditableRetirementBenefitItem extends RetirementBenefitItem {
-  id: string;
-  isEditing?: boolean;
-}
-
-// API에서 요구하는 RetirementBenefitRow 타입
-interface RetirementBenefitRow {
-  provisionAmount: number;
-  debitAccountCode: string;
-  note?: string;
-}
 
 // 가수가지급금 관련 타입
 interface SuspenseVoucher {
@@ -241,10 +195,6 @@ export default function AIClosingCheckPage() {
 
   // 퇴직급여충당금 팝업 상태
   const [showRetirementBenefitModal, setShowRetirementBenefitModal] = useState(false);
-  const [retirementBenefitData, setRetirementBenefitData] = useState<RetirementBenefitResponse | null>(null);
-  const [retirementBenefitVoucherData, setRetirementBenefitVoucherData] = useState<VoucherResponse | null>(null);
-  const [retirementBenefitLoading, setRetirementBenefitLoading] = useState(false);
-  const [editableRetirementBenefitItems, setEditableRetirementBenefitItems] = useState<EditableRetirementBenefitItem[]>([]);
 
   // 가수가지급금 팝업 상태
   const [showSuspenseModal, setShowSuspenseModal] = useState(false);
@@ -290,157 +240,11 @@ export default function AIClosingCheckPage() {
   };
 
 
-  /** 퇴직급여충당금 점검 */
-  const handleRetirementBenefitCheck = async () => {
-    try {
-      setRetirementBenefitLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 퇴직급여충당금 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'retirement_benefit'
-      };
-      
-      console.log('퇴직급여충당금 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
-        closingDate: closingDate
-      });
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`퇴직급여충당금 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: RetirementBenefitResponse = await response.json();
-      setRetirementBenefitData(data);
-      
-      // 편집 가능한 형태로 변환
-      const editableItems: EditableRetirementBenefitItem[] = data.rows.map((item, index) => ({
-        ...item,
-        id: `${item.label}-${index}`,
-        isEditing: false
-      }));
-      setEditableRetirementBenefitItems(editableItems);
-      
-      // 기존 모달 닫기
-      setShowModal(false);
-      
-      // 퇴직급여충당금 팝업 열기
-      setShowRetirementBenefitModal(true);
-      
-      // 테이블에 퇴직급여충당금 항목 표시
-      const updatedRows = rows.map(row => 
-        row.key === 'retirement_benefit' 
-          ? { ...row, status: 'DONE' as CheckRow['status'] }
-          : row
-      );
-      setRows(updatedRows);
-    } catch (error) {
-      console.error('퇴직급여충당금 점검 API 호출 오류:', error);
-      alert('퇴직급여충당금 점검 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setRetirementBenefitLoading(false);
-    }
-  };
-
-  /** 퇴직급여충당금 결산 반영 */
-  const handleRetirementBenefitApply = async () => {
-    try {
-      setRetirementBenefitLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // API에서 요구하는 형태로 데이터 변환
-      const rows: RetirementBenefitRow[] = editableRetirementBenefitItems.map(item => ({
-        provisionAmount: item.provisionAmount,
-        debitAccountCode: item.debitAccountCode,
-        note: item.note
-      }));
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          key: 'retirement_benefit',
-          description: '퇴직급여충당금 결산 반영',
-          rows: rows
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          // 500 에러 시 얼럿 표시
-          alert('퇴직급여충당금 결산반영 중 서버 오류가 발생했습니다.');
-        } else {
-          alert(`퇴직급여충당금 결산 반영에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: VoucherResponse = await response.json();
-      setRetirementBenefitVoucherData(data);
-      
-      // 메인 테이블 상태 업데이트
-      setRows(prev => prev.map(row => 
-        row.key === 'retirement_benefit' ? { ...row, status: 'DONE' } : row
-      ));
-      
-    } catch (error) {
-      console.error('퇴직급여충당금 결산 반영 API 호출 오류:', error);
-      alert('퇴직급여충당금 결산 반영 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setRetirementBenefitLoading(false);
-    }
-  };
-
-  /** 퇴직급여충당금 전표 저장 */
-  const handleRetirementBenefitSave = async () => {
-    alert('저장했습니다');
-    setShowRetirementBenefitModal(false);
-  };
-
-  /** 퇴직급여충당금 아이템 변경 핸들러 */
-  const handleRetirementBenefitItemChange = (id: string, field: keyof EditableRetirementBenefitItem, value: string | number | boolean) => {
-    setEditableRetirementBenefitItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
+  /** 퇴직급여충당금 상태 업데이트 핸들러 */
+  const handleRetirementBenefitStatusUpdate = (status: 'DONE') => {
+    setRows(prev => prev.map(row => 
+      row.key === 'retirement_benefit' ? { ...row, status } : row
+    ));
   };
 
   /** 가수가지급금 점검 */
@@ -1095,7 +899,7 @@ export default function AIClosingCheckPage() {
                       } else if (r.key === 'bad_debt') {
                         setShowBadDebtModal(true);
                       } else if (r.key === 'retirement_benefit') {
-                        handleRetirementBenefitCheck();
+                        setShowRetirementBenefitModal(true);
                       } else if (r.key === 'suspense_clear') {
                         handleSuspenseCheck();
                       } else if (r.key === 'period_accrual') {
@@ -1292,240 +1096,12 @@ export default function AIClosingCheckPage() {
       />
 
       {/* 퇴직급여충당금 팝업 */}
-      {showRetirementBenefitModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-50 p-6">
-          <div className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
-            {/* 팝업 헤더 */}
-            <div className="relative p-6 border-b border-gray-200">
-              {/* X 버튼 - 우측 상단 고정 */}
-              <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
-                onClick={() => setShowRetirementBenefitModal(false)}
-              >
-                ✕
-              </button>
-              
-              <div className="flex justify-between items-start pr-12">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 퇴직급여충당금</div>
-                  <h2 className="text-2xl font-bold text-gray-900">퇴직급여충당금</h2>
-                  <p className="text-gray-600 mt-2">
-                    AI가 수행한 퇴직급여충당금 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                    onClick={() => window.print()}
-                  >
-                    인쇄하기
-                  </button>
-                  <button
-                    className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                    onClick={handleRetirementBenefitApply}
-                    disabled={retirementBenefitLoading}
-                  >
-                    {retirementBenefitLoading ? '처리중...' : '결산 반영'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 팝업 내용 */}
-            <div className="p-6 overflow-y-auto h-[calc(100%-120px)]">
-              {retirementBenefitLoading ? (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">퇴직급여충당금 데이터를 불러오는 중...</div>
-                </div>
-              ) : retirementBenefitData ? (
-                <>
-                  {/* 퇴직급여충당금 테이블 */}
-                  <div className="mb-8">
-                    <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                      <thead>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">구분</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">지급총액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">비율</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">충당금</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변계정</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {editableRetirementBenefitItems.length > 0 ? (
-                          editableRetirementBenefitItems.map((item) => (
-                            <tr key={item.id}>
-                              <td className="p-3 border border-[#D9D9D9] text-center">{item.label}</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.paidTotal.toLocaleString()}
-                                  onChange={(e) => handleRetirementBenefitItemChange(item.id, 'paidTotal', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                                />
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">{item.ratioText}</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.provisionAmount.toLocaleString()}
-                                  onChange={(e) => handleRetirementBenefitItemChange(item.id, 'provisionAmount', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                                />
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.note}
-                                  onChange={(e) => handleRetirementBenefitItemChange(item.id, 'note', e.target.value)}
-                                />
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">{item.debitAccountCode}</td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={6} className="p-8 text-center text-gray-500">
-                              퇴직급여충당금 데이터가 없습니다. 퇴직급여충당금 점검을 실행해주세요.
-                            </td>
-                          </tr>
-                        )}
-                        {/* 합계 행 */}
-                        {editableRetirementBenefitItems.length > 0 && (
-                          <tr className="bg-[#F5F5F5]">
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">합계</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                              {editableRetirementBenefitItems.reduce((sum, item) => sum + item.paidTotal, 0).toLocaleString()}
-                            </td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                              {editableRetirementBenefitItems.reduce((sum, item) => sum + item.provisionAmount, 0).toLocaleString()}
-                            </td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* 전표 점검 섹션 */}
-                  <div>
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold">전표 점검</h3>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
-                        <button
-                          className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                          onClick={handleRetirementBenefitSave}
-                        >
-                          저장
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                      <thead>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
-                          <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변</th>
-                          <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대변</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
-                        </tr>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {retirementBenefitVoucherData ? (
-                          <>
-                            {retirementBenefitVoucherData.transactions && retirementBenefitVoucherData.transactions.length > 0 ? (
-                              <>
-                                {retirementBenefitVoucherData.transactions.map((transaction, index) => (
-                              <tr key={index}>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
-                                {transaction.debitCredit === 'DEBIT' ? (
-                                  <>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                  </>
-                                ) : (
-                                  <>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-
-                                  </>
-                                )}
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
-                              </tr>
-                            ))}
-                            <tr>
-                              <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                {retirementBenefitVoucherData.transactions
-                                  .filter(t => t.debitCredit === 'DEBIT')
-                                  .reduce((sum, t) => sum + t.amount, 0)
-                                  .toLocaleString()}
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                {retirementBenefitVoucherData.transactions
-                                  .filter(t => t.debitCredit === 'CREDIT')
-                                  .reduce((sum, t) => sum + t.amount, 0)
-                                  .toLocaleString()}
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                            </tr>
-                              </>
-                            ) : (
-                              <tr>
-                                <td colSpan={8} className="p-8 text-center text-gray-500">
-                                  생성된 거래 내역이 없습니다.
-                                </td>
-                              </tr>
-                            )}
-                          </>
-                        ) : (
-                          <tr>
-                            <td colSpan={8} className="p-8 text-center text-gray-500">
-                              결산반영을 실행하면 전표가 생성됩니다.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                    
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">퇴직급여충당금 데이터가 없습니다.</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <RetirementBenefitModal
+        isOpen={showRetirementBenefitModal}
+        onClose={() => setShowRetirementBenefitModal(false)}
+        closingDate={closingDate}
+        onStatusUpdate={handleRetirementBenefitStatusUpdate}
+      />
 
       {/* 가수가지급금 팝업 */}
       <SuspenseModal

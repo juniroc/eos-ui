@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import ToastMessage from './ToastMessage';
 
 // 퇴직급여충당금 관련 타입
@@ -278,235 +279,261 @@ export default function RetirementBenefitModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-50 p-6">
-      <div className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
-        {/* 팝업 헤더 */}
-        <div className="relative p-6 border-b border-gray-200">
-          {/* X 버튼 - 우측 상단 고정 */}
-          <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
-            onClick={onClose}
-          >
-            ✕
-          </button>
-          
-          <div className="flex justify-between items-start pr-12">
-            <div>
-              <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 퇴직급여충당금</div>
-              <h2 className="text-2xl font-bold text-gray-900">퇴직급여충당금</h2>
-              <p className="text-gray-600 mt-2">
-                AI가 수행한 퇴직급여충당금 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.
-              </p>
+    <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
+      <div className="relative w-full h-full bg-white flex flex-col pb-5">
+        {/* 상단 헤더 */}
+        <div className="flex flex-row justify-between items-center p-2 h-[41px]">
+          {/* Breadcrumb */}
+          <div className="flex flex-row items-center gap-0.5 flex-1 h-[17px]">
+            <div className="flex flex-row items-start">
+              <span className="text-xs leading-[140%] text-[#B3B3B3] font-['Pretendard']">AI분개</span>
             </div>
-            <div className="flex gap-2">
-              <button
-                className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                onClick={() => window.print()}
-              >
-                인쇄하기
-              </button>
-              <button
-                className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                onClick={handleRetirementBenefitApply}
-                disabled={retirementBenefitLoading}
-              >
-                {retirementBenefitLoading ? '처리중...' : '결산 반영'}
-              </button>
+            <div className="w-4 h-4 flex items-center justify-center">
+              <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16"/>
+            </div>
+            <div className="flex flex-row items-start">
+              <span className="text-xs leading-[140%] text-[#B3B3B3] font-['Pretendard']">AI결산점검</span>
+            </div>
+            <div className="w-4 h-4 flex items-center justify-center">
+              <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16"/>
+            </div>
+            <div className="flex flex-row items-start">
+              <span className="text-xs leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">퇴직급여충당금</span>
             </div>
           </div>
+          
+          {/* X 버튼 */}
+          <button
+            className="w-4 h-4 flex items-center justify-center cursor-pointer"
+            onClick={onClose}
+          >
+          <Image src="/icons/close.svg" alt="close" width={16} height={16} />
+          </button>
         </div>
 
-        {/* 팝업 내용 */}
-        <div className="p-6 overflow-y-auto h-[calc(100%-120px)]">
-          {retirementBenefitLoading ? (
-            <div className="text-center py-8">
-              <div className="text-gray-500">퇴직급여충당금 데이터를 불러오는 중...</div>
-            </div>
-          ) : retirementBenefitData ? (
-            <>
-              {/* 퇴직급여충당금 테이블 */}
-              <div className="mb-8">
-                <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                  <thead>
-                    <tr>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">구분</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">지급총액</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">비율</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">충당금</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변계정</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {editableRetirementBenefitItems.length > 0 ? (
-                      editableRetirementBenefitItems.map((item) => (
-                        <tr key={item.id}>
-                          <td className="p-3 border border-[#D9D9D9] text-center">{item.label}</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
-                            <input 
-                              type="text" 
-                              className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                              value={item.paidTotal.toLocaleString()}
-                              onChange={(e) => handleRetirementBenefitItemChange(item.id, 'paidTotal', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                            />
-                          </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">{item.ratioText}</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
-                            <input 
-                              type="text" 
-                              className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                              value={item.provisionAmount.toLocaleString()}
-                              onChange={(e) => handleRetirementBenefitItemChange(item.id, 'provisionAmount', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                            />
-                          </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
-                            <input 
-                              type="text" 
-                              className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                              value={item.note}
-                              onChange={(e) => handleRetirementBenefitItemChange(item.id, 'note', e.target.value)}
-                            />
-                          </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">{item.debitAccountCode}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={6} className="p-8 text-center text-gray-500">
-                          퇴직급여충당금 데이터가 없습니다. 퇴직급여충당금 점검을 실행해주세요.
-                        </td>
-                      </tr>
-                    )}
-                    {/* 합계 행 */}
-                    {editableRetirementBenefitItems.length > 0 && (
-                      <tr className="bg-[#F5F5F5]">
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">합계</td>
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                          {editableRetirementBenefitItems.reduce((sum, item) => sum + item.paidTotal, 0).toLocaleString()}
-                        </td>
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                          {editableRetirementBenefitItems.reduce((sum, item) => sum + item.provisionAmount, 0).toLocaleString()}
-                        </td>
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                        <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* 전표 점검 섹션 */}
-              <div>
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold">전표 점검</h3>
-                  <div className="flex justify-between items-center">
-                    <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
-                    <button
-                      className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                      onClick={handleRetirementBenefitSave}
-                    >
-                      저장하기
-                    </button>
+        {/* 콘텐츠 영역 */}
+        <div className="flex flex-col items-start p-4 gap-4 flex-1 overflow-y-auto">
+          {/* 제목 섹션 */}
+          <div className="flex flex-col items-start gap-4 w-full min-w-[520px] h-[46px]">
+            <div className="flex flex-row justify-between items-end gap-4 w-full h-[46px]">
+              <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start p-1.5 px-0 pt-1.5 pb-0.5 w-64 h-[29px] rounded-lg">
+                  <div className="flex flex-row items-start">
+                    <span className="text-[15px] leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">퇴직급여충당금</span>
                   </div>
                 </div>
-                
-                <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                  <thead>
-                    <tr>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
-                      <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변</th>
-                      <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대변</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
-                    </tr>
-                    <tr>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                      <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {retirementBenefitVoucherData ? (
-                      <>
-                        {retirementBenefitVoucherData.transactions && retirementBenefitVoucherData.transactions.length > 0 ? (
-                          <>
-                            {retirementBenefitVoucherData.transactions.map((transaction, index) => (
-                          <tr key={index}>
-                            <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
-                            {transaction.debitCredit === 'DEBIT' ? (
-                              <>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              </>
-                            ) : (
-                              <>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-
-                              </>
-                            )}
-                            <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
-                            {retirementBenefitVoucherData.transactions
-                              .filter(t => t.debitCredit === 'DEBIT')
-                              .reduce((sum, t) => sum + t.amount, 0)
-                              .toLocaleString()}
-                          </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
-                            {retirementBenefitVoucherData.transactions
-                              .filter(t => t.debitCredit === 'CREDIT')
-                              .reduce((sum, t) => sum + t.amount, 0)
-                              .toLocaleString()}
-                          </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                        </tr>
-                          </>
-                        ) : (
-                          <tr>
-                            <td colSpan={8} className="p-8 text-center text-gray-500">
-                              생성된 거래 내역이 없습니다.
-                            </td>
-                          </tr>
-                        )}
-                      </>
-                    ) : (
-                      <tr>
-                        <td colSpan={8} className="p-8 text-center text-gray-500">
-                          결산반영을 실행하면 전표가 생성됩니다.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-                
+                <span className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">
+                  AI가 수행한 퇴직급여충당금 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.
+                </span>
               </div>
-            </>
-          ) : (
-            <div className="text-center py-8">
-              <div className="text-gray-500">퇴직급여충당금 데이터가 없습니다.</div>
+              
+              {/* 버튼 그룹 */}
+              <div className="flex flex-row justify-end items-center gap-2 w-[143px] h-7">
+                <div className="flex flex-row items-start w-[66px] h-7">
+                  <button
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[66px] h-7 bg-[#F3F3F3] hover:bg-gray-200"
+                    onClick={() => window.print()}
+                  >
+                    <span className="text-xs leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">인쇄하기</span>
+                  </button>
+                </div>
+                <div className="flex flex-row items-start w-[69px] h-7">
+                  <button
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                    onClick={handleRetirementBenefitApply}
+                    disabled={retirementBenefitLoading}
+                  >
+                    <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
+                      {retirementBenefitLoading ? '처리중...' : '결산 반영'}
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+          {/* 퇴직급여충당금 테이블 섹션 */}
+          <div className="flex flex-col items-start w-full ">
+            {retirementBenefitLoading ? (
+              <div className="flex items-center justify-center w-full h-full">
+                <div className="text-[#757575]">퇴직급여충당금 데이터를 불러오는 중...</div>
+              </div>
+            ) : retirementBenefitData ? (
+              <>
+                {/* 퇴직급여충당금 테이블 */}
+                <div className="w-full">
+                  <table className="w-full border-collapse border border-[#D9D9D9] text-xs text-[#757575]">
+                    <thead>
+                      <tr>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">구분</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">지급총액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">비율</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">충당금</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">적요</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">차변계정</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {editableRetirementBenefitItems.length > 0 ? (
+                        editableRetirementBenefitItems.map((item) => (
+                          <tr key={item.id}>
+                            <td className="p-2 border border-[#D9D9D9] text-center">{item.label}</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                value={item.paidTotal.toLocaleString()}
+                                onChange={(e) => handleRetirementBenefitItemChange(item.id, 'paidTotal', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9] text-center">{item.ratioText}</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                value={item.provisionAmount.toLocaleString()}
+                                onChange={(e) => handleRetirementBenefitItemChange(item.id, 'provisionAmount', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9] text-center">
+                              <input 
+                                type="text" 
+                                className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                value={item.note}
+                                onChange={(e) => handleRetirementBenefitItemChange(item.id, 'note', e.target.value)}
+                              />
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9] text-center">{item.debitAccountCode}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center text-gray-500">
+                            퇴직급여충당금 데이터가 없습니다. 퇴직급여충당금 점검을 실행해주세요.
+                          </td>
+                        </tr>
+                      )}
+                      {/* 합계 행 */}
+                      {editableRetirementBenefitItems.length > 0 && (
+                        <tr className="bg-[#F5F5F5]">
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">합계</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">
+                            {editableRetirementBenefitItems.reduce((sum, item) => sum + item.paidTotal, 0).toLocaleString()}
+                          </td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">
+                            {editableRetirementBenefitItems.reduce((sum, item) => sum + item.provisionAmount, 0).toLocaleString()}
+                          </td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* 전표 점검 섹션 - retirementBenefitVoucherData가 있을 때만 표시 */}
+                {retirementBenefitVoucherData && (
+                <div className="w-full pt-4 mt-19 border-t border-[#D9D9D9]">
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="text-[15px] leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">전표 점검</h3>
+                        <p className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">생성된 전표를 확인하고 저장해주세요.</p>
+                      </div>
+                      <button
+                        className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                        onClick={handleRetirementBenefitSave}
+                      >
+                        <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">저장하기</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <table className="w-full border-collapse border border-[#D9D9D9] text-xs text-[#757575]">
+                    <thead className="h-16">
+                      <tr className="h-8">
+                        <th rowSpan={2} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">일자</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">차변</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">대변</th>
+                        <th rowSpan={2} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">적요</th>
+                      </tr>
+                      <tr className="h-8">
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">거래처</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium h-8">거래처</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {retirementBenefitVoucherData && retirementBenefitVoucherData.transactions?.length > 0 ? (
+                        <>
+                          {retirementBenefitVoucherData.transactions.map((transaction, index) => (
+                            <tr key={index} className="h-8">
+                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{closingDate}</td>
+                              {transaction.debitCredit === 'DEBIT' ? (
+                                <>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.partner?.name || '-'}</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                </>
+                              ) : (
+                                <>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.partner?.name || '-'}</td>
+                                </>
+                              )}
+                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.note}</td>
+                            </tr>
+                          ))}
+                          <tr className="h-8">
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8 font-medium bg-[#F5F5F5]">소계</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                              {retirementBenefitVoucherData.transactions
+                                .filter(t => t.debitCredit === 'DEBIT')
+                                .reduce((sum, t) => sum + t.amount, 0)
+                                .toLocaleString()}
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                              {retirementBenefitVoucherData.transactions
+                                .filter(t => t.debitCredit === 'CREDIT')
+                                .reduce((sum, t) => sum + t.amount, 0)
+                                .toLocaleString()}
+                            </td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                          </tr>
+                        </>
+                      ) : (
+                        <tr className="h-8">
+                          <td colSpan={8} className="p-2 text-center text-gray-500 h-8">
+                            전표전검 데이터가 없습니다.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                  
+                </div>
+                )}
+            </>
+            ) : (
+              <div className="flex items-center justify-center w-full h-full">
+                <div className="text-[#757575]">퇴직급여충당금 데이터가 없습니다.</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <ToastMessage 

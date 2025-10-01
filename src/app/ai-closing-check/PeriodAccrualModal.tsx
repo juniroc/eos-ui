@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { EditablePeriodAccrualItem, PeriodAccrualResponse } from './page';
 import Image from 'next/image';
+import ToastMessage from '@/components/ToastMessage';
 
 // 타입 정의
 interface PeriodAccrualItem {
@@ -63,6 +64,8 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   const [showJournalTable, setShowJournalTable] = useState(false);
   const [editableData, setEditableData] = useState<PeriodAccrualItem[]>([]);
   const [editableJournalEntries, setEditableJournalEntries] = useState<JournalEntry[]>([]);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
   
   // data가 변경될 때마다 editableData 초기화
   React.useEffect(() => {
@@ -143,6 +146,8 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
       return;
     }
 
+    setToastMessage('기간귀속의 전표 생성이 완료되었습니다.');
+    setShowToast(true);
     setShowJournalTable(true);
   };
 
@@ -471,7 +476,11 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                     <p className="text-xs text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
                   </div>
                   <button 
-                    onClick={() => alert('전표가 저장되었습니다.')}
+                    onClick={() => {
+                      // TODO: 저장 기능 구현
+                      setToastMessage('기간귀속의 전표 저장이 완료되었습니다.');
+                      setShowToast(true);
+                    }}
                     className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs"
                   >
                     저장하기
@@ -643,6 +652,11 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
           )}
         </div>
       </div>
+      <ToastMessage
+        message={toastMessage} 
+        isVisible={showToast} 
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 };

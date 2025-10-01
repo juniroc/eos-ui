@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { EditablePeriodAccrualItem, PeriodAccrualResponse } from './page';
+import Image from 'next/image';
 
 // 타입 정의
 interface PeriodAccrualItem {
@@ -268,9 +269,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
             onClick={onClose}
             className="w-4 h-4 text-[#1E1E1E] hover:text-gray-700"
           >
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <Image src="/icons/close.svg" alt="close" width={16} height={16} />
           </button>
         </div>
 

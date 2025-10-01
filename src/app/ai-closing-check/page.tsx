@@ -7,10 +7,9 @@ import SuspenseModal from './SuspenseModal';
 import PeriodAccrualModal from './PeriodAccrualModal';
 import DepreciationModal from '@/components/DepreciationModal';
 import EndingInventoryModal from '@/components/EndingInventoryModal';
+import BadDebtModal from '@/components/BadDebtModal';
 import {
   initClosingCheck,
-  checkBadDebt,
-  applyBadDebt,
   getClosingCheckStream
 } from '@/services/api';
 interface CheckRow {
@@ -35,40 +34,6 @@ interface AutoModeResponse {
 }
 
 
-
-// 대손상각 관련 타입
-interface BadDebtItem {
-  accountCode: string;
-  accountName: string;
-  partnerId?: string | null;
-  partnerName?: string | null;
-  endingBalance: number;
-  rate: number;
-  amount: number;
-  reason?: string;
-}
-
-interface BadDebtResponse {
-  key: string;
-  status: string;
-  rows: BadDebtItem[];
-  meta: {
-    receivableCodes: string[];
-  };
-}
-
-interface EditableBadDebtItem extends BadDebtItem {
-  id: string;
-  isEditing?: boolean;
-}
-
-// API에서 요구하는 BadDebtRow 타입
-interface BadDebtRow {
-  accountCode: string;
-  amount: number;
-  partnerId?: string | null;
-  reason?: string;
-}
 
 // 퇴직급여충당금 관련 타입
 interface RetirementBenefitItem {
@@ -273,10 +238,6 @@ export default function AIClosingCheckPage() {
 
   // 대손상각 팝업 상태
   const [showBadDebtModal, setShowBadDebtModal] = useState(false);
-  const [badDebtData, setBadDebtData] = useState<BadDebtResponse | null>(null);
-  const [badDebtVoucherData, setBadDebtVoucherData] = useState<VoucherResponse | null>(null);
-  const [badDebtLoading, setBadDebtLoading] = useState(false);
-  const [editableBadDebtItems, setEditableBadDebtItems] = useState<EditableBadDebtItem[]>([]);
 
   // 퇴직급여충당금 팝업 상태
   const [showRetirementBenefitModal, setShowRetirementBenefitModal] = useState(false);
@@ -321,113 +282,13 @@ export default function AIClosingCheckPage() {
     ));
   };
 
-  /** 대손상각 점검 */
-  const handleBadDebtCheck = async () => {
-    try {
-      setBadDebtLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      console.log('대손상각 점검 API 요청:', {
-        closingDate: closingDate
-      });
-
-      const data: BadDebtResponse = await checkBadDebt(closingDate, accessToken) as BadDebtResponse;
-      setBadDebtData(data);
-      
-      // 편집 가능한 형태로 변환
-      const editableItems: EditableBadDebtItem[] = data.rows.map((item, index) => ({
-        ...item,
-        partnerId: item.partnerId || '',
-        partnerName: item.partnerName || '',
-        id: `${item.accountCode}-${item.partnerId || 'unknown'}-${index}`,
-        isEditing: false
-      }));
-      setEditableBadDebtItems(editableItems);
-      
-      // 기존 모달 닫기
-      setShowModal(false);
-      
-      // 대손상각 팝업 열기
-      setShowBadDebtModal(true);
-      
-      // 테이블에 대손상각 항목 표시
-      const updatedRows = rows.map(row => 
-        row.key === 'bad_debt' 
-          ? { ...row, status: 'DONE' as CheckRow['status'] }
-          : row
-      );
-      setRows(updatedRows);
-    } catch (error) {
-      console.error('대손상각 점검 API 호출 오류:', error);
-      alert(error instanceof Error ? error.message : '대손상각 점검 중 오류가 발생했습니다.');
-    } finally {
-      setBadDebtLoading(false);
-    }
+  /** 대손상각 상태 업데이트 핸들러 */
+  const handleBadDebtStatusUpdate = (status: 'DONE') => {
+    setRows(prev => prev.map(row => 
+      row.key === 'bad_debt' ? { ...row, status } : row
+    ));
   };
 
-  /** 대손상각 결산 반영 */
-  const handleBadDebtApply = async () => {
-    try {
-      setBadDebtLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // API에서 요구하는 형태로 데이터 변환
-      const rows: BadDebtRow[] = editableBadDebtItems.map(item => {
-        const row: BadDebtRow = {
-          accountCode: item.accountCode,
-          amount: item.amount,
-          reason: item.reason
-        };
-        // partnerId가 있는 경우에만 추가
-        if (item.partnerId) {
-          row.partnerId = item.partnerId;
-        }
-        return row;
-      });
-
-      const data: VoucherResponse = await applyBadDebt({
-        closingDate: closingDate,
-        rows: rows
-      }, accessToken) as VoucherResponse;
-      setBadDebtVoucherData(data);
-      
-      // 메인 테이블 상태 업데이트
-      setRows(prev => prev.map(row => 
-        row.key === 'bad_debt' ? { ...row, status: 'DONE' } : row
-      ));
-      
-    } catch (error) {
-      console.error('대손상각 결산 반영 API 호출 오류:', error);
-      alert(error instanceof Error ? error.message : '대손상각 결산 반영 중 오류가 발생했습니다.');
-    } finally {
-      setBadDebtLoading(false);
-    }
-  };
-
-  /** 대손상각 전표 저장 */
-  const handleBadDebtSave = async () => {
-    alert('저장했습니다');
-    setShowBadDebtModal(false);
-  };
-
-  /** 대손상각 아이템 변경 핸들러 */
-  const handleBadDebtItemChange = (id: string, field: keyof EditableBadDebtItem, value: string | number | boolean) => {
-    setEditableBadDebtItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
-  };
 
   /** 퇴직급여충당금 점검 */
   const handleRetirementBenefitCheck = async () => {
@@ -1232,7 +1093,7 @@ export default function AIClosingCheckPage() {
                       } else if (r.key === 'ending_inventory') {
                         setShowEndingInventoryModal(true);
                       } else if (r.key === 'bad_debt') {
-                        handleBadDebtCheck();
+                        setShowBadDebtModal(true);
                       } else if (r.key === 'retirement_benefit') {
                         handleRetirementBenefitCheck();
                       } else if (r.key === 'suspense_clear') {
@@ -1423,238 +1284,12 @@ export default function AIClosingCheckPage() {
       />
 
       {/* 대손상각 팝업 */}
-      {showBadDebtModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-5 flex items-center justify-center z-50 p-6">
-          <div className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
-            {/* 팝업 헤더 */}
-            <div className="relative p-6 border-b border-gray-200">
-              {/* X 버튼 - 우측 상단 고정 */}
-              <button
-                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
-                onClick={() => setShowBadDebtModal(false)}
-              >
-                ✕
-              </button>
-              
-              <div className="flex justify-between items-start pr-12">
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">AI분개 &gt; AI결산점검 &gt; 대손상각</div>
-                  <h2 className="text-2xl font-bold text-gray-900">대손상각</h2>
-                  <p className="text-gray-600 mt-2">
-                    AI가 수행한 대손상각 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                    onClick={() => window.print()}
-                  >
-                    인쇄하기
-                  </button>
-                  <button
-                    className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                    onClick={handleBadDebtApply}
-                    disabled={badDebtLoading}
-                  >
-                    {badDebtLoading ? '처리중...' : '결산 반영'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 팝업 내용 */}
-            <div className="p-6 overflow-y-auto h-[calc(100%-120px)]">
-              {badDebtLoading ? (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">대손상각 데이터를 불러오는 중...</div>
-                </div>
-              ) : badDebtData ? (
-                <>
-                  {/* 대손상각 테이블 */}
-                  <div className="mb-8">
-                    <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                      <thead>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">기말잔액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대손상각액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대손사유</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">비율</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {editableBadDebtItems.length > 0 ? (
-                          editableBadDebtItems.map((item) => (
-                            <tr key={item.id}>
-                              <td className="p-3 border border-[#D9D9D9] text-center">{item.accountName}</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">{item.partnerName}</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.endingBalance.toLocaleString()}
-                                  onChange={(e) => handleBadDebtItemChange(item.id, 'endingBalance', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                                />
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.amount.toLocaleString()}
-                                  onChange={(e) => handleBadDebtItemChange(item.id, 'amount', parseFloat(e.target.value.replace(/,/g, '')) || 0)}
-                                />
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <select 
-                                  className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={item.reason || '세법상 인정액'}
-                                  onChange={(e) => handleBadDebtItemChange(item.id, 'reason', e.target.value)}
-                                >
-                                  <option value="세법상 인정액">세법상 인정액</option>
-                                  <option value="기타">기타</option>
-                                </select>
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                <input 
-                                  type="text" 
-                                  className="w-full px-2 py-1 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={`${item.rate}%`}
-                                  onChange={(e) => handleBadDebtItemChange(item.id, 'rate', parseFloat(e.target.value.replace('%', '')) || 0)}
-                                />
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={6} className="p-8 text-center text-gray-500">
-                              대손상각 데이터가 없습니다. 대손상각 점검을 실행해주세요.
-                            </td>
-                          </tr>
-                        )}
-                        {/* 합계 행 */}
-                        {editableBadDebtItems.length > 0 && (
-                          <tr className="bg-[#F5F5F5]">
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">합계</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                              {editableBadDebtItems.reduce((sum, item) => sum + item.endingBalance, 0).toLocaleString()}
-                            </td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">
-                              {editableBadDebtItems.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
-                            </td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                            <td className="p-3 border border-[#D9D9D9] text-center font-medium">-</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* 전표 점검 섹션 */}
-                  <div>
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold">전표 점검</h3>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-600">생성된 전표를 확인하고 저장해주세요.</p>
-                        <button
-                          className="px-6 py-2 bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                          onClick={handleBadDebtSave}
-                        >
-                          저장
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <table className="w-full border-collapse border border-[#D9D9D9] text-sm text-[#757575]">
-                      <thead>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">일자</th>
-                          <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">차변</th>
-                          <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">대변</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">적요</th>
-                        </tr>
-                        <tr>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">계정과목</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">금액</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium">거래처</th>
-                          <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center font-medium"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {badDebtVoucherData && badDebtVoucherData.transactions?.length > 0 ? (
-                          <>
-                            {badDebtVoucherData.transactions.map((transaction, index) => (
-                              <tr key={index}>
-                                <td className="p-3 border border-[#D9D9D9] text-center">{closingDate}</td>
-                                {transaction.debitCredit === 'DEBIT' ? (
-                                  <>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                  </>
-                                ) : (
-                                  <>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.account?.name || '-'}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.amount.toLocaleString()}</td>
-                                    <td className="p-3 border border-[#D9D9D9] text-center">{transaction.partner?.name || '-'}</td>
-                                  </>
-                                )}
-                                <td className="p-3 border border-[#D9D9D9] text-center">{transaction.note}</td>
-                              </tr>
-                            ))}
-                            <tr>
-                              <td className="p-3 border border-[#D9D9D9] text-center font-medium bg-[#F5F5F5]">소계</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                {badDebtVoucherData.transactions
-                                  .filter(t => t.debitCredit === 'DEBIT')
-                                  .reduce((sum, t) => sum + t.amount, 0)
-                                  .toLocaleString()}
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">
-                                {badDebtVoucherData.transactions
-                                  .filter(t => t.debitCredit === 'CREDIT')
-                                  .reduce((sum, t) => sum + t.amount, 0)
-                                  .toLocaleString()}
-                              </td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                              <td className="p-3 border border-[#D9D9D9] text-center">-</td>
-                            </tr>
-                          </>
-                        ) : (
-                          <tr>
-                            <td colSpan={8} className="p-8 text-center text-gray-500">
-                              결산반영을 실행하면 전표가 생성됩니다.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                    
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">대손상각 데이터가 없습니다.</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <BadDebtModal
+        isOpen={showBadDebtModal}
+        onClose={() => setShowBadDebtModal(false)}
+        closingDate={closingDate}
+        onStatusUpdate={handleBadDebtStatusUpdate}
+      />
 
       {/* 퇴직급여충당금 팝업 */}
       {showRetirementBenefitModal && (

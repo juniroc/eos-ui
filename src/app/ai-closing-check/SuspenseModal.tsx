@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 // 타입 정의
 interface SuspenseTransaction {
@@ -195,9 +196,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
             onClick={onClose}
             className="w-4 h-4 text-[#1E1E1E] hover:text-gray-600 flex items-center justify-center"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
+            <Image src="/icons/close.svg" alt="close" width={16} height={16} />
           </button>
         </div>
 

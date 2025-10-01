@@ -248,7 +248,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="bg-white shadow-xl w-full mx-4 h-full overflow-hidden">
+      <div className="bg-white shadow-xl w-full h-full overflow-hidden">
         {/* 모달 헤더 */}
         <div className="flex justify-between items-center px-3 py-3 h-[41px]">
           {/* 브레드크럼 */}
@@ -275,7 +275,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
         </div>
 
         {/* 모달 내용 */}
-        <div className="p-4 overflow-y-auto max-h-[calc(800px-41px)]">
+        <div className="p-4 overflow-y-auto max-h-[calc(100%-41px)]">
           {/* 제목 섹션 */}
           <div className="mb-4">
             <div className="flex justify-between items-end mb-4">
@@ -463,7 +463,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
 
           {/* 전표 테이블 */}
           {showJournalTable && (
-            <div className="mt-4 border-t border-[#D9D9D9]">
+            <div className="mt-19 border-t border-[#D9D9D9]">
               <div className="pt-4">
                 {/* 전표 제목 */}
                 <div className="mb-4 flex justify-between items-end">

@@ -213,8 +213,9 @@ export default function EndingInventoryModal({
 
   /** 기말재고 전표 저장 */
   const handleEndingInventorySave = async () => {
-    alert('저장했습니다');
-    onClose();
+    // TODO: 저장 기능 구현
+    setToastMessage('기말재고의 전표 저장이 완료되었습니다.');
+    setShowToast(true);
   };
 
   /** 기말재고 아이템 변경 핸들러 */
@@ -328,37 +329,37 @@ export default function EndingInventoryModal({
                 <div className="flex flex-col items-start p-0 min-w-[640px] sm:min-w-[720px] lg:min-w-[820px] border border-[#D9D9D9]">
                 {/* Header Row */}
                 <div className="flex items-start p-0 w-full h-8">
-                  <div className="flex flex-col justify-center items-start p-0 w-[100px] min-w-[80px] sm:w-[120px] sm:min-w-[120px] h-8">
+                  <div className="flex flex-col justify-center items-start p-0 w-[100px] min-w-[80px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">계정과목</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">기초재고</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">기중매입</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[110px] min-w-[90px] sm:w-[140px] sm:min-w-[140px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[110px] min-w-[90px] sm:w-[140px] sm:min-w-[140px] lg:flex-1 lg:min-w-[140px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">장부상재고액</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">기말실사액</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[160px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[160px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] lg:flex-[1.5] lg:min-w-[200px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-r border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">매출외사용</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8">
+                  <div className="flex flex-col justify-center items-center p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                     <div className="flex justify-center items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-l border-[#D9D9D9]">
                       <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">매출원가</span>
                     </div>
@@ -369,13 +370,13 @@ export default function EndingInventoryModal({
                 {editableInventoryItems.length > 0 ? (
                   editableInventoryItems.map((item) => (
                     <div key={item.id} className="flex items-start p-0 w-full h-8 border-t border-[#D9D9D9]">
-                      <div className="flex flex-col justify-center items-start p-0 w-[120px] min-w-[120px] h-8">
-                        <div className="flex items-center p-2 w-[120px] min-w-[120px] h-8 bg-white border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[100px] min-w-[80px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                           <span className="flex-1 text-xs leading-[100%] text-[#757575] whitespace-nowrap overflow-hidden text-ellipsis">{item.itemName}</span>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[120px] min-w-[120px] h-8">
-                        <div className="flex items-center p-2 w-[120px] min-w-[120px] h-8 bg-white border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                           <input 
                             type="text" 
                             className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none text-right pr-1"
@@ -385,8 +386,8 @@ export default function EndingInventoryModal({
                           <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">원</span>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[120px] min-w-[120px] h-8">
-                        <div className="flex items-center p-2 w-[120px] min-w-[120px] h-8 bg-white border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                           <input 
                             type="text" 
                             className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none text-right pr-1"
@@ -396,16 +397,16 @@ export default function EndingInventoryModal({
                           <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">원</span>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[140px] min-w-[140px] h-8">
-                        <div className="flex items-center p-2 w-[140px] min-w-[140px] h-8 bg-white border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[110px] min-w-[90px] sm:w-[140px] sm:min-w-[140px] lg:flex-1 lg:min-w-[140px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                           <span className="flex-1 text-xs leading-[100%] text-[#757575] text-right pr-1 whitespace-nowrap overflow-hidden text-ellipsis">
                             {(item.priorAmount + item.currentAmount).toLocaleString()}
                           </span>
                           <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">원</span>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[120px] min-w-[120px] h-8">
-                        <div className="flex items-center p-2 w-[120px] min-w-[120px] h-8 bg-white border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-r border-[#D9D9D9]">
                           <input 
                             type="text" 
                             className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none text-right pr-1"
@@ -415,9 +416,9 @@ export default function EndingInventoryModal({
                           <span className="text-xs leading-[100%] text-[#757575] whitespace-nowrap">원</span>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[200px] min-w-[200px] h-8">
-                        <div className="flex items-center p-0 w-[200px] min-w-[200px] h-8 bg-white border-r border-[#D9D9D9]">
-                          <div className="flex items-center p-2 w-[100px] min-w-[100px] h-8 border-r border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[160px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] lg:flex-[1.5] lg:min-w-[200px] h-8">
+                        <div className="flex items-center p-0 w-full h-8 bg-white border-r border-[#D9D9D9]">
+                          <div className="flex items-center p-2 w-1/2 h-8 border-r border-[#D9D9D9]">
                             <input 
                               type="text" 
                               className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none"
@@ -425,7 +426,7 @@ export default function EndingInventoryModal({
                               onChange={(e) => handleInventoryItemChange(item.id, 'usagePurpose', e.target.value)}
                             />
                           </div>
-                          <div className="flex items-center p-2 w-[100px] min-w-[100px] h-8">
+                          <div className="flex items-center p-2 w-1/2 h-8">
                             <input 
                               type="text" 
                               className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none text-right"
@@ -435,8 +436,8 @@ export default function EndingInventoryModal({
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-center items-start p-0 w-[120px] min-w-[120px] h-8">
-                        <div className="flex items-center p-2 w-[120px] min-w-[120px] h-8 bg-white border-l border-[#D9D9D9]">
+                      <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
+                        <div className="flex items-center p-2 w-full h-8 bg-white border-l border-[#D9D9D9]">
                           <input 
                             type="text" 
                             className="w-full text-xs leading-[100%] text-[#757575] bg-transparent border-none outline-none text-right pr-1"
@@ -459,17 +460,17 @@ export default function EndingInventoryModal({
                 {/* Subtotal Row */}
                 {editableInventoryItems.length > 0 && (
                   <div className="flex items-start p-0 w-full h-8 border-t border-[#D9D9D9]">
-                    <div className="flex flex-col justify-center items-start p-0 w-[100px] min-w-[80px] sm:w-[120px] sm:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                    <div className="flex flex-col justify-center items-start p-0 w-[100px] min-w-[80px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[110px] min-w-[90px] sm:w-[140px] sm:min-w-[140px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                    <div className="flex flex-col justify-center items-start p-0 w-[110px] min-w-[90px] sm:w-[140px] sm:min-w-[140px] lg:flex-1 lg:min-w-[140px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[160px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] h-8">
+                    <div className="flex flex-col justify-center items-start p-0 w-[160px] min-w-[140px] sm:w-[200px] sm:min-w-[200px] lg:flex-[1.5] lg:min-w-[200px] h-8">
                       <div className="flex items-center p-0 w-full h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
                         <div className="flex items-center p-2 gap-2 w-1/2 h-8 border-r border-[#D9D9D9]">
                           <span className="flex-1 text-xs leading-[100%] text-[#757575] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -483,7 +484,7 @@ export default function EndingInventoryModal({
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] h-8">
+                    <div className="flex flex-col justify-center items-start p-0 w-[90px] min-w-[70px] sm:w-[120px] sm:min-w-[120px] lg:flex-1 lg:min-w-[120px] h-8">
                       <div className="flex items-center p-2 gap-2 w-full h-8 bg-[#F5F5F5] border-l border-b border-[#D9D9D9]">
                         <span className="flex-1 text-xs leading-[100%] text-[#B3B3B3] text-right pr-1 whitespace-nowrap overflow-hidden text-ellipsis">
                           {editableInventoryItems.reduce((sum, item) => sum + item.cogsAmount, 0).toLocaleString()}
@@ -528,7 +529,7 @@ export default function EndingInventoryModal({
                           onClick={handleEndingInventorySave}
                         >
                           <span className="w-[42px] h-3 font-medium text-xs leading-[100%] text-[#F5F5F5]">
-                            저장
+                            저장하기
                           </span>
                         </button>
                       </div>
@@ -539,20 +540,20 @@ export default function EndingInventoryModal({
                   <table className="w-full border-collapse border border-[#D9D9D9] text-sm">
                     <thead>
                       <tr>
-                        <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">일자</th>
-                        <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">차변</th>
-                        <th colSpan={3} className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">대변</th>
-                        <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">적요</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">일자</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">차변</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">대변</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">적요</th>
                       </tr>
                       <tr>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 text-xs font-medium text-[#757575]"></th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-10 text-xs font-medium text-[#757575]"></th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]"></th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -606,7 +607,7 @@ export default function EndingInventoryModal({
                         </>
                       ) : (
                         <tr>
-                          <td colSpan={8} className="p-8 text-center text-gray-500 h-20 text-sm">
+                          <td colSpan={8} className="p-8 text-center text-gray-500 h-20 text-xs">
                             전표 데이터가 없습니다.
                           </td>
                         </tr>

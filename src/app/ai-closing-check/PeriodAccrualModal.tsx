@@ -247,10 +247,10 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white shadow-xl max-w-[1240px] w-full mx-4 max-h-[800px] overflow-hidden">
+    <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
+      <div className="bg-white shadow-xl w-full mx-4 h-full overflow-hidden">
         {/* 모달 헤더 */}
-        <div className="flex justify-between items-center px-3 py-3 border-b border-[#D9D9D9] h-[41px]">
+        <div className="flex justify-between items-center px-3 py-3 h-[41px]">
           {/* 브레드크럼 */}
           <div className="flex items-center gap-[2px] flex-1">
             <span className="text-xs text-[#B3B3B3]">기초정보</span>
@@ -475,7 +475,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                     onClick={() => alert('전표가 저장되었습니다.')}
                     className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs"
                   >
-                    저장
+                    저장하기
                   </button>
                 </div>
 

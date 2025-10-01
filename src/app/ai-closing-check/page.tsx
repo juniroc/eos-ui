@@ -1254,15 +1254,15 @@ export default function AIClosingCheckPage() {
         ) : (
           /* 빈 상태 행 */
           <div className="flex w-full h-8 border-t border-b border-[#D9D9D9]">
-            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-[#F5F5F5] p-2">
+            <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-[#F5F5F5] border-b border-[#D9D9D9] p-2">
             </div>
           </div>
         )}

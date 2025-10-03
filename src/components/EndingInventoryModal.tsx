@@ -540,20 +540,18 @@ export default function EndingInventoryModal({
                   <table className="w-full border-collapse border border-[#D9D9D9] text-sm">
                     <thead>
                       <tr>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">일자</th>
-                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">차변</th>
-                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">대변</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">적요</th>
+                        <th rowSpan={2} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 w-[100px] min-w-[100px] text-xs font-medium text-[#757575]">일자</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 w-1/3 text-xs font-medium text-[#757575]">차변</th>
+                        <th colSpan={3} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 w-1/3 text-xs font-medium text-[#757575]">대변</th>
+                        <th rowSpan={2} className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 w-1/3 text-xs font-medium text-[#757575]">적요</th>
                       </tr>
                       <tr>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]"></th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[120px] text-xs font-medium text-[#757575]">계정과목</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">금액</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 min-w-[100px] text-xs font-medium text-[#757575]">거래처</th>
-                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]"></th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">거래처</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">계정과목</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">금액</th>
+                        <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center h-8 text-xs font-medium text-[#757575]">거래처</th>
                       </tr>
                     </thead>
                     <tbody>

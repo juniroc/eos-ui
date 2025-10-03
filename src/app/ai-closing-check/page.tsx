@@ -37,47 +37,6 @@ interface AutoModeResponse {
 
 
 
-// 가수가지급금 관련 타입
-interface SuspenseVoucher {
-  voucherId: string;
-  date: string;
-  description: string;
-  transactions: {
-    id: string;
-    accountId: string;
-    accountCode: string;
-    accountName: string;
-    debitCredit: 'DEBIT' | 'CREDIT';
-    amount: number;
-    partnerId?: string;
-    partnerName?: string;
-    note?: string;
-  }[];
-}
-
-interface SuspenseResponse {
-  key: string;
-  status: string;
-  vouchers: SuspenseVoucher[];
-  period: {
-    start: string;
-    end: string;
-  };
-}
-
-interface EditableSuspenseTransaction {
-  id: string;
-  accountId: string;
-  accountCode: string;
-  accountName: string;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  amount: number;
-  partnerId?: string;
-  partnerName?: string;
-  note?: string;
-  isEditing?: boolean;
-}
-
 // 기간귀속 관련 타입
 interface PeriodAccrualItem {
   accountCode: string;
@@ -198,9 +157,6 @@ export default function AIClosingCheckPage() {
 
   // 가수가지급금 팝업 상태
   const [showSuspenseModal, setShowSuspenseModal] = useState(false);
-  const [suspenseData, setSuspenseData] = useState<SuspenseResponse | null>(null);
-  const [suspenseLoading, setSuspenseLoading] = useState(false);
-  const [editableSuspenseTransactions, setEditableSuspenseTransactions] = useState<EditableSuspenseTransaction[]>([]);
 
   // 기간귀속 팝업 상태
   const [showPeriodAccrualModal, setShowPeriodAccrualModal] = useState(false);
@@ -247,196 +203,11 @@ export default function AIClosingCheckPage() {
     ));
   };
 
-  /** 가수가지급금 점검 */
-  const handleSuspenseCheck = async () => {
-    try {
-      setSuspenseLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 가수가지급금 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'suspense_clear'
-      };
-      
-      console.log('가수가지급금 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
-        closingDate: closingDate
-      });
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`가수가지급금 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: SuspenseResponse = await response.json();
-      setSuspenseData(data);
-      
-      // 편집 가능한 형태로 변환
-      const allTransactions: EditableSuspenseTransaction[] = [];
-      data.vouchers.forEach(voucher => {
-        voucher.transactions.forEach(transaction => {
-          allTransactions.push({
-            ...transaction,
-            isEditing: false
-          });
-        });
-      });
-      setEditableSuspenseTransactions(allTransactions);
-      
-      // 기존 모달 닫기
-      setShowModal(false);
-      
-      // 가수가지급금 팝업 열기
-      setShowSuspenseModal(true);
-      
-      // 테이블에 가수가지급금 항목 표시
-      const updatedRows = rows.map(row => 
-        row.key === 'suspense_clear' 
-          ? { ...row, status: 'DONE' as CheckRow['status'] }
-          : row
-      );
-      setRows(updatedRows);
-    } catch (error) {
-      console.error('가수가지급금 점검 API 호출 오류:', error);
-      alert('가수가지급금 점검 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setSuspenseLoading(false);
-    }
-  };
-
-  /** 가수가지급금 직접 점검 */
-  const callSuspenseAPI = async (date: string) => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 가수가지급금 점검 API 호출
-      const requestBody = {
-        closingDate: date,
-        key: 'suspense_clear',
-      };
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`가수가지급금 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      const data: SuspenseResponse = await response.json();
-      setSuspenseData(data);
-
-      return data;
-    } catch (error) {
-      console.error('가수가지급금 직접 점검 API 호출 오류:', error);
-      alert('가수가지급금 직접 점검 중 네트워크 오류가 발생했습니다.');
-    }
-  };
-
-  /** 가수가지급금 결산 반영 */
-  const handleSuspenseApply = async (newData: SuspenseResponse) => {
-    try {
-      setSuspenseLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // 가수가지급금 점검 API 호출
-      const requestBody = {
-        closingDate: closingDate,
-        key: 'suspense_clear',
-        vouchers: newData.vouchers
-      };
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        } else {
-          alert(`가수가지급금 점검에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-      // 성공했습니다는 안내문구
-      alert('가수가지급금 결산 반영이 완료되었습니다.');
-
-      // const data: SuspenseResponse = await response.json();
-      // setSuspenseData(data);
-      
-      // // 편집 가능한 형태로 변환
-      // const allTransactions: EditableSuspenseTransaction[] = [];
-      // data.vouchers.forEach(voucher => {
-      //   voucher.transactions.forEach(transaction => {
-      //     allTransactions.push({
-      //       ...transaction,
-      //       isEditing: false
-      //     });
-      //   });
-      // });
-      // setEditableSuspenseTransactions(allTransactions);
-      
-    } catch (error) {
-      console.error('가수가지급금 점검 API 호출 오류:', error);
-      alert('가수가지급금 점검 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setSuspenseLoading(false);
-    }
+  /** 가수가지급금 상태 업데이트 핸들러 */
+  const handleSuspenseStatusUpdate = (status: 'DONE') => {
+    setRows(prev => prev.map(row => 
+      row.key === 'suspense_clear' ? { ...row, status } : row
+    ));
   };
 
   /** 기간귀속 점검 API 호출 */
@@ -782,7 +553,7 @@ export default function AIClosingCheckPage() {
           </div>
           
           {/* Right Buttons */}
-          <div className="flex justify-end items-center gap-2 w-[354px] h-[32px]">
+          <div className="flex justify-end items-center gap-2 h-[32px]">
             {/* Date Input */}
             <div className="flex flex-col justify-center items-start w-[150px] min-w-[100px] h-[32px]">
               <div className="flex items-center p-2 gap-2 bg-white border border-[#D9D9D9] w-[150px] min-w-[100px] h-[32px] self-stretch">
@@ -796,7 +567,7 @@ export default function AIClosingCheckPage() {
             </div>
             
             {/* Divider */}
-            <div className="w-5 h-0 border-t border-[#D9D9D9] rotate-90"></div>
+            <div className="h-5 border-l border-[#D9D9D9]"></div>
             
             {/* Manual Check Button */}
             <div className="w-[90px] h-[28px]">
@@ -901,7 +672,7 @@ export default function AIClosingCheckPage() {
                       } else if (r.key === 'retirement_benefit') {
                         setShowRetirementBenefitModal(true);
                       } else if (r.key === 'suspense_clear') {
-                        handleSuspenseCheck();
+                        setShowSuspenseModal(true);
                       } else if (r.key === 'period_accrual') {
                         handlePeriodAccrualCheck();
                       } else {
@@ -1107,11 +878,8 @@ export default function AIClosingCheckPage() {
       <SuspenseModal
         isOpen={showSuspenseModal}
         onClose={() => setShowSuspenseModal(false)}
-        loading={suspenseLoading}
-        onApply={(data: SuspenseResponse) => handleSuspenseApply(data)}
         closingDate={closingDate}
-        onClosingDateChange={setClosingDate}
-        onDirectCheck={(date: string) => callSuspenseAPI(date)}
+        onStatusUpdate={handleSuspenseStatusUpdate}
       />
 
       {/* 기간귀속 팝업 */}

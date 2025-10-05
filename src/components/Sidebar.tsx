@@ -136,7 +136,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('basic-info', true)}
                 onMouseEnter={() => setHoveredMenu('basic-info')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'basic-info'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -157,7 +157,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('ai-journal', true)}
                 onMouseEnter={() => setHoveredMenu('ai-journal')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'ai-journal'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -178,7 +178,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('accounting', true)}
                 onMouseEnter={() => setHoveredMenu('accounting')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'accounting'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -210,7 +210,7 @@ export default function Sidebar({
             <button
               onClick={() => handleMenuClick('ai-tax', false)}
               onMouseEnter={() => setHoveredMenu('ai-tax')}
-              className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+              className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                 getCurrentActiveMenu() === 'ai-tax'
                   ? 'bg-[#E6E6E6]'
                   : 'hover:bg-[#E6E6E6]'
@@ -242,7 +242,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('cost-management', false)}
                 onMouseEnter={() => setHoveredMenu('cost-management')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'cost-management'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -263,7 +263,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('payroll', true)}
                 onMouseEnter={() => setHoveredMenu('payroll')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors ${
+                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'payroll'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -336,7 +336,7 @@ export default function Sidebar({
                         <div key={sub.id} className="flex flex-col items-start pl-4 gap-[10px] w-[92px] h-7">
                           <button
                             onClick={() => onSectionChange(sub.id)}
-                            className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors ${
+                            className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors cursor-pointer ${
                               activeSection === sub.id
                                 ? 'bg-[#E6E6E6]'
                                 : 'hover:bg-[#E6E6E6]'
@@ -356,7 +356,7 @@ export default function Sidebar({
                       <button
                         key={sub.id}
                         onClick={() => onSectionChange(sub.id)}
-                        className={`flex flex-row items-center p-2 gap-[6px] w-[92px] h-7 rounded transition-colors ${
+                        className={`flex flex-row items-center p-2 gap-[6px] w-[92px] h-7 rounded transition-colors cursor-pointer ${
                           activeSection === sub.id
                             ? 'bg-[#E6E6E6]'
                             : 'hover:bg-[#E6E6E6]'

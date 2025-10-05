@@ -71,77 +71,13 @@ interface PeriodAccrualRow {
 }
 
 
-interface VoucherTransaction {
-  account: {
-    id: string;
-    code: number;
-    name: string;
-    debitCredit: boolean;
-    attribute: string;
-    category: string;
-    fsName1: string;
-    fsName2: string;
-    summarySourceCodes: string[];
-    createdAt: string;
-    updatedAt: string;
-  };
-  partner: {
-    id: string;
-    name: string;
-    businessNumber: string | null;
-    representative: string | null;
-    address: string | null;
-    phone: string | null;
-    email: string | null;
-    userId: string;
-    type: string;
-    cardIssuer: string | null;
-    cardNumber: string | null;
-    cardType: string | null;
-    primaryUser: string | null;
-    bankName: string | null;
-    accountNumber: string | null;
-    withdrawalFee: number | null;
-    purpose: string | null;
-    note: string | null;
-    mainItems: string | null;
-    relationship: string | null;
-    documentId: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
-  amount: number;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  note: string;
-}
-
-interface VoucherResponse {
-  id: string;
-  userId: string;
-  date: string;
-  description: string;
-  departmentId: string | null;
-  documentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  transactions: VoucherTransaction[];
-}
-
 export default function AIClosingCheckPage() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<CheckRow[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [closingDate, setClosingDate] = useState<string>('');
   const [streamStatus, setStreamStatus] = useState<string>('');
-  const [modalData, setModalData] = useState<{
-    tangible?: Record<string, unknown>[];
-    intangible?: Record<string, unknown>[];
-    rows?: Record<string, unknown>[];
-  } | null>(null);
-  const [selectedItemKey, setSelectedItemKey] = useState<string>('');
-  const [allResults, setAllResults] = useState<Record<string, unknown> | null>(null);
   
   // 감가상각 팝업 상태
   const [showDepreciationModal, setShowDepreciationModal] = useState(false);
@@ -161,7 +97,6 @@ export default function AIClosingCheckPage() {
   // 기간귀속 팝업 상태
   const [showPeriodAccrualModal, setShowPeriodAccrualModal] = useState(false);
   const [periodAccrualData, setPeriodAccrualData] = useState<PeriodAccrualResponse | null>(null);
-  const [periodAccrualVoucherData, setPeriodAccrualVoucherData] = useState<VoucherResponse | null>(null);
   const [periodAccrualLoading, setPeriodAccrualLoading] = useState(false);
   const [editablePeriodAccrualItems, setEditablePeriodAccrualItems] = useState<EditablePeriodAccrualItem[]>([]);
 
@@ -271,7 +206,6 @@ export default function AIClosingCheckPage() {
       setEditablePeriodAccrualItems(editableItems);
       
       // 기존 모달 닫기
-      setShowModal(false);
       
       // 기간귀속 팝업 열기
       setShowPeriodAccrualModal(true);
@@ -342,13 +276,8 @@ export default function AIClosingCheckPage() {
         return;
       }
 
-      const data: VoucherResponse = await response.json();
-      setPeriodAccrualVoucherData(data);
+      await response.json();
       
-      // 메인 테이블 상태 업데이트
-      setRows(prev => prev.map(row => 
-        row.key === 'period_accrual' ? { ...row, status: 'DONE' } : row
-      ));
       
     } catch (error) {
       console.error('기간귀속 결산 반영 API 호출 오류:', error);
@@ -468,9 +397,6 @@ export default function AIClosingCheckPage() {
                       }
                     } else if (currentEventType === 'done') {
                       setStreamStatus(`완료: ${parsedData.progress}/${parsedData.total} 항목 처리됨`);
-                      
-                      // 모든 결과 데이터 저장
-                      setAllResults(parsedData.results);
                       
                       // 모든 항목을 완료 상태로 설정
                       setRows(prev => prev.map(row => ({ ...row, status: 'DONE' as CheckRow['status'] })));
@@ -662,7 +588,6 @@ export default function AIClosingCheckPage() {
                   <button
                     className="flex justify-center items-center py-1.5 gap-2.5 w-[32px] h-[23px] bg-[#2C2C2C] text-xs font-medium text-white"
                     onClick={() => {
-                      setSelectedItemKey(r.key);
                       if (r.key === 'depreciation') {
                         setShowDepreciationModal(true);
                       } else if (r.key === 'ending_inventory') {
@@ -675,9 +600,6 @@ export default function AIClosingCheckPage() {
                         setShowSuspenseModal(true);
                       } else if (r.key === 'period_accrual') {
                         handlePeriodAccrualCheck();
-                      } else {
-                        setModalData((allResults?.[r.key] as Record<string, unknown>) || null);
-                        setShowModal(true);
                       }
                     }}
                   >
@@ -703,144 +625,6 @@ export default function AIClosingCheckPage() {
           </div>
         )}
       </div>
-
-      {/* 모달 */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white shadow-lg max-w-7xl w-full mx-4 max-h-[90vh] overflow-hidden">
-            {/* 모달 헤더 */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <div>
-                <div className="text-sm text-gray-500 mb-1">
-                  AI분개 &gt; AI결산점검 &gt; {selectedItemKey === 'depreciation' && '감가상각'}
-                  {selectedItemKey === 'ending_inventory' && '기말재고'}
-                  {selectedItemKey === 'bad_debt' && '매출채권 연령 분석'}
-                  {selectedItemKey === 'retirement_benefit' && '퇴직급여 충당금'}
-                  {selectedItemKey === 'suspense_clear' && '미결산 정리'}
-                  {selectedItemKey === 'period_accrual' && '기말수정분개'}
-                </div>
-                <h3 className="text-lg font-bold">
-                  {selectedItemKey === 'depreciation' && '감가상각'}
-                  {selectedItemKey === 'ending_inventory' && '기말재고'}
-                  {selectedItemKey === 'bad_debt' && '매출채권 연령 분석'}
-                  {selectedItemKey === 'retirement_benefit' && '퇴직급여 충당금'}
-                  {selectedItemKey === 'suspense_clear' && '미결산 정리'}
-                  {selectedItemKey === 'period_accrual' && '기말수정분개'}
-                </h3>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  className="px-4 py-2 text-sm bg-[#F3F3F3] text-[#2C2C2C] hover:bg-gray-200"
-                  onClick={() => window.print()}
-                >
-                  인쇄하기
-                </button>
-                <button
-                  className="px-4 py-2 text-sm bg-[#2C2C2C] text-white hover:bg-[#444444]"
-                  onClick={() => {/* 결산 반영 기능 */}}
-                >
-                  결산 반영
-                </button>
-                <button
-                  className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowModal(false)}
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              <p className="text-sm text-gray-600 mb-4">
-                {selectedItemKey === 'depreciation' && 'AI가 수행한 감가상각 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
-                {selectedItemKey === 'ending_inventory' && '최종 실사 확인된 재고자산액과 장부상 재고액을 조정하여 원가를 계산합니다. 제조업과 상품의 품목별 단가, 원가율 등의 관리를 하고자 하는 회사는 원가관리 메뉴를 활용하여 기말재고작업을 진행하세요.'}
-                {selectedItemKey === 'bad_debt' && 'AI가 수행한 매출채권 연령 분석 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
-                {selectedItemKey === 'retirement_benefit' && 'AI가 수행한 퇴직급여 충당금 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
-                {selectedItemKey === 'suspense_clear' && 'AI가 수행한 미결산 정리 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
-                {selectedItemKey === 'period_accrual' && 'AI가 수행한 기말수정분개 작업을 확인해 주세요. 수정사항이 있으면 수정 후 결산반영을 누르면 됩니다.'}
-              </p>
-                
-              {/* 감가상각은 별도 팝업으로 처리 */}
-              {selectedItemKey === 'depreciation' && (
-                <div className="text-center py-8">
-                  <div className="text-gray-500">감가상각 점검을 실행해주세요.</div>
-                </div>
-              )}
-
-              {/* 다른 항목들 */}
-              {selectedItemKey !== 'depreciation' && selectedItemKey !== 'ending_inventory' && selectedItemKey !== 'bad_debt' && selectedItemKey !== 'retirement_benefit' && modalData && (
-                <>
-                  {/* 기말수정분개 테이블 */}
-                  {selectedItemKey === 'period_accrual' && (
-                    <div>
-                      <div className="text-center py-8">
-                        <div className="text-gray-500">기말수정분개 데이터가 없습니다.</div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-              
-              {/* 기말수정분개 테이블 */}
-              {selectedItemKey === 'period_accrual' && (
-                <table className="w-full border border-[#D9D9D9] text-sm">
-              <thead>
-                    <tr className="bg-[#F5F5F5]">
-                      <th className="p-2 border border-[#D9D9D9]">계정코드</th>
-                      <th className="p-2 border border-[#D9D9D9]">계정명</th>
-                      <th className="p-2 border border-[#D9D9D9]">기말잔액</th>
-                      <th className="p-2 border border-[#D9D9D9]">추가금액</th>
-                      <th className="p-2 border border-[#D9D9D9]">대상계정</th>
-                      <th className="p-2 border border-[#D9D9D9]">메모</th>
-                </tr>
-              </thead>
-              <tbody>
-                    {modalData && modalData.rows && Array.isArray(modalData.rows) && modalData.rows.length > 0 ? (
-                      (modalData.rows as Record<string, unknown>[]).map((item: Record<string, unknown>, index: number) => (
-                        <tr key={index}>
-                          <td className="p-2 border border-[#D9D9D9]">{String(item.accountCode || '-')}</td>
-                          <td className="p-2 border border-[#D9D9D9]">{String(item.accountName || '-')}</td>
-                          <td className="p-2 border border-[#D9D9D9]">
-                            <input 
-                              type="text" 
-                              className="w-full px-1 py-1 text-xs" 
-                              defaultValue={typeof item.endingBalance === 'number' ? item.endingBalance.toLocaleString() : String(item.endingBalance || '')}
-                            />
-                          </td>
-                          <td className="p-2 border border-[#D9D9D9]">
-                            <input 
-                              type="text" 
-                              className="w-full px-1 py-1 text-xs" 
-                              defaultValue={typeof item.addAmount === 'number' ? item.addAmount.toLocaleString() : String(item.addAmount || '')}
-                            />
-                          </td>
-                          <td className="p-2 border border-[#D9D9D9]">
-                            <input 
-                              type="text" 
-                              className="w-full px-1 py-1 text-xs" 
-                              defaultValue={String(item.counterAccountId || '')}
-                            />
-                          </td>
-                          <td className="p-2 border border-[#D9D9D9]">
-                            <input 
-                              type="text" 
-                              className="w-full px-1 py-1 text-xs" 
-                              defaultValue={String(item.memo || '')}
-                            />
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={6} className="p-4 text-center text-gray-500">데이터가 없습니다.</td>
-                </tr>
-                    )}
-              </tbody>
-            </table>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 감가상각 팝업 */}
       <DepreciationModal

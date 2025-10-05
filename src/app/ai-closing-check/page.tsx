@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SuspenseModal from './SuspenseModal';
 import PeriodAccrualModal from './PeriodAccrualModal';
-import DepreciationModal from '@/components/DepreciationModal';
-import EndingInventoryModal from '@/components/EndingInventoryModal';
-import BadDebtModal from '@/components/BadDebtModal';
-import RetirementBenefitModal from '@/components/RetirementBenefitModal';
+import DepreciationModal from './DepreciationModal';
+import EndingInventoryModal from './EndingInventoryModal';
+import BadDebtModal from './BadDebtModal';
+import RetirementBenefitModal from './RetirementBenefitModal';
 import {
   initClosingCheck,
   getClosingCheckStream

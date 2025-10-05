@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { checkEndingInventory, applyEndingInventory } from '@/services/api';
-import ToastMessage from './ToastMessage';
+import ToastMessage from '@/components/ToastMessage';
 
 // 기말재고 관련 타입
 interface EndingInventoryItem {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkDepreciation, applyDepreciation } from '@/services/api';
 import Image from 'next/image';
-import ToastMessage from './ToastMessage';
+import ToastMessage from '@/components/ToastMessage';
 
 // 타입 정의
 interface DepreciationItem {

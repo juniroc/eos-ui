@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { checkEndingInventory, applyEndingInventory } from '@/services/api';
-import ToastMessage from './ToastMessage';
+import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
+import Image from 'next/image';
 
 // 기말재고 관련 타입
 interface EndingInventoryItem {
@@ -158,9 +160,6 @@ export default function EndingInventoryModal({
       }));
       setEditableInventoryItems(editableItems);
       
-      // 상태 업데이트 알림
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('기말재고 점검 API 호출 오류:', error);
       alert(error instanceof Error ? error.message : '기말재고 점검 중 오류가 발생했습니다.');
@@ -214,8 +213,12 @@ export default function EndingInventoryModal({
   /** 기말재고 전표 저장 */
   const handleEndingInventorySave = async () => {
     // TODO: 저장 기능 구현
+    
     setToastMessage('기말재고의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+
+    // 상태 업데이트 알림
+    onStatusUpdate('DONE');
   };
 
   /** 기말재고 아이템 변경 핸들러 */
@@ -231,7 +234,7 @@ export default function EndingInventoryModal({
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
+      <div id="ending-inventory-modal" className="bg-white shadow-lg w-full h-full max-h-[calc(100vh-48px)] overflow-hidden">
         {/* 팝업 헤더 */}
         <div className="flex justify-between items-center p-3 w-full h-[41px]">
           {/* Breadcrumb */}
@@ -242,9 +245,7 @@ export default function EndingInventoryModal({
               </span>
             </div>
             <div className="w-4 h-4">
-              <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 12.5L10 8.5L6 4.5" stroke="#B3B3B3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             </div>
             <div className="flex items-start p-0 h-[17px]">
               <span className="h-[17px] text-xs leading-[140%] text-[#B3B3B3]">
@@ -252,9 +253,7 @@ export default function EndingInventoryModal({
               </span>
             </div>
             <div className="w-4 h-4">
-              <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 12.5L10 8.5L6 4.5" stroke="#B3B3B3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             </div>
             <div className="flex items-start p-0 w-[42px] h-[17px]">
               <span className="w-[42px] h-[17px] text-xs leading-[140%] text-[#1E1E1E]">
@@ -265,12 +264,10 @@ export default function EndingInventoryModal({
           
           {/* X 버튼 */}
           <button
-            className="mx-auto w-4 h-4"
+            className="mx-auto w-4 h-4 cursor-pointer"
             onClick={onClose}
           >
-            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4.5L4 12.5M4 4.5L12 12.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Image src="/icons/close.svg" alt="close" width={16} height={16} />
           </button>
         </div>
 
@@ -301,17 +298,20 @@ export default function EndingInventoryModal({
                   </div>
                   
                   {/* Right: Buttons */}
-                  <div className="flex justify-end items-center p-0 gap-2 w-[143px] h-7">
-                    <div className="flex items-start p-0 w-[66px] h-7">
-                      <button className="flex justify-center items-center p-[8px_12px] gap-2 w-[66px] h-7 bg-[#F3F3F3]">
-                        <span className="w-[42px] h-3 text-xs leading-[100%] text-[#1E1E1E]">
-                          인쇄하기
-                        </span>
-                      </button>
+                  <div className="flex justify-end items-center p-0 gap-2 h-7">
+                    <div className="flex items-start p-0 h-7">
+                      <PrintButton
+                        variant="neutral"
+                        size="small"
+                        printType="modal"
+                        targetSelector="#ending-inventory-modal"
+                      >
+                        인쇄하기
+                      </PrintButton>
                     </div>
                     <div className="flex items-start p-0 w-[69px] h-7">
                       <button 
-                        className="flex justify-center items-center p-[8px_12px] gap-2 w-[69px] h-7 bg-[#2C2C2C]"
+                        className="flex justify-center items-center p-[8px_12px] gap-2 w-[69px] h-7 bg-[#2C2C2C] cursor-pointer"
                         onClick={handleEndingInventoryApply}
                         disabled={loading}
                       >
@@ -525,7 +525,7 @@ export default function EndingInventoryModal({
                     <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-[66px] h-7 flex-shrink-0">
                       <div className="flex flex-row items-start p-0 w-[66px] h-7">
                         <button 
-                          className="flex flex-row justify-center items-center p-[8px_12px] gap-2 w-[66px] h-7 bg-[#2C2C2C]"
+                          className="flex flex-row justify-center items-center p-[8px_12px] gap-2 w-[66px] h-7 bg-[#2C2C2C] cursor-pointer"
                           onClick={handleEndingInventorySave}
                         >
                           <span className="w-[42px] h-3 font-medium text-xs leading-[100%] text-[#F5F5F5]">

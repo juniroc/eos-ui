@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
 
 // 타입 정의
 interface SuspenseTransaction {
@@ -129,9 +130,6 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
       });
       setTransactions(allTransactions);
       
-      // 상태 업데이트
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('가수가지급금 점검 API 호출 오류:', error);
       alert(error instanceof Error ? error.message : '가수가지급금 점검 중 오류가 발생했습니다.');
@@ -159,15 +157,20 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
 
   // 저장 핸들러
   const handleSave = () => {
+    // TODO: 저장 기능 구현
+
     setToastMessage('가수가지급금의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+    
+    // 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="relative w-full h-full bg-white flex flex-col pb-5">
+      <div id="suspense-modal" className="relative w-full h-full bg-white flex flex-col pb-5">
         {/* 상단 헤더 */}
         <div className="flex flex-row justify-between items-center p-2 h-[41px]">
           {/* Breadcrumb */}
@@ -215,13 +218,25 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
               </div>
               
               {/* 버튼 그룹 */}
-              <div className="flex flex-row items-start h-7">
-                <button
-                  className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] hover:bg-[#444444]"
-                  onClick={handleSave}
-                >
-                  <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">저장하기</span>
-                </button>
+              <div className="flex flex-row justify-end items-center gap-2 h-7">
+                <div className="flex flex-row items-start h-7">
+                  <PrintButton
+                    variant="neutral"
+                    size="small"
+                    printType="modal"
+                    targetSelector="#suspense-modal"
+                  >
+                    인쇄하기
+                  </PrintButton>
+                </div>
+                <div className="flex flex-row items-start h-7">
+                  <button
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] cursor-pointer"
+                    onClick={handleSave}
+                  >
+                    <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">저장하기</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

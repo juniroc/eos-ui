@@ -1,19 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
-import { EditablePeriodAccrualItem, PeriodAccrualResponse } from './page';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
 
-// 타입 정의
+// 기간귀속 관련 타입
 interface PeriodAccrualItem {
   accountCode: string;
   accountName: string;
   endingBalance: number;
   addAmount: number;
-  actualBalance: number;
+  counterAccountId?: string | null;
   memo: string;
 }
+
+interface PeriodAccrualResponse {
+  key: string;
+  status: string;
+  rows: PeriodAccrualItem[];
+  period: {
+    start: string;
+    end: string;
+  };
+}
+
+// API에서 요구하는 PeriodAccrualRow 타입 (결산반영 시 사용)
+// interface PeriodAccrualRow {
+//   accountCode: string;
+//   addAmount: number;
+//   counterAccountId?: string | null;
+//   memo?: string;
+// }
 
 // 전표 관련 타입 정의
 interface JournalEntry {
@@ -39,47 +57,107 @@ interface JournalEntry {
 interface PeriodAccrualModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: PeriodAccrualResponse | null;
-  loading: boolean;
-  editableItems: EditablePeriodAccrualItem[];
-  onItemChange: (id: string, field: keyof EditablePeriodAccrualItem, value: string | number | boolean) => void;
-  onApply: (data: PeriodAccrualResponse) => void;
   closingDate: string;
-  onClosingDateChange: (date: string) => void;
-  onDirectCheck: (date: string) => void;
+  onStatusUpdate: (status: 'DONE') => void;
 }
 
-const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
+function PeriodAccrualModal({
   isOpen,
   onClose,
-  data,
-  loading: _loading,
-  // editableItems, // 현재 사용하지 않음
-  // onItemChange, // 현재 사용하지 않음
-  // onApply, // 현재 사용하지 않음
   closingDate,
-  onClosingDateChange: _onClosingDateChange,
-  onDirectCheck: _onDirectCheck,
-}) => {
+  onStatusUpdate,
+}: PeriodAccrualModalProps) {
+  const [loading, setLoading] = useState(false);
   const [showJournalTable, setShowJournalTable] = useState(false);
   const [editableData, setEditableData] = useState<PeriodAccrualItem[]>([]);
   const [editableJournalEntries, setEditableJournalEntries] = useState<JournalEntry[]>([]);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   
-  // data가 변경될 때마다 editableData 초기화
-  React.useEffect(() => {
-    if (data?.rows) {
-      setEditableData(data.rows.map(item => ({
-        accountCode: item.accountCode,
-        accountName: item.accountName,
-        endingBalance: item.endingBalance,
-        addAmount: item.addAmount,
-        actualBalance: item.endingBalance + item.addAmount,
-        memo: item.memo
-      })));
+  // API 호출 중복 방지를 위한 ref
+  const isApiCallInProgress = useRef(false);
+  
+  /** 기간귀속 점검 API 호출 */
+  const handlePeriodAccrualCheck = useCallback(async () => {
+    // 이미 API 호출 중이면 중복 호출 방지
+    if (isApiCallInProgress.current) {
+      return;
     }
-  }, [data]);
+    
+    try {
+      setLoading(true);
+      isApiCallInProgress.current = true;
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        throw new Error('로그인이 필요합니다.');
+      }
+
+      const requestBody = {
+        closingDate: closingDate,
+        key: 'period_accrual'
+      };
+      
+      console.log('기간귀속 점검 API 요청:', {
+        url: 'https://api.eosxai.com/api/closing-check/run-item',
+        method: 'POST',
+        body: requestBody,
+        closingDate: closingDate
+      });
+
+      const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API 에러 응답:', errorData);
+        
+        if (response.status === 500) {
+          throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          throw new Error(`기간귀속 점검에 실패했습니다. (${response.status})`);
+        }
+      }
+
+      const responseData: PeriodAccrualResponse = await response.json();
+      
+      // API 응답 직후 editableData 초기화
+      if (responseData?.rows) {
+        setEditableData(responseData.rows.map(item => ({
+          accountCode: item.accountCode,
+          accountName: item.accountName,
+          endingBalance: item.endingBalance,
+          addAmount: item.addAmount,
+          counterAccountId: item.counterAccountId,
+          memo: item.memo
+        })));
+      }
+      
+      // 부모 컴포넌트에 상태 업데이트 알림
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('기간귀속 점검 오류:', error);
+      alert(error instanceof Error ? error.message : '기간귀속 점검 중 네트워크 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+      isApiCallInProgress.current = false;
+    }
+  }, [closingDate, onStatusUpdate]);
+
+  // 모달이 열릴 때 자동으로 API 호출
+  useEffect(() => {
+    if (isOpen && closingDate) {
+      handlePeriodAccrualCheck();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, closingDate]);
 
   // 개별 필드 수정 핸들러
   const handleFieldChange = (index: number, field: keyof PeriodAccrualItem, value: string | number) => {
@@ -88,8 +166,6 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
       if (field === 'endingBalance' || field === 'addAmount') {
         const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) || 0 : value;
         newData[index] = { ...newData[index], [field]: numValue };
-        // 실제 잔액 자동 계산
-        newData[index].actualBalance = newData[index].endingBalance + newData[index].addAmount;
       } else {
         newData[index] = { ...newData[index], [field]: value };
       }
@@ -100,6 +176,11 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
   // 숫자 포맷팅 함수
   const formatNumber = (value: number): string => {
     return value.toLocaleString();
+  };
+
+  // 실제 잔액 계산 함수
+  const calculateActualBalance = (endingBalance: number, addAmount: number): number => {
+    return endingBalance + addAmount;
   };
 
   // 숫자 입력 처리 함수
@@ -254,25 +335,21 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="bg-white shadow-xl w-full h-full overflow-hidden">
+      <div id="period-accrual-modal" className="bg-white shadow-xl w-full h-full overflow-hidden">
         {/* 모달 헤더 */}
         <div className="flex justify-between items-center px-3 py-3 h-[41px]">
           {/* 브레드크럼 */}
           <div className="flex items-center gap-[2px] flex-1">
             <span className="text-xs text-[#B3B3B3]">기초정보</span>
-            <svg className="w-4 h-4 text-[#B3B3B3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 5l7 7-7 7" />
-            </svg>
+            <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             <span className="text-xs text-[#B3B3B3]">AI결산점검</span>
-            <svg className="w-4 h-4 text-[#B3B3B3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 5l7 7-7 7" />
-            </svg>
+            <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             <span className="text-xs font-semibold text-[#1E1E1E]">기간귀속</span>
           </div>
           
           <button
             onClick={onClose}
-            className="w-4 h-4 text-[#1E1E1E] hover:text-gray-700"
+            className="w-4 h-4 text-[#1E1E1E] cursor-pointer"
           >
             <Image src="/icons/close.svg" alt="close" width={16} height={16} />
           </button>
@@ -293,12 +370,17 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
               <div className="flex items-center gap-2">
               {/* 버튼 영역 */}
           <div className="flex justify-end gap-2 mt-4">
-            <button className="flex items-center justify-center px-4 py-2 h-8 bg-white border border-[#D9D9D9] text-[#757575] text-xs">
+            <PrintButton
+              variant="neutral"
+              size="small"
+              printType="modal"
+              targetSelector="#period-accrual-modal"
+            >
               인쇄하기
-            </button>
+            </PrintButton>
             <button 
               onClick={handleGenerateJournal}
-              className="flex items-center justify-center px-4 py-2 h-8 bg-[#2C2C2C] text-white text-xs"
+              className="flex items-center justify-center px-4 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
             >
               결산반영
             </button>
@@ -336,7 +418,12 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
           </div>
 
           {/* 테이블 */}
-          <div className="border border-[#D9D9D9]">
+          {loading ? (
+            <div className="flex items-center justify-center h-32 border border-[#D9D9D9]">
+              <div className="text-xs text-[#757575]">데이터를 불러오는 중...</div>
+            </div>
+          ) : (
+            <div className="border border-[#D9D9D9]">
             {/* 테이블 헤더 */}
             <div className="flex bg-[#F5F5F5]">
               <div className="w-[100px] min-w-[100px] h-8 flex items-center justify-center px-2 border-r border-[#D9D9D9]">
@@ -399,7 +486,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                     <input 
                       type="text" 
                       className="w-full text-xs text-[#757575] bg-transparent border-none outline-none text-right"
-                      value={formatNumber(item.actualBalance)}
+                      value={formatNumber(calculateActualBalance(item.endingBalance, item.addAmount))}
                       readOnly
                     />
                     <span className="text-xs text-[#757575] ml-1">원</span>
@@ -442,7 +529,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
               </div>
               <div className="flex-1 h-8 flex items-center px-2 border-r border-[#D9D9D9]">
                 <span className="text-xs font-medium text-[#757575] flex-1 text-right">
-                  {editableData.reduce((sum, item) => sum + item.actualBalance, 0).toLocaleString()}
+                  {editableData.reduce((sum, item) => sum + calculateActualBalance(item.endingBalance, item.addAmount), 0).toLocaleString()}
                 </span>
                 <span className="text-xs text-[#757575] ml-1">원</span>
               </div>
@@ -451,6 +538,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
               </div>
             </div>
           </div>
+          )}
 
           {/* 버튼 영역 */}
           {/* <div className="flex justify-end gap-2 mt-4">
@@ -481,7 +569,7 @@ const PeriodAccrualModal: React.FC<PeriodAccrualModalProps> = ({
                       setToastMessage('기간귀속의 전표 저장이 완료되었습니다.');
                       setShowToast(true);
                     }}
-                    className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs"
+                    className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
                   >
                     저장하기
                   </button>

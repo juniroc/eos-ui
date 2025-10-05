@@ -99,10 +99,97 @@ body {
   transition-duration: 150ms;
 }
 
+/* 긴 텍스트 자동 개행 */
+* {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 숫자 입력 필드 스핀 버튼 숨기기 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* 점선 패턴을 위한 스타일 */
 [data-dasharray='8, 4'] {
   border-style: dashed;
   border-width: 1px;
   border-color: var(--Border-Default-Default);
   background: var(--Background-Default-Default);
+}
+
+/* 인쇄 관련 스타일 */
+@media print {
+  /* 인쇄 시 불필요한 요소 숨기기 */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* 인쇄 시에만 보이는 요소 */
+  .print-only {
+    display: block !important;
+  }
+  
+  /* 페이지 나누기 방지 */
+  .print-keep-together {
+    page-break-inside: avoid;
+  }
+  
+  /* 새 페이지에서 시작 */
+  .print-page-break {
+    page-break-before: always;
+  }
+  
+  /* 인쇄 시 기본 스타일 */
+  body {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  /* 링크 URL 표시 안함 */
+  a::after {
+    content: none !important;
+  }
+  
+  /* 그림자 제거 */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* 배경색 유지 */
+  .print-background {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  /* 프린트 시에도 숫자 입력 필드 스핀 버튼 숨기기 */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* 인쇄 미리보기 모드 */
+.print-preview {
+  background: var(--gray-100);
+}
+
+.print-preview * {
+  max-width: 210mm;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 20mm;
 }

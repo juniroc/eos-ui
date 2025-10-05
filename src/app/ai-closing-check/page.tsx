@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import SuspenseModal from './SuspenseModal';
 import PeriodAccrualModal from './PeriodAccrualModal';
-import DepreciationModal from '@/components/DepreciationModal';
-import EndingInventoryModal from '@/components/EndingInventoryModal';
-import BadDebtModal from '@/components/BadDebtModal';
-import RetirementBenefitModal from '@/components/RetirementBenefitModal';
+import DepreciationModal from './DepreciationModal';
+import EndingInventoryModal from './EndingInventoryModal';
+import BadDebtModal from './BadDebtModal';
+import RetirementBenefitModal from './RetirementBenefitModal';
 import {
   initClosingCheck,
   getClosingCheckStream
@@ -32,42 +32,6 @@ interface ManualModeResponse {
 interface AutoModeResponse {
   jobId: string;
   closingDate: string;
-}
-
-
-
-
-// 기간귀속 관련 타입
-interface PeriodAccrualItem {
-  accountCode: string;
-  accountName: string;
-  endingBalance: number;
-  addAmount: number;
-  counterAccountId?: string | null;
-  memo: string;
-}
-
-export interface PeriodAccrualResponse {
-  key: string;
-  status: string;
-  rows: PeriodAccrualItem[];
-  period: {
-    start: string;
-    end: string;
-  };
-}
-
-export interface EditablePeriodAccrualItem extends PeriodAccrualItem {
-  id: string;
-  isEditing?: boolean;
-}
-
-// API에서 요구하는 PeriodAccrualRow 타입
-interface PeriodAccrualRow {
-  accountCode: string;
-  addAmount: number;
-  counterAccountId?: string | null;
-  memo?: string;
 }
 
 
@@ -96,9 +60,6 @@ export default function AIClosingCheckPage() {
 
   // 기간귀속 팝업 상태
   const [showPeriodAccrualModal, setShowPeriodAccrualModal] = useState(false);
-  const [periodAccrualData, setPeriodAccrualData] = useState<PeriodAccrualResponse | null>(null);
-  const [periodAccrualLoading, setPeriodAccrualLoading] = useState(false);
-  const [editablePeriodAccrualItems, setEditablePeriodAccrualItems] = useState<EditablePeriodAccrualItem[]>([]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -145,155 +106,11 @@ export default function AIClosingCheckPage() {
     ));
   };
 
-  /** 기간귀속 점검 API 호출 */
-  const callPeriodAccrualAPI = async (date: string): Promise<PeriodAccrualResponse> => {
-    const accessToken = localStorage.getItem('accessToken');
-    
-    if (!accessToken) {
-      throw new Error('로그인이 필요합니다.');
-    }
-
-    // 기간귀속 점검 API 호출
-    const requestBody = {
-      closingDate: date,
-      key: 'period_accrual'
-    };
-    
-    console.log('기간귀속 점검 API 요청:', {
-      url: 'https://api.eosxai.com/api/closing-check/run-item',
-      method: 'POST',
-      body: requestBody,
-      closingDate: date
-    });
-
-    const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('API 에러 응답:', errorData);
-      
-      if (response.status === 500) {
-        throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      } else {
-        throw new Error(`기간귀속 점검에 실패했습니다. (${response.status})`);
-      }
-    }
-
-    const data: PeriodAccrualResponse = await response.json();
-    setPeriodAccrualData(data);
-    return data;
-  };
-
-  /** 기간귀속 점검 */
-  const handlePeriodAccrualCheck = async () => {
-    try {
-      const data = await callPeriodAccrualAPI(closingDate);
-      
-      // 편집 가능한 형태로 변환
-      const editableItems: EditablePeriodAccrualItem[] = data.rows.map((item, index) => ({
-        ...item,
-        counterAccountId: item.counterAccountId || '',
-        id: `${item.accountCode}-${index}`,
-        isEditing: false
-      }));
-      setEditablePeriodAccrualItems(editableItems);
-      
-      // 기존 모달 닫기
-      
-      // 기간귀속 팝업 열기
-      setShowPeriodAccrualModal(true);
-      
-      // 테이블에 기간귀속 항목 표시
-      const updatedRows = rows.map(row => 
-        row.key === 'period_accrual' 
-          ? { ...row, status: 'DONE' as CheckRow['status'] }
-          : row
-      );
-      setRows(updatedRows);
-    } catch (error) {
-      console.error('기간귀속 점검 오류:', error);
-      alert(error instanceof Error ? error.message : '기간귀속 점검 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setPeriodAccrualLoading(false);
-    }
-  };
-
-  /** 기간귀속 결산 반영 */
-  const handlePeriodAccrualApply = async () => {
-    try {
-      setPeriodAccrualLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      
-      if (!accessToken) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      // API에서 요구하는 형태로 데이터 변환
-      const rows: PeriodAccrualRow[] = editablePeriodAccrualItems.map(item => {
-        const row: PeriodAccrualRow = {
-          accountCode: item.accountCode,
-          addAmount: item.addAmount,
-          memo: item.memo
-        };
-        // counterAccountId가 있는 경우에만 추가
-        if (item.counterAccountId) {
-          row.counterAccountId = item.counterAccountId;
-        }
-        return row;
-      });
-
-      const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          closingDate: closingDate,
-          key: 'period_accrual',
-          description: '기간귀속 결산 반영',
-          rows: rows
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('API 에러 응답:', errorData);
-        
-        if (response.status === 500) {
-          alert('기간귀속 결산반영 중 서버 오류가 발생했습니다.');
-        } else {
-          alert(`기간귀속 결산 반영에 실패했습니다. (${response.status})`);
-        }
-        return;
-      }
-
-      await response.json();
-      
-      
-    } catch (error) {
-      console.error('기간귀속 결산 반영 API 호출 오류:', error);
-      alert('기간귀속 결산 반영 중 네트워크 오류가 발생했습니다.');
-    } finally {
-      setPeriodAccrualLoading(false);
-    }
-  };
-
-  /** 기간귀속 아이템 변경 핸들러 */
-  const handlePeriodAccrualItemChange = (id: string, field: keyof EditablePeriodAccrualItem, value: string | number | boolean) => {
-    setEditablePeriodAccrualItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    );
+  /** 기간귀속 상태 업데이트 핸들러 */
+  const handlePeriodAccrualStatusUpdate = (status: 'DONE') => {
+    setRows(prev => prev.map(row => 
+      row.key === 'period_accrual' ? { ...row, status } : row
+    ));
   };
 
   /** 직접 점검 */
@@ -500,7 +317,7 @@ export default function AIClosingCheckPage() {
               <button
                 onClick={() => handleCheck('manual')}
                 disabled={loading}
-                className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium"
+                className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
               >
                 {loading ? '처리중...' : '직접 점검하기'}
               </button>
@@ -511,7 +328,7 @@ export default function AIClosingCheckPage() {
               <button
                 onClick={() => handleCheck('auto')}
                 disabled={loading}
-                className="flex justify-center items-center gap-2 w-[90px] h-[28px] bg-white border border-solid"
+                className="flex justify-center items-center gap-2 w-[90px] h-[28px] bg-white border border-solid cursor-pointer"
                 style={{
                   borderImageSource: 'linear-gradient(97.16deg, #00D2FF 0%, #4B5CDD 68.75%, #BE26FF 100%)',
                   borderImageSlice: 1
@@ -528,7 +345,7 @@ export default function AIClosingCheckPage() {
 
       {/* 스트림 상태 표시 */}
       {streamStatus && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="w-full p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span className="text-sm text-blue-700">{streamStatus}</span>
@@ -586,7 +403,7 @@ export default function AIClosingCheckPage() {
               <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-white p-2">
                 <div className="flex justify-center items-center w-[46px] h-[23px]">
                   <button
-                    className="flex justify-center items-center py-1.5 gap-2.5 w-[32px] h-[23px] bg-[#2C2C2C] text-xs font-medium text-white"
+                    className="flex justify-center items-center py-1.5 gap-2.5 w-[32px] h-[23px] bg-[#2C2C2C] text-xs font-medium text-white cursor-pointer"
                     onClick={() => {
                       if (r.key === 'depreciation') {
                         setShowDepreciationModal(true);
@@ -599,7 +416,7 @@ export default function AIClosingCheckPage() {
                       } else if (r.key === 'suspense_clear') {
                         setShowSuspenseModal(true);
                       } else if (r.key === 'period_accrual') {
-                        handlePeriodAccrualCheck();
+                        setShowPeriodAccrualModal(true);
                       }
                     }}
                   >
@@ -670,14 +487,8 @@ export default function AIClosingCheckPage() {
       <PeriodAccrualModal
         isOpen={showPeriodAccrualModal}
         onClose={() => setShowPeriodAccrualModal(false)}
-        data={periodAccrualData}
-        loading={periodAccrualLoading}
-        editableItems={editablePeriodAccrualItems}
-        onItemChange={handlePeriodAccrualItemChange}
-        onApply={handlePeriodAccrualApply}
         closingDate={closingDate}
-        onClosingDateChange={setClosingDate}
-        onDirectCheck={(date: string) => callPeriodAccrualAPI(date)}
+        onStatusUpdate={handlePeriodAccrualStatusUpdate}
       />
     </div>
   );

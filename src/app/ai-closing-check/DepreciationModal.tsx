@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkDepreciation, applyDepreciation } from '@/services/api';
 import Image from 'next/image';
-import ToastMessage from './ToastMessage';
+import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
 
 // 타입 정의
 interface DepreciationItem {
@@ -241,9 +242,6 @@ export default function DepreciationModal({
       setToastMessage('감가삼각의 결산반영이 완료되었습니다.');
       setShowToast(true);
       
-      // 메인 테이블 상태 업데이트
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
       alert(error instanceof Error ? error.message : '감가상각 결산반영 중 오류가 발생했습니다.');
@@ -254,15 +252,20 @@ export default function DepreciationModal({
 
   /** 감가상각 전표 저장 */
   const handleDepreciationSave = async () => {
+    // TODO: 저장 기능 구현
+    
     setToastMessage('감가삼각의 전표 전검이 저장되었습니다.');
     setShowToast(true);
+
+    // 메인 테이블 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="relative w-full h-full bg-white flex flex-col pb-5">
+      <div id="depreciation-modal" className="relative w-full h-full bg-white flex flex-col pb-5">
         {/* 상단 헤더 */}
         <div className="flex flex-row justify-between items-center p-3 h-[41px]">
           {/* Breadcrumb */}
@@ -308,18 +311,30 @@ export default function DepreciationModal({
               </div>
               
               {/* 버튼 그룹 */}
-              <div className="flex flex-row justify-end items-center gap-2 w-[143px] h-7">
-                <div className="flex flex-row items-start w-[66px] h-7">
-                  <button
-                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[66px] h-7 bg-[#F3F3F3] hover:bg-gray-200"
-                    onClick={() => window.print()}
+              <div className="flex flex-row justify-end items-center gap-2 h-7">
+                <div className="flex flex-row items-start h-7">
+                  <PrintButton
+                    printType="modal"
+                    targetSelector="#depreciation-modal"
+                    variant="neutral"
+                    size="small"
+                    printOptions={{
+                      delay: 500,
+                      onBeforePrint: () => {
+                        // 인쇄 전에 모든 스크롤 영역을 최상단으로 이동
+                        const scrollElements = document.querySelectorAll('.overflow-y-auto');
+                        scrollElements.forEach(el => {
+                          (el as HTMLElement).scrollTop = 0;
+                        });
+                      }
+                    }}
                   >
-                    <span className="text-xs leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">인쇄하기</span>
-                  </button>
+                    인쇄하기
+                  </PrintButton>
                 </div>
                 <div className="flex flex-row items-start w-[69px] h-7">
                   <button
-                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] cursor-pointer"
                     onClick={handleDepreciationApply}
                     disabled={loading}
                   >
@@ -333,7 +348,7 @@ export default function DepreciationModal({
           </div>
 
           {/* 감가상각 테이블 섹션 */}
-          <div className="flex flex-col items-start w-full h-[224px]">
+          <div className="flex flex-col items-start w-full">
             {loading ? (
               <div className="flex items-center justify-center w-full h-full">
                 <div className="text-[#757575]">감가상각 데이터를 불러오는 중...</div>
@@ -404,7 +419,7 @@ export default function DepreciationModal({
                             <div className="flex items-center justify-center gap-1">
                               <input 
                                 type="number" 
-                                className="w-12 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
                                 value={Math.floor(item.usefulLifeMonths / 12)}
                                 onChange={(e) => handleItemChange(item.id, 'usefulLifeMonths', parseInt(e.target.value) * 12)}
                               />
@@ -445,7 +460,7 @@ export default function DepreciationModal({
                       <p className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">생성된 전표를 확인하고 저장해주세요.</p>
                     </div>
                     <button
-                      className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                      className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] cursor-pointer"
                       onClick={handleDepreciationSave}
                       disabled={loading}
                     >

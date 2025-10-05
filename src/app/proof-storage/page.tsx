@@ -3,16 +3,11 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { getProofList, getProofDownloadUrl, deleteProofItem, type ProofItem } from '@/services/financial';
+import Image from 'next/image';
+import ToastMessage from '@/components/ToastMessage';
 
-interface ProofRow {
-  id: number;
-  uploadedAt: string; // 업로드일자
-  fileName: string; // 파일명
-  type: string; // 증빙종류
-  mimeType: string;
-  size: number;
-  voucherIds?: number[];
-}
+type ProofRow = ProofItem;
 
 export default function ProofStoragePage() {
   const router = useRouter();
@@ -20,6 +15,8 @@ export default function ProofStoragePage() {
   const [rows, setRows] = useState<ProofRow[]>([]);
   const [, setLoading] = useState(false);
   const [search, setSearch] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -28,16 +25,31 @@ export default function ProofStoragePage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
+  /**
+   * 날짜를 YYMMDD 형식으로 변환합니다
+   * @param date - Date 객체 또는 날짜 문자열
+   * @returns YYMMDD 형식의 문자열 (예: 251005)
+   */
+  const formatDateToYYMMDD = (date: Date | string | null | undefined): string => {
+    if (!date) return '-';
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    if (isNaN(dateObj.getTime())) return '-';
+    
+    const year = dateObj.getFullYear().toString().slice(-2); // 마지막 2자리
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    
+    return `${year}${month}${day}`;
+  };
+
   /** 리스트 조회 */
   const fetchProofs = useCallback(async () => {
     if (!token) return;
     try {
       setLoading(true);
-      const res = await fetch('https://api.eosxai.com/api/proof', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error('불러오기 실패');
-      const data = await res.json();
+      const data = await getProofList(token);
       setRows(data.items || []);
     } catch (err) {
       console.error('증빙 조회 에러:', err);
@@ -51,10 +63,7 @@ export default function ProofStoragePage() {
   const handleDownload = async (id: number) => {
     if (!token) return;
     try {
-      const res = await fetch(`https://api.eosxai.com/api/proof/${id}/url`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
+      const data = await getProofDownloadUrl(id, token);
       if (data.url) {
         window.open(data.url, '_blank');
       } else {
@@ -84,21 +93,13 @@ export default function ProofStoragePage() {
     if (!confirm('삭제하시겠습니까?')) return;
 
     try {
-      const res = await fetch(`https://api.eosxai.com/api/proof/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (res.ok) {
-        setRows(prev => prev.filter(r => r.id !== id));
-        alert('삭제되었습니다.');
-      } else {
-        const errorData = await res.json();
-        alert(`삭제 실패: ${errorData.error || '알 수 없는 오류'}`);
-      }
+      await deleteProofItem(id, token);
+      setRows(prev => prev.filter(r => r.id !== id));
+      setToastMessage('증빙이 삭제되었습니다.');
+      setShowToast(true);
     } catch (err) {
       console.error('삭제 에러:', err);
-      alert('삭제 실패');
+      alert(`삭제 실패: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
     }
   };
 
@@ -137,121 +138,136 @@ export default function ProofStoragePage() {
 
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">증빙보관소</h2>
-            <p className="text-[#767676]">결산일자를 선택하고 결산점검을 시작하세요.</p>
+    <div className="flex flex-col items-start p-4 gap-4">
+      {/* Title Section */}
+      <div className="flex flex-col items-start p-0 gap-4 self-stretch">
+        <div className="flex justify-between items-end p-0 gap-4 self-stretch">
+          {/* Left Title Area */}
+          <div className="flex flex-col items-start p-0">
+            <div className="flex flex-col items-start py-1.5 px-0 rounded-lg">
+              <div className="flex items-start p-0">
+                <h2 className="text-[15px] font-semibold leading-[140%] text-[#1E1E1E]">증빙보관소</h2>
+              </div>
+              <p className="text-[12px] leading-[140%] text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          
+          {/* Search Field */}
+          <div className="flex flex-col items-start p-0 w-[200px]">
+            <div className="flex items-center w-full px-3 py-2 gap-2 bg-white border border-[#D9D9D9]">
               <input
                 type="text"
                 placeholder="검색어를 입력해주세요."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="border border-[#D9D9D9] rounded px-3 py-2 pr-8 text-sm w-64"
+                className="text-[12px] font-medium leading-[100%] text-[#B3B3B3] bg-transparent outline-none flex-1"
               />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
+              <Image src="/icons/search.svg" alt="search" width={16} height={16} />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* 테이블 */}
-        <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-          <thead className="bg-gray-50">
+      {/* Table Section */}
+      <div className="flex flex-col items-start p-0 self-stretch">
+        <table className="w-full border-collapse border border-[#D9D9D9]">
+          <thead className="h-[32px]">
             <tr>
-              <th className="p-3 border border-[#D9D9D9] w-14">번호</th>
-              <th className="p-3 border border-[#D9D9D9]">제출일자</th>
-              <th className="p-3 border border-[#D9D9D9]">내용(파일명)</th>
-              <th className="p-3 border border-[#D9D9D9]">증빙종류</th>
-              <th className="p-3 border border-[#D9D9D9] w-24">분개보기</th>
-              <th className="p-3 border border-[#D9D9D9] w-24">다운로드</th>
-              <th className="p-3 border border-[#D9D9D9] w-24">삭제</th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[40px]">
+                번호
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[69px]">
+                제공일자
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center">
+                내용(파일명)
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[100px]">
+                증빙종류
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[87px]">
+                분개보기
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[87px]">
+                다운로드
+              </th>
+              <th className="p-2 bg-[#F5F5F5] border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center min-w-[87px]">
+                삭제
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredRows.map((row, idx) => (
               <tr key={row.id}>
-                <td className="p-3 border border-[#D9D9D9] text-center">{idx + 1}</td>
-                <td className="p-3 border border-[#D9D9D9]">{row.uploadedAt}</td>
-                <td className="p-3 border border-[#D9D9D9]">{row.fileName}</td>
-                <td className="p-3 border border-[#D9D9D9]">{row.type}</td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+                <td className="p-2 bg-white border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center">
+                  {idx + 1}
+                </td>
+                <td className="p-2 bg-white border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575] text-center">
+                  {formatDateToYYMMDD(row.uploadedAt)}
+                </td>
+                <td className="p-2 bg-white border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575]">
+                  {row.fileName}
+                </td>
+                <td className="p-2 bg-white border border-[#D9D9D9] text-[12px] font-medium leading-[100%] text-[#757575]">
+                  {row.type}
+                </td>
+                <td className="p-1 bg-white border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleViewJournal(row)}
                     disabled={!row.voucherIds || row.voucherIds.length === 0}
-                    style={{
-                      width: 'auto',
-                      minWidth: '66px',
-                      height: '28px',
-                      padding: '8px 12px',
-                      background: (!row.voucherIds || row.voucherIds.length === 0) ? '#F5F5F5' : '#F3F3F3',
-                      color: (!row.voucherIds || row.voucherIds.length === 0) ? '#999' : '#1E1E1E',
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                      border: 'none',
-                      cursor: (!row.voucherIds || row.voucherIds.length === 0) ? 'not-allowed' : 'pointer',
-                    }}
+                    className={`py-1.5 px-1.5 h-[23px] flex items-center justify-center mx-auto ${
+                      (!row.voucherIds || row.voucherIds.length === 0) 
+                        ? 'bg-[#E6E6E6] cursor-not-allowed' 
+                        : 'bg-[#2C2C2C] cursor-pointer'
+                    }`}
                   >
-                    분개보기
+                    <span className={`text-[11px] font-medium leading-[100%] ${
+                      (!row.voucherIds || row.voucherIds.length === 0) 
+                        ? 'text-[#B3B3B3]' 
+                        : 'text-[#F5F5F5]'
+                    }`}>
+                      보기
+                    </span>
                   </button>
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+                <td className="p-1 bg-white border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDownload(row.id)}
-                    style={{
-                      width: 'auto',
-                      minWidth: '66px',
-                      height: '28px',
-                      padding: '8px 12px',
-                      background: '#F3F3F3',
-                      color: '#1E1E1E',
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                      border: 'none',
-                    }}
+                    className="py-1.5 px-1.5 bg-[#2C2C2C] h-[23px] flex items-center justify-center mx-auto"
                   >
-                    다운로드
+                    <span className="text-[11px] font-medium leading-[100%] text-[#F5F5F5]">다운로드</span>
                   </button>
                 </td>
-                <td className="p-3 border border-[#D9D9D9] text-center">
+                <td className="p-1 bg-white border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    style={{
-                      width: 'auto',
-                      minWidth: '66px',
-                      height: '28px',
-                      padding: '8px 12px',
-                      background: '#F3F3F3',
-                      color: '#1E1E1E',
-                      fontSize: '12px',
-                      lineHeight: '12px',
-                      border: 'none',
-                    }}
+                    className="py-1.5 px-1.5 bg-[#EC221F] h-[23px] flex items-center justify-center mx-auto"
                   >
-                    삭제
+                    <span className="text-[11px] font-medium leading-[100%] text-[#F5F5F5]">삭제</span>
                   </button>
                 </td>
               </tr>
             ))}
+            
             {filteredRows.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-gray-500">
-                  <p>등록된 증빙서류가 없습니다.</p>
-                  <p className="text-sm mt-2">파일을 업로드해주세요.</p>
+                <td colSpan={7} className="p-8 bg-white border border-[#D9D9D9] text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <p className="text-[12px] leading-[140%] text-[#767676]">등록된 증빙서류가 없습니다.</p>
+                    <p className="text-[12px] leading-[140%] text-[#767676]">파일을 업로드해주세요.</p>
+                  </div>
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      <ToastMessage 
+        message={toastMessage}
+        isVisible={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

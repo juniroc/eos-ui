@@ -193,10 +193,10 @@ export default function GuidelinePeriodPage() {
   return (
     <div className="flex flex-col items-start p-4 gap-4 w-full min-h-[175px]">
       {/* Title Section */}
-      <div className="flex flex-col items-start gap-4 w-full min-w-[520px] h-[63px]">
-        <div className="flex flex-row justify-between items-end gap-4 w-full h-[63px]">
+      <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">
+        <div className="flex flex-row justify-between items-end gap-4 w-full">
           {/* Left Content */}
-          <div className="flex flex-col items-start flex-1 h-[63px]">
+          <div className="flex flex-col items-start flex-1">
             {/* Menu Heading */}
             <div className="flex flex-col items-start pt-1.5 pb-0.5 w-64 rounded-lg">
               <div className="flex flex-row items-start w-14 h-[21px]">
@@ -206,7 +206,7 @@ export default function GuidelinePeriodPage() {
               </div>
             </div>
             {/* Description */}
-            <div className="w-full h-[34px] font-pretendard text-[12px] leading-[140%] text-[#767676]">
+            <div className="w-full font-pretendard text-[12px] leading-[140%] text-[#767676]">
               EOS는 각 고개별로 맞춤 훈련이 가능합니다. 일반적인 기준과 다른 우리 회사만의 특별한 룰이 있을 경우, 특별히 회계처리시 명심할 사항 등을 알려주실 수 있습니다.<br/>
               특별한 사항이 없으면 사용하지 않아도 됩니다. 계정분류와 관련된 사항에 대해서만 조언을 주세요. 업무지시를 받는 AI는 상단 지시창을 이용해주세요.
             </div>

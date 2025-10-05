@@ -345,7 +345,7 @@ export default function AIClosingCheckPage() {
 
       {/* 스트림 상태 표시 */}
       {streamStatus && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="w-full p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span className="text-sm text-blue-700">{streamStatus}</span>

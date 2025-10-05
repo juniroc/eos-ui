@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
 
 // 기간귀속 관련 타입
 interface PeriodAccrualItem {
@@ -334,25 +335,21 @@ function PeriodAccrualModal({
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="bg-white shadow-xl w-full h-full overflow-hidden">
+      <div id="period-accrual-modal" className="bg-white shadow-xl w-full h-full overflow-hidden">
         {/* 모달 헤더 */}
         <div className="flex justify-between items-center px-3 py-3 h-[41px]">
           {/* 브레드크럼 */}
           <div className="flex items-center gap-[2px] flex-1">
             <span className="text-xs text-[#B3B3B3]">기초정보</span>
-            <svg className="w-4 h-4 text-[#B3B3B3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 5l7 7-7 7" />
-            </svg>
+            <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             <span className="text-xs text-[#B3B3B3]">AI결산점검</span>
-            <svg className="w-4 h-4 text-[#B3B3B3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 5l7 7-7 7" />
-            </svg>
+            <Image src="/icons/arrow_right.svg" alt="arrow_right" width="16" height="16" />
             <span className="text-xs font-semibold text-[#1E1E1E]">기간귀속</span>
           </div>
           
           <button
             onClick={onClose}
-            className="w-4 h-4 text-[#1E1E1E] hover:text-gray-700"
+            className="w-4 h-4 text-[#1E1E1E] cursor-pointer"
           >
             <Image src="/icons/close.svg" alt="close" width={16} height={16} />
           </button>
@@ -373,12 +370,17 @@ function PeriodAccrualModal({
               <div className="flex items-center gap-2">
               {/* 버튼 영역 */}
           <div className="flex justify-end gap-2 mt-4">
-            <button className="flex items-center justify-center px-4 py-2 h-8 bg-white border border-[#D9D9D9] text-[#757575] text-xs">
+            <PrintButton
+              variant="neutral"
+              size="small"
+              printType="modal"
+              targetSelector="#period-accrual-modal"
+            >
               인쇄하기
-            </button>
+            </PrintButton>
             <button 
               onClick={handleGenerateJournal}
-              className="flex items-center justify-center px-4 py-2 h-8 bg-[#2C2C2C] text-white text-xs"
+              className="flex items-center justify-center px-4 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
             >
               결산반영
             </button>
@@ -567,7 +569,7 @@ function PeriodAccrualModal({
                       setToastMessage('기간귀속의 전표 저장이 완료되었습니다.');
                       setShowToast(true);
                     }}
-                    className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs"
+                    className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
                   >
                     저장하기
                   </button>

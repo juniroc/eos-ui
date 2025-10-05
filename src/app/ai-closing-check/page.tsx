@@ -317,7 +317,7 @@ export default function AIClosingCheckPage() {
               <button
                 onClick={() => handleCheck('manual')}
                 disabled={loading}
-                className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium"
+                className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
               >
                 {loading ? '처리중...' : '직접 점검하기'}
               </button>
@@ -328,7 +328,7 @@ export default function AIClosingCheckPage() {
               <button
                 onClick={() => handleCheck('auto')}
                 disabled={loading}
-                className="flex justify-center items-center gap-2 w-[90px] h-[28px] bg-white border border-solid"
+                className="flex justify-center items-center gap-2 w-[90px] h-[28px] bg-white border border-solid cursor-pointer"
                 style={{
                   borderImageSource: 'linear-gradient(97.16deg, #00D2FF 0%, #4B5CDD 68.75%, #BE26FF 100%)',
                   borderImageSlice: 1
@@ -403,7 +403,7 @@ export default function AIClosingCheckPage() {
               <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-white p-2">
                 <div className="flex justify-center items-center w-[46px] h-[23px]">
                   <button
-                    className="flex justify-center items-center py-1.5 gap-2.5 w-[32px] h-[23px] bg-[#2C2C2C] text-xs font-medium text-white"
+                    className="flex justify-center items-center py-1.5 gap-2.5 w-[32px] h-[23px] bg-[#2C2C2C] text-xs font-medium text-white cursor-pointer"
                     onClick={() => {
                       if (r.key === 'depreciation') {
                         setShowDepreciationModal(true);

@@ -334,7 +334,7 @@ export default function DepreciationModal({
                 </div>
                 <div className="flex flex-row items-start w-[69px] h-7">
                   <button
-                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] cursor-pointer"
                     onClick={handleDepreciationApply}
                     disabled={loading}
                   >
@@ -460,7 +460,7 @@ export default function DepreciationModal({
                       <p className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">생성된 전표를 확인하고 저장해주세요.</p>
                     </div>
                     <button
-                      className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                      className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] cursor-pointer"
                       onClick={handleDepreciationSave}
                       disabled={loading}
                     >

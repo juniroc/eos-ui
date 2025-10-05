@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
+import PrintButton from '@/components/PrintButton';
 
 // 퇴직급여충당금 관련 타입
 interface RetirementBenefitItem {
@@ -280,7 +281,7 @@ export default function RetirementBenefitModal({
 
   return (
     <div className="fixed inset-0 bg-[#00000080] flex items-center justify-center z-50 p-5">
-      <div className="relative w-full h-full bg-white flex flex-col pb-5">
+      <div id="retirement-benefit-modal" className="relative w-full h-full bg-white flex flex-col pb-5">
         {/* 상단 헤더 */}
         <div className="flex flex-row justify-between items-center p-2 h-[41px]">
           {/* Breadcrumb */}
@@ -328,18 +329,20 @@ export default function RetirementBenefitModal({
               </div>
               
               {/* 버튼 그룹 */}
-              <div className="flex flex-row justify-end items-center gap-2 w-[143px] h-7">
-                <div className="flex flex-row items-start w-[66px] h-7">
-                  <button
-                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[66px] h-7 bg-[#F3F3F3] hover:bg-gray-200"
-                    onClick={() => window.print()}
+              <div className="flex flex-row justify-end items-center gap-2 h-7">
+                <div className="flex flex-row items-start h-7">
+                  <PrintButton
+                    variant="neutral"
+                    size="small"
+                    printType="modal"
+                    targetSelector="#retirement-benefit-modal"
                   >
-                    <span className="text-xs leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">인쇄하기</span>
-                  </button>
+                    인쇄하기
+                  </PrintButton>
                 </div>
                 <div className="flex flex-row items-start w-[69px] h-7">
                   <button
-                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                    className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-[69px] h-7 bg-[#2C2C2C] cursor-pointer"
                     onClick={handleRetirementBenefitApply}
                     disabled={retirementBenefitLoading}
                   >
@@ -441,7 +444,7 @@ export default function RetirementBenefitModal({
                         <p className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">생성된 전표를 확인하고 저장해주세요.</p>
                       </div>
                       <button
-                        className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] hover:bg-[#444444]"
+                        className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] cursor-pointer"
                         onClick={handleRetirementBenefitSave}
                       >
                         <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">저장하기</span>

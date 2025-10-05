@@ -62,7 +62,7 @@ export default function EmployeeInfoPage() {
       r.name.trim() ||
       r.residentNumber.trim() ||
       r.employmentType?.trim() ||
-      r.monthlySalary?.trim() ||
+      (r.monthlySalary && String(r.monthlySalary).trim()) ||
       r.isProduction?.trim()
   );
 
@@ -167,8 +167,8 @@ export default function EmployeeInfoPage() {
           if (row.employmentType?.trim()) {
             employee.employmentType = row.employmentType.trim();
           }
-          if (row.monthlySalary?.trim()) {
-            employee.monthlySalary = row.monthlySalary.trim();
+          if (row.monthlySalary && String(row.monthlySalary).trim()) {
+            employee.monthlySalary = String(row.monthlySalary).trim();
           }
           
           return employee;
@@ -436,7 +436,7 @@ export default function EmployeeInfoPage() {
                 >
                   <option value="">선택하기</option>
                   <option value="REGULAR">정규직</option>
-                  <option value="NON_REGULAR">계약직</option>
+                  <option value="TEMPORARY">계약직</option>
                 </select>
               </div>
               {/* 월 급여 컴럼 */}
@@ -444,7 +444,7 @@ export default function EmployeeInfoPage() {
                 <input
                   className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                   placeholder="입력하기"
-                  value={row.monthlySalary || 0}
+                  value={row.monthlySalary || '0'}
                   onChange={e =>
                     setRows(prev =>
                       prev.map(r =>

@@ -129,9 +129,6 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
       });
       setTransactions(allTransactions);
       
-      // 상태 업데이트
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('가수가지급금 점검 API 호출 오류:', error);
       alert(error instanceof Error ? error.message : '가수가지급금 점검 중 오류가 발생했습니다.');
@@ -159,8 +156,13 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
 
   // 저장 핸들러
   const handleSave = () => {
+    // TODO: 저장 기능 구현
+
     setToastMessage('가수가지급금의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+    
+    // 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   if (!isOpen) return null;

@@ -241,9 +241,6 @@ export default function DepreciationModal({
       setToastMessage('감가삼각의 결산반영이 완료되었습니다.');
       setShowToast(true);
       
-      // 메인 테이블 상태 업데이트
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('감가상각 결산반영 오류:', error);
       alert(error instanceof Error ? error.message : '감가상각 결산반영 중 오류가 발생했습니다.');
@@ -254,8 +251,13 @@ export default function DepreciationModal({
 
   /** 감가상각 전표 저장 */
   const handleDepreciationSave = async () => {
+    // TODO: 저장 기능 구현
+    
     setToastMessage('감가삼각의 전표 전검이 저장되었습니다.');
     setShowToast(true);
+
+    // 메인 테이블 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   if (!isOpen) return null;

@@ -112,7 +112,7 @@ interface RetirementBenefitModalProps {
   isOpen: boolean;
   onClose: () => void;
   closingDate: string;
-  onStatusUpdate?: (status: 'DONE') => void;
+  onStatusUpdate: (status: 'DONE') => void;
 }
 
 export default function RetirementBenefitModal({
@@ -190,11 +190,6 @@ export default function RetirementBenefitModal({
         isEditing: false
       }));
       setEditableRetirementBenefitItems(editableItems);
-      
-      // 상태 업데이트
-      if (onStatusUpdate) {
-        onStatusUpdate('DONE');
-      }
     } catch (error) {
       console.error('퇴직급여충당금 점검 API 호출 오류:', error);
       alert('퇴직급여충당금 점검 중 네트워크 오류가 발생했습니다.');
@@ -263,8 +258,13 @@ export default function RetirementBenefitModal({
 
   /** 퇴직급여충당금 전표 저장 */
   const handleRetirementBenefitSave = async () => {
+    // TODO: 저장 기능 구현
+    
     setToastMessage('퇴직급여충당금의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+
+    // 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   /** 퇴직급여충당금 아이템 변경 핸들러 */

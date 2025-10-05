@@ -158,9 +158,6 @@ export default function EndingInventoryModal({
       }));
       setEditableInventoryItems(editableItems);
       
-      // 상태 업데이트 알림
-      onStatusUpdate('DONE');
-      
     } catch (error) {
       console.error('기말재고 점검 API 호출 오류:', error);
       alert(error instanceof Error ? error.message : '기말재고 점검 중 오류가 발생했습니다.');
@@ -214,8 +211,12 @@ export default function EndingInventoryModal({
   /** 기말재고 전표 저장 */
   const handleEndingInventorySave = async () => {
     // TODO: 저장 기능 구현
+    
     setToastMessage('기말재고의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+
+    // 상태 업데이트 알림
+    onStatusUpdate('DONE');
   };
 
   /** 기말재고 아이템 변경 핸들러 */

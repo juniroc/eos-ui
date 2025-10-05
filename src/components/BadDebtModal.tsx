@@ -145,9 +145,6 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
         isEditing: false
       }));
       setEditableBadDebtItems(editableItems);
-
-      // 상태 업데이트
-      onStatusUpdate('DONE');
       
     } catch (error) {
       console.error('대손상각 점검 API 호출 오류:', error);
@@ -201,8 +198,13 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
 
   /** 대손상각 전표 저장 */
   const handleBadDebtSave = async () => {
+    // TODO: 저장 기능 구현
+    
     setToastMessage('대손상각의 전표 저장이 완료되었습니다.');
     setShowToast(true);
+
+    // 상태 업데이트
+    onStatusUpdate('DONE');
   };
 
   /** 대손상각 아이템 변경 핸들러 */

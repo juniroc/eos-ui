@@ -32,6 +32,11 @@ export default function AccountInfoPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // 문자열 안전 변환 헬퍼 함수
+  const safeString = (value: string | number | null | undefined): string => {
+    return String(value || '');
+  };
+
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -42,11 +47,11 @@ export default function AccountInfoPage() {
   /** 저장 버튼 활성화 여부 → 데이터가 하나라도 있으면 true */
   const hasData = rows.some(
     r =>
-      r.bankName.trim() ||
-      r.accountNumber.trim() ||
-      r.withdrawalFee?.trim() ||
-      r.purpose?.trim() ||
-      r.note?.trim()
+      (r.bankName && safeString(r.bankName).trim()) ||
+      (r.accountNumber && safeString(r.accountNumber).trim()) ||
+      (r.withdrawalFee && safeString(r.withdrawalFee).trim()) ||
+      (r.purpose && safeString(r.purpose).trim()) ||
+      (r.note && safeString(r.note).trim())
   );
 
   /** 통장 계좌 불러오기 */
@@ -60,18 +65,18 @@ export default function AccountInfoPage() {
         if (data.data && data.data.length > 0) {
           // 실제 데이터만 필터링하여 설정
           const validData = data.data.filter((acc: AccountRow) => 
-            acc.bankName?.trim() || acc.accountNumber?.trim()
+            (acc.bankName && safeString(acc.bankName).trim()) || (acc.accountNumber && safeString(acc.accountNumber).trim())
           );
           
           if (validData.length > 0) {
             setRows(
               validData.map((acc: AccountRow) => ({
                 id: acc.id,
-                bankName: acc.bankName || '',
-                accountNumber: acc.accountNumber || '',
-                withdrawalFee: acc.withdrawalFee || '',
-                purpose: acc.purpose || '',
-                note: acc.note || '',
+                bankName: safeString(acc.bankName),
+                accountNumber: safeString(acc.accountNumber),
+                withdrawalFee: safeString(acc.withdrawalFee),
+                purpose: safeString(acc.purpose),
+                note: safeString(acc.note),
                 serverId: acc.id, // 서버 ID 설정
               }))
             );
@@ -128,11 +133,11 @@ const handleFileUpload = async (file: File) => {
       
       const extracted = response.items.map((item: AccountRow) => ({
         id: Date.now() + Math.random(),
-        bankName: item.bankName || '',
-        accountNumber: item.accountNumber || '',
-        withdrawalFee: item.withdrawalFee || '',
-        purpose: item.purpose || '',
-        note: item.note || '',
+        bankName: safeString(item.bankName),
+        accountNumber: safeString(item.accountNumber),
+        withdrawalFee: safeString(item.withdrawalFee),
+        purpose: safeString(item.purpose),
+        note: safeString(item.note),
       }));
       // 기존 빈 행을 제거하고 추출된 데이터만 설정
       setRows(extracted);
@@ -154,13 +159,13 @@ const handleFileUpload = async (file: File) => {
       
       // 유효한 데이터만 필터링
       const validAccounts = rows
-        .filter(row => row.bankName.trim() || row.accountNumber.trim())
+        .filter(row => (row.bankName && safeString(row.bankName).trim()) || (row.accountNumber && safeString(row.accountNumber).trim()))
         .map(row => ({
-          bankName: row.bankName.trim(),
-          accountNumber: row.accountNumber.trim(),
-          withdrawalFee: row.withdrawalFee?.trim(),
-          purpose: row.purpose?.trim(),
-          note: row.note?.trim(),
+          bankName: safeString(row.bankName).trim(),
+          accountNumber: safeString(row.accountNumber).trim(),
+          withdrawalFee: safeString(row.withdrawalFee).trim(),
+          purpose: safeString(row.purpose).trim(),
+          note: safeString(row.note).trim(),
         }));
       
       const data = await saveBankAccountDocs({

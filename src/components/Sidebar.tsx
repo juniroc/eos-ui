@@ -102,6 +102,15 @@ export default function Sidebar({
     }
   };
 
+  const handleSubMenuClick = (subId: string) => {
+    // account-ledger 선택 시 cashbook으로 이동
+    if (subId === 'account-ledger') {
+      onSectionChange('cashbook');
+    } else {
+      onSectionChange(subId);
+    }
+  };
+
   // 현재 활성화된 메뉴를 찾는 함수
   const getCurrentActiveMenu = () => {
     if (!isClient) {
@@ -334,14 +343,15 @@ export default function Sidebar({
                     if (isIndented) {
                       return (
                         <div key={sub.id} className="flex flex-col items-start pl-4 gap-[10px] w-[92px] h-7">
-                          <button
-                            onClick={() => onSectionChange(sub.id)}
-                            className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors cursor-pointer ${
-                              activeSection === sub.id
-                                ? 'bg-[#E6E6E6]'
-                                : 'hover:bg-[#E6E6E6]'
-                            }`}
-                          >
+                        <button
+                          key={sub.id}
+                          onClick={() => handleSubMenuClick(sub.id)}
+                          className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors cursor-pointer ${
+                            activeSection === sub.id
+                              ? 'bg-[#E6E6E6]'
+                              : 'hover:bg-[#E6E6E6]'
+                          }`}
+                        >
                             <span className={`text-xs font-medium leading-[100%] text-center ${
                               activeSection === sub.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
                             }`}>
@@ -355,7 +365,7 @@ export default function Sidebar({
                     return (
                       <button
                         key={sub.id}
-                        onClick={() => onSectionChange(sub.id)}
+                        onClick={() => handleSubMenuClick(sub.id)}
                         className={`flex flex-row items-center p-2 gap-[6px] w-[92px] h-7 rounded transition-colors cursor-pointer ${
                           activeSection === sub.id
                             ? 'bg-[#E6E6E6]'

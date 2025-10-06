@@ -254,7 +254,6 @@ export default function ProofStoragePage() {
                 <td colSpan={7} className="p-8 bg-white border border-[#D9D9D9] text-center">
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-[12px] leading-[140%] text-[#767676]">등록된 증빙서류가 없습니다.</p>
-                    <p className="text-[12px] leading-[140%] text-[#767676]">파일을 업로드해주세요.</p>
                   </div>
                 </td>
               </tr>

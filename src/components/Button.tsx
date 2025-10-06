@@ -35,7 +35,7 @@ export default function Button({
       disabled || loading
         ? '#E6E6E6'
         : variant === 'primary'
-          ? 'var(--Background-Primary, #2563EB)'
+          ? 'var(--Background-Primary, #2C2C2C)'
           : 'var(--Background-Neutral-Tertiary, #F3F3F3)',
     color:
       disabled || loading

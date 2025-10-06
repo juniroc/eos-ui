@@ -140,12 +140,14 @@ export default function CardInfoPage() {
         .filter(row => row.cardIssuer.trim() || row.cardNumber.trim())
         .map(row => {
           const card: {
-            cardIssuer: string;
-            cardNumber: string;
+            id: number;
+            cardIssuer?: string;
+            cardNumber?: string;
             cardType?: string;
             purpose?: string;
             primaryUser?: string;
           } = {
+            id: row.id,
             cardIssuer: row.cardIssuer.trim(),
             cardNumber: row.cardNumber.trim(),
           };

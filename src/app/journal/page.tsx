@@ -3,39 +3,16 @@
 import { useEffect, useState, useCallback, useMemo, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Image from 'next/image';
 import Button from '@/components/Button';
-
-interface Transaction {
-  id: number;
-  accountId?: string;
-  accountCode?: string;
-  accountName?: string;
-  debitCredit?: boolean; // true = DEBIT, false = CREDIT
-  amount?: number;
-  partnerId?: string;
-  partnerName?: string;
-  note?: string;
-  matched?: boolean;
-}
-
-interface Voucher {
-  id: number;
-  date?: string;
-  description?: string;
-  debitTotal: number;
-  creditTotal: number;
-  transactions: Transaction[];
-}
-
-interface JournalFilters {
-  startDate: string; // YYYY-MM-DD
-  endDate: string; // YYYY-MM-DD
-  accountCode?: string;
-  partnerId?: string;
-  minAmount?: number;
-  maxAmount?: number;
-}
+import { 
+  fetchJournalData, 
+  batchSaveVouchers,
+  saveVoucher, 
+  type Transaction, 
+  type Voucher, 
+  type JournalFilters 
+} from '@/services/financial';
+import ToastMessage from '@/components/ToastMessage';
 
 function JournalPageContent() {
   const router = useRouter();
@@ -82,7 +59,7 @@ function JournalPageContent() {
 
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({ isLoading: false, message: '' });
   const [filters, setFilters] = useState<JournalFilters>(() => {
     const defaultDates = getDefaultDates();
     return {
@@ -94,6 +71,8 @@ function JournalPageContent() {
       maxAmount: undefined,
     };
   });
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -107,49 +86,46 @@ function JournalPageContent() {
     if (!token) return;
 
     try {
-      setLoading(true);
-      const params = new URLSearchParams();
-
-      // 시작일과 종료일을 API 파라미터로 설정
-      if (filters.startDate && filters.endDate) {
-        params.append('startDate', filters.startDate);
-        params.append('endDate', filters.endDate);
-      }
-
-      if (filters.accountCode) params.append('accountCode', filters.accountCode);
-      if (filters.partnerId) params.append('partnerId', filters.partnerId);
-      if (filters.minAmount) params.append('minAmount', filters.minAmount.toString());
-      if (filters.maxAmount) params.append('maxAmount', filters.maxAmount.toString());
-      if (voucherIds.length > 0) {
-        params.append('voucherIds', voucherIds.join(','));
-      }
-
-      const url = `https://api.eosxai.com/api/journal?${params.toString()}`;
-      console.log('API 호출 URL:', url); // 디버깅용
-
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      console.log('API 응답 데이터:', data);
+      setLoading({ isLoading: true, message: '전표를 조회하고 있습니다...' });
+      const data = await fetchJournalData(token, filters, voucherIds);
       
-      if (data.vouchers && Array.isArray(data.vouchers)) {
-        // 날짜 포맷팅 및 데이터 구조 확인
-        const formattedVouchers = data.vouchers.map((voucher: { id: string; date: string; description: string; transactions: unknown[] }) => ({
-          ...voucher,
-          date: voucher.date ? new Date(voucher.date).toISOString().split('T')[0] : '',
-          transactions: voucher.transactions || []
-        }));
-        console.log('포맷된 전표 데이터:', formattedVouchers);
-        setVouchers(formattedVouchers);
-      } else {
-        console.log('전표 데이터가 없거나 형식이 올바르지 않습니다:', data);
-        setVouchers([]);
+      if (data.vouchers.length === 0) {
+        alert('조회된 전표가 없습니다.');
       }
+      
+      console.log('포맷된 전표 데이터:', data.vouchers);
+      setVouchers(data.vouchers);
     } catch (err) {
       console.error('전표 조회 에러:', err);
+      alert('전표 조회에 실패했습니다: ' + (err instanceof Error ? err.message : '알 수 없는 오류'));
     } finally {
-      setLoading(false);
+      setLoading({ isLoading: false, message: '' });
     }
   }, [token, filters, voucherIds]);
+
+  /** 개별 전표 저장 */
+  const handleSaveVoucher = async (voucher: Voucher) => {
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const data = await saveVoucher(token, voucher);
+
+      if (data.success) {
+        setToastMessage(`전표가 저장되었습니다.`);
+        setShowToast(true);
+      } else {
+        alert('저장 실패: ' + (data.message || '알 수 없는 오류'));
+      }
+    } catch (err) {
+      console.error('전표 저장 에러:', err);
+      alert('저장 실패: ' + (err instanceof Error ? err.message : '알 수 없는 오류'));
+    } finally {
+      setLoading({ isLoading: false, message: '' });
+    }
+  };
 
   /** 일괄 저장 */
   const handleBatchSave = async () => {
@@ -164,37 +140,14 @@ function JournalPageContent() {
     }
 
     try {
-      // API 명세에 맞게 데이터 구조 변환
-      const formattedVouchers = vouchers.map(voucher => ({
-        id: voucher.id,
-        date: voucher.date,
-        description: voucher.description,
-        transactions: voucher.transactions.map(transaction => ({
-          id: transaction.id,
-          accountId: transaction.accountId,
-          partnerId: transaction.partnerId,
-          amount: transaction.amount,
-          note: transaction.note,
-          debitCredit: transaction.debitCredit
-        }))
-      }));
-
-      console.log('저장할 데이터:', formattedVouchers);
-
-      const res = await fetch(`https://api.eosxai.com/api/journal/save`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ vouchers: formattedVouchers }),
-      });
-
-      const data = await res.json();
+      setLoading({ isLoading: true, message: '전표를 저장하고 있습니다...' });
+      console.log('저장할 데이터:', vouchers);
+      const data = await batchSaveVouchers(token, vouchers);
       console.log('저장 응답:', data);
 
       if (data.success) {
-        alert('일괄 저장되었습니다.');
+        setToastMessage(`전표가 일괄로 저장되었습니다.`);
+        setShowToast(true);
         // 저장 후 리스팅 함수 다시 호출하여 서버 데이터로 업데이트
         fetchJournal();
       } else {
@@ -203,6 +156,8 @@ function JournalPageContent() {
     } catch (err) {
       console.error('저장 에러:', err);
       alert('저장 실패: ' + (err instanceof Error ? err.message : '알 수 없는 오류'));
+    } finally {
+      setLoading({ isLoading: false, message: '' });
     }
   };
 
@@ -256,8 +211,6 @@ function JournalPageContent() {
                     paddingBottom: '8px',
                     paddingLeft: '12px',
                     paddingRight: '12px',
-                    // background: '#E6E6E6',
-                    // color: '#B3B3B3',
                     fontSize: '12px',
                     lineHeight: '100%',
                     fontWeight: '500',
@@ -268,6 +221,7 @@ function JournalPageContent() {
                   조회하기
                 </Button>
                 <Button
+                  variant="primary"
                   onClick={handleBatchSave}
                   className="flex flex-row justify-center items-center gap-2"
                   style={{
@@ -275,8 +229,6 @@ function JournalPageContent() {
                     paddingBottom: '8px',
                     paddingLeft: '12px',
                     paddingRight: '12px',
-                    background: '#E6E6E6',
-                    color: '#B3B3B3',
                     fontSize: '12px',
                     lineHeight: '100%',
                     fontWeight: '500',
@@ -399,7 +351,9 @@ function JournalPageContent() {
         </div>
 
         {/* 전표 리스트 */}
-        {vouchers.length > 0 ? (
+        {loading.isLoading ? (
+          <div className="p-8 text-center text-xs">{loading.message}</div>
+        ) : vouchers.length > 0 && (
           vouchers.map((voucher, voucherIndex) => (
             <div key={voucher.id}>
               {/* 전표 테이블 */}
@@ -643,23 +597,35 @@ function JournalPageContent() {
                 </tbody>
               </table>
               
+              {/* 개별 저장 버튼 */}
+              <div className="flex justify-end mt-2">
+                <Button
+                  variant="primary"
+                  onClick={() => handleSaveVoucher(voucher)}
+                  disabled={loading.isLoading}
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: '11px',
+                    lineHeight: '100%',
+                    fontWeight: '500',
+                  }}
+                >
+                  저장하기
+                </Button>
+              </div>
+              
             </div>
           ))
-        ) : (
-          !loading && (
-            <div className="text-center text-gray-500 py-8">
-              조회된 전표가 없습니다.
-            </div>
-          )
         )}
       </div>
+      <ToastMessage message={toastMessage} isVisible={showToast} onHide={() => setShowToast(false)} />
     </div>
   );
 }
 
 export default function JournalPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="p-8 text-center">페이지를 불러오고 있습니다...</div>}>
       <JournalPageContent />
     </Suspense>
   );

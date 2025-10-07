@@ -306,7 +306,7 @@ export default function GuidelinePeriodPage() {
             <div className="flex flex-col justify-center items-center py-2 px-3 w-[70px] min-w-[70px] h-8 bg-white border-l border-r border-b border-[#D9D9D9] flex-shrink-0">
               <div className="flex flex-row items-start w-[46px] h-[23px]">
                 <button
-                  className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#E6E6E6] border-none font-pretendard text-[11px] leading-[100%] text-[#B3B3B3] cursor-pointer"
+                  className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#F3F3F3] border-none font-pretendard text-[11px] leading-[100%] text-[#1E1E1E] cursor-pointer"
                   onClick={() => handleDelete(rows[0].id)}
                   disabled={loading}
                 >

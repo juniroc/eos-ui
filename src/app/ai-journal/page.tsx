@@ -27,67 +27,12 @@ interface ProgressData {
 export default function AIJournalPage() {
   const { token } = useAuth();
 
-  const [step, setStep] = useState<'upload' | 'extracting' | 'processing' | 'result'>('result'); // 임시로 result로 설정
+  const [step, setStep] = useState<'upload' | 'extracting' | 'processing' | 'result'>('upload'); // 임시로 result로 설정
   const [, setFiles] = useState<FileList | null>(null);
   const [progress, setProgress] = useState<ProgressData>({ processed: 0, total: 100 });
   
   // 임시 vouchers 데이터
-  const [vouchers, setVouchers] = useState<AIJournalVoucher[]>([
-    {
-      id: 'voucher-1',
-      date: '2024-10-07',
-      description: '사무용품 구입',
-      transactions: [
-        {
-          id: 'debit-1-1',
-          date: '2024-10-07',
-          description: '사무용품 구입',
-          amount: 50000,
-          partnerName: '스테이플러코리아',
-          accountName: '사무용품비',
-          debitCredit: true,
-          note: '복사용지, 펜, 스테이플러'
-        },
-        {
-          id: 'credit-1-1',
-          date: '2024-10-07',
-          description: '사무용품 구입',
-          amount: 50000,
-          partnerName: '스테이플러코리아',
-          accountName: '현금',
-          debitCredit: true,
-          note: '현금결제'
-        }
-      ]
-    },
-    {
-      id: 'voucher-2',
-      date: '2024-10-07',
-      description: '컨설팅 수입',
-      transactions: [
-        {
-          id: 'debit-2-1',
-          date: '2024-10-07',
-          description: '컨설팅 수입',
-          amount: 1000000,
-          partnerName: 'ABC컨설팅',
-          accountName: '현금',
-          debitCredit: true,
-          note: '10월 컨설팅 수수료'
-        },
-        {
-          id: 'credit-2-1',
-          date: '2024-10-07',
-          description: '컨설팅 수입',
-          amount: 1000000,
-          partnerName: 'ABC컨설팅',
-          accountName: '컨설팅수입',
-          debitCredit: false,
-          note: '컨설팅 서비스 제공'
-        }
-      ]
-    }
-  ]);
+  const [vouchers, setVouchers] = useState<AIJournalVoucher[]>([]);
   
   const [, setRawTransactions] = useState<RawTransaction[]>([]);
   const [, setNewPartners] = useState<NewPartner[]>([]);
@@ -621,8 +566,7 @@ export default function AIJournalPage() {
         )}
 
         {/* 결과 */}
-        {/* {step === 'result' &&  */}
-        {true && (
+        {step === 'result' && (
           <>
             {/* Dashboard */}
             <div className="flex flex-row items-center p-0 h-[63px] bg-white border border-[#D9D9D9]">

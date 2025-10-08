@@ -110,6 +110,20 @@ export default function CashbookPage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
+  // 중복 제거 함수
+  const removeDuplicateTransactions = (transactions: CashTransaction[]): CashTransaction[] => {
+    const seen = new Set<string>();
+    return transactions.filter(tx => {
+      const key = `${tx.id}-${tx.date}-${tx.balance}`;
+      if (seen.has(key)) {
+        console.warn('중복 거래 발견:', tx);
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  };
+
   /** 현금출납장 조회 */
   const fetchCashbook = useCallback(async () => {
     if (!token) return;
@@ -244,8 +258,9 @@ export default function CashbookPage() {
         }
       }
       
-      setCashTransactions(cashData);
-      setDepositTransactions(depositData);
+      // 중복 제거 후 데이터 설정
+      setCashTransactions(removeDuplicateTransactions(cashData));
+      setDepositTransactions(removeDuplicateTransactions(depositData));
       setHasDepositData(hasDeposit);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
@@ -409,11 +424,11 @@ export default function CashbookPage() {
         </div>
 
         {/* 회계장부 필터 */}
-        <div className="flex flex-row items-stretch border border-[#D9D9D9] min-w-0 overflow-x-auto mb-6">
+        <div className="flex flex-row items-stretch border border-[#D9D9D9] min-w-0 overflow-x-auto mb-4">
           {/* 조회기간(필수) */}
           <div className="flex flex-row items-stretch flex-1 min-w-[310px]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[80px] md:w-[100px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">조회기간(필수)</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">조회기간(필수)</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-1 px-2 gap-1 bg-white h-full">
@@ -421,7 +436,7 @@ export default function CashbookPage() {
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
-                  className="w-[90px] text-[11px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none"
+                  className="w-[90px] text-[11px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none"
                   placeholder="시작일"
                 />
                 <span className="text-[11px] text-[#757575] shrink-0">-</span>
@@ -429,7 +444,7 @@ export default function CashbookPage() {
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
-                  className="w-[90px] text-[11px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none"
+                  className="w-[90px] text-[11px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none"
                   placeholder="종료일"
                 />
               </div>
@@ -439,14 +454,14 @@ export default function CashbookPage() {
           {/* 계정과목 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[150px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[80px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">계정과목</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">계정과목</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
                 <select
                   value={filters.accountCode || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
                   <option value="">선택하기</option>
                   <option value="11111">현금 (11111)</option>
@@ -460,7 +475,7 @@ export default function CashbookPage() {
           {/* 거래처 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[120px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[50px] md:w-[60px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">거래처</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">거래처</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
@@ -469,7 +484,7 @@ export default function CashbookPage() {
                   placeholder="선택하기"
                   value={filters.partnerId || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
               </div>
             </div>
@@ -478,7 +493,7 @@ export default function CashbookPage() {
           {/* 최소금액 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최소금액</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">최소금액</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
@@ -487,7 +502,7 @@ export default function CashbookPage() {
                   placeholder="입력하기"
                   value={filters.minAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                  className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
               </div>
             </div>
@@ -496,7 +511,7 @@ export default function CashbookPage() {
           {/* 최대금액 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최대금액</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">최대금액</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
@@ -505,7 +520,7 @@ export default function CashbookPage() {
                   placeholder="입력하기"
                   value={filters.maxAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                  className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
               </div>
             </div>
@@ -514,46 +529,46 @@ export default function CashbookPage() {
 
         {/* 현금 테이블 - 데이터가 있을 때만 표시 */}
         {(cashTransactions.length > 0 || loading) && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">현금</h3>
-            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-              <thead>
-                <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">계정과목</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
-              </tr>
-            </thead>
+           <div className="flex flex-col gap-2 mb-4">
+             <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">현금</h3>
+             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
+               <thead>
+                 <tr>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
+               </tr>
+             </thead>
             <tbody>
                 {cashTransactions.length > 0 ? (
-                  cashTransactions.map(tx => (
+                  cashTransactions.map((tx, index) => (
                 <tr 
-                  key={tx.id}
+                  key={`cash-${tx.id}-${index}`}
                   onClick={() => handleRowClick(tx)}
                   className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
                 >
-                      <td className="p-3 border border-[#D9D9D9] text-center">
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                         {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
                           year: '2-digit',
                           month: '2-digit',
                           day: '2-digit'
                         }).replace(/\./g, '').replace(/\s/g, '') : '-'}
                       </td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.accountName}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.note || '-'}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                    <td colSpan={7} className="p-2 border border-[#D9D9D9] text-center text-gray-500">
                       {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
                     </td>
                   </tr>
@@ -565,46 +580,46 @@ export default function CashbookPage() {
 
         {/* 보통예금 테이블 - 보통예금 데이터가 있거나 로딩 중일 때 표시 */}
         {(hasDepositData || loading) && (
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3 text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
-            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575]">
-              <thead>
-                <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">입금</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">출금</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">계정과목</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
-                </tr>
-              </thead>
+           <div className="flex flex-col gap-2 mb-6">
+             <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
+             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
+               <thead>
+                 <tr>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
+                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
+                 </tr>
+               </thead>
               <tbody>
                 {depositTransactions.length > 0 ? (
-                  depositTransactions.map(tx => (
+                  depositTransactions.map((tx, index) => (
                     <tr 
-                      key={tx.id}
+                      key={`deposit-${tx.id}-${index}`}
                       onClick={() => handleRowClick(tx)}
                       className={`cursor-pointer hover:bg-gray-50 ${tx.voucherId ? 'hover:bg-blue-50' : ''}`}
                     >
-                      <td className="p-3 border border-[#D9D9D9] text-center">
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                         {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
                           year: '2-digit',
                           month: '2-digit',
                           day: '2-digit'
                         }).replace(/\./g, '').replace(/\s/g, '') : '-'}
                       </td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.accountName}</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9]">{tx.note || '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.deposit ? tx.deposit.toLocaleString() : '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.withdrawal ? tx.withdrawal.toLocaleString() : '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{tx.balance.toLocaleString()}원</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.accountName}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.partnerName || '-'}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{tx.note || '-'}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="p-3 border border-[#D9D9D9] text-center text-gray-500">
+                    <td colSpan={7} className="p-2 border border-[#D9D9D9] text-center text-gray-500">
                       {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
                     </td>
                   </tr>
@@ -638,7 +653,7 @@ export default function CashbookPage() {
               <div className="mb-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">일자</label>
+                     <label className="block text-xs mb-1">일자</label>
                     <input
                       type="date"
                       value={selectedVoucher.date || ''}
@@ -647,7 +662,7 @@ export default function CashbookPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">적요</label>
+                     <label className="block text-xs mb-1">적요</label>
                     <input
                       type="text"
                       value={selectedVoucher.description || ''}
@@ -659,7 +674,7 @@ export default function CashbookPage() {
               </div>
 
               <div className="mb-4">
-                <h4 className="font-medium mb-2">거래 내역</h4>
+                <h4 className="text-xs mb-2">거래 내역</h4>
                 <table className="w-full border text-sm">
                   <thead className="bg-gray-50">
                     <tr>

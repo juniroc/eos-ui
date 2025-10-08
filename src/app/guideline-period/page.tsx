@@ -269,61 +269,13 @@ export default function GuidelinePeriodPage() {
           </div>
         </div>
 
-        {/* First Data Row */}
-        {rows.length > 0 && (
-          <div className="flex flex-row items-center w-full h-8">
-            {/* 번호 - 고정 */}
-            <div className="flex flex-col justify-center items-center py-2 px-3 w-10 min-w-[40px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
-              <span className="font-pretendard text-[12px] leading-[100%] text-[#757575] text-center">
-                1
-              </span>
-            </div>
-
-            {/* 제공일자 - 고정 */}
-            <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
-              <span className="font-pretendard text-[12px] leading-[100%] text-[#B3B3B3]">
-                {rows[0].providedAt ? new Date(rows[0].providedAt).toLocaleDateString('ko-KR') : '2024-01-01'}
-              </span>
-            </div>
-
-            {/* 지침내용 - 가변 (2/3 비율) */}
-            <div className="flex flex-row items-center p-2 flex-[2] min-w-[200px] h-8 bg-white border-l border-b border-[#D9D9D9]">
-              <span className="font-pretendard text-[12px] leading-[100%] flex-1 truncate text-[#B3B3B3]">
-                {rows[0].content || '입력하기'}
-              </span>
-            </div>
-
-            {/* 반영여부 - 가변 (1/3 비율) */}
-            <div className="flex flex-row items-center py-2 px-3 flex-1 min-w-[120px] h-8 bg-white border-l border-b border-[#D9D9D9]">
-              <span className={`font-pretendard text-[12px] leading-[100%] truncate ${
-                (rows[0].problem || '반영중') === '반영중' ? 'text-[#1E1E1E]' : 'text-[#B3B3B3]'
-              }`}>
-                {rows[0].problem || '반영중'}
-              </span>
-            </div>
-
-            {/* 삭제 버튼 - 고정 */}
-            <div className="flex flex-col justify-center items-center py-2 px-3 w-[70px] min-w-[70px] h-8 bg-white border-l border-r border-b border-[#D9D9D9] flex-shrink-0">
-              <div className="flex flex-row items-start w-[46px] h-[23px]">
-                <button
-                  className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#F3F3F3] border-none font-pretendard text-[11px] leading-[100%] text-[#1E1E1E] cursor-pointer"
-                  onClick={() => handleDelete(rows[0].id)}
-                  disabled={loading}
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Additional Rows */}
-        {rows.slice(1).map((row, idx) => (
+        {/* Data Rows */}
+        {rows.map((row, idx) => (
           <div key={row.id} className="flex flex-row items-center w-full h-8">
             {/* 번호 - 고정 */}
             <div className="flex flex-col justify-center items-center py-2 px-3 w-10 min-w-[40px] h-8 bg-white border-l border-b border-[#D9D9D9] flex-shrink-0">
               <span className="font-pretendard text-[12px] leading-[100%] text-[#757575] text-center">
-                {idx + 2}
+                {idx + 1}
               </span>
             </div>
 
@@ -354,7 +306,7 @@ export default function GuidelinePeriodPage() {
             <div className="flex flex-col justify-center items-center py-2 px-3 w-[70px] min-w-[70px] h-8 bg-white border-l border-r border-b border-[#D9D9D9] flex-shrink-0">
               <div className="flex flex-row items-start w-[46px] h-[23px]">
                 <button
-                className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#E6E6E6] border-none font-pretendard text-[11px] leading-[100%] text-[#B3B3B3] cursor-pointer"
+                  className="flex flex-row justify-center items-center p-[6px] gap-[10px] w-[46px] h-[23px] bg-[#F3F3F3] border-none font-pretendard text-[11px] leading-[100%] text-[#1E1E1E] cursor-pointer"
                   onClick={() => handleDelete(row.id)}
                   disabled={loading}
                 >

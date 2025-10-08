@@ -367,7 +367,7 @@ export default function AIClosingCheckPage() {
               <span className="text-xs font-medium text-[#757575]">점검항목</span>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
+          <div className="flex flex-col justify-center items-start flex-[2.8] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             <div className="flex justify-center items-center w-full">
               <span className="text-xs font-medium text-[#757575]">내용</span>
             </div>
@@ -394,7 +394,7 @@ export default function AIClosingCheckPage() {
               <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-white border-r border-[#D9D9D9] p-2">
                 <span className="text-xs font-medium text-[#757575]">{r.title}</span>
               </div>
-              <div className="flex flex-col justify-center items-start flex-1 h-8 bg-white border-r border-[#D9D9D9] p-2">
+              <div className="flex flex-col justify-center items-start flex-[2.8] h-8 bg-white border-r border-[#D9D9D9] p-2">
                 <span className="text-xs font-medium text-[#757575]">{r.description}</span>
               </div>
               <div className="flex flex-col justify-center items-start flex-1 h-8 bg-white border-r border-[#D9D9D9] p-2">
@@ -433,7 +433,7 @@ export default function AIClosingCheckPage() {
             </div>
             <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start flex-[2.8] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>
             <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
             </div>

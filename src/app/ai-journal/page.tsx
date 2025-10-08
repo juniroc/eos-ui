@@ -477,12 +477,21 @@ export default function AIJournalPage() {
   const handleNewFileUpload = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.jpg,.jpeg,.png,.pdf,.doc,.docx';
+    input.accept = '.pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png';
     input.multiple = false;
     input.onchange = (e) => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
-        handleFileUpload(target.files[0]);
+        const file = target.files[0];
+        // 파일 확장자 검증
+        const allowedExtensions = ['.pdf', '.xlsx', '.xls', '.csv', '.jpg', '.jpeg', '.png'];
+        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+        
+        if (allowedExtensions.includes(fileExtension)) {
+          handleFileUpload(file);
+        } else {
+          alert('지원하지 않는 파일 형식입니다. (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)');
+        }
       }
     };
     input.click();
@@ -535,7 +544,7 @@ export default function AIJournalPage() {
                 파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
               </span>
               <span className="text-xs leading-[140%] text-center text-[#767676]">
-                (JPG, PNG, PDF, DOC, DOCX 파일만 지원됩니다.)
+                (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)
               </span>
             </div>
             <FileUploadBox

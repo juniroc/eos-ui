@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import PrintButton from '@/components/PrintButton';
 
 interface FSRow {
   label: string;
@@ -88,7 +89,7 @@ export default function FinancialStatementsPage() {
   const [date, setDate] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [statementData, setStatementData] = useState<StatementData | null>(null);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
@@ -188,10 +189,6 @@ export default function FinancialStatementsPage() {
     link.click();
   };
 
-  /** 인쇄하기 */
-  const handlePrint = () => {
-    window.print();
-  };
 
   /** 조회하기 */
   const handleSearch = () => {
@@ -352,12 +349,14 @@ export default function FinancialStatementsPage() {
               
               {/* Print Button */}
               <div className="w-[90px] h-[28px]">
-                <button
-                  onClick={handlePrint}
+                <PrintButton
+                  printType="element"
+                  targetSelector="#financial-statements-data"
+                  variant="neutral"
                   className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#F3F3F3] text-[#2C2C2C] text-[12px] leading-[100%] font-medium cursor-pointer"
                 >
                   인쇄하기
-                </button>
+                </PrintButton>
               </div>
             </div>
           </div>
@@ -393,7 +392,7 @@ export default function FinancialStatementsPage() {
 
         {/* 재무제표 데이터 */}
         {statementData && statementData.rows && Array.isArray(statementData.rows) && statementData.rows.length > 0 && (
-          <div className="w-full bg-white rounded">
+          <div id="financial-statements-data" className="w-full bg-white rounded">
             {/* 제목 및 기간 정보 */}
             <div className="flex flex-col justify-center items-center py-2 px-1 gap-1 w-full min-w-[100px] h-[83px]">
               {/* 제목 */}

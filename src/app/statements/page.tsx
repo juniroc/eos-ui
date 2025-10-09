@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import PrintButton from '@/components/PrintButton';
 import Image from 'next/image';
 
 interface Account {
@@ -201,10 +202,6 @@ export default function StatementsPage() {
     link.click();
   };
 
-  /** 인쇄하기 */
-  const handlePrint = () => {
-    window.print();
-  };
 
   /** 조회하기 */
   const handleSearch = () => {
@@ -251,13 +248,14 @@ export default function StatementsPage() {
                 >
                   다운로드
                 </Button>
-                <Button
+                <PrintButton
+                  printType="element"
+                  targetSelector="#statements-table"
                   variant="neutral"
-                  onClick={handlePrint}
                   className="flex flex-row justify-center items-center gap-2"
                 >
                   인쇄하기
-                </Button>
+                </PrintButton>
               </div>
             </div>
           </div>
@@ -322,7 +320,7 @@ export default function StatementsPage() {
 
         {/* 잔액명세서 데이터 */}
         {balanceData.length > 0 && (
-          <div className="bg-white">
+          <div id="statements-table" className="bg-white">
             <table className="w-full text-sm text-[#757575]">
               <thead className="bg-[#F5F5F5]">
                 <tr>

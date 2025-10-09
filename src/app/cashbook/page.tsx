@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import PrintButton from '@/components/PrintButton';
 import ToastMessage from '@/components/ToastMessage';
 
 interface CashTransaction {
@@ -354,10 +355,6 @@ export default function CashbookPage() {
     link.click();
   };
 
-  /** 인쇄하기 */
-  const handlePrint = () => {
-    window.print();
-  };
 
   /** 행 클릭 핸들러 */
   const handleRowClick = (transaction: CashTransaction) => {
@@ -415,13 +412,14 @@ export default function CashbookPage() {
                 >
                   다운로드
                 </Button>
-                <Button
+                <PrintButton
+                  printType="element"
+                  targetSelector="#cashbook-tables"
                   variant="neutral"
-                  onClick={handlePrint}
                   className="flex flex-row justify-center items-center gap-2"
                 >
                   인쇄하기
-                </Button>
+                </PrintButton>
               </div>
             </div>
           </div>
@@ -532,6 +530,7 @@ export default function CashbookPage() {
         </div>
 
         {/* 현금 테이블 - 데이터가 있을 때만 표시 */}
+        <div id="cashbook-tables">
         {(cashTransactions.length > 0 || loading) && (
            <div className="flex flex-col gap-2 mb-4">
              <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">현금</h3>
@@ -632,6 +631,7 @@ export default function CashbookPage() {
           </table>
           </div>
         )}
+        </div>
 
         {/* 전표 상세 모달 */}
         {showVoucherDetail && selectedVoucher && (

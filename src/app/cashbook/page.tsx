@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import ToastMessage from '@/components/ToastMessage';
 
 interface CashTransaction {
   id: string;
@@ -102,6 +103,8 @@ export default function CashbookPage() {
   const [hasDepositData, setHasDepositData] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [showVoucherDetail, setShowVoucherDetail] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -303,8 +306,9 @@ export default function CashbookPage() {
       });
       const data = await res.json();
       if (data.success) {
-        alert('저장되었습니다.');
         setSelectedVoucher(data.voucher);
+        setToastMessage('전표가 저장되었습니다.');
+        setShowToast(true);
         // 저장 후 리스팅 함수 다시 호출
         fetchCashbook();
       } else {
@@ -568,7 +572,7 @@ export default function CashbookPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="p-2 border border-[#D9D9D9] text-center text-gray-500">
+                    <td colSpan={7} className="p-2 text-xs border border-[#D9D9D9] text-center text-gray-500">
                       {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
                     </td>
                   </tr>
@@ -619,7 +623,7 @@ export default function CashbookPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="p-2 border border-[#D9D9D9] text-center text-gray-500">
+                    <td colSpan={7} className="p-2 text-xs border border-[#D9D9D9] text-center text-gray-500">
                       {loading ? '조회 중...' : '조회된 내역이 없습니다.'}
                     </td>
                   </tr>
@@ -627,13 +631,6 @@ export default function CashbookPage() {
             </tbody>
           </table>
           </div>
-        )}
-
-        {/* 조회 전 메시지 - 데이터가 없고 로딩 중이 아닐 때만 표시 */}
-        {cashTransactions.length === 0 && depositTransactions.length === 0 && !loading && (
-            <div className="text-center text-gray-500 py-8">
-            조회기간을 선택하고 조회하기 버튼을 클릭하세요.
-            </div>
         )}
 
         {/* 전표 상세 모달 */}
@@ -776,6 +773,8 @@ export default function CashbookPage() {
           </div>
         )}
       </div>
+
+      <ToastMessage message={toastMessage} isVisible={showToast} onHide={() => setShowToast(false)} />
     </div>
   );
 }

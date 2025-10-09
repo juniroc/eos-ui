@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Button from '@/components/Button';
 
 interface LedgerRow {
   date: string;
@@ -38,7 +39,8 @@ interface LedgerPartner {
 }
 
 interface LedgerFilters {
-  period: string; // YYYY-MM
+  startDate: string;
+  endDate: string;
   accountCode?: string;
   partnerId?: string;
   minAmount?: number;
@@ -68,12 +70,52 @@ export default function LedgerPage() {
   const router = useRouter();
   const { token, isAuthenticated, loading: authLoading } = useAuth();
 
-  const [filters, setFilters] = useState<LedgerFilters>({
-    period: '',
-    accountCode: '',
-    partnerId: '',
-    minAmount: undefined,
-    maxAmount: undefined,
+  // 기본 날짜 계산 함수
+  const getDefaultDates = () => {
+    // 한국 시간대로 현재 날짜 가져오기
+    const today = new Date();
+    const koreaTime = new Date(today.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
+    
+    const currentYear = koreaTime.getFullYear();
+    const currentMonth = koreaTime.getMonth(); // 0-based (0=1월, 11=12월)
+    
+    // 전월 1일 계산
+    let startYear = currentYear;
+    let startMonth = currentMonth - 1; // 이전 달
+    
+    // 1월인 경우 작년 12월로 조정
+    if (startMonth < 0) {
+      startMonth = 11;
+      startYear = currentYear - 1;
+    }
+    
+    const startDate = new Date(startYear, startMonth, 1);
+    const endDate = new Date(koreaTime.getFullYear(), koreaTime.getMonth(), koreaTime.getDate());
+    
+    // YYYY-MM-DD 형식으로 변환
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
+    return {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate)
+    };
+  };
+
+  const [filters, setFilters] = useState<LedgerFilters>(() => {
+    const defaultDates = getDefaultDates();
+    return {
+      startDate: defaultDates.startDate,
+      endDate: defaultDates.endDate,
+      accountCode: '',
+      partnerId: '',
+      minAmount: undefined,
+      maxAmount: undefined,
+    };
   });
   const [loading, setLoading] = useState(false);
   const [ledgerData, setLedgerData] = useState<LedgerAccount[] | LedgerPartner[]>([]);
@@ -95,14 +137,9 @@ export default function LedgerPage() {
       setLoading(true);
       const params = new URLSearchParams();
 
-      // 조회월을 startDate, endDate 로 변환
-      if (filters.period) {
-        const [year, month] = filters.period.split('-').map(Number);
-        const startDate = `${filters.period}-01`;
-        const endDate = new Date(year, month, 0).toISOString().split('T')[0];
-        params.append('startDate', startDate);
-        params.append('endDate', endDate);
-      }
+      // 조회기간을 startDate, endDate 로 설정
+      if (filters.startDate) params.append('startDate', filters.startDate);
+      if (filters.endDate) params.append('endDate', filters.endDate);
 
       if (filters.accountCode) params.append('accountCode', filters.accountCode);
       if (filters.partnerId) params.append('partnerId', filters.partnerId);
@@ -198,7 +235,7 @@ export default function LedgerPage() {
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `원장_${filters.period || '전체'}.csv`;
+    link.download = `원장_${filters.startDate}_${filters.endDate}.csv`;
     link.click();
   };
 
@@ -216,8 +253,12 @@ export default function LedgerPage() {
 
   /** 조회하기 */
   const handleSearch = () => {
-    if (!filters.period) {
-      alert('조회월을 입력해주세요.');
+    if (!filters.startDate || !filters.endDate) {
+      alert('조회기간을 입력해주세요.');
+      return;
+    }
+    if (filters.startDate > filters.endDate) {
+      alert('시작일은 종료일보다 이전이어야 합니다.');
       return;
     }
     fetchLedger();
@@ -230,107 +271,159 @@ export default function LedgerPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="p-4">
+      <div className="flex flex-col gap-4">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">원장</h2>
-            <p className="text-[#767676]">결산일자를 선택하고 결산점검을 시작하세요.</p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleSearch}
-              className="px-4 py-2 bg-[#2C2C2C] text-white"
-            >
-              조회하기
-            </button>
-            <button
-              onClick={handleDownload}
-              className="px-4 py-2 bg-[#2C2C2C] text-white"
-            >
-              다운로드
-            </button>
-            <button
-              onClick={handlePrint}
-              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C]"
-            >
-              인쇄하기
-            </button>
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start gap-4 self-stretch">
+            <div className="flex flex-row justify-between items-end gap-4 self-stretch">
+              <div className="flex flex-col items-start w-64">
+                <div className="flex flex-col items-start py-1.5 px-0 pb-0.5 rounded-lg">
+                  <div className="flex flex-row items-start">
+                    <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">원장</h2>
+                  </div>
+                  <p className="text-[12px] leading-[140%] text-[#767676]">조회일자를 선택하고 결산점검을 시작하세요.</p>
+                </div>
+              </div>
+              <div className="flex flex-row justify-end items-center gap-2 w-41">
+                <Button
+                  variant="primary"
+                  onClick={handleSearch}
+                  className="flex flex-row justify-center items-center gap-2"
+                >
+                  조회하기
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handleDownload}
+                  className="flex flex-row justify-center items-center gap-2"
+                >
+                  다운로드
+                </Button>
+                <Button
+                  variant="neutral"
+                  onClick={handlePrint}
+                  className="flex flex-row justify-center items-center gap-2"
+                >
+                  인쇄하기
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* 필터 영역 (1행) */}
-        <div className="bg-white border border-[#D9D9D9] mb-6">
-          <table className="w-full text-sm text-[#1e1616]">
-            <tbody>
-              <tr>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>조회일자(필수)</td>
-                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
-                  <input
-                    type="month"
-                    value={filters.period}
-                    onChange={(e) => setFilters(prev => ({ ...prev, period: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
-                    placeholder="YYYY-MM"
-                  />
-                </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>계정과목</td>
-                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
-                  <select
-                    value={filters.accountCode || ''}
-                    onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
-                  >
-                    <option value="">선택하기</option>
-                    <option value="11111">현금 (11111)</option>
-                    <option value="11113">보통예금 (11113)</option>
-                    <option value="11132">외상매출금 (11132)</option>
-                    <option value="11142">미수금 (11142)</option>
-                    <option value="11144">가지급금 (11144)</option>
-                    <option value="21207">가수금 (21207)</option>
-                    <option value="21212">미지급비용 (21212)</option>
-                    <option value="44007">복리후생비(판) (44007)</option>
-                    <option value="44008">여비교통비(판) (44008)</option>
-                    <option value="44015">소모품비(판) (44015)</option>
-                    <option value="44016">세금과공과금(판) (44016)</option>
-                    <option value="44025">지급수수료(판) (44025)</option>
-                    <option value="44028">외주용역비(판) (44028)</option>
-                  </select>
-                </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>거래처</td>
-                <td className="p-3 border border-[#D9D9D9]" style={{ width: '150px' }}>
-                  <input
-                    type="text"
-                    placeholder="선택하기"
-                    value={filters.partnerId || ''}
-                    onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
-                  />
-                </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최소금액</td>
-                <td className="p-3 border border-[#D9D9D9]" style={{ width: '120px' }}>
-                  <input
-                    type="number"
-                    value={filters.minAmount || ''}
-                    onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
-                    placeholder="입력하기"
-                  />
-                </td>
-                <td className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]" style={{ width: 'fit-content', whiteSpace: 'nowrap' }}>최대금액</td>
-                <td className="p-3 border border-[#D9D9D9]" style={{ width: '120px' }}>
-                  <input
-                    type="number"
-                    value={filters.maxAmount || ''}
-                    onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
-                    className="w-full border-none outline-none bg-transparent text-[#B3B3B3] h-6"
-                    placeholder="입력하기"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        {/* 회계장부 필터 */}
+        <div className="flex flex-row items-stretch border border-[#D9D9D9] min-w-0 overflow-x-auto mb-4">
+          {/* 조회기간(필수) */}
+          <div className="flex flex-row items-stretch flex-1 min-w-[310px]">
+            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[80px] md:w-[100px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">조회기간(필수)</span>
+            </div>
+            <div className="flex flex-col justify-center flex-1 min-w-0">
+              <div className="flex flex-row items-center py-1 px-2 gap-1 bg-white h-full">
+                <input
+                  type="date"
+                  value={filters.startDate}
+                  onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
+                  className="w-[90px] text-[11px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none"
+                  placeholder="시작일"
+                />
+                <span className="text-[11px] text-[#757575] shrink-0">-</span>
+                <input
+                  type="date"
+                  value={filters.endDate}
+                  onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
+                  className="w-[90px] text-[11px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none"
+                  placeholder="종료일"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 계정과목 */}
+          <div className="flex flex-row items-stretch flex-1 min-w-[150px] border-l border-[#D9D9D9]">
+            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[80px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">계정과목</span>
+            </div>
+            <div className="flex flex-col justify-center flex-1 min-w-0">
+              <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
+                <select
+                  value={filters.accountCode || ''}
+                  onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                >
+                  <option value="">선택하기</option>
+                  <option value="11111">현금 (11111)</option>
+                  <option value="11113">보통예금 (11113)</option>
+                  <option value="11132">외상매출금 (11132)</option>
+                  <option value="11142">미수금 (11142)</option>
+                  <option value="11144">가지급금 (11144)</option>
+                  <option value="21207">가수금 (21207)</option>
+                  <option value="21212">미지급비용 (21212)</option>
+                  <option value="44007">복리후생비(판) (44007)</option>
+                  <option value="44008">여비교통비(판) (44008)</option>
+                  <option value="44015">소모품비(판) (44015)</option>
+                  <option value="44016">세금과공과금(판) (44016)</option>
+                  <option value="44025">지급수수료(판) (44025)</option>
+                  <option value="44028">외주용역비(판) (44028)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 거래처 */}
+          <div className="flex flex-row items-stretch flex-1 min-w-[120px] border-l border-[#D9D9D9]">
+            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[50px] md:w-[60px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">거래처</span>
+            </div>
+            <div className="flex flex-col justify-center flex-1 min-w-0">
+              <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
+                <input
+                  type="text"
+                  placeholder="선택하기"
+                  value={filters.partnerId || ''}
+                  onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 최소금액 */}
+          <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
+            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">최소금액</span>
+            </div>
+            <div className="flex flex-col justify-center flex-1 min-w-0">
+              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+                <input
+                  type="number"
+                  placeholder="입력하기"
+                  value={filters.minAmount || ''}
+                  onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 최대금액 */}
+          <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
+            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+              <span className="text-[11px] md:text-[12px] leading-[100%] text-xs text-[#757575] text-center">최대금액</span>
+            </div>
+            <div className="flex flex-col justify-center flex-1 min-w-0">
+              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+                <input
+                  type="number"
+                  placeholder="입력하기"
+                  value={filters.maxAmount || ''}
+                  onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 원장 테이블 - 데이터가 있을 때만 표시 */}
@@ -377,16 +470,6 @@ export default function LedgerPage() {
                 })}
               </tbody>
             </table>
-          </div>
-        )}
-
-        {/* 데이터가 없을 때 메시지 */}
-        {!loading && (ledgerData.length === 0 || !ledgerData.some(account => {
-          const rows = 'rows' in account ? account.rows : [];
-          return rows && rows.length > 0;
-        })) && (
-          <div className="text-center text-gray-500 py-8">
-            조회된 내역이 없습니다.
           </div>
         )}
 

@@ -87,6 +87,7 @@ export default function FinancialStatementsPage() {
   const [selectedType, setSelectedType] = useState<StatementType>('balance_sheet');
   const [date, setDate] = useState('');
   const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [statementData, setStatementData] = useState<StatementData | null>(null);
 
@@ -107,6 +108,7 @@ export default function FinancialStatementsPage() {
     
     setDate(todayString);
     setStartDate(todayString);
+    setEndDate(todayString);
   }, []);
 
   /** 재무제표 조회 */
@@ -118,8 +120,12 @@ export default function FinancialStatementsPage() {
       const params = new URLSearchParams();
 
       params.append('type', selectedType);
-      if (date) params.append('date', date);
-      if (startDate) params.append('startDate', startDate);
+      if (selectedType === 'balance_sheet' || selectedType === 'trial_balance') {
+        if (date) params.append('date', date);
+      } else {
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+      }
 
       const url = `https://api.eosxai.com/api/statements?${params.toString()}`;
       console.log('API 호출 URL:', url);
@@ -135,7 +141,7 @@ export default function FinancialStatementsPage() {
     } finally {
       setLoading(false);
     }
-  }, [token, selectedType, date, startDate]);
+  }, [token, selectedType, date, startDate, endDate]);
 
   /** 다운로드 */
   const handleDownload = () => {
@@ -195,7 +201,7 @@ export default function FinancialStatementsPage() {
         return;
       }
     } else {
-      if (!startDate) {
+      if (!startDate || !endDate) {
         alert('조회기간을 입력해주세요.');
         return;
       }
@@ -270,23 +276,56 @@ export default function FinancialStatementsPage() {
             
             {/* Right Buttons */}
             <div className="flex justify-end items-center gap-2 h-[32px]">
-              {/* Date Input */}
-              <div className="flex flex-col justify-center items-start w-[150px] min-w-[100px] h-[32px]">
-                <div className="flex items-center p-2 gap-2 bg-white border border-[#D9D9D9] w-[150px] min-w-[100px] h-[32px] self-stretch">
-                  <input
-                    type="date"
-                    value={selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? date : startDate}
-                    onChange={(e) => {
-                      if (selectedType === 'balance_sheet' || selectedType === 'trial_balance') {
-                        setDate(e.target.value);
-                      } else {
-                        setStartDate(e.target.value);
-                      }
-                    }}
-                    className="flex-1 text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
-                  />
+              {/* Date Input - 재무상태표, 합계잔액시산표는 단일 날짜 */}
+              {(selectedType === 'balance_sheet' || selectedType === 'trial_balance') ? (
+                <div className="flex flex-col justify-center items-start w-[150px] min-w-[100px] h-[32px]">
+                  <div className="flex items-center p-2 gap-2 bg-white border border-[#D9D9D9] w-[150px] min-w-[100px] h-[32px] self-stretch">
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="flex-1 text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* 손익계산서, 원가명세서, 현금흐름표, 이익잉여금처분계산서는 기간 설정 */
+                <div className="flex flex-row items-stretch border border-[#D9D9D9] min-w-0 overflow-x-auto">
+                  {/* 시작일 */}
+                  <div className="flex flex-row items-stretch flex-1 min-w-[120px]">
+                    <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+                      <span className="text-[11px] leading-[100%] text-[#757575] text-center">시작일</span>
+                    </div>
+                    <div className="flex flex-col justify-center flex-1 min-w-0">
+                      <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
+                        <input
+                          type="date"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="flex-1 text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* 종료일 */}
+                  <div className="flex flex-row items-stretch flex-1 min-w-[120px] border-l border-[#D9D9D9]">
+                    <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
+                      <span className="text-[11px] leading-[100%] text-[#757575] text-center">종료일</span>
+                    </div>
+                    <div className="flex flex-col justify-center flex-1 min-w-0">
+                      <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
+                        <input
+                          type="date"
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="flex-1 text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {/* Divider */}
               <div className="h-5 border-l border-[#D9D9D9]"></div>
@@ -329,7 +368,10 @@ export default function FinancialStatementsPage() {
           {statementTypes.map((type) => (
             <button
               key={type.key}
-              onClick={() => setSelectedType(type.key)}
+              onClick={() => {
+                setSelectedType(type.key);
+                setStatementData(null); // 탭 변경 시 데이터 리셋
+              }}
               className={`flex flex-col justify-center items-center pt-1 pb-4 flex-1 h-[38px] border-b ${
                 selectedType === type.key
                   ? 'border-[#383838]'
@@ -355,7 +397,7 @@ export default function FinancialStatementsPage() {
             {/* 제목 및 기간 정보 */}
             <div className="flex flex-col justify-center items-center py-2 px-1 gap-1 w-full min-w-[100px] h-[83px]">
               {/* 제목 */}
-              <div className="flex flex-row items-center p-0 gap-3 w-[153px] h-[29px]">
+              <div className="flex flex-row items-center p-0 gap-3 h-[29px]">
                 <h3 className="text-2xl font-semibold leading-[120%] tracking-tight text-[#1E1E1E]">
                   {statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label}
                 </h3>

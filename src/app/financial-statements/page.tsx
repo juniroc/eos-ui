@@ -73,12 +73,12 @@ interface StatementData {
 type StatementType = 'balance_sheet' | 'income_statement' | 'cost_report' | 'cash_flow' | 'trial_balance' | 'retained_earnings';
 
 const statementTypes: { key: StatementType; label: string }[] = [
-  { key: 'balance_sheet', label: '재 무 상 태 표' },
-  { key: 'income_statement', label: '손 익 계 산 서' },
-  { key: 'cost_report', label: '원 가 명 세 서' },
-  { key: 'cash_flow', label: '현 금 흐 름 표' },
-  { key: 'trial_balance', label: '합 계 잔 액 시 산 표' },
-  { key: 'retained_earnings', label: '이 익 잉 여 금 처 분 계 산 서' },
+  { key: 'balance_sheet', label: '재무상태표' },
+  { key: 'income_statement', label: '손익계산서' },
+  { key: 'cost_report', label: '원가명세서' },
+  { key: 'cash_flow', label: '현금흐름표' },
+  { key: 'trial_balance', label: '합계잔액시산표' },
+  { key: 'retained_earnings', label: '이익잉여금처분계산서' },
 ];
 
 export default function FinancialStatementsPage() {
@@ -267,7 +267,7 @@ export default function FinancialStatementsPage() {
                 </div>
               </div>
               <p className="text-[12px] leading-[140%] text-[#767676]">
-                결산일자를 선택하고 결산점검을 시작하세요.
+                조회일자를 선택하고 결산점검을 시작하세요.
               </p>
             </div>
             
@@ -397,8 +397,8 @@ export default function FinancialStatementsPage() {
             <div className="flex flex-col justify-center items-center py-2 px-1 gap-1 w-full min-w-[100px] h-[83px]">
               {/* 제목 */}
               <div className="flex flex-row items-center p-0 gap-3 h-[29px]">
-                <h3 className="text-2xl font-semibold leading-[120%] tracking-tight text-[#1E1E1E]">
-                  {statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label}
+                <h3 className="text-2xl font-semibold leading-[120%] tracking-wide text-[#1E1E1E]">
+                  {(statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label || '').split('').join(' ')}
                 </h3>
               </div>
               

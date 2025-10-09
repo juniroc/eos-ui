@@ -394,7 +394,7 @@ export default function CashbookPage() {
                   <div className="flex flex-row items-start">
                     <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">현금출납장</h2>
                   </div>
-                  <p className="text-[12px] leading-[140%] text-[#767676]">조회월을 선택하고 결산점검을 시작하세요.</p>
+                  <p className="text-[12px] leading-[140%] text-[#767676]">조회기간을 선택하고 결산점검을 시작하세요.</p>
                 </div>
               </div>
               <div className="flex flex-row justify-end items-center gap-2 w-41">

@@ -260,7 +260,7 @@ export async function extractCardDocs(file: File, token: string): Promise<unknow
 }
 
 
-export async function saveCardDocs(data: { documentId: string; cards: Array<{ cardIssuer: string; cardNumber: string; cardType?: string; purpose?: string; primaryUser?: string }> }, token: string): Promise<{ success: boolean; partners: Array<{ id: string; cardIssuer: string; cardNumber: string; cardType: string; purpose: string; primaryUser: string; createdAt: string }> }> {
+export async function saveCardDocs(data: { documentId: string; cards: Array<{ id: string, cardIssuer: string; cardNumber: string; cardType?: string; purpose?: string; primaryUser?: string }> }, token: string): Promise<{ success: boolean; partners: Array<{ id: string; cardIssuer: string; cardNumber: string; cardType: string; purpose: string; primaryUser: string; createdAt: string }> }> {
   const response = await fetch(`${API_BASE_URL}/api/card-docs/save`, {
     method: 'POST',
     headers: {

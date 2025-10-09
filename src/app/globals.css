@@ -72,6 +72,7 @@ body {
 /* 커스텀 스크롤바 */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px; /* 가로 스크롤바 두께 */
 }
 
 ::-webkit-scrollbar-track {
@@ -85,6 +86,11 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-500);
+}
+
+/* 가로 스크롤바만 더 얇게 설정하고 싶다면 */
+::-webkit-scrollbar:horizontal {
+  height: 4px;
 }
 
 /* 포커스 아웃라인 제거 */

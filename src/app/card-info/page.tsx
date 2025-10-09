@@ -10,21 +10,21 @@ import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
 
 interface CardRow {
-  id: number;
+  id: string;
   cardIssuer: string;
   cardNumber: string;
   cardType?: string; // GENERAL_CREDIT, DEBIT_CARD
   purpose?: string;
   primaryUser?: string;
-  serverId?: number; // 서버에 저장된 데이터인지 구분
+  serverId?: string; // 서버에 저장된 데이터인지 구분
 }
 
 export default function CardInfoPage() {
   const router = useRouter();
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<CardRow[]>([
-    { id: 1, cardIssuer: '', cardNumber: '' },
-    { id: 2, cardIssuer: '', cardNumber: '' },
+    { id: '1', cardIssuer: '', cardNumber: '' },
+    { id: '2', cardIssuer: '', cardNumber: '' },
   ]);
   const [loading, setLoading] = useState(false);
   const [, setFirstLoad] = useState(true);
@@ -72,23 +72,23 @@ export default function CardInfoPage() {
         } else {
           // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
           setRows([
-            { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
-            { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+            { id: '1', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+            { id: '2', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
           ]);
         }
       } else {
         // API 호출 실패 시에도 빈 행으로 초기화
         setRows([
-          { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
-          { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+          { id: '1', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+          { id: '2', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
         ]);
       }
     } catch (err) {
       console.error('카드 정보 조회 에러:', err);
       // 에러 발생 시에도 빈 행으로 초기화
       setRows([
-        { id: 1, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
-        { id: 2, cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+        { id: '1', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
+        { id: '2', cardIssuer: '', cardNumber: '', cardType: '', purpose: '', primaryUser: '' },
       ]);
     } finally {
       setFirstLoad(false);
@@ -109,7 +109,7 @@ export default function CardInfoPage() {
         }
         
         const extracted = data.items.map((item: CardRow) => ({
-          id: Date.now() + Math.random(),
+          id: Date.now() + Math.random().toString(),
           cardIssuer: item.cardIssuer || '',
           cardNumber: item.cardNumber || '',
           cardType: item.cardType || '',
@@ -140,7 +140,7 @@ export default function CardInfoPage() {
         .filter(row => row.cardIssuer.trim() || row.cardNumber.trim())
         .map(row => {
           const card: {
-            id: number;
+            id: string;
             cardIssuer?: string;
             cardNumber?: string;
             cardType?: string;
@@ -170,7 +170,7 @@ export default function CardInfoPage() {
       
       const data = await saveCardDocs({
         documentId: documentId || '',
-        cards: validCards
+        cards: validCards as CardRow[]
       }, token);
       
       console.log('저장 응답:', data);
@@ -194,7 +194,7 @@ export default function CardInfoPage() {
   };
 
   /** 삭제 */
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     const row = rows.find(r => r.id === id);
     if (!row) return;
 
@@ -225,7 +225,7 @@ export default function CardInfoPage() {
   const addRow = () => {
     setRows(prev => [
       ...prev,
-      { id: Date.now(), cardIssuer: '', cardNumber: '' },
+      { id: Date.now().toString(), cardIssuer: '', cardNumber: '' },
     ]);
   };
 

@@ -39,12 +39,18 @@ interface CashFlowRow {
 interface StatementMeta {
   asOfDate?: string;
   periods?: {
-    current: string;
-    prior: string;
+    current: {
+      start: string;
+      end: string;
+    }
+    prior: {
+      start: string;
+      end: string;
+    }
   };
-  terms?: {
-    current: string;
-    prior: string;
+  terms: {
+    current: number;
+    prior: number;
   };
   totals?: {
     debit: number;
@@ -66,12 +72,12 @@ interface StatementData {
 type StatementType = 'balance_sheet' | 'income_statement' | 'cost_report' | 'cash_flow' | 'trial_balance' | 'retained_earnings';
 
 const statementTypes: { key: StatementType; label: string }[] = [
-  { key: 'balance_sheet', label: '재무상태표' },
-  { key: 'income_statement', label: '손익계산서' },
-  { key: 'cost_report', label: '원가명세서' },
-  { key: 'cash_flow', label: '현금흐름표' },
-  { key: 'trial_balance', label: '합계잔액시산표' },
-  { key: 'retained_earnings', label: '이익잉여금처분계산서' },
+  { key: 'balance_sheet', label: '재 무 상 태 표' },
+  { key: 'income_statement', label: '손 익 계 산 서' },
+  { key: 'cost_report', label: '원 가 명 세 서' },
+  { key: 'cash_flow', label: '현 금 흐 름 표' },
+  { key: 'trial_balance', label: '합 계 잔 액 시 산 표' },
+  { key: 'retained_earnings', label: '이 익 잉 여 금 처 분 계 산 서' },
 ];
 
 export default function FinancialStatementsPage() {
@@ -90,6 +96,18 @@ export default function FinancialStatementsPage() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // 오늘 날짜를 기본값으로 설정
+  useEffect(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayString = `${year}-${month}-${day}`;
+    
+    setDate(todayString);
+    setStartDate(todayString);
+  }, []);
 
   /** 재무제표 조회 */
   const fetchStatement = useCallback(async () => {
@@ -231,97 +249,154 @@ export default function FinancialStatementsPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="flex flex-col items-start p-4 gap-4">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold mb-2 text-[#1E1E1E]">재무제표</h2>
-            <p className="text-[#767676]">결산일자를 선택하고 결산점검을 시작하세요.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              value={selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? date : startDate}
-              onChange={(e) => {
-                if (selectedType === 'balance_sheet' || selectedType === 'trial_balance') {
-                  setDate(e.target.value);
-                } else {
-                  setStartDate(e.target.value);
-                }
-              }}
-              className="border border-gray-300 rounded px-3 py-1 text-sm"
-            />
-            <button
-              onClick={handleSearch}
-              className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
-            >
-              조회하기
-            </button>
-            <button
-              onClick={handleDownload}
-              className="px-4 py-2 bg-[#2C2C2C] text-white text-sm"
-            >
-              다운로드
-            </button>
-            <button
-              onClick={handlePrint}
-              className="px-4 py-2 bg-[#F3F3F3] text-[#2C2C2C] text-sm"
-            >
-              인쇄하기
-            </button>
+        <div className="flex flex-col items-start gap-4 min-w-[520px] self-stretch">
+          {/* Title Section */}
+          <div className="flex justify-between items-end gap-4 h-[46px] self-stretch">
+            {/* Left Title */}
+            <div className="flex flex-col items-start w-[256px] h-[46px]">
+              <div className="flex flex-col items-start py-1.5 w-[256px] h-[29px] rounded-lg">
+                <div className="flex items-start">
+                  <h2 className="text-[15px] font-semibold leading-[140%] text-[#1E1E1E]">
+                    재무제표
+                  </h2>
+                </div>
+              </div>
+              <p className="text-[12px] leading-[140%] text-[#767676]">
+                결산일자를 선택하고 결산점검을 시작하세요.
+              </p>
+            </div>
+            
+            {/* Right Buttons */}
+            <div className="flex justify-end items-center gap-2 h-[32px]">
+              {/* Date Input */}
+              <div className="flex flex-col justify-center items-start w-[150px] min-w-[100px] h-[32px]">
+                <div className="flex items-center p-2 gap-2 bg-white border border-[#D9D9D9] w-[150px] min-w-[100px] h-[32px] self-stretch">
+                  <input
+                    type="date"
+                    value={selectedType === 'balance_sheet' || selectedType === 'trial_balance' ? date : startDate}
+                    onChange={(e) => {
+                      if (selectedType === 'balance_sheet' || selectedType === 'trial_balance') {
+                        setDate(e.target.value);
+                      } else {
+                        setStartDate(e.target.value);
+                      }
+                    }}
+                    className="flex-1 text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
+                  />
+                </div>
+              </div>
+              
+              {/* Divider */}
+              <div className="h-5 border-l border-[#D9D9D9]"></div>
+              
+              {/* Search Button */}
+              <div className="w-[90px] h-[28px]">
+                <button
+                  onClick={handleSearch}
+                  className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
+                >
+                  조회하기
+                </button>
+              </div>
+              
+              {/* Download Button */}
+              <div className="w-[90px] h-[28px]">
+                <button
+                  onClick={handleDownload}
+                  className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
+                >
+                  다운로드
+                </button>
+              </div>
+              
+              {/* Print Button */}
+              <div className="w-[90px] h-[28px]">
+                <button
+                  onClick={handlePrint}
+                  className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#F3F3F3] text-[#2C2C2C] text-[12px] leading-[100%] font-medium cursor-pointer"
+                >
+                  인쇄하기
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-
         {/* 탭 메뉴 */}
-        <div className="flex border-b border-gray-200 mb-6 w-full justify-between">
+        <div className="flex flex-row items-center p-0 h-[38px] w-full">
           {statementTypes.map((type) => (
             <button
               key={type.key}
               onClick={() => setSelectedType(type.key)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 ${
+              className={`flex flex-col justify-center items-center pt-1 pb-4 flex-1 h-[38px] border-b ${
                 selectedType === type.key
-                  ? 'border-[#1E1E1E] text-[#1E1E1E]'
-                  : 'border-transparent text-[#757575] hover:text-gray-700'
+                  ? 'border-[#383838]'
+                  : 'border-[#D9D9D9]'
               }`}
             >
-              {type.label}
+              <div className="flex flex-row justify-center items-center p-0 h-[18px] self-stretch">
+                <span className={`text-[13px] font-semibold leading-[140%] ${
+                  selectedType === type.key
+                    ? 'text-[#1E1E1E]'
+                    : 'text-[#757575]'
+                }`}>
+                  {type.label}
+                </span>
+              </div>
             </button>
           ))}
         </div>
 
         {/* 재무제표 데이터 */}
-        {statementData && statementData.rows && Array.isArray(statementData.rows) && statementData.rows.length > 0 ? (
-          <div className="bg-white border border-[#D9D9D9] rounded">
+        {statementData && statementData.rows && Array.isArray(statementData.rows) && statementData.rows.length > 0 && (
+          <div className="w-full bg-white rounded">
             {/* 제목 및 기간 정보 */}
-            <div className="text-center py-6 border-b border-gray-200">
-              <h3 className="text-2xl font-bold mb-4">
-                {statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label}
-              </h3>
-              {statementData.meta.periods && statementData.meta.periods.current && statementData.meta.periods.prior && 
-               formatDate(statementData.meta.periods.current) !== '날짜 정보 없음' && 
-               formatDate(statementData.meta.periods.prior) !== '날짜 정보 없음' ? (
-                <div className="text-sm text-gray-600">
-                  <div>{statementData.meta.currentPeriodLabel || '제 6기'} {formatDate(statementData.meta.periods.current)} 현재</div>
-                  <div>{statementData.meta.priorPeriodLabel || '제 5기'} {formatDate(statementData.meta.periods.prior)} 현재</div>
+            <div className="flex flex-col justify-center items-center py-2 px-1 gap-1 w-full min-w-[100px] h-[83px]">
+              {/* 제목 */}
+              <div className="flex flex-row items-center p-0 gap-3 w-[153px] h-[29px]">
+                <h3 className="text-2xl font-semibold leading-[120%] tracking-tight text-[#1E1E1E]">
+                  {statementData.meta.title || statementTypes.find(s => s.key === selectedType)?.label}
+                </h3>
+              </div>
+              
+              {/* 기간 정보 */}
+              {statementData.meta.periods && statementData.meta.periods.current && statementData.meta.periods.prior ? (
+                <div className="flex flex-col items-start p-0 h-[34px]">
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {`제 ${statementData.meta.terms.current} 기`} {formatDate(statementData.meta.periods.current.start)}부터 {formatDate(statementData.meta.periods.current.end)}까지
+                  </div>
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {`제 ${statementData.meta.terms.prior} 기`} {formatDate(statementData.meta.periods.prior.start)}부터 {formatDate(statementData.meta.periods.prior.end)}까지
+                  </div>
                 </div>
               ) : statementData.meta.asOfDate && formatDate(statementData.meta.asOfDate) !== '날짜 정보 없음' ? (
-                <div className="text-sm text-gray-600">
-                  {formatDate(statementData.meta.asOfDate)} 현재
+                <div className="flex flex-col items-start p-0 h-[34px]">
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {formatDate(statementData.meta.asOfDate)} 현재
+                  </div>
                 </div>
               ) : date ? (
-                <div className="text-sm text-gray-600">
-                  <div>{statementData.meta.currentPeriodLabel || '제 6기'} {date} 현재</div>
-                  <div>{statementData.meta.priorPeriodLabel || '제 5기'} {date} 현재</div>
+                <div className="flex flex-col items-start p-0 h-[34px]">
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {statementData.meta.currentPeriodLabel || '제 6기'} {date} 현재
+                  </div>
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {statementData.meta.priorPeriodLabel || '제 5기'} {date} 현재
+                  </div>
                 </div>
               ) : null}
             </div>
 
             {/* 회사명 및 단위 */}
-            <div className="flex justify-between items-center px-6 py-2 text-sm text-gray-600">
-              <span>회사명 : {statementData.meta.companyName || ''}</span>
-              <span>(단위 : {statementData.meta.unit || '원'})</span>
+            <div className="flex flex-row justify-between items-center py-[10px] px-1 gap-2 w-full min-w-[100px] h-[32px]">
+              <span className="h-[12px] text-[12px] font-medium leading-[100%] text-[#757575]">
+                회사명 : {statementData.meta.companyName || ''}
+              </span>
+              <span className="h-[12px] text-[12px] font-medium leading-[100%] text-[#757575]">
+                (단위 : {statementData.meta.unit || '원'})
+              </span>
             </div>
 
             {/* 테이블 */}
@@ -329,23 +404,23 @@ export default function FinancialStatementsPage() {
               <table className="w-full text-sm text-[#757575]">
                 <thead className="bg-[#F5F5F5]">
                   <tr>
-                    <th className="p-3 border border-[#D9D9D9] text-left font-medium">과목</th>
+                    <th className="p-2 text-xs border border-[#D9D9D9] text-left font-medium">과목</th>
                     {selectedType === 'trial_balance' ? (
                       <>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">차변합계</th>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">대변합계</th>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">잔액</th>
-                        <th className="p-3 border border-[#D9D9D9] text-center font-medium">방향</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">차변합계</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">대변합계</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">잔액</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">방향</th>
                       </>
                     ) : selectedType === 'cash_flow' ? (
-                      <th className="p-3 border border-[#D9D9D9] text-right font-medium">금액</th>
+                      <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">금액</th>
                     ) : (
                       <>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">
                           <div>{statementData.meta.currentPeriodLabel || '제6(당)기'}</div>
                           <div className="text-xs font-normal">금액</div>
                         </th>
-                        <th className="p-3 border border-[#D9D9D9] text-right font-medium">
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">
                           <div>{statementData.meta.priorPeriodLabel || '제5(전)기'}</div>
                           <div className="text-xs font-normal">금액</div>
                         </th>
@@ -356,36 +431,36 @@ export default function FinancialStatementsPage() {
                 <tbody>
                   {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="p-3 border border-[#D9D9D9]">
+                      <td className="p-2 text-xs border border-[#D9D9D9]">
                         <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
                           {'label' in row ? row.label : 'account' in row ? row.account.name : 'Unknown'}
                         </span>
                       </td>
                       {selectedType === 'trial_balance' ? (
                         <>
-                          <td className="p-3 border border-[#D9D9D9] text-right">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                             {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border border-[#D9D9D9] text-right">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                             {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border border-[#D9D9D9] text-right">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                             {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border border-[#D9D9D9] text-center">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                             {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
                           </td>
                         </>
                       ) : selectedType === 'cash_flow' ? (
-                        <td className="p-3 border border-[#D9D9D9] text-right">
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                           {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                         </td>
                       ) : (
                         <>
-                          <td className="p-3 border border-[#D9D9D9] text-right">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                             {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
                           </td>
-                          <td className="p-3 border border-[#D9D9D9] text-right">
+                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
                             {'prior' in row ? row.prior?.toLocaleString() || '-' : '-'}
                           </td>
                         </>
@@ -396,14 +471,7 @@ export default function FinancialStatementsPage() {
               </table>
             </div>
           </div>
-        ) : (
-          !loading && (
-            <div className="text-center text-gray-500 py-8">
-              조회된 내역이 없습니다.
-            </div>
-          )
         )}
-      </div>
     </div>
   );
 }

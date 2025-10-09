@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 
+type dataType = 'ACCOUNT' | 'ACCOUNTS' | 'ACCOUNT_PARTNER' | 'PARTNER';
+
 interface LedgerRow {
   date: string;
   debit: number;
@@ -15,6 +17,8 @@ interface LedgerRow {
   note?: string;
   voucherId?: number;
   transactionId?: number;
+  accountCode?: string;
+  accountName?: string;
 }
 
 interface Account {
@@ -118,6 +122,7 @@ export default function LedgerPage() {
     };
   });
   const [loading, setLoading] = useState(false);
+  const [ledgerType, setLedgerType] = useState<dataType>('ACCOUNTS');
   const [ledgerData, setLedgerData] = useState<LedgerAccount[] | LedgerPartner[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [showVoucherDetail, setShowVoucherDetail] = useState(false);
@@ -149,17 +154,14 @@ export default function LedgerPage() {
       const url = `https://api.eosxai.com/api/ledger?${params.toString()}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      
-      // API 응답 구조에 따라 데이터 파싱
-      if (data.type === 'ACCOUNT') {
-        // 단일 계정 응답
-        setLedgerData([data]);
-      } else if (data.type === 'ACCOUNTS' && data.accounts) {
-        // 여러 계정 응답
-        setLedgerData(data.accounts);
+
+      if (!!data) {
+        setLedgerType(data.type);
+        setLedgerData(data);
       } else {
         setLedgerData([]);
       }
+
     } catch (err) {
       console.error('원장 조회 에러:', err);
     } finally {
@@ -216,19 +218,40 @@ export default function LedgerPage() {
 
   /** 다운로드 */
   const handleDownload = () => {
-    // CSV 형태로 다운로드
+    // CSV 헤더를 ledgerType에 따라 동적으로 생성
+    const headers = ['일자'];
+    if (ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') {
+      headers.push('계정과목');
+    }
+    headers.push('차변금액', '대변금액', '잔액');
+    if (ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') {
+      headers.push('거래처');
+    }
+    headers.push('적요');
+
+    // CSV 데이터를 ledgerType에 따라 동적으로 생성
     const csvContent = [
-      ['일자', '차변금액', '대변금액', '잔액', '거래처', '적요'],
+      headers,
       ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => {
         const rows = 'rows' in account ? account.rows : [];
-        return rows ? rows.map((row: LedgerRow) => [
-          row.date,
-          row.debit.toLocaleString(),
-          row.credit.toLocaleString(),
-          row.balance.toLocaleString(),
-          row.partnerName || '',
-          row.description || ''
-        ]) : [];
+        const accountInfo = 'account' in account ? account.account : null;
+        
+        return rows ? rows.map((row: LedgerRow) => {
+          const rowData = [row.date];
+          if (ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') {
+            rowData.push(row.accountName || accountInfo?.name || '');
+          }
+          rowData.push(
+            row.debit.toLocaleString(),
+            row.credit.toLocaleString(),
+            row.balance.toLocaleString()
+          );
+          if (ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') {
+            rowData.push(row.partnerName || '');
+          }
+          rowData.push(row.description || '');
+          return rowData;
+        }) : [];
       })
     ].map(row => row.join(',')).join('\n');
 
@@ -352,20 +375,10 @@ export default function LedgerPage() {
                   onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
-                  <option value="">선택하기</option>
-                  <option value="11111">현금 (11111)</option>
-                  <option value="11113">보통예금 (11113)</option>
-                  <option value="11132">외상매출금 (11132)</option>
-                  <option value="11142">미수금 (11142)</option>
-                  <option value="11144">가지급금 (11144)</option>
-                  <option value="21207">가수금 (21207)</option>
-                  <option value="21212">미지급비용 (21212)</option>
-                  <option value="44007">복리후생비(판) (44007)</option>
-                  <option value="44008">여비교통비(판) (44008)</option>
-                  <option value="44015">소모품비(판) (44015)</option>
-                  <option value="44016">세금과공과금(판) (44016)</option>
-                  <option value="44025">지급수수료(판) (44025)</option>
-                  <option value="44028">외주용역비(판) (44028)</option>
+                  <option value="">선택없음</option>
+                  <option value="CASH">현금</option>
+                  <option value="BANK">당죄예금</option>
+                  <option value="DEPOSIT">예금</option>
                 </select>
               </div>
             </div>
@@ -435,36 +448,50 @@ export default function LedgerPage() {
             <table className="w-full text-sm text-[#757575]">
               <thead>
                 <tr>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">차변금액</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">대변금액</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
-                  <th className="bg-[#F5F5F5] p-3 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
+                  <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575] w-[90px]">일자</th>
+                  {(ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') && (
+                    <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">계정과목</th>
+                  )}
+                  <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">차변금액</th>
+                  <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">대변금액</th>
+                  <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">잔액</th>
+                  {(ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') && (
+                    <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">거래처</th>
+                  )}
+                  <th className="text-xs bg-[#F5F5F5] p-2 border border-[#D9D9D9] font-medium text-[#757575]">적요</th>
                 </tr>
               </thead>
               <tbody>
                 {ledgerData.flatMap((account: LedgerAccount | LedgerPartner, accountIndex: number) => {
                   // API 응답 구조에 따라 rows 추출
                   const rows = 'rows' in account ? account.rows : [];
+                  const accountInfo = 'account' in account ? account.account : null;
+                  
                   return rows ? rows.map((row: LedgerRow, rowIndex: number) => (
                     <tr 
                       key={`${accountIndex}-${rowIndex}`}
                       onClick={() => handleRowClick(row)}
                       className={`cursor-pointer hover:bg-gray-50 ${row.voucherId ? 'hover:bg-blue-50' : ''}`}
                     >
-                      <td className="p-3 border border-[#D9D9D9] text-center">
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                         {row.date ? new Date(row.date).toLocaleDateString('ko-KR', {
                           year: '2-digit',
                           month: '2-digit',
                           day: '2-digit'
                         }).replace(/\./g, '').replace(/\s/g, '') : '-'}
                       </td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
-                      <td className="p-3 border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
-                      <td className="p-3 border border-[#D9D9D9]">{row.partnerName || '-'}</td>
-                      <td className="p-3 border border-[#D9D9D9]">{row.description || '-'}</td>
+                      {(ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') && (
+                        <td className="p-2 text-xs border border-[#D9D9D9]">
+                          {row.accountName || accountInfo?.name || '-'}
+                        </td>
+                      )}
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
+                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
+                      {(ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') && (
+                        <td className="p-2 text-xs border border-[#D9D9D9]">{row.partnerName || '-'}</td>
+                      )}
+                      <td className="p-2 text-xs border border-[#D9D9D9]">{row.description || '-'}</td>
                     </tr>
                   )) : [];
                 })}

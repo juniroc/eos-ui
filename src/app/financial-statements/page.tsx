@@ -421,10 +421,7 @@ export default function FinancialStatementsPage() {
               ) : date ? (
                 <div className="flex flex-col items-start p-0 h-[34px]">
                   <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
-                    {statementData.meta.currentPeriodLabel || '제 6기'} {date} 현재
-                  </div>
-                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
-                    {statementData.meta.priorPeriodLabel || '제 5기'} {date} 현재
+                    { date} 현재
                   </div>
                 </div>
               ) : null}
@@ -442,32 +439,57 @@ export default function FinancialStatementsPage() {
 
             {/* 테이블 */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-[#757575]">
+              <table className="w-full text-sm text-[#757575]" style={{tableLayout: 'fixed'}}>
+                <colgroup>
+                  <col style={{width: '180px'}} />
+                  {selectedType === 'trial_balance' ? (
+                    <>
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
+                    </>
+                  ) : selectedType === 'cash_flow' ? (
+                    <col />
+                  ) : (
+                    <>
+                      <col style={{width: '50%'}} />
+                      <col style={{width: '50%'}} />
+                    </>
+                  )}
+                </colgroup>
                 <thead className="bg-[#F5F5F5]">
-                  <tr>
-                    <th className="p-2 text-xs border border-[#D9D9D9] text-left font-medium">과목</th>
-                    {selectedType === 'trial_balance' ? (
-                      <>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">차변합계</th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">대변합계</th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">잔액</th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">방향</th>
-                      </>
-                    ) : selectedType === 'cash_flow' ? (
-                      <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">금액</th>
-                    ) : (
-                      <>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">
-                          <div>{statementData.meta.currentPeriodLabel || '제6(당)기'}</div>
-                          <div className="text-xs font-normal">금액</div>
+                  {['trial_balance', 'cash_flow'].includes(selectedType) ? (
+                    <tr>
+                      <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">과목</th>
+                      {selectedType === 'trial_balance' ? (
+                        <>
+                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">차변합계</th>
+                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">대변합계</th>
+                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">잔액</th>
+                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">방향</th>
+                        </>
+                      ) : (
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">금액</th>
+                      )}
+                    </tr>
+                  ) : (
+                    <>
+                      <tr>
+                        <th rowSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">과목</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
+                          제{statementData.meta.terms?.current}(당)기
                         </th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-right font-medium">
-                          <div>{statementData.meta.priorPeriodLabel || '제5(전)기'}</div>
-                          <div className="text-xs font-normal">금액</div>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
+                          제{statementData.meta.terms?.prior}(전)기
                         </th>
-                      </>
-                    )}
-                  </tr>
+                      </tr>
+                      <tr>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
+                      </tr>
+                    </>
+                  )}
                 </thead>
                 <tbody>
                   {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (

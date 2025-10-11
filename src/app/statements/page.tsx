@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import PrintButton from '@/components/PrintButton';
 import Image from 'next/image';
 
 interface Account {
@@ -201,10 +202,6 @@ export default function StatementsPage() {
     link.click();
   };
 
-  /** 인쇄하기 */
-  const handlePrint = () => {
-    window.print();
-  };
 
   /** 조회하기 */
   const handleSearch = () => {
@@ -233,7 +230,7 @@ export default function StatementsPage() {
                   <div className="flex flex-row items-start">
                     <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">명세서</h2>
                   </div>
-                  <p className="text-[12px] leading-[140%] text-[#767676]">결산일자를 선택하고 결산점검을 시작하세요.</p>
+                  <p className="text-[12px] leading-[140%] text-[#767676]">조회기간을 선택하고 결산점검을 시작하세요.</p>
                 </div>
               </div>
               <div className="flex flex-row justify-end items-center gap-2 w-41">
@@ -251,13 +248,14 @@ export default function StatementsPage() {
                 >
                   다운로드
                 </Button>
-                <Button
+                <PrintButton
+                  printType="element"
+                  targetSelector="#statements-table"
                   variant="neutral"
-                  onClick={handlePrint}
                   className="flex flex-row justify-center items-center gap-2"
                 >
                   인쇄하기
-                </Button>
+                </PrintButton>
               </div>
             </div>
           </div>
@@ -322,7 +320,7 @@ export default function StatementsPage() {
 
         {/* 잔액명세서 데이터 */}
         {balanceData.length > 0 && (
-          <div className="bg-white">
+          <div id="statements-table" className="bg-white">
             <table className="w-full text-sm text-[#757575]">
               <thead className="bg-[#F5F5F5]">
                 <tr>

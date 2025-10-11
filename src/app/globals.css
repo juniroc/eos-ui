@@ -40,6 +40,9 @@
   --color-button-disabled: #E6E6E6;
   --color-upload-border: #D9D9D9;
   --color-upload-text: #303030;
+  
+  /* 계정관리 페이지 색상 변수들 */
+  --color-success-text: #009951;
 }
 
 @theme inline {

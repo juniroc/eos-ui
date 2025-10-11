@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import PrintButton from '@/components/PrintButton';
 
 type dataType = 'ACCOUNT' | 'ACCOUNTS' | 'ACCOUNT_PARTNER' | 'PARTNER';
 
@@ -121,7 +122,7 @@ export default function LedgerPage() {
       maxAmount: undefined,
     };
   });
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [ledgerType, setLedgerType] = useState<dataType>('ACCOUNTS');
   const [ledgerData, setLedgerData] = useState<LedgerAccount[] | LedgerPartner[]>([]);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
@@ -262,10 +263,6 @@ export default function LedgerPage() {
     link.click();
   };
 
-  /** 인쇄하기 */
-  const handlePrint = () => {
-    window.print();
-  };
 
   /** 행 클릭 핸들러 */
   const handleRowClick = (row: LedgerRow) => {
@@ -305,7 +302,7 @@ export default function LedgerPage() {
                   <div className="flex flex-row items-start">
                     <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">원장</h2>
                   </div>
-                  <p className="text-[12px] leading-[140%] text-[#767676]">조회일자를 선택하고 결산점검을 시작하세요.</p>
+                  <p className="text-[12px] leading-[140%] text-[#767676]">조회기간을 선택하고 결산점검을 시작하세요.</p>
                 </div>
               </div>
               <div className="flex flex-row justify-end items-center gap-2 w-41">
@@ -323,13 +320,14 @@ export default function LedgerPage() {
                 >
                   다운로드
                 </Button>
-                <Button
+                <PrintButton
+                  printType="element"
+                  targetSelector="#ledger-table"
                   variant="neutral"
-                  onClick={handlePrint}
                   className="flex flex-row justify-center items-center gap-2"
                 >
                   인쇄하기
-                </Button>
+                </PrintButton>
               </div>
             </div>
           </div>
@@ -444,7 +442,7 @@ export default function LedgerPage() {
           const rows = 'rows' in account ? account.rows : [];
           return rows && rows.length > 0;
         }) && (
-          <div className="bg-white border border-[#D9D9D9]">
+          <div id="ledger-table" className="bg-white border border-[#D9D9D9]">
             <table className="w-full text-sm text-[#757575]">
               <thead>
                 <tr>

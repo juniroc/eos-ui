@@ -32,6 +32,7 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/employee-salary': { mainMenu: '급여관리', subMenu: '직원 급여' },
     '/salary-structure': { mainMenu: '급여관리', subMenu: '급여 체계' },
     '/tax-deduction': { mainMenu: '급여관리', subMenu: '세금 공제' },
+    '/account-management': { mainMenu: '계정관리', subMenu: '' },
   };
 
   return (

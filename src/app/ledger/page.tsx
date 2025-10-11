@@ -155,10 +155,10 @@ export default function LedgerPage() {
       const url = `https://api.eosxai.com/api/ledger?${params.toString()}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-
+      console.log(data);
       if (!!data) {
         setLedgerType(data.type);
-        setLedgerData(data);
+        setLedgerData(data.accounts);
       } else {
         setLedgerData([]);
       }
@@ -442,7 +442,7 @@ export default function LedgerPage() {
           const rows = 'rows' in account ? account.rows : [];
           return rows && rows.length > 0;
         }) && (
-          <div id="ledger-table" className="bg-white border border-[#D9D9D9]">
+          <div id="ledger-table" className="bg-white">
             <table className="w-full text-sm text-[#757575]">
               <thead>
                 <tr>

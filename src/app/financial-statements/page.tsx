@@ -96,6 +96,27 @@ export default function FinancialStatementsPage() {
   const [, setLoading] = useState(false);
   const [statementData, setStatementData] = useState<StatementData | null>(null);
 
+  const initDate = () => {
+    // 한국 시간대 기준으로 오늘 날짜 설정
+    const today = new Date();
+    const koreaDate = new Date(today.toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const currentYear = koreaDate.getFullYear();
+    const month = String(koreaDate.getMonth() + 1).padStart(2, '0');
+    const day = String(koreaDate.getDate()).padStart(2, '0');
+    
+    const todayString = `${currentYear}-${month}-${day}`;
+    const yearStart = `${currentYear}-01-01`;
+
+    setDate(todayString);
+    setStartDate(yearStart);
+    setEndDate(todayString);
+  };
+
+  // 컴포넌트 마운트 시 기본값 설정
+  useEffect(() => {
+    initDate();
+  }, []);
+
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -375,6 +396,7 @@ export default function FinancialStatementsPage() {
               key={type.key}
               onClick={() => {
                 setSelectedType(type.key);
+                initDate();
                 setStatementData(null); // 탭 변경 시 데이터 리셋
               }}
               className={`flex flex-col justify-center items-center pt-1 pb-4 flex-1 h-[38px] border-b ${

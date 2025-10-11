@@ -131,7 +131,7 @@ export default function Sidebar({
         {/* 로고 섹션 */}
         <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
           <div className="flex flex-col justify-center items-center h-7">
-            <Image src="/logo.png" alt="logo" width={80} height={26} className="w-20" style={{ width: 'auto', height: 'auto' }} />
+            <Image src="/logo.png" alt="logo" width={80} height={28}/>
           </div>
         </div>
 

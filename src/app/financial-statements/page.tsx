@@ -9,6 +9,10 @@ interface FSRow {
   label: string;
   current?: number;
   prior?: number;
+  currentLeft?: number;
+  currentRight?: number;
+  priorLeft?: number;
+  priorRight?: number;
   id?: string;
   depth?: number;
   rowType?: string;
@@ -172,11 +176,13 @@ export default function FinancialStatementsPage() {
       ];
     } else {
       csvContent = [
-        ['항목', '당기', '전기'],
+        ['항목', '당기 좌측', '당기 우측', '전기 좌측', '전기 우측'],
         ...(statementData.rows as FSRow[]).map(row => [
           row.label,
-          row.current ? row.current.toLocaleString() : '',
-          row.prior ? row.prior.toLocaleString() : ''
+          row.currentLeft ? row.currentLeft.toLocaleString() : (row.current ? row.current.toLocaleString() : ''),
+          row.currentRight ? row.currentRight.toLocaleString() : '',
+          row.priorLeft ? row.priorLeft.toLocaleString() : (row.prior ? row.prior.toLocaleString() : ''),
+          row.priorRight ? row.priorRight.toLocaleString() : ''
         ])
       ];
     }
@@ -453,8 +459,10 @@ export default function FinancialStatementsPage() {
                     <col />
                   ) : (
                     <>
-                      <col style={{width: '50%'}} />
-                      <col style={{width: '50%'}} />
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
+                      <col style={{width: '25%'}} />
                     </>
                   )}
                 </colgroup>
@@ -477,59 +485,90 @@ export default function FinancialStatementsPage() {
                     <>
                       <tr>
                         <th rowSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">과목</th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
                           제{statementData.meta.terms?.current}(당)기
                         </th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">
                           제{statementData.meta.terms?.prior}(전)기
                         </th>
                       </tr>
                       <tr>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-normal">금액</th>
                       </tr>
                     </>
                   )}
                 </thead>
                 <tbody>
-                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => (
+                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => {
+                    const isLastRow = index === statementData.rows.length - 1;
+                    const borderClass = isLastRow ? 'border-l border-r border-b border-[#D9D9D9]' : 'border-l border-r border-[#D9D9D9]';
+                    
+                    return (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="p-2 text-xs border border-[#D9D9D9]">
+                      <td className={`p-2 text-xs ${borderClass}`}>
                         <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
                           {'label' in row ? row.label : 'account' in row ? row.account.name : 'Unknown'}
                         </span>
                       </td>
                       {selectedType === 'trial_balance' ? (
                         <>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                            {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
+                            </span>
                           </td>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                            {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
+                            </span>
                           </td>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                            {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
+                            </span>
                           </td>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-center">
-                            {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-center`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
+                            </span>
                           </td>
                         </>
                       ) : selectedType === 'cash_flow' ? (
-                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                          {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
+                        <td className={`p-2 text-xs ${borderClass} text-right`}>
+                          <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                            {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
+                          </span>
                         </td>
                       ) : (
                         <>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                            {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'currentLeft' in row ? row.currentLeft?.toLocaleString() || '' : 
+                               'current' in row ? row.current?.toLocaleString() || '' : ''}
+                            </span>
                           </td>
-                          <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                            {'prior' in row ? row.prior?.toLocaleString() || '-' : '-'}
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'currentRight' in row ? row.currentRight?.toLocaleString() || '' : ''}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'priorLeft' in row ? row.priorLeft?.toLocaleString() || '' : 
+                               'prior' in row ? row.prior?.toLocaleString() || '' : ''}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'priorRight' in row ? row.priorRight?.toLocaleString() || '' : ''}
+                            </span>
                           </td>
                         </>
                       )}
                     </tr>
-                  )) : null}
+                    );
+                  }) : null}
                 </tbody>
               </table>
             </div>

@@ -193,12 +193,12 @@ export default function AccountManagement() {
     // TODO: 회원 탈퇴 API 호출
   };
   return (
-    <div className="flex flex-col items-center p-4 gap-4 max-w-[1200px] mx-auto">
+    <div className="flex flex-col items-center p-4 gap-4">
       {/* Account Section */}
       <div className="flex flex-col items-start p-4 gap-4 w-[480px]">
         {/* Menu Heading */}
         <div className="flex flex-col items-start py-1.5 px-0 pb-0.5 w-full rounded-lg">
-          <div className="flex flex-row items-start p-0 w-[52px]">
+          <div className="flex flex-row items-start p-0">
             <span className="text-[15px] font-semibold leading-[140%] text-[#1E1E1E]">
               계정
             </span>
@@ -250,7 +250,7 @@ export default function AccountManagement() {
               ********
             </span>
           </div>
-          <div className="flex flex-col items-start p-0 w-[66px]">
+          <div className="flex flex-col items-start p-0">
             <Button 
               variant="primary" 
               size="small" 
@@ -272,7 +272,7 @@ export default function AccountManagement() {
               {user?.name || '홍길동'}
             </span>
           </div>
-          <div className="flex flex-col items-start p-0 w-[66px]">
+          <div className="flex flex-col items-start p-0">
             <Button 
               variant="primary" 
               size="small" 
@@ -293,7 +293,7 @@ export default function AccountManagement() {
               {user?.email || 'example@eossolution.com'}
             </span>
           </div>
-          <div className="flex flex-col items-start p-0 w-[66px]">
+          <div className="flex flex-col items-start p-0">
             <Button 
               variant="primary" 
               size="small" 
@@ -314,7 +314,7 @@ export default function AccountManagement() {
               010-1234-5678 {/* TODO: db값 반영하기 */}
             </span>
           </div>
-          <div className="flex flex-col items-start p-0 w-[66px]">
+          <div className="flex flex-col items-start p-0">
             <Button 
               variant="primary" 
               size="small" 
@@ -335,7 +335,7 @@ export default function AccountManagement() {
               02-1234-5678 {/* TODO: db값 반영하기 */}
             </span>
           </div>
-          <div className="flex flex-col items-start p-0 w-[66px]">
+          <div className="flex flex-col items-start p-0">
             <Button 
               variant="primary" 
               size="small" 
@@ -373,7 +373,7 @@ export default function AccountManagement() {
         <div className="w-full border-t border-[#D9D9D9]"></div>
 
         {/* Bottom Buttons */}
-        <div className="flex flex-col items-start p-0 gap-1 w-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1">
           <Button 
             variant="neutral" 
             size="small" 

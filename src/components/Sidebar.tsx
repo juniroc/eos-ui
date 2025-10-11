@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 interface SidebarProps {
   activeSection: string;
@@ -129,7 +130,7 @@ export default function Sidebar({
       <div className="w-[104px] flex flex-col items-start pb-3 bg-[#F5F5F5]">
         {/* 로고 섹션 */}
         <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
-          <div className="flex flex-col justify-center items-center w-20 h-7">
+          <div className="flex flex-col justify-center items-center h-7">
             <Image src="/logo.png" alt="logo" width={80} height={26} className="w-20" style={{ width: 'auto', height: 'auto' }} />
           </div>
         </div>
@@ -137,15 +138,15 @@ export default function Sidebar({
         {/* 메인 네비게이션 섹션 */}
         <div className="flex flex-col items-center p-3 gap-3 w-full flex-1">
           {/* 기초정보 섹션 */}
-          <div className="flex flex-col items-start gap-2 w-20">
-            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+          <div className="w-full flex flex-col items-start gap-2">
+            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
               <span className="text-xs font-medium text-[#757575]">회계</span>
             </div>
-            <div className="flex flex-col items-start gap-[2px] w-20">
+            <div className="flex flex-col items-start gap-[2px]">
               <button
                 onClick={() => handleMenuClick('basic-info', true)}
                 onMouseEnter={() => setHoveredMenu('basic-info')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'basic-info'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -166,7 +167,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('ai-journal', true)}
                 onMouseEnter={() => setHoveredMenu('ai-journal')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'ai-journal'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -187,7 +188,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('accounting', true)}
                 onMouseEnter={() => setHoveredMenu('accounting')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'accounting'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -212,14 +213,14 @@ export default function Sidebar({
           <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
 
           {/* 세무 섹션 */}
-          <div className="flex flex-col items-start gap-2 w-20">
-            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+          <div className="w-full flex flex-col items-start gap-2">
+            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
               <span className="text-xs font-medium text-[#757575]">세무</span>
             </div>
             <button
               onClick={() => handleMenuClick('ai-tax', false)}
               onMouseEnter={() => setHoveredMenu('ai-tax')}
-              className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+              className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                 getCurrentActiveMenu() === 'ai-tax'
                   ? 'bg-[#E6E6E6]'
                   : 'hover:bg-[#E6E6E6]'
@@ -243,15 +244,15 @@ export default function Sidebar({
           <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
 
           {/* ERP 섹션 */}
-          <div className="flex flex-col items-start gap-2 w-20">
-            <div className="flex flex-row items-center gap-[2px] w-20 h-3 rounded">
+          <div className="w-full flex flex-col items-start gap-2">
+            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
               <span className="text-xs font-medium text-[#757575]">ERP</span>
             </div>
-            <div className="flex flex-col items-start gap-[2px] w-20">
+            <div className="flex flex-col items-start gap-[2px]">
               <button
                 onClick={() => handleMenuClick('cost-management', false)}
                 onMouseEnter={() => setHoveredMenu('cost-management')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'cost-management'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -272,7 +273,7 @@ export default function Sidebar({
               <button
                 onClick={() => handleMenuClick('payroll', true)}
                 onMouseEnter={() => setHoveredMenu('payroll')}
-                className={`flex flex-row items-center p-2 gap-[6px] w-20 h-8 rounded transition-colors cursor-pointer ${
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'payroll'
                     ? 'bg-[#E6E6E6]'
                     : 'hover:bg-[#E6E6E6]'
@@ -295,17 +296,17 @@ export default function Sidebar({
         </div>
         
         {/* 계정관리 섹션 */}
-        <div className="flex flex-col justify-center items-center p-3 gap-1 w-full h-[68px]">
-          <div className="flex flex-col justify-center items-center p-2 gap-[6px] w-7 h-7 bg-[#5A5A5A] rounded-full">
+        <Link href="/account-management" className="flex flex-col justify-center items-center w-full gap-1 cursor-pointer">
+          <div className="flex flex-col justify-center items-center w-7 h-7 bg-[#5A5A5A] rounded-full">
             <Image
               src="/user.png"
               alt="계정관리"
-              width={16}
-              height={16}
+              width={28}
+              height={28}
             />
           </div>
           <span className="text-xs font-medium text-[#757575] text-center">계정관리</span>
-        </div>
+        </Link>
       </div>
 
       {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}

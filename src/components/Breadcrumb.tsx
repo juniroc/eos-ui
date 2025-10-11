@@ -13,9 +13,9 @@ export default function Breadcrumb({ mainMenu, subMenu }: BreadcrumbProps) {
       <p className="flex items-center text-sm">
         <span
           style={{
-            color: '#B3B3B3',
+            color: subMenu ? '#B3B3B3' : '#1E1E1E',
             fontFamily: 'var(--font-sans)',
-            fontWeight: 400,
+            fontWeight: subMenu ? 400 : 600,
             fontStyle: 'normal',
             fontSize: '12px',
             lineHeight: '140%',
@@ -24,20 +24,24 @@ export default function Breadcrumb({ mainMenu, subMenu }: BreadcrumbProps) {
         >
           {mainMenu}
         </span>
-        <Image src="/icons/arrow_right.svg" alt="ArrowRight" width={16} height={16} style={{ width: 'auto', height: 'auto' }} />
-        <span
-          style={{
-            color: '#1E1E1E',
-            fontFamily: 'var(--font-sans)',
-            fontWeight: 600,
-            fontStyle: 'normal',
-            fontSize: '12px',
-            lineHeight: '140%',
-            letterSpacing: '0%',
-          }}
-        >
-          {subMenu}
-        </span>
+        {subMenu && (
+          <>
+            <Image src="/icons/arrow_right.svg" alt="ArrowRight" width={16} height={16} style={{ width: 'auto', height: 'auto' }} />
+            <span
+              style={{
+                color: '#1E1E1E',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 600,
+                fontStyle: 'normal',
+                fontSize: '12px',
+                lineHeight: '140%',
+                letterSpacing: '0%',
+              }}
+            >
+              {subMenu}
+            </span>
+          </>
+        )}
       </p>
     </div>
   );

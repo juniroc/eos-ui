@@ -214,7 +214,7 @@ export default function ShareholderInfoPage() {
       
       try {
         setLoading(true);
-        const res = await fetch(`https://api.eosxai.com/api/shareholders/${row.serverId}`, {
+        const res = await fetch(`https://api.eosxai.com/api/shareholder-docs/${row.serverId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });

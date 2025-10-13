@@ -25,20 +25,12 @@ interface Account {
 }
 
 interface TrialBalanceRow {
-  account: Account;
+  account: string;
+  debitBalance: number;
+  creditBalance: number;
   debitSum: number;
   creditSum: number;
-  balance: number;
-  direction: 'DEBIT' | 'CREDIT';
-}
-
-interface CashFlowRow {
-  id: string;
-  label: string;
-  current: number;
-  depth: number;
-  rowType: string;
-  styles: Record<string, unknown>;
+  styles?: Record<string, unknown>;
 }
 
 interface StatementMeta {
@@ -71,7 +63,7 @@ interface StatementMeta {
 interface StatementData {
   type: string;
   meta: StatementMeta;
-  rows: FSRow[] | TrialBalanceRow[] | CashFlowRow[];
+  rows: FSRow[] | TrialBalanceRow[];
 }
 
 type StatementType = 'balance_sheet' | 'income_statement' | 'cost_report' | 'cash_flow' | 'trial_balance' | 'retained_earnings';
@@ -177,22 +169,22 @@ export default function FinancialStatementsPage() {
     
     if (selectedType === 'trial_balance') {
       csvContent = [
-        ['계정코드', '계정명', '차변합계', '대변합계', '잔액', '방향'],
+        ['차변잔액', '차변합계', '계정과목', '대변합계', '대변잔액'],
         ...(statementData.rows as TrialBalanceRow[]).map(row => [
-          row.account.code,
-          row.account.name,
+          row.debitBalance.toLocaleString(),
           row.debitSum.toLocaleString(),
+          row.account,
           row.creditSum.toLocaleString(),
-          row.balance.toLocaleString(),
-          row.direction === 'DEBIT' ? '차변' : '대변'
+          row.creditBalance.toLocaleString(),
         ])
       ];
     } else if (selectedType === 'cash_flow') {
       csvContent = [
-        ['항목', '금액'],
-        ...(statementData.rows as CashFlowRow[]).map(row => [
+        ['항목', '증감액', '현금흐름'],
+        ...(statementData.rows as FSRow[]).map(row => [
           row.label,
-          row.current.toLocaleString()
+          row.currentLeft ? row.currentLeft.toLocaleString() : '',
+          row.currentRight ? row.currentRight.toLocaleString() : ''
         ])
       ];
     } else {
@@ -469,18 +461,23 @@ export default function FinancialStatementsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-[#757575]" style={{tableLayout: 'fixed'}}>
                 <colgroup>
-                  <col style={{width: '180px'}} />
                   {selectedType === 'trial_balance' ? (
                     <>
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
+                      <col style={{width: '180px'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
                     </>
                   ) : selectedType === 'cash_flow' ? (
-                    <col />
+                    <>
+                      <col style={{width: '180px'}} />
+                      <col style={{width: '50%'}} />
+                      <col style={{width: '50%'}} />
+                    </>
                   ) : (
                     <>
+                      <col style={{width: '180px'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
@@ -489,19 +486,25 @@ export default function FinancialStatementsPage() {
                   )}
                 </colgroup>
                 <thead className="bg-[#F5F5F5]">
-                  {['trial_balance', 'cash_flow'].includes(selectedType) ? (
+                  {selectedType === 'trial_balance' ? (
+                    <>
+                      <tr>
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">차변</th>
+                        <th rowSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">계정과목</th>
+                        <th colSpan={2} className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">대변</th>
+                      </tr>
+                      <tr>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">잔액</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">합계</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">합계</th>
+                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">잔액</th>
+                      </tr>
+                    </>
+                  ) : selectedType === 'cash_flow' ? (
                     <tr>
                       <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">과목</th>
-                      {selectedType === 'trial_balance' ? (
-                        <>
-                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">차변합계</th>
-                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">대변합계</th>
-                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">잔액</th>
-                          <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">방향</th>
-                        </>
-                      ) : (
-                        <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">금액</th>
-                      )}
+                      <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">증감액</th>
+                      <th className="p-2 text-xs border border-[#D9D9D9] text-center font-medium">현금흐름</th>
                     </tr>
                   ) : (
                     <>
@@ -522,52 +525,69 @@ export default function FinancialStatementsPage() {
                   )}
                 </thead>
                 <tbody>
-                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashFlowRow, index: number) => {
+                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow, index: number) => {
                     const isLastRow = index === statementData.rows.length - 1;
                     const borderClass = isLastRow ? 'border-l border-r border-b border-[#D9D9D9]' : 'border-l border-r border-[#D9D9D9]';
                     
                     return (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className={`p-2 text-xs ${borderClass}`}>
-                        <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
-                          {'label' in row ? row.label : 'account' in row ? row.account.name : 'Unknown'}
-                        </span>
-                      </td>
                       {selectedType === 'trial_balance' ? (
                         <>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'debitSum' in row ? row.debitSum?.toLocaleString() || '-' : '-'}
+                              {'debitBalance' in row ? row.debitBalance?.toLocaleString() || '0' : '0'}
                             </span>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'creditSum' in row ? row.creditSum?.toLocaleString() || '-' : '-'}
-                            </span>
-                          </td>
-                          <td className={`p-2 text-xs ${borderClass} text-right`}>
-                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'balance' in row ? row.balance?.toLocaleString() || '-' : '-'}
+                              {'debitSum' in row ? row.debitSum?.toLocaleString() || '0' : '0'}
                             </span>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-center`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'direction' in row ? (row.direction === 'DEBIT' ? '차변' : '대변') : '-'}
+                              {'account' in row ? row.account : ''}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'creditSum' in row ? row.creditSum?.toLocaleString() || '0' : '0'}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'creditBalance' in row ? row.creditBalance?.toLocaleString() || '0' : '0'}
                             </span>
                           </td>
                         </>
                       ) : selectedType === 'cash_flow' ? (
-                        <td className={`p-2 text-xs ${borderClass} text-right`}>
-                          <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                            {'current' in row ? row.current?.toLocaleString() || '-' : '-'}
-                          </span>
-                        </td>
+                        <>
+                          <td className={`p-2 text-xs ${borderClass}`}>
+                            <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
+                              {'label' in row ? row.label : ''}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'currentLeft' in row ? row.currentLeft?.toLocaleString() || '0' : '0'}
+                            </span>
+                          </td>
+                          <td className={`p-2 text-xs ${borderClass} text-right`}>
+                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'currentRight' in row ? row.currentRight?.toLocaleString() || '0' : '0'}
+                            </span>
+                          </td>
+                        </>
                       ) : (
                         <>
+                          <td className={`p-2 text-xs ${borderClass}`}>
+                            <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
+                              {'label' in row ? row.label : ''}
+                            </span>
+                          </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
                               {'currentLeft' in row ? row.currentLeft?.toLocaleString() || '' : 
-                               'current' in row ? row.current?.toLocaleString() || '' : ''}
+                                'current' in row ? row.current?.toLocaleString() || '' : ''}
                             </span>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
@@ -578,7 +598,7 @@ export default function FinancialStatementsPage() {
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
                               {'priorLeft' in row ? row.priorLeft?.toLocaleString() || '' : 
-                               'prior' in row ? row.prior?.toLocaleString() || '' : ''}
+                                'prior' in row ? row.prior?.toLocaleString() || '' : ''}
                             </span>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>

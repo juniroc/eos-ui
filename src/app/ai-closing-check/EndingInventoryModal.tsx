@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { checkEndingInventory, applyEndingInventory } from '@/services/api';
+import { saveClosingCheck } from '@/services/ai-closing-check';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
 import Image from 'next/image';
@@ -51,61 +52,88 @@ interface EndingInventoryRow {
   cogsAmount: number;
 }
 
-interface VoucherTransaction {
+// API 응답 타입 (결산 반영 시 받는 간단한 구조)
+interface ApplyTransaction {
+  accountId: string;
   account: {
     id: string;
     code: number;
     name: string;
-    debitCredit: boolean;
-    attribute: string;
-    category: string;
-    fsName1: string;
-    fsName2: string;
-    summarySourceCodes: string[];
-    createdAt: string;
-    updatedAt: string;
   };
-  partner: {
+  partnerId?: string;
+  partner?: {
     id: string;
     name: string;
-    businessNumber: string | null;
-    representative: string | null;
-    address: string | null;
-    phone: string | null;
-    email: string | null;
-    userId: string;
-    type: string;
-    cardIssuer: string | null;
-    cardNumber: string | null;
-    cardType: string | null;
-    primaryUser: string | null;
-    bankName: string | null;
-    accountNumber: string | null;
-    withdrawalFee: number | null;
-    purpose: string | null;
-    note: string | null;
-    mainItems: string | null;
-    relationship: string | null;
-    documentId: string | null;
-    createdAt: string;
-    updatedAt: string;
   };
   amount: number;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  note: string;
+  debitCredit: boolean;
+  note?: string;
 }
 
-interface VoucherResponse {
-  id: string;
-  userId: string;
-  date: string;
-  description: string;
-  departmentId: string | null;
-  documentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  transactions: VoucherTransaction[];
+interface ApplyEndingInventoryResponse {
+  voucher: {
+    date: string;
+    description?: string;
+  };
+  transactions: ApplyTransaction[];
 }
+
+// 기존의 상세한 타입 (필요시 사용 - 현재 미사용)
+// interface VoucherTransaction {
+//   account: {
+//     id: string;
+//     code: number;
+//     name: string;
+//     debitCredit: boolean;
+//     attribute: string;
+//     category: string;
+//     fsName1: string;
+//     fsName2: string;
+//     summarySourceCodes: string[];
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   partner: {
+//     id: string;
+//     name: string;
+//     businessNumber: string | null;
+//     representative: string | null;
+//     address: string | null;
+//     phone: string | null;
+//     email: string | null;
+//     userId: string;
+//     type: string;
+//     cardIssuer: string | null;
+//     cardNumber: string | null;
+//     cardType: string | null;
+//     primaryUser: string | null;
+//     bankName: string | null;
+//     accountNumber: string | null;
+//     withdrawalFee: number | null;
+//     purpose: string | null;
+//     note: string | null;
+//     mainItems: string | null;
+//     relationship: string | null;
+//     documentId: string | null;
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   amount: number;
+//   debitCredit: 'DEBIT' | 'CREDIT';
+//   note: string;
+// }
+
+// interface VoucherResponse {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   description: string;
+//   departmentId: string | null;
+//   documentId: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   transactions: VoucherTransaction[];
+// }
 
 interface EndingInventoryModalProps {
   isOpen: boolean;
@@ -121,21 +149,23 @@ export default function EndingInventoryModal({
   onStatusUpdate
 }: EndingInventoryModalProps) {
   const [endingInventoryData, setEndingInventoryData] = useState<EndingInventoryResponse | null>(null);
-  const [endingInventoryVoucherData, setEndingInventoryVoucherData] = useState<VoucherResponse | null>(null);
+  const [endingInventoryVoucherData, setEndingInventoryVoucherData] = useState<ApplyEndingInventoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [editableInventoryItems, setEditableInventoryItems] = useState<EditableEndingInventoryItem[]>([]);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  // 팝업이 열릴 때 기말재고 데이터 조회
-  useEffect(() => {
-    if (isOpen && closingDate) {
-      handleEndingInventoryCheck();
-    }
-  }, [isOpen, closingDate]);
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   /** 기말재고 점검 */
-  const handleEndingInventoryCheck = async () => {
+  const handleEndingInventoryCheck = useCallback(async () => {
     try {
       setLoading(true);
       const accessToken = localStorage.getItem('accessToken');
@@ -144,11 +174,6 @@ export default function EndingInventoryModal({
         alert('로그인이 필요합니다.');
         return;
       }
-
-      console.log('기말재고 점검 API 요청:', {
-        closingDate: closingDate
-      });
-
       const data: EndingInventoryResponse = await checkEndingInventory(closingDate, accessToken) as EndingInventoryResponse;
       setEndingInventoryData(data);
       
@@ -166,7 +191,14 @@ export default function EndingInventoryModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [closingDate]);
+
+  // 팝업이 열릴 때 기말재고 데이터 조회
+  useEffect(() => {
+    if (isOpen && closingDate) {
+      handleEndingInventoryCheck();
+    }
+  }, [isOpen, closingDate, handleEndingInventoryCheck]);
 
   /** 기말재고 결산 반영 */
   const handleEndingInventoryApply = async () => {
@@ -193,11 +225,13 @@ export default function EndingInventoryModal({
         cogsAmount: item.cogsAmount
       }));
 
-      const data: VoucherResponse = await applyEndingInventory({
+      const data = await applyEndingInventory({
         closingDate: closingDate,
         rows: rows
-      }, accessToken) as VoucherResponse;
-      setEndingInventoryVoucherData(data);
+      }, accessToken);
+      
+      // API 응답 구조: { voucher: { date, description }, transactions: [...] }
+      setEndingInventoryVoucherData(data as ApplyEndingInventoryResponse);
 
       setToastMessage('기말재고의 결산반영이 완료되었습니다.');
       setShowToast(true);
@@ -212,13 +246,61 @@ export default function EndingInventoryModal({
 
   /** 기말재고 전표 저장 */
   const handleEndingInventorySave = async () => {
-    // TODO: 저장 기능 구현
-    
-    setToastMessage('기말재고의 전표 저장이 완료되었습니다.');
-    setShowToast(true);
+    try {
+      setLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-    // 상태 업데이트 알림
-    onStatusUpdate('DONE');
+      if (!endingInventoryVoucherData) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = endingInventoryVoucherData.transactions.some(
+        transaction => !transaction.accountId
+      );
+      
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      // API 요청 데이터 구조로 변환
+      const requestData = {
+        closingDate,
+        key: 'ending_inventory' as const,
+        voucher: {
+          date: endingInventoryVoucherData.voucher.date,
+          description: endingInventoryVoucherData.voucher.description,
+        },
+        transactions: endingInventoryVoucherData.transactions.map(transaction => ({
+          accountId: transaction.accountId,
+          amount: transaction.amount,
+          debitCredit: transaction.debitCredit,
+          partnerId: transaction.partnerId,
+          note: transaction.note,
+        })),
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+      
+      setToastMessage('기말재고의 전표 저장이 완료되었습니다.');
+      setShowToast(true);
+
+      // 상태 업데이트 알림
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('기말재고 전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '기말재고 전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 기말재고 아이템 변경 핸들러 */
@@ -559,8 +641,8 @@ export default function EndingInventoryModal({
                         <>
                           {endingInventoryVoucherData.transactions.map((transaction, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="p-3 border border-[#D9D9D9] text-center h-12 text-xs text-[#1E1E1E]">{closingDate}</td>
-                              {transaction.debitCredit === 'DEBIT' ? (
+                              <td className="p-3 border border-[#D9D9D9] text-center h-12 text-xs text-[#1E1E1E]">{formatDate(endingInventoryVoucherData.voucher.date)}</td>
+                              {transaction.debitCredit ? (
                                 <>
                                   <td className="p-3 border border-[#D9D9D9] text-center h-12 text-xs text-[#1E1E1E]">{transaction.account?.name || '-'}</td>
                                   <td className="p-3 border border-[#D9D9D9] text-right h-12 text-xs text-[#1E1E1E] font-medium">{transaction.amount.toLocaleString()}</td>
@@ -587,7 +669,7 @@ export default function EndingInventoryModal({
                             <td className="p-3 border border-[#D9D9D9] text-center h-12 text-xs text-[#B3B3B3]">-</td>
                             <td className="p-3 border border-[#D9D9D9] text-right h-12 text-xs font-semibold text-[#1E1E1E]">
                               {endingInventoryVoucherData.transactions
-                                .filter(t => t.debitCredit === 'DEBIT')
+                                .filter(t => t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>
@@ -595,7 +677,7 @@ export default function EndingInventoryModal({
                             <td className="p-3 border border-[#D9D9D9] text-center h-12 text-xs text-[#B3B3B3]">-</td>
                             <td className="p-3 border border-[#D9D9D9] text-right h-12 text-xs font-semibold text-[#1E1E1E]">
                               {endingInventoryVoucherData.transactions
-                                .filter(t => t.debitCredit === 'CREDIT')
+                                .filter(t => !t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>

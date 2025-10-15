@@ -356,7 +356,7 @@ export default function AIClosingCheckPage() {
       {/* 점검 테이블 */}
       <div className="flex flex-col w-full border border-[#D9D9D9]">
         {/* 테이블 헤더 */}
-        <div className="flex w-full h-8">
+        <div className="flex w-full h-8 border-b border-[#D9D9D9]">
           <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             <div className="flex justify-center items-center w-full">
               <span className="text-xs font-medium text-[#757575]">구분</span>
@@ -386,8 +386,8 @@ export default function AIClosingCheckPage() {
 
         {/* 테이블 바디 */}
         {rows.length > 0 ? (
-          rows.map(r => (
-            <div key={r.id} className="flex w-full h-8 border-t border-[#D9D9D9]" style={{ borderBottom: '1px solid #D9D9D9' }}>
+          rows.map((r, index) => (
+            <div key={r.id} className={`flex w-full h-8 border-t border-[#D9D9D9] ${index === rows.length - 1 ? 'border-b' : ''}`}>
               <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-white border-r border-[#D9D9D9] p-2">
                 <span className="text-xs font-medium text-[#EC221F]">{r.category}</span>
               </div>
@@ -428,16 +428,16 @@ export default function AIClosingCheckPage() {
           ))
         ) : (
           /* 빈 상태 행 */
-          <div className="flex w-full h-8 border-t border-b border-[#D9D9D9]">
-            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
+          <div className="flex w-full h-8 border-b border-[#D9D9D9]">
+            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start flex-[2.8] h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start flex-[2.8] h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-start flex-1 h-8 bg-[#F5F5F5] border-r border-[#D9D9D9] p-2">
             </div>
-            <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-[#F5F5F5] border-b border-[#D9D9D9] p-2">
+            <div className="flex flex-col justify-center items-center w-[70px] min-w-[70px] h-8 bg-[#F5F5F5] p-2">
             </div>
           </div>
         )}

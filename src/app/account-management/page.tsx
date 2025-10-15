@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import FileUpload from '@/components/FileUpload';
 import EditModal from '@/components/EditModal';
+import PasswordEditModal from '@/components/PasswordEditModal';
 import ConfirmModal from '@/components/ConfirmModal';
 import ToastMessage from '@/components/ToastMessage';
 import {
@@ -41,6 +42,9 @@ export default function AccountManagement() {
     placeholder: '',
     onSave: () => {},
   });
+
+  // Password Modal state
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // Confirm Modal 설정
   const [confirmModalConfig, setConfirmModalConfig] = useState<{
@@ -92,15 +96,12 @@ export default function AccountManagement() {
   };
 
   // Modal save handlers
-  const handlePasswordSave = async (newPassword: string) => {
+  const handlePasswordSave = async (currentPassword: string, newPassword: string) => {
     if (!token) return;
 
     try {
-      // EditModal에서는 새 비밀번호만 입력받으므로, 현재 비밀번호는 별도 처리 필요
-      // 여기서는 임시로 currentPassword를 빈 문자열로 처리
-      // 실제로는 비밀번호 변경 모달을 별도로 만들거나 두 필드를 받아야 함
-      await changePassword({ currentPassword: '', newPassword }, token);
-      closeModal();
+      await changePassword({ currentPassword, newPassword }, token);
+      setIsPasswordModalOpen(false);
       showToast('비밀번호가 변경되었습니다.');
     } catch (error) {
       console.error('비밀번호 변경 실패:', error);
@@ -180,12 +181,6 @@ export default function AccountManagement() {
 
   // 필드별 설정 데이터
   const fieldConfigs = {
-    password: {
-      title: '비밀번호 변경',
-      currentValue: '',
-      placeholder: '새 비밀번호를 입력해주세요',
-      onSave: handlePasswordSave,
-    },
     name: {
       title: '성명 변경',
       currentValue: accountInfo?.name || user?.name || '',
@@ -231,7 +226,7 @@ export default function AccountManagement() {
   };
 
   // 각 필드별 핸들러들 (한 줄로 단순화)
-  const handlePasswordChange = () => openModal('password');
+  const handlePasswordChange = () => setIsPasswordModalOpen(true);
   const handleNameChange = () => openModal('name');
   const handleEmailChange = () => openModal('email');
   const handlePhoneChange = () => openModal('phone');
@@ -522,6 +517,12 @@ export default function AccountManagement() {
         currentValue={modalConfig.currentValue}
         placeholder={modalConfig.placeholder}
         onSave={modalConfig.onSave}
+      />
+
+      <PasswordEditModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        onSave={handlePasswordSave}
       />
 
       <ConfirmModal

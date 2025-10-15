@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { saveClosingCheck } from '@/services/ai-closing-check';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
@@ -46,61 +47,88 @@ interface EditableRetirementBenefitItem extends RetirementBenefitItem {
   isEditing?: boolean;
 }
 
-interface VoucherTransaction {
+// API 응답 타입 (결산 반영 시 받는 간단한 구조)
+interface ApplyTransaction {
+  accountId: string;
   account: {
     id: string;
     code: number;
     name: string;
-    debitCredit: boolean;
-    attribute: string;
-    category: string;
-    fsName1: string;
-    fsName2: string;
-    summarySourceCodes: string[];
-    createdAt: string;
-    updatedAt: string;
   };
-  partner: {
+  partnerId?: string;
+  partner?: {
     id: string;
     name: string;
-    businessNumber: string | null;
-    representative: string | null;
-    address: string | null;
-    phone: string | null;
-    email: string | null;
-    userId: string;
-    type: string;
-    cardIssuer: string | null;
-    cardNumber: string | null;
-    cardType: string | null;
-    primaryUser: string | null;
-    bankName: string | null;
-    accountNumber: string | null;
-    withdrawalFee: number | null;
-    purpose: string | null;
-    note: string | null;
-    mainItems: string | null;
-    relationship: string | null;
-    documentId: string | null;
-    createdAt: string;
-    updatedAt: string;
   };
   amount: number;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  note: string;
+  debitCredit: boolean;
+  note?: string;
 }
 
-interface VoucherResponse {
-  id: string;
-  userId: string;
-  date: string;
-  description: string;
-  departmentId: string | null;
-  documentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  transactions: VoucherTransaction[];
+interface ApplyRetirementBenefitResponse {
+  voucher: {
+    date: string;
+    description?: string;
+  };
+  transactions: ApplyTransaction[];
 }
+
+// 기존의 상세한 타입 (필요시 사용 - 현재 미사용)
+// interface VoucherTransaction {
+//   account: {
+//     id: string;
+//     code: number;
+//     name: string;
+//     debitCredit: boolean;
+//     attribute: string;
+//     category: string;
+//     fsName1: string;
+//     fsName2: string;
+//     summarySourceCodes: string[];
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   partner: {
+//     id: string;
+//     name: string;
+//     businessNumber: string | null;
+//     representative: string | null;
+//     address: string | null;
+//     phone: string | null;
+//     email: string | null;
+//     userId: string;
+//     type: string;
+//     cardIssuer: string | null;
+//     cardNumber: string | null;
+//     cardType: string | null;
+//     primaryUser: string | null;
+//     bankName: string | null;
+//     accountNumber: string | null;
+//     withdrawalFee: number | null;
+//     purpose: string | null;
+//     note: string | null;
+//     mainItems: string | null;
+//     relationship: string | null;
+//     documentId: string | null;
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   amount: number;
+//   debitCredit: 'DEBIT' | 'CREDIT';
+//   note: string;
+// }
+
+// interface VoucherResponse {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   description: string;
+//   departmentId: string | null;
+//   documentId: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   transactions: VoucherTransaction[];
+// }
 
 // API에서 요구하는 RetirementBenefitRow 타입
 interface RetirementBenefitRow {
@@ -123,21 +151,23 @@ export default function RetirementBenefitModal({
   onStatusUpdate
 }: RetirementBenefitModalProps) {
   const [retirementBenefitData, setRetirementBenefitData] = useState<RetirementBenefitResponse | null>(null);
-  const [retirementBenefitVoucherData, setRetirementBenefitVoucherData] = useState<VoucherResponse | null>(null);
+  const [retirementBenefitVoucherData, setRetirementBenefitVoucherData] = useState<ApplyRetirementBenefitResponse | null>(null);
   const [retirementBenefitLoading, setRetirementBenefitLoading] = useState(false);
   const [editableRetirementBenefitItems, setEditableRetirementBenefitItems] = useState<EditableRetirementBenefitItem[]>([]);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  // 팝업이 열릴 때 API 호출
-  useEffect(() => {
-    if (isOpen) {
-      handleRetirementBenefitCheck();
-    }
-  }, [isOpen, closingDate]);
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   /** 퇴직급여충당금 점검 */
-  const handleRetirementBenefitCheck = async () => {
+  const handleRetirementBenefitCheck = useCallback(async () => {
     try {
       setRetirementBenefitLoading(true);
       const accessToken = localStorage.getItem('accessToken');
@@ -152,13 +182,6 @@ export default function RetirementBenefitModal({
         closingDate: closingDate,
         key: 'retirement_benefit'
       };
-      
-      console.log('퇴직급여충당금 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
-        closingDate: closingDate
-      });
 
       const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
         method: 'POST',
@@ -197,7 +220,14 @@ export default function RetirementBenefitModal({
     } finally {
       setRetirementBenefitLoading(false);
     }
-  };
+  }, [closingDate]);
+
+  // 팝업이 열릴 때 API 호출
+  useEffect(() => {
+    if (isOpen) {
+      handleRetirementBenefitCheck();
+    }
+  }, [isOpen, closingDate, handleRetirementBenefitCheck]);
 
   /** 퇴직급여충당금 결산 반영 */
   const handleRetirementBenefitApply = async () => {
@@ -243,8 +273,10 @@ export default function RetirementBenefitModal({
         return;
       }
 
-      const data: VoucherResponse = await response.json();
-      setRetirementBenefitVoucherData(data);
+      const data = await response.json();
+      
+      // API 응답 구조: { voucher: { date, description }, transactions: [...] }
+      setRetirementBenefitVoucherData(data as ApplyRetirementBenefitResponse);
 
       setToastMessage('퇴직급여충당금의 결산반영이 완료되었습니다.');
       setShowToast(true);
@@ -259,13 +291,61 @@ export default function RetirementBenefitModal({
 
   /** 퇴직급여충당금 전표 저장 */
   const handleRetirementBenefitSave = async () => {
-    // TODO: 저장 기능 구현
-    
-    setToastMessage('퇴직급여충당금의 전표 저장이 완료되었습니다.');
-    setShowToast(true);
+    try {
+      setRetirementBenefitLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-    // 상태 업데이트
-    onStatusUpdate('DONE');
+      if (!retirementBenefitVoucherData) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = retirementBenefitVoucherData.transactions.some(
+        transaction => !transaction.accountId
+      );
+      
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      // API 요청 데이터 구조로 변환
+      const requestData = {
+        closingDate,
+        key: 'retirement_benefit' as const,
+        voucher: {
+          date: retirementBenefitVoucherData.voucher.date,
+          description: retirementBenefitVoucherData.voucher.description,
+        },
+        transactions: retirementBenefitVoucherData.transactions.map(transaction => ({
+          accountId: transaction.accountId,
+          amount: transaction.amount,
+          debitCredit: transaction.debitCredit,
+          partnerId: transaction.partnerId,
+          note: transaction.note,
+        })),
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+      
+      setToastMessage('퇴직급여충당금의 전표 저장이 완료되었습니다.');
+      setShowToast(true);
+
+      // 상태 업데이트
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('퇴직급여충당금 전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '퇴직급여충당금 전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setRetirementBenefitLoading(false);
+    }
   };
 
   /** 퇴직급여충당금 아이템 변경 핸들러 */
@@ -474,8 +554,8 @@ export default function RetirementBenefitModal({
                         <>
                           {retirementBenefitVoucherData.transactions.map((transaction, index) => (
                             <tr key={index} className="h-8">
-                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{closingDate}</td>
-                              {transaction.debitCredit === 'DEBIT' ? (
+                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{formatDate(retirementBenefitVoucherData.voucher.date)}</td>
+                              {transaction.debitCredit ? (
                                 <>
                                   <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
                                   <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
@@ -502,7 +582,7 @@ export default function RetirementBenefitModal({
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>
                             <td className="p-2 border border-[#D9D9D9] text-center h-8">
                               {retirementBenefitVoucherData.transactions
-                                .filter(t => t.debitCredit === 'DEBIT')
+                                .filter(t => t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>
@@ -510,7 +590,7 @@ export default function RetirementBenefitModal({
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>
                             <td className="p-2 border border-[#D9D9D9] text-center h-8">
                               {retirementBenefitVoucherData.transactions
-                                .filter(t => t.debitCredit === 'CREDIT')
+                                .filter(t => !t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>

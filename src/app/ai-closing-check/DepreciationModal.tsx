@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { checkDepreciation, applyDepreciation } from '@/services/api';
+import { saveClosingCheck } from '@/services/ai-closing-check';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
@@ -45,61 +46,88 @@ interface DepRow {
   method: string;
 }
 
-interface VoucherTransaction {
+// API 응답 타입 (결산 반영 시 받는 간단한 구조)
+interface ApplyTransaction {
+  accountId: string;
   account: {
     id: string;
     code: number;
     name: string;
-    debitCredit: boolean;
-    attribute: string;
-    category: string;
-    fsName1: string;
-    fsName2: string;
-    summarySourceCodes: string[];
-    createdAt: string;
-    updatedAt: string;
   };
-  partner: {
+  partnerId?: string;
+  partner?: {
     id: string;
     name: string;
-    businessNumber: string | null;
-    representative: string | null;
-    address: string | null;
-    phone: string | null;
-    email: string | null;
-    userId: string;
-    type: string;
-    cardIssuer: string | null;
-    cardNumber: string | null;
-    cardType: string | null;
-    primaryUser: string | null;
-    bankName: string | null;
-    accountNumber: string | null;
-    withdrawalFee: number | null;
-    purpose: string | null;
-    note: string | null;
-    mainItems: string | null;
-    relationship: string | null;
-    documentId: string | null;
-    createdAt: string;
-    updatedAt: string;
   };
   amount: number;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  note: string;
+  debitCredit: boolean;
+  note?: string;
 }
 
-interface VoucherResponse {
-  id: string;
-  userId: string;
-  date: string;
-  description: string;
-  departmentId: string | null;
-  documentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  transactions: VoucherTransaction[];
+interface ApplyDepreciationResponse {
+  voucher: {
+    date: string;
+    description?: string;
+  };
+  transactions: ApplyTransaction[];
 }
+
+// 기존의 상세한 타입 (필요시 사용 - 현재 미사용)
+// interface VoucherTransaction {
+//   account: {
+//     id: string;
+//     code: number;
+//     name: string;
+//     debitCredit: boolean;
+//     attribute: string;
+//     category: string;
+//     fsName1: string;
+//     fsName2: string;
+//     summarySourceCodes: string[];
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   partner: {
+//     id: string;
+//     name: string;
+//     businessNumber: string | null;
+//     representative: string | null;
+//     address: string | null;
+//     phone: string | null;
+//     email: string | null;
+//     userId: string;
+//     type: string;
+//     cardIssuer: string | null;
+//     cardNumber: string | null;
+//     cardType: string | null;
+//     primaryUser: string | null;
+//     bankName: string | null;
+//     accountNumber: string | null;
+//     withdrawalFee: number | null;
+//     purpose: string | null;
+//     note: string | null;
+//     mainItems: string | null;
+//     relationship: string | null;
+//     documentId: string | null;
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   amount: number;
+//   debitCredit: 'DEBIT' | 'CREDIT';
+//   note: string;
+// }
+
+// interface VoucherResponse {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   description: string;
+//   departmentId: string | null;
+//   documentId: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   transactions: VoucherTransaction[];
+// }
 
 interface DepreciationModalProps {
   isOpen: boolean;
@@ -115,12 +143,21 @@ export default function DepreciationModal({
   onStatusUpdate 
 }: DepreciationModalProps) {
   const [depreciationData, setDepreciationData] = useState<DepreciationResponse | null>(null);
-  const [voucherData, setVoucherData] = useState<VoucherResponse | null>(null);
-  const [editableVoucherData, setEditableVoucherData] = useState<VoucherResponse | null>(null);
+  const [voucherData, setVoucherData] = useState<ApplyDepreciationResponse | null>(null);
+  const [editableVoucherData, setEditableVoucherData] = useState<ApplyDepreciationResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [editableItems, setEditableItems] = useState<EditableDepreciationItem[]>([]);
+
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   /** 감가상각 점검 실행 */
   const handleDepreciationCheck = useCallback(async () => {
@@ -181,7 +218,7 @@ export default function DepreciationModal({
       };
       
       return {
-        ...prev,
+        voucher: prev.voucher,
         transactions: updatedTransactions
       };
     });
@@ -235,9 +272,9 @@ export default function DepreciationModal({
       }, accessToken);
       console.log('감가상각 API 응답 데이터:', data);
       
-      // API 응답을 그대로 사용 (이미 전표 형태로 반환됨)
-      setVoucherData(data as VoucherResponse);
-      setEditableVoucherData(data as VoucherResponse);
+      // API 응답 구조: { voucher: { date, description }, transactions: [...] }
+      setVoucherData(data as ApplyDepreciationResponse);
+      setEditableVoucherData(data as ApplyDepreciationResponse);
 
       setToastMessage('감가삼각의 결산반영이 완료되었습니다.');
       setShowToast(true);
@@ -252,13 +289,61 @@ export default function DepreciationModal({
 
   /** 감가상각 전표 저장 */
   const handleDepreciationSave = async () => {
-    // TODO: 저장 기능 구현
-    
-    setToastMessage('감가삼각의 전표 전검이 저장되었습니다.');
-    setShowToast(true);
+    try {
+      setLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-    // 메인 테이블 상태 업데이트
-    onStatusUpdate('DONE');
+      if (!editableVoucherData) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = editableVoucherData.transactions.some(
+        transaction => !transaction.accountId
+      );
+      
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      // API 요청 데이터 구조로 변환
+      const requestData = {
+        closingDate,
+        key: 'depreciation' as const,
+        voucher: {
+          date: editableVoucherData.voucher.date,
+          description: editableVoucherData.voucher.description,
+        },
+        transactions: editableVoucherData.transactions.map(transaction => ({
+          accountId: transaction.accountId,
+          amount: transaction.amount,
+          debitCredit: transaction.debitCredit,
+          partnerId: transaction.partnerId,
+          note: transaction.note,
+        })),
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+      
+      setToastMessage('감가삼각의 전표 점검이 저장되었습니다.');
+      setShowToast(true);
+
+      // 메인 테이블 상태 업데이트
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('감가상각 전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '감가상각 전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -493,7 +578,7 @@ export default function DepreciationModal({
                       <>
                         {editableVoucherData.transactions?.map((transaction, index) => (
                           <tr key={index} className="h-8">
-                            <td className="p-2 border border-[#D9D9D9] text-center h-8">{closingDate}</td>
+                            <td className="p-2 border border-[#D9D9D9] text-center h-8">{formatDate(editableVoucherData.voucher.date)}</td>
                             {transaction.debitCredit ? (
                               <>
                                 <td className="p-2 border border-[#D9D9D9] text-center h-8">

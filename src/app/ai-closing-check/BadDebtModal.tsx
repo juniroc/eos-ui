@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { checkBadDebt, applyBadDebt } from '@/services/api';
+import { saveClosingCheck } from '@/services/ai-closing-check';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
@@ -40,61 +41,88 @@ interface BadDebtRow {
   reason?: string;
 }
 
-interface VoucherTransaction {
+// API 응답 타입 (결산 반영 시 받는 간단한 구조)
+interface ApplyTransaction {
+  accountId: string;
   account: {
     id: string;
     code: number;
     name: string;
-    debitCredit: boolean;
-    attribute: string;
-    category: string;
-    fsName1: string;
-    fsName2: string;
-    summarySourceCodes: string[];
-    createdAt: string;
-    updatedAt: string;
   };
-  partner: {
+  partnerId?: string;
+  partner?: {
     id: string;
     name: string;
-    businessNumber: string | null;
-    representative: string | null;
-    address: string | null;
-    phone: string | null;
-    email: string | null;
-    userId: string;
-    type: string;
-    cardIssuer: string | null;
-    cardNumber: string | null;
-    cardType: string | null;
-    primaryUser: string | null;
-    bankName: string | null;
-    accountNumber: string | null;
-    withdrawalFee: number | null;
-    purpose: string | null;
-    note: string | null;
-    mainItems: string | null;
-    relationship: string | null;
-    documentId: string | null;
-    createdAt: string;
-    updatedAt: string;
   };
   amount: number;
-  debitCredit: 'DEBIT' | 'CREDIT';
-  note: string;
+  debitCredit: boolean;
+  note?: string;
 }
 
-interface VoucherResponse {
-  id: string;
-  userId: string;
-  date: string;
-  description: string;
-  departmentId: string | null;
-  documentId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  transactions: VoucherTransaction[];
+interface ApplyBadDebtResponse {
+  voucher: {
+    date: string;
+    description?: string;
+  };
+  transactions: ApplyTransaction[];
 }
+
+// 기존의 상세한 타입 (필요시 사용 - 현재 미사용)
+// interface VoucherTransaction {
+//   account: {
+//     id: string;
+//     code: number;
+//     name: string;
+//     debitCredit: boolean;
+//     attribute: string;
+//     category: string;
+//     fsName1: string;
+//     fsName2: string;
+//     summarySourceCodes: string[];
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   partner: {
+//     id: string;
+//     name: string;
+//     businessNumber: string | null;
+//     representative: string | null;
+//     address: string | null;
+//     phone: string | null;
+//     email: string | null;
+//     userId: string;
+//     type: string;
+//     cardIssuer: string | null;
+//     cardNumber: string | null;
+//     cardType: string | null;
+//     primaryUser: string | null;
+//     bankName: string | null;
+//     accountNumber: string | null;
+//     withdrawalFee: number | null;
+//     purpose: string | null;
+//     note: string | null;
+//     mainItems: string | null;
+//     relationship: string | null;
+//     documentId: string | null;
+//     createdAt: string;
+//     updatedAt: string;
+//   };
+//   amount: number;
+//   debitCredit: 'DEBIT' | 'CREDIT';
+//   note: string;
+// }
+
+// interface VoucherResponse {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   description: string;
+//   departmentId: string | null;
+//   documentId: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   transactions: VoucherTransaction[];
+// }
 
 interface BadDebtModalProps {
   isOpen: boolean;
@@ -105,22 +133,23 @@ interface BadDebtModalProps {
 
 export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpdate }: BadDebtModalProps) {
   const [badDebtData, setBadDebtData] = useState<BadDebtResponse | null>(null);
-  const [badDebtVoucherData, setBadDebtVoucherData] = useState<VoucherResponse | null>(null);
+  const [badDebtVoucherData, setBadDebtVoucherData] = useState<ApplyBadDebtResponse | null>(null);
   const [badDebtLoading, setBadDebtLoading] = useState(false);
   const [editableBadDebtItems, setEditableBadDebtItems] = useState<EditableBadDebtItem[]>([]);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  // 팝업이 열릴 때 대손상각 점검 API 호출
-  useEffect(() => {
-    if (isOpen && closingDate) {
-      handleBadDebtCheck();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, closingDate]);
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   /** 대손상각 점검 */
-  const handleBadDebtCheck = async () => {
+  const handleBadDebtCheck = useCallback(async () => {
     try {
       setBadDebtLoading(true);
       const accessToken = localStorage.getItem('accessToken');
@@ -129,10 +158,6 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
         alert('로그인이 필요합니다.');
         return;
       }
-
-      console.log('대손상각 점검 API 요청:', {
-        closingDate: closingDate
-      });
 
       const data: BadDebtResponse = await checkBadDebt(closingDate, accessToken) as BadDebtResponse;
       setBadDebtData(data);
@@ -153,7 +178,14 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
     } finally {
       setBadDebtLoading(false);
     }
-  };
+  }, [closingDate]);
+
+  // 팝업이 열릴 때 대손상각 점검 API 호출
+  useEffect(() => {
+    if (isOpen && closingDate) {
+      handleBadDebtCheck();
+    }
+  }, [isOpen, closingDate, handleBadDebtCheck]);
 
   /** 대손상각 결산 반영 */
   const handleBadDebtApply = async () => {
@@ -180,11 +212,13 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
         return row;
       });
 
-      const data: VoucherResponse = await applyBadDebt({
+      const data = await applyBadDebt({
         closingDate: closingDate,
         rows: rows
-      }, accessToken) as VoucherResponse;
-      setBadDebtVoucherData(data);
+      }, accessToken);
+      
+      // API 응답 구조: { voucher: { date, description }, transactions: [...] }
+      setBadDebtVoucherData(data as ApplyBadDebtResponse);
 
       setToastMessage('대손상각의 결산반영이 완료되었습니다.');
       setShowToast(true);
@@ -199,13 +233,61 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
 
   /** 대손상각 전표 저장 */
   const handleBadDebtSave = async () => {
-    // TODO: 저장 기능 구현
-    
-    setToastMessage('대손상각의 전표 저장이 완료되었습니다.');
-    setShowToast(true);
+    try {
+      setBadDebtLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-    // 상태 업데이트
-    onStatusUpdate('DONE');
+      if (!badDebtVoucherData) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = badDebtVoucherData.transactions.some(
+        transaction => !transaction.accountId
+      );
+      
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      // API 요청 데이터 구조로 변환
+      const requestData = {
+        closingDate,
+        key: 'bad_debt' as const,
+        voucher: {
+          date: badDebtVoucherData.voucher.date,
+          description: badDebtVoucherData.voucher.description,
+        },
+        transactions: badDebtVoucherData.transactions.map(transaction => ({
+          accountId: transaction.accountId,
+          amount: transaction.amount,
+          debitCredit: transaction.debitCredit,
+          partnerId: transaction.partnerId,
+          note: transaction.note,
+        })),
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+      
+      setToastMessage('대손상각의 전표 저장이 완료되었습니다.');
+      setShowToast(true);
+
+      // 상태 업데이트
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('대손상각 전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '대손상각 전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setBadDebtLoading(false);
+    }
   };
 
   /** 대손상각 아이템 변경 핸들러 */
@@ -424,8 +506,8 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
                         <>
                           {badDebtVoucherData.transactions.map((transaction, index) => (
                             <tr key={index} className="h-8">
-                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{closingDate}</td>
-                              {transaction.debitCredit === 'DEBIT' ? (
+                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{formatDate(badDebtVoucherData.voucher.date)}</td>
+                              {transaction.debitCredit ? (
                                 <>
                                   <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
                                   <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
@@ -452,7 +534,7 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>
                             <td className="p-2 border border-[#D9D9D9] text-center h-8">
                               {badDebtVoucherData.transactions
-                                .filter(t => t.debitCredit === 'DEBIT')
+                                .filter(t => t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>
@@ -460,7 +542,7 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>
                             <td className="p-2 border border-[#D9D9D9] text-center h-8">
                               {badDebtVoucherData.transactions
-                                .filter(t => t.debitCredit === 'CREDIT')
+                                .filter(t => !t.debitCredit)
                                 .reduce((sum, t) => sum + t.amount, 0)
                                 .toLocaleString()}
                             </td>

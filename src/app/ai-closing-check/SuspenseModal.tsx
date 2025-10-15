@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { saveClosingCheck } from '@/services/ai-closing-check';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
@@ -59,13 +60,14 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   const [showToast, setShowToast] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 팝업이 열릴 때 가수가지급금 점검 API 호출
-  useEffect(() => {
-    if (isOpen && closingDate) {
-      handleSuspenseCheck();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, closingDate]);
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   /** 가수가지급금 점검 API 호출 */
   const callSuspenseAPI = async (date: string): Promise<SuspenseData> => {
@@ -79,13 +81,6 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
       closingDate: date,
       key: 'suspense_clear'
     };
-
-    console.log('가수가지급금 점검 API 요청:', {
-      url: 'https://api.eosxai.com/api/closing-check/run-item',
-      method: 'POST',
-      body: requestBody,
-      closingDate: date
-    });
 
     const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
       method: 'POST',
@@ -112,7 +107,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   };
 
   /** 가수가지급금 점검 */
-  const handleSuspenseCheck = async () => {
+  const handleSuspenseCheck = useCallback(async () => {
     try {
       setLoading(true);
       const data = await callSuspenseAPI(closingDate);
@@ -136,7 +131,14 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [closingDate]);
+
+  // 팝업이 열릴 때 가수가지급금 점검 API 호출
+  useEffect(() => {
+    if (isOpen && closingDate) {
+      handleSuspenseCheck();
+    }
+  }, [isOpen, closingDate, handleSuspenseCheck]);
 
   // 트랜잭션 값 변경 핸들러
   const handleTransactionChange = (id: string, field: keyof EditableSuspenseTransaction, value: string | number | boolean) => {
@@ -156,14 +158,65 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
   };
 
   // 저장 핸들러
-  const handleSave = () => {
-    // TODO: 저장 기능 구현
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-    setToastMessage('가수가지급금의 전표 저장이 완료되었습니다.');
-    setShowToast(true);
-    
-    // 상태 업데이트
-    onStatusUpdate('DONE');
+      if (!data || transactions.length === 0) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = transactions.some(
+        transaction => !transaction.accountId
+      );
+      
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      // 첫 번째 voucher의 정보를 사용
+      const firstVoucher = data.vouchers[0];
+      
+      // API 요청 데이터 구조로 변환
+      const requestData = {
+        closingDate,
+        key: 'suspense_clear' as const,
+        voucher: {
+          date: firstVoucher.date,
+          description: firstVoucher.description,
+        },
+        transactions: transactions.map(transaction => ({
+          accountId: transaction.accountId,
+          amount: transaction.amount,
+          debitCredit: transaction.debitCredit === 'DEBIT',
+          partnerId: transaction.partnerId,
+          note: transaction.note,
+        })),
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+      
+      setToastMessage('가수가지급금의 전표 저장이 완료되었습니다.');
+      setShowToast(true);
+      
+      // 상태 업데이트
+      onStatusUpdate('DONE');
+      
+    } catch (error) {
+      console.error('가수가지급금 전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '가수가지급금 전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -271,7 +324,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                     <tbody>
                       {transactions.map((transaction) => (
                         <tr key={transaction.id}>
-                          <td className="p-2 border border-[#D9D9D9] text-center">{data?.vouchers[0]?.date || '2024-12-31'}</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center">{data?.vouchers[0]?.date ? formatDate(data.vouchers[0].date) : ''}</td>
                           {/* 차변 섹션 */}
                           {transaction.debitCredit === 'DEBIT' ? (
                             <>

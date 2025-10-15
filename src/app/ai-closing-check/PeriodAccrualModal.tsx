@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { saveClosingCheck, applyClosingCheck } from '@/services/ai-closing-check';
 import Image from 'next/image';
 import ToastMessage from '@/components/ToastMessage';
 import PrintButton from '@/components/PrintButton';
@@ -26,14 +27,40 @@ interface PeriodAccrualResponse {
 }
 
 // API에서 요구하는 PeriodAccrualRow 타입 (결산반영 시 사용)
-// interface PeriodAccrualRow {
-//   accountCode: string;
-//   addAmount: number;
-//   counterAccountId?: string | null;
-//   memo?: string;
-// }
+interface PeriodAccrualRow {
+  accountCode: string;
+  addAmount: number;
+  counterAccountId?: string | null;
+  memo?: string;
+}
 
-// 전표 관련 타입 정의
+// API 응답 타입 (결산 반영 시 받는 구조)
+interface ApplyTransaction {
+  accountId: string;
+  account: {
+    id: string;
+    code: number;
+    name: string;
+  };
+  partnerId?: string;
+  partner?: {
+    id: string;
+    name: string;
+  };
+  amount: number;
+  debitCredit: boolean;
+  note?: string;
+}
+
+interface ApplyPeriodAccrualResponse {
+  voucher: {
+    date: string;
+    description?: string;
+  };
+  transactions: ApplyTransaction[];
+}
+
+// 전표 관련 타입 정의 (UI 표시용)
 interface JournalEntry {
   id: string;
   date: string;
@@ -68,14 +95,23 @@ function PeriodAccrualModal({
   onStatusUpdate,
 }: PeriodAccrualModalProps) {
   const [loading, setLoading] = useState(false);
-  const [showJournalTable, setShowJournalTable] = useState(false);
   const [editableData, setEditableData] = useState<PeriodAccrualItem[]>([]);
   const [editableJournalEntries, setEditableJournalEntries] = useState<JournalEntry[]>([]);
+  const [voucherData, setVoucherData] = useState<ApplyPeriodAccrualResponse | null>(null);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   
   // API 호출 중복 방지를 위한 ref
   const isApiCallInProgress = useRef(false);
+
+  /** 날짜를 YYYY-MM-DD 형식으로 포맷 */
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   
   /** 기간귀속 점검 API 호출 */
   const handlePeriodAccrualCheck = useCallback(async () => {
@@ -97,13 +133,6 @@ function PeriodAccrualModal({
         closingDate: closingDate,
         key: 'period_accrual'
       };
-      
-      console.log('기간귀속 점검 API 요청:', {
-        url: 'https://api.eosxai.com/api/closing-check/run-item',
-        method: 'POST',
-        body: requestBody,
-        closingDate: closingDate
-      });
 
       const response = await fetch('https://api.eosxai.com/api/closing-check/run-item', {
         method: 'POST',
@@ -215,6 +244,81 @@ function PeriodAccrualModal({
       return newEntries;
     });
   };
+
+  // 전표 저장하기 버튼 핸들러
+  const handleSaveVoucher = async () => {
+    try {
+      setLoading(true);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      if (!voucherData) {
+        alert('저장할 전표 데이터가 없습니다.');
+        return;
+      }
+
+      // JournalEntry를 API 요청 형식으로 변환
+      const transactions = [];
+      for (const entry of editableJournalEntries) {
+        // 차변 추가
+        if (entry.debit.amount > 0 && entry.debit.accountName) {
+          transactions.push({
+            accountId: voucherData.transactions.find(
+              t => t.account.name === entry.debit.accountName
+            )?.accountId || '',
+            amount: entry.debit.amount,
+            debitCredit: true,
+            note: entry.debit.memo || undefined,
+          });
+        }
+        // 대변 추가
+        if (entry.credit.amount > 0 && entry.credit.accountName) {
+          transactions.push({
+            accountId: voucherData.transactions.find(
+              t => t.account.name === entry.credit.accountName
+            )?.accountId || '',
+            amount: entry.credit.amount,
+            debitCredit: false,
+            note: entry.credit.memo || undefined,
+          });
+        }
+      }
+
+      // accountId 유효성 검사
+      const hasInvalidAccount = transactions.some(t => !t.accountId);
+      if (hasInvalidAccount) {
+        alert('계정과목이 설정되지 않은 거래가 있습니다. 모든 거래에 계정과목을 지정해주세요.');
+        return;
+      }
+
+      const requestData = {
+        closingDate,
+        key: 'period_accrual' as const,
+        voucher: {
+          date: voucherData.voucher.date,
+          description: voucherData.voucher.description,
+        },
+        transactions,
+      };
+
+      await saveClosingCheck(accessToken, requestData);
+
+      setToastMessage('기간귀속의 전표 저장이 완료되었습니다.');
+      setShowToast(true);
+
+      // 메인 테이블 상태 업데이트
+      onStatusUpdate('DONE');
+    } catch (error) {
+      console.error('전표 저장 오류:', error);
+      alert(error instanceof Error ? error.message : '전표 저장 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   if (!isOpen) return null;
 
@@ -222,114 +326,85 @@ function PeriodAccrualModal({
 
   // 결산반영 버튼 클릭 시 전표 생성
   const handleGenerateJournal = async () => {
-    const entries = await handleSaveJournal();
-    if (!entries) {  
-      return;
-    }
-
-    setToastMessage('기간귀속의 전표 생성이 완료되었습니다.');
+    await handleSaveJournal();
+    setToastMessage('기간귀속의 결산반영이 완료되었습니다.');
     setShowToast(true);
-    setShowJournalTable(true);
   };
 
-  // 전표 저장 함수
+  // 전표 저장 함수 (결산반영 API 호출)
   const handleSaveJournal = async () => {
     try {
-      const dummyData: JournalEntry[] = [
-        {
-          id: '1',
-          date: '2024-01-01',
-          debit: { accountCode: '0', accountName: '선수금', amount: 0, memo: '' },
-          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          description: ''
-        },
-        {
-          id: '2',
-          date: '2024-01-02',
-          debit: { accountCode: '0', accountName: '선수수익', amount: 0, memo: '' },
-          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          description: ''
-        },
-        {
-          id: '3',
-          date: '2024-01-03',
-          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          credit: { accountCode: '10500500', accountName: '미수금', amount: 10500500, memo: '' },
-          description: ''
-        },
-        {
-          id: '4',
-          date: '2024-01-04',
-          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          credit: { accountCode: '0', accountName: '미수수익', amount: 0, memo: '' },
-          description: ''
-        },
-        {
-          id: '5',
-          date: '2024-01-05',
-          debit: { accountCode: '0', accountName: '선급금', amount: 0, memo: '' },
-          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          description: ''
-        },
-        {
-          id: '6',
-          date: '2024-01-06',
-          debit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          credit: { accountCode: '5000', accountName: '선급비용', amount: 100000, memo: '' },
-          description: ''
-        },
-        {
-          id: '7',
-          date: '2024-01-07',
-          debit: { accountCode: '7000', accountName: '미지지급금', amount: 100000, memo: '' },
-          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          description: ''
-        },
-        {
-          id: '8',
-          date: '2024-01-08',
-          debit: { accountCode: '8000', accountName: '미지급금비용', amount: 100000, memo: '' },
-          credit: { accountCode: '0', accountName: '', amount: 0, memo: '' },
-          description: ''
-        },
-      ];
-      setEditableJournalEntries(dummyData);
-      return dummyData;
+      setLoading(true);
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
 
-      // const token = localStorage.getItem('accessToken');
-      // if (!token) {
-      //   alert('로그인이 필요합니다.');
-      //   return;
-      // }
+      // rows 데이터 변환
+      const rows: PeriodAccrualRow[] = editableData.map(item => ({
+        accountCode: item.accountCode,
+        addAmount: item.addAmount,
+        counterAccountId: item.counterAccountId || null,
+        memo: item.memo,
+      }));
 
+      const result: ApplyPeriodAccrualResponse = await applyClosingCheck(token, {
+        closingDate: closingDate,
+        key: 'period_accrual',
+        rows: rows,
+      });
 
-      // const response = await fetch('https://api.eosxai.com/api/closing-check/apply', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify({ 
-      //     rows: data?.rows || [],
-      //     closingDate: closingDate,
-      //     key: 'period_accrual',
-      //   }),
-      // });
+      setVoucherData(result);
 
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-
-      //   throw new Error(errorData.error || '전표 조회 실패');
-      // }
-
-      // const result = await response.json();
-      // console.log('전표 조회 결과:', result);
-      // // 전표값 저장
-      // return result;
+      // API 응답을 JournalEntry 형태로 변환
+      // transactions를 차변/대변 쌍으로 그룹화
+      const journalEntries: JournalEntry[] = [];
+      const debitTransactions = result.transactions.filter(t => t.debitCredit);
+      const creditTransactions = result.transactions.filter(t => !t.debitCredit);
+      
+      const maxLength = Math.max(debitTransactions.length, creditTransactions.length);
+      
+      for (let i = 0; i < maxLength; i++) {
+        const debit = debitTransactions[i];
+        const credit = creditTransactions[i];
+        
+        journalEntries.push({
+          id: String(i + 1),
+          date: result.voucher.date,
+          debit: debit ? {
+            accountCode: String(debit.account.code),
+            accountName: debit.account.name,
+            amount: debit.amount,
+            memo: debit.note || ''
+          } : {
+            accountCode: '',
+            accountName: '',
+            amount: 0,
+            memo: ''
+          },
+          credit: credit ? {
+            accountCode: String(credit.account.code),
+            accountName: credit.account.name,
+            amount: credit.amount,
+            memo: credit.note || ''
+          } : {
+            accountCode: '',
+            accountName: '',
+            amount: 0,
+            memo: ''
+          },
+          description: result.voucher.description || ''
+        });
+      }
+      
+      setEditableJournalEntries(journalEntries);
 
     } catch (error) {
-      console.error('전표 저장 에러:', error);
-      alert(error instanceof Error ? error.message : '전표 저장 중 문제가 발생했습니다.');
+      console.error('전표 조회 에러:', error);
+      alert(error instanceof Error ? error.message : '전표 조회 중 문제가 발생했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -367,52 +442,22 @@ function PeriodAccrualModal({
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
               {/* 버튼 영역 */}
-          <div className="flex justify-end gap-2 mt-4">
-            <PrintButton
-              variant="neutral"
-              size="small"
-              printType="modal"
-              targetSelector="#period-accrual-modal"
-            >
-              인쇄하기
-            </PrintButton>
-            <button 
-              onClick={handleGenerateJournal}
-              className="flex items-center justify-center px-4 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
-            >
-              결산반영
-            </button>
-          </div>
-          
-                {/* 날짜 필드 */}
-                {/* <div className="flex flex-col w-[150px] h-8 relative">
-                  <input
-                    type="date"
-                    value={closingDate}
-                    onChange={(e) => onClosingDateChange(e.target.value)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  <div className="flex items-center p-2 gap-2 bg-white border border-[#D9D9D9] h-8 pointer-events-none">
-                    <span className="text-xs text-[#B3B3B3] flex-1">{closingDate}</span>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M2 6H14M5 2V4M11 2V4M3 4H13C13.5523 4 14 4.44772 14 5V13C14 13.5523 13.5523 14 13 14H3C2.44772 14 2 13.5523 2 13V5C2 4.44772 2.44772 4 3 4Z" 
-                            stroke="#757575" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="w-px h-5 bg-[#D9D9D9]"></div> */}
-                
-                {/* 직접 점검하기 버튼 */}
-                {/* <button
-                  onClick={() => onDirectCheck(closingDate)}
-                  disabled={loading}
-                  className="flex items-center justify-center px-3 py-2 gap-2 w-[90px] h-7 bg-[#2C2C2C] text-white text-xs leading-3"
+              <div className="flex justify-end gap-2">
+                <PrintButton
+                  variant="neutral"
+                  size="small"
+                  printType="modal"
+                  targetSelector="#period-accrual-modal"
                 >
-                  {loading ? '처리중...' : '직접 점검하기'}
-                </button> */}
+                  인쇄하기
+                </PrintButton>
+                <button 
+                  onClick={handleGenerateJournal}
+                  className="flex items-center justify-center px-4 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
+                >
+                  결산반영
+                </button>
               </div>
             </div>
           </div>
@@ -540,43 +585,25 @@ function PeriodAccrualModal({
           </div>
           )}
 
-          {/* 버튼 영역 */}
-          {/* <div className="flex justify-end gap-2 mt-4">
-            <button className="flex items-center justify-center px-4 py-2 h-8 bg-white border border-[#D9D9D9] text-[#757575] text-xs">
-              인쇄
-            </button>
-            <button 
-              onClick={handleGenerateJournal}
-              className="flex items-center justify-center px-4 py-2 h-8 bg-[#2C2C2C] text-white text-xs"
-            >
-              결산반영
-            </button>
-          </div> */}
 
-          {/* 전표 테이블 */}
-          {showJournalTable && (
-            <div className="mt-19 border-t border-[#D9D9D9]">
-              <div className="pt-4">
-                {/* 전표 제목 */}
-                <div className="mb-4 flex justify-between items-end">
-                  <div>
-                    <h3 className="text-base font-semibold text-[#1E1E1E] mb-1">전표</h3>
-                    <p className="text-xs text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      // TODO: 저장 기능 구현
-                      setToastMessage('기간귀속의 전표 저장이 완료되었습니다.');
-                      setShowToast(true);
-                    }}
-                    className="flex items-center justify-center px-3 py-2 h-7 bg-[#2C2C2C] text-white text-xs cursor-pointer"
-                  >
-                    저장하기
-                  </button>
+          {/* 전표 테이블 - voucherData가 있을 때만 표시 */}
+          {voucherData && (
+            <div className="mt-19 border-t border-[#D9D9D9] w-full pt-4">
+              <div className="mb-4 flex justify-between items-center">
+                <div>
+                  <h3 className="text-[15px] leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">전표 점검</h3>
+                  <p className="text-xs leading-[140%] text-[#767676] font-['Pretendard']">생성된 전표를 확인하고 저장해주세요.</p>
                 </div>
+                <button 
+                  onClick={handleSaveVoucher}
+                  className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-[#2C2C2C] cursor-pointer"
+                >
+                  <span className="text-xs leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">저장하기</span>
+                </button>
+              </div>
 
-                {/* 전표 테이블 헤더 */}
-                <div className="border border-[#D9D9D9]">
+              {/* 전표 테이블 */}
+              <div className="border border-[#D9D9D9]">
                   <div className="flex bg-[#F5F5F5]">
                       <div className="w-[100px] min-w-[100px] h-16 flex items-center justify-center px-2 border-r border-[#D9D9D9]">
                         <span className="text-xs text-[#757575]">일자</span>
@@ -619,10 +646,12 @@ function PeriodAccrualModal({
                   </div>
 
                   {/* 전표 테이블 바디 */}
+                  {editableJournalEntries.length > 0 ? (
+                    <>
                   {editableJournalEntries.map((entry, index) => (
                     <div key={entry.id} className="flex border-b border-[#D9D9D9] last:border-b-0">
                       <div className="w-[100px] min-w-[100px] h-8 flex items-center justify-center px-2 bg-white border-r border-[#D9D9D9]">
-                        <span className="text-xs text-[#757575]">{closingDate}</span>
+                        <span className="text-xs text-[#757575]">{formatDate(entry.date)}</span>
                       </div>
                       <div className="flex-1 h-8 flex border-r border-[#D9D9D9]">
                         <div className="flex-1 flex items-center px-2 bg-white border-r border-[#D9D9D9]">
@@ -734,7 +763,12 @@ function PeriodAccrualModal({
                       <span className="text-xs text-[#757575]"></span>
                     </div>
                   </div>
-                </div>
+                    </>
+                  ) : (
+                    <div className="flex h-32 items-center justify-center border-b border-[#D9D9D9]">
+                      <span className="text-xs text-[#757575]">결산반영을 실행하면 전표가 생성됩니다.</span>
+                    </div>
+                  )}
               </div>
             </div>
           )}

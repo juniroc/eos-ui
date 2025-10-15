@@ -9,7 +9,7 @@ interface EditModalProps {
   title: string;
   currentValue: string;
   placeholder?: string;
-  onSave: (value: string) => void;
+  onSave: (value: string) => void | Promise<void>;
 }
 
 export default function EditModal({
@@ -21,6 +21,7 @@ export default function EditModal({
   onSave,
 }: EditModalProps) {
   const [value, setValue] = useState(currentValue);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 모달이 열릴 때마다 currentValue로 초기화
   useEffect(() => {
@@ -31,9 +32,15 @@ export default function EditModal({
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
-    onSave(value);
-    onClose();
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(value);
+    } catch (error) {
+      console.error('EditModal handleSave 에러:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -70,6 +77,7 @@ export default function EditModal({
             variant="neutral"
             size="small"
             onClick={handleCancel}
+            disabled={isSaving}
             style={{ width: 'auto', minWidth: 'auto' }}
           >
             취소
@@ -78,9 +86,10 @@ export default function EditModal({
             variant="primary"
             size="small"
             onClick={handleSave}
+            disabled={isSaving}
             style={{ width: 'auto', minWidth: 'auto' }}
           >
-            저장하기
+            {isSaving ? '저장 중...' : '저장하기'}
           </Button>
         </div>
       </div>

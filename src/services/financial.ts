@@ -231,3 +231,60 @@ export async function saveVoucher(
 ): Promise<BatchSaveResponse> {
   return batchSaveVouchers(token, [voucher]);
 }
+
+// ========================================
+// 계정원장 페이지 관련 API 함수들
+// ========================================
+
+export interface PartnerItem {
+  id: string;
+  name: string;
+}
+
+export interface PartnersResponse {
+  companies: PartnerItem[];
+  cards: PartnerItem[];
+  bankAccounts: PartnerItem[];
+}
+
+export interface UserAccount {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export type UserAccountsResponse = UserAccount[];
+
+/**
+ * 전표입력 거래처 조회
+ */
+export async function getJournalInputPartners(token: string): Promise<PartnersResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/partners/journal-input`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('거래처 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+/**
+ * 전표입력 계정과목 조회
+ */
+export async function getJournalInputAccounts(token: string): Promise<UserAccountsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/user-accounts/journal-input`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('계정과목 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}

@@ -14,7 +14,7 @@ interface EmployeeRow {
   residentNumber: string;
   employmentType?: string;
   monthlySalary?: string;
-  isProduction?: string; // 'YES' | 'NO'
+  isProduction?: boolean;
   serverId?: number; // 서버에 저장된 데이터인지 구분
 }
 
@@ -28,7 +28,7 @@ export default function EmployeeInfoPage() {
       residentNumber: '',
       employmentType: '',
       monthlySalary: '',
-      isProduction: '',
+      isProduction: false,
     },
     {
       id: 2,
@@ -36,7 +36,7 @@ export default function EmployeeInfoPage() {
       residentNumber: '',
       employmentType: '',
       monthlySalary: '',
-      isProduction: '',
+      isProduction: false,
     },
   ]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +63,7 @@ export default function EmployeeInfoPage() {
       r.residentNumber.trim() ||
       r.employmentType?.trim() ||
       (r.monthlySalary && String(r.monthlySalary).trim()) ||
-      r.isProduction?.trim()
+      r.isProduction !== undefined
   );
 
   /** 직원 목록 불러오기 */
@@ -85,23 +85,23 @@ export default function EmployeeInfoPage() {
             residentNumber: emp.residentNumber || '',
             employmentType: emp.employmentType || '',
             monthlySalary: emp.monthlySalary || '',
-            isProduction: emp.isProduction ? 'YES' : 'NO',
+            isProduction: emp.isProduction || false,
             serverId: emp.id, // 서버 ID 설정
           }))
         );
       } else {
         // 서버에 데이터가 없으면 빈 행으로 초기화 (로컬 데이터 완전 제거)
         setRows([
-          { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
-          { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+          { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: false },
+          { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: false },
         ]);
       }
     } catch (err) {
       console.error(err);
       // 에러 발생 시에도 빈 행으로 초기화
       setRows([
-        { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
-        { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: '' },
+        { id: 1, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: false },
+        { id: 2, name: '', residentNumber: '', employmentType: '', monthlySalary: '', isProduction: false },
       ]);
     } finally {
       setFirstLoad(false);
@@ -127,7 +127,7 @@ export default function EmployeeInfoPage() {
           residentNumber: item.residentNumber || '',
           employmentType: item.employmentType || '',
           monthlySalary: item.monthlySalary || '',
-          isProduction: item.isProduction ? 'YES' : 'NO',
+          isProduction: item.isProduction || false,
         }));
         // 기존 빈 행을 제거하고 추출된 데이터만 설정
         setRows(extracted);
@@ -160,7 +160,7 @@ export default function EmployeeInfoPage() {
           const employee: { name: string; residentNumber: string; monthlySalary?: string; position?: string; department?: string; startDate?: string; endDate?: string; note?: string; employmentType?: string; isProduction?: boolean } = {
             name: row.name.trim(),
             residentNumber: row.residentNumber.trim(),
-            isProduction: row.isProduction === 'YES',
+            isProduction: row.isProduction || false,
           };
           
           // optional 필드들은 값이 있을 때만 포함
@@ -237,7 +237,7 @@ export default function EmployeeInfoPage() {
         residentNumber: '',
         employmentType: 'REGULAR',
         monthlySalary: '',
-        isProduction: 'YES',
+        isProduction: false,
       },
     ]);
   };
@@ -463,20 +463,20 @@ export default function EmployeeInfoPage() {
               <div className="flex flex-row items-center px-2 flex-1 h-8 bg-white border-l border-b border-[#D9D9D9]">
                 <select
                   className="w-full font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
-                  value={row.isProduction || ''}
+                  value={row.isProduction === undefined ? '' : String(row.isProduction)}
                   onChange={e =>
                     setRows(prev =>
                       prev.map(r =>
                         r.id === row.id
-                          ? { ...r, isProduction: e.target.value }
+                          ? { ...r, isProduction: e.target.value === 'true' }
                           : r
                       )
                     )
                   }
                 >
                   <option value="">선택하기</option>
-                  <option value="YES">예</option>
-                  <option value="NO">아니오</option>
+                  <option value="true">O</option>
+                  <option value="false">X</option>
                 </select>
               </div>
               {/* 관리 컴럼 */}

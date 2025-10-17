@@ -264,6 +264,38 @@ export default function FinancialStatementsPage() {
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
 
+  /** 텍스트를 파싱하여 번호 매김과 내용을 분리하고, 내용에 균등 간격 적용 */
+  const formatLabelWithSpacing = (label: string) => {
+    // 패턴: 숫자., 숫자), (숫자), 로마숫자. 등
+    const prefixPattern = /^(\d+\.|[①②③④⑤⑥⑦⑧⑨⑩]+|\(\d+\)|[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\.|\d+\))\s*/;
+    const match = label.match(prefixPattern);
+    
+    if (match) {
+      const prefix = match[1]; // 번호 매김 부분
+      const content = label.substring(match[0].length); // 나머지 내용
+      
+      // 내용 텍스트의 글자 사이에 공백 추가
+      const spacedContent = content.split('').join(' ');
+      
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <span style={{ flexShrink: 0, marginRight: '0.5em' }}>{prefix}</span>
+          <span style={{ flex: 1, textAlign: 'justify', textAlignLast: 'justify' }}>
+            {spacedContent}
+          </span>
+        </div>
+      );
+    }
+    
+    // 패턴이 없으면 전체 텍스트에 글자 간격 적용
+    const spacedLabel = label.split('').join(' ');
+    return (
+      <span style={{ display: 'block', width: '100%', textAlign: 'justify', textAlignLast: 'justify' }}>
+        {spacedLabel}
+      </span>
+    );
+  };
+
   // 로딩/인증 처리
   if (authLoading) {
     return <div className="p-8 text-center">로딩 중...</div>;
@@ -465,19 +497,19 @@ export default function FinancialStatementsPage() {
                     <>
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
-                      <col style={{width: '180px'}} />
+                      <col style={{width: '210px'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
                     </>
                   ) : selectedType === 'cash_flow' ? (
                     <>
-                      <col style={{width: '180px'}} />
+                      <col style={{width: '210px'}} />
                       <col style={{width: '50%'}} />
                       <col style={{width: '50%'}} />
                     </>
                   ) : (
                     <>
-                      <col style={{width: '180px'}} />
+                      <col style={{width: '210px'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
                       <col style={{width: '25%'}} />
@@ -543,10 +575,10 @@ export default function FinancialStatementsPage() {
                               {'debitSum' in row ? row.debitSum?.toLocaleString() || '0' : '0'}
                             </span>
                           </td>
-                          <td className={`p-2 text-xs ${borderClass} text-center`}>
-                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'account' in row ? row.account : ''}
-                            </span>
+                          <td className={`p-2 text-xs ${borderClass}`}>
+                            <div className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
+                              {'account' in row ? formatLabelWithSpacing(row.account) : ''}
+                            </div>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
@@ -562,9 +594,9 @@ export default function FinancialStatementsPage() {
                       ) : selectedType === 'cash_flow' ? (
                         <>
                           <td className={`p-2 text-xs ${borderClass}`}>
-                            <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
-                              {'label' in row ? row.label : ''}
-                            </span>
+                            <div style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 12}px` }}>
+                              {'label' in row ? formatLabelWithSpacing(row.label) : ''}
+                            </div>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
@@ -580,9 +612,9 @@ export default function FinancialStatementsPage() {
                       ) : (
                         <>
                           <td className={`p-2 text-xs ${borderClass}`}>
-                            <span style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 20}px` }}>
-                              {'label' in row ? row.label : ''}
-                            </span>
+                            <div style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 12}px` }}>
+                              {'label' in row ? formatLabelWithSpacing(row.label) : ''}
+                            </div>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
                             <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>

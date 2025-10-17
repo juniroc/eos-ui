@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
 type dataType = 'ACCOUNT' | 'ACCOUNTS' | 'ACCOUNT_PARTNER' | 'PARTNER';
 
@@ -50,25 +51,6 @@ interface LedgerFilters {
   partnerId?: string;
   minAmount?: number;
   maxAmount?: number;
-}
-
-interface VoucherTransaction {
-  id: number;
-  accountId?: string;
-  accountCode?: string;
-  accountName?: string;
-  debitCredit?: 'DEBIT' | 'CREDIT';
-  amount?: number;
-  partnerId?: string;
-  partnerName?: string;
-  note?: string;
-}
-
-interface Voucher {
-  id: number;
-  date?: string;
-  description?: string;
-  transactions: VoucherTransaction[];
 }
 
 export default function LedgerPage() {
@@ -125,8 +107,19 @@ export default function LedgerPage() {
   const [, setLoading] = useState(false);
   const [ledgerType, setLedgerType] = useState<dataType>('ACCOUNTS');
   const [ledgerData, setLedgerData] = useState<LedgerAccount[] | LedgerPartner[]>([]);
-  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
-  const [showVoucherDetail, setShowVoucherDetail] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  
+  // 계정과목 및 거래처 옵션
+  const [accounts, setAccounts] = useState<UserAccount[]>([]);
+  const [partners, setPartners] = useState<{
+    companies: PartnerItem[];
+    cards: PartnerItem[];
+    bankAccounts: PartnerItem[];
+  }>({
+    companies: [],
+    cards: [],
+    bankAccounts: []
+  });
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -134,6 +127,33 @@ export default function LedgerPage() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // 페이지 첫 진입 시 계정과목 및 거래처 조회
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      if (!token) return;
+
+      try {
+        // 계정과목 조회
+        const accountsData = await getJournalInputAccounts(token);
+        setAccounts(accountsData || []);
+
+        // 거래처 조회
+        const partnersData = await getJournalInputPartners(token);
+        setPartners({
+          companies: partnersData.companies || [],
+          cards: partnersData.cards || [],
+          bankAccounts: partnersData.bankAccounts || []
+        });
+      } catch (error) {
+        console.error('초기 데이터 조회 에러:', error);
+      }
+    };
+
+    if (token) {
+      fetchInitialData();
+    }
+  }, [token]);
 
   /** 원장 조회 */
   const fetchLedger = useCallback(async () => {
@@ -155,10 +175,30 @@ export default function LedgerPage() {
       const url = `https://api.eosxai.com/api/ledger?${params.toString()}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      console.log(data);
+      console.log('원장 API 응답:', data);
+      console.log('data.type:', data.type);
+      console.log('data.accounts:', data.accounts);
+      
       if (!!data) {
-        setLedgerType(data.type);
-        setLedgerData(data.accounts);
+        setLedgerType(data.type || 'ACCOUNTS');
+        
+        // API 응답 구조에 따라 데이터 처리
+        if (data.accounts && Array.isArray(data.accounts)) {
+          // 전체 조회 또는 여러 계정 조회 시
+          console.log('accounts 배열 길이:', data.accounts.length);
+          setLedgerData(data.accounts);
+        } else if (data.rows && Array.isArray(data.rows)) {
+          // 단일 계정 조회 시 (data.rows가 직접 있는 경우)
+          console.log('단일 계정 rows 길이:', data.rows.length);
+          setLedgerData([{
+            account: data.account || { code: '', name: '' },
+            openingBalance: data.openingBalance || 0,
+            rows: data.rows
+          }]);
+        } else {
+          console.warn('예상하지 못한 API 응답 구조:', data);
+          setLedgerData([]);
+        }
       } else {
         setLedgerData([]);
       }
@@ -167,55 +207,9 @@ export default function LedgerPage() {
       console.error('원장 조회 에러:', err);
     } finally {
       setLoading(false);
+      setHasSearched(true);
     }
   }, [token, filters]);
-
-  /** 전표 상세 조회 */
-  const fetchVoucherDetail = async (voucherId: number) => {
-    if (!token) return;
-    try {
-      const res = await fetch(`https://api.eosxai.com/api/ledger/voucher/${voucherId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setSelectedVoucher(data);
-        setShowVoucherDetail(true);
-      } else {
-        alert('전표 상세 조회 실패');
-      }
-    } catch (err) {
-      console.error('전표 상세 조회 에러:', err);
-      alert('전표 상세 조회 실패');
-    }
-  };
-
-  /** 전표 저장 */
-  const handleSaveVoucher = async () => {
-    if (!token || !selectedVoucher) return;
-    try {
-      const res = await fetch(`https://api.eosxai.com/api/ledger/voucher/${selectedVoucher.id}/save`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(selectedVoucher),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert('저장되었습니다.');
-        setSelectedVoucher(data.voucher);
-        // 저장 후 리스팅 함수 다시 호출
-        fetchLedger();
-      } else {
-        alert('저장 실패');
-      }
-    } catch (err) {
-      console.error('전표 저장 에러:', err);
-      alert('저장 실패');
-    }
-  };
 
   /** 다운로드 */
   const handleDownload = () => {
@@ -261,14 +255,6 @@ export default function LedgerPage() {
     link.href = URL.createObjectURL(blob);
     link.download = `원장_${filters.startDate}_${filters.endDate}.csv`;
     link.click();
-  };
-
-
-  /** 행 클릭 핸들러 */
-  const handleRowClick = (row: LedgerRow) => {
-    if (row.voucherId) {
-      fetchVoucherDetail(row.voucherId);
-    }
   };
 
   /** 조회하기 */
@@ -373,10 +359,12 @@ export default function LedgerPage() {
                   onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
-                  <option value="">선택없음</option>
-                  <option value="CASH">현금</option>
-                  <option value="BANK">당죄예금</option>
-                  <option value="DEPOSIT">예금</option>
+                  <option value="">선택하기</option>
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.code}>
+                      {account.name} ({account.code})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -389,13 +377,40 @@ export default function LedgerPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <input
-                  type="text"
-                  placeholder="선택하기"
+                <select
                   value={filters.partnerId || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                />
+                >
+                  <option value="">선택하기</option>
+                  {partners.companies.length > 0 && (
+                    <optgroup label="회사">
+                      {partners.companies.map((company) => (
+                        <option key={`company-${company.id}`} value={company.id}>
+                          {company.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {partners.cards.length > 0 && (
+                    <optgroup label="카드">
+                      {partners.cards.map((card) => (
+                        <option key={`card-${card.id}`} value={card.id}>
+                          {card.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {partners.bankAccounts.length > 0 && (
+                    <optgroup label="은행계좌">
+                      {partners.bankAccounts.map((bankAccount) => (
+                        <option key={`bank-${bankAccount.id}`} value={bankAccount.id}>
+                          {bankAccount.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
               </div>
             </div>
           </div>
@@ -437,11 +452,8 @@ export default function LedgerPage() {
           </div>
         </div>
 
-        {/* 원장 테이블 - 데이터가 있을 때만 표시 */}
-        {ledgerData.length > 0 && ledgerData.some(account => {
-          const rows = 'rows' in account ? account.rows : [];
-          return rows && rows.length > 0;
-        }) && (
+        {/* 원장 테이블 - 조회 후 표시 */}
+        {hasSearched && (
           <div id="ledger-table" className="bg-white">
             <table className="w-full text-sm text-[#757575]">
               <thead>
@@ -460,181 +472,59 @@ export default function LedgerPage() {
                 </tr>
               </thead>
               <tbody>
-                {ledgerData.flatMap((account: LedgerAccount | LedgerPartner, accountIndex: number) => {
-                  // API 응답 구조에 따라 rows 추출
-                  const rows = 'rows' in account ? account.rows : [];
-                  const accountInfo = 'account' in account ? account.account : null;
-                  
-                  return rows ? rows.map((row: LedgerRow, rowIndex: number) => (
-                    <tr 
-                      key={`${accountIndex}-${rowIndex}`}
-                      onClick={() => handleRowClick(row)}
-                      className={`cursor-pointer hover:bg-gray-50 ${row.voucherId ? 'hover:bg-blue-50' : ''}`}
-                    >
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
-                        {row.date ? new Date(row.date).toLocaleDateString('ko-KR', {
-                          year: '2-digit',
-                          month: '2-digit',
-                          day: '2-digit'
-                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
-                      </td>
-                      {(ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') && (
-                        <td className="p-2 text-xs border border-[#D9D9D9]">
-                          {row.accountName || accountInfo?.name || '-'}
+                {Array.isArray(ledgerData) && ledgerData.length > 0 && (
+                  ledgerData.flatMap((account: LedgerAccount | LedgerPartner, accountIndex: number) => {
+                    // API 응답 구조에 따라 rows 추출
+                    const rows = 'rows' in account ? account.rows : [];
+                    const accountInfo = 'account' in account ? account.account : null;
+                    
+                    if (!rows || rows.length === 0) {
+                      console.log('rows가 비어있습니다:', account);
+                      return (                  <tr>
+                        <td 
+                          colSpan={
+                            1 + // 일자
+                            ((ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') ? 1 : 0) + // 계정과목
+                            3 + // 차변금액, 대변금액, 잔액
+                            ((ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') ? 1 : 0) + // 거래처
+                            1 // 적요
+                          }
+                          className="p-2 text-xs border border-[#D9D9D9] text-center text-gray-500"
+                        >
+                          조회된 내역이 없습니다.
                         </td>
-                      )}
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
-                      {(ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') && (
-                        <td className="p-2 text-xs border border-[#D9D9D9]">{row.partnerName || '-'}</td>
-                      )}
-                      <td className="p-2 text-xs border border-[#D9D9D9]">{row.description || '-'}</td>
-                    </tr>
-                  )) : [];
-                })}
+                      </tr>)
+                    }
+                    
+                    return rows.map((row: LedgerRow, rowIndex: number) => (
+                      <tr 
+                        key={`${accountIndex}-${rowIndex}`}
+                      >
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-center">
+                          {row.date ? new Date(row.date).toLocaleDateString('ko-KR', {
+                            year: '2-digit',
+                            month: '2-digit',
+                            day: '2-digit'
+                          }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                        </td>
+                        {(ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') && (
+                          <td className="p-2 text-xs border border-[#D9D9D9]">
+                            {row.accountName || accountInfo?.name || '-'}
+                          </td>
+                        )}
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.debit.toLocaleString()}</td>
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.credit.toLocaleString()}</td>
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">{row.balance.toLocaleString()}원</td>
+                        {(ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') && (
+                          <td className="p-2 text-xs border border-[#D9D9D9]">{row.partnerName || '-'}</td>
+                        )}
+                        <td className="p-2 text-xs border border-[#D9D9D9]">{row.description || '-'}</td>
+                      </tr>
+                    ));
+                  })
+                )}
               </tbody>
             </table>
-          </div>
-        )}
-
-        {/* 전표 상세 모달 */}
-        {showVoucherDetail && selectedVoucher && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">전표 상세</h3>
-                <button
-                  onClick={() => setShowVoucherDetail(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-              
-              <div className="mb-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">일자</label>
-                    <input
-                      type="date"
-                      value={selectedVoucher.date || ''}
-                      onChange={(e) => setSelectedVoucher(prev => prev ? { ...prev, date: e.target.value } : null)}
-                      className="w-full border border-gray-300 rounded px-3 py-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">적요</label>
-                    <input
-                      type="text"
-                      value={selectedVoucher.description || ''}
-                      onChange={(e) => setSelectedVoucher(prev => prev ? { ...prev, description: e.target.value } : null)}
-                      className="w-full border border-gray-300 rounded px-3 py-2"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h4 className="font-medium mb-2">거래 내역</h4>
-                <table className="w-full border text-sm">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="p-2 border">계정과목</th>
-                      <th className="p-2 border">차변</th>
-                      <th className="p-2 border">대변</th>
-                      <th className="p-2 border">거래처</th>
-                      <th className="p-2 border">적요</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedVoucher.transactions.map((tx, index) => (
-                      <tr key={tx.id || index}>
-                        <td className="p-2 border">
-                          <input
-                            type="text"
-                            value={tx.accountName || ''}
-                            onChange={(e) => {
-                              const newTransactions = [...selectedVoucher.transactions];
-                              newTransactions[index].accountName = e.target.value;
-                              setSelectedVoucher(prev => prev ? { ...prev, transactions: newTransactions } : null);
-                            }}
-                            className="w-full border-none outline-none bg-transparent"
-                          />
-                        </td>
-                        <td className="p-2 border text-right">
-                          <input
-                            type="number"
-                            value={tx.debitCredit === 'DEBIT' ? (tx.amount || '') : ''}
-                            onChange={(e) => {
-                              const newTransactions = [...selectedVoucher.transactions];
-                              if (tx.debitCredit === 'DEBIT') {
-                                newTransactions[index].amount = e.target.value ? Number(e.target.value) : undefined;
-                              }
-                              setSelectedVoucher(prev => prev ? { ...prev, transactions: newTransactions } : null);
-                            }}
-                            className="w-full text-right border-none outline-none bg-transparent"
-                          />
-                        </td>
-                        <td className="p-2 border text-right">
-                          <input
-                            type="number"
-                            value={tx.debitCredit === 'CREDIT' ? (tx.amount || '') : ''}
-                            onChange={(e) => {
-                              const newTransactions = [...selectedVoucher.transactions];
-                              if (tx.debitCredit === 'CREDIT') {
-                                newTransactions[index].amount = e.target.value ? Number(e.target.value) : undefined;
-                              }
-                              setSelectedVoucher(prev => prev ? { ...prev, transactions: newTransactions } : null);
-                            }}
-                            className="w-full text-right border-none outline-none bg-transparent"
-                          />
-                        </td>
-                        <td className="p-2 border">
-                          <input
-                            type="text"
-                            value={tx.partnerName || ''}
-                            onChange={(e) => {
-                              const newTransactions = [...selectedVoucher.transactions];
-                              newTransactions[index].partnerName = e.target.value;
-                              setSelectedVoucher(prev => prev ? { ...prev, transactions: newTransactions } : null);
-                            }}
-                            className="w-full border-none outline-none bg-transparent"
-                          />
-                        </td>
-                        <td className="p-2 border">
-                          <input
-                            type="text"
-                            value={tx.note || ''}
-                            onChange={(e) => {
-                              const newTransactions = [...selectedVoucher.transactions];
-                              newTransactions[index].note = e.target.value;
-                              setSelectedVoucher(prev => prev ? { ...prev, transactions: newTransactions } : null);
-                            }}
-                            className="w-full border-none outline-none bg-transparent"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => setShowVoucherDetail(false)}
-                  className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
-                >
-                  취소
-                </button>
-                <button
-                  onClick={handleSaveVoucher}
-                  className="px-4 py-2 bg-[#1E1E1E] text-white rounded hover:bg-gray-800"
-                >
-                  저장
-                </button>
-              </div>
-            </div>
           </div>
         )}
       </div>

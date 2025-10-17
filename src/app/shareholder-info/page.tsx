@@ -336,22 +336,22 @@ export default function ShareholderInfoPage() {
           {/* Buttons */}
           <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-full sm:w-[153px] h-7">
             {/* 파일 업로드 버튼 */}
-            <div className="flex flex-row items-start p-0 w-[79px] h-7">
+            <div className="flex flex-row items-start p-0 h-7">
               <button
                 onClick={() => document.getElementById('shareholderFile')?.click()}
                 disabled={loading}
-                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[79px] h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
               >
                 파일 업로드
               </button>
             </div>
             
             {/* 저장하기 버튼 */}
-            <div className="flex flex-row items-start p-0 w-[66px] h-7">
+            <div className="flex flex-row items-start p-0 h-7">
               <button
                 onClick={handleSave}
                 disabled={!hasData || loading}
-                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[66px] h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
+                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
                   !hasData || loading 
                     ? 'bg-[#E6E6E6] text-[#B3B3B3]' 
                     : 'bg-[#F3F3F3] text-[#1E1E1E]'
@@ -471,8 +471,9 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-2 border border-[#D9D9D9] h-8 relative" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs pr-6"
+                    className="w-full h-full text-right focus:outline-none text-[#B3B3B3] text-xs pr-6"
                     placeholder="입력하기"
+                    type="number"
                     value={row.shares || ''}
                     onChange={e => handleSharesChange(row.id, e.target.value)}
                   />
@@ -480,7 +481,7 @@ export default function ShareholderInfoPage() {
                 </td>
                 <td className="p-2 border border-[#D9D9D9] h-8 relative" style={{width: 'calc((100% - 110px) / 7)'}}>
                   <input
-                    className="w-full h-full focus:outline-none text-[#B3B3B3] text-xs"
+                    className="w-full h-full text-right focus:outline-none text-[#B3B3B3] text-xs pr-6"
                     placeholder="입력하기"
                     value={row.sharePercentage || ''}
                     readOnly

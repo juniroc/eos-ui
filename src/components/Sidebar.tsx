@@ -127,7 +127,7 @@ export default function Sidebar({
   return (
     <div className="flex h-screen bg-[#F5F5F5]">
       {/* 왼쪽 큰 메뉴 */}
-      <div className="w-[104px] flex flex-col items-start pb-3 bg-[#F5F5F5]">
+      <div className="w-fit flex flex-col items-start pb-3 bg-[#F5F5F5]">
         {/* 로고 섹션 */}
         <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
           <div className="flex flex-col justify-center items-center h-7">

@@ -398,9 +398,8 @@ export default function ClientInfoPage() {
                 />
               </div>
               <div className="flex items-center px-2 min-w-[100px] w-[150px] bg-white border-r border-[#D9D9D9]">
-                <input
+                <select
                   className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
-                  placeholder="입력하기"
                   value={row.relationship || ''}
                   onChange={e =>
                     setRows(prev =>
@@ -411,7 +410,17 @@ export default function ClientInfoPage() {
                       )
                     )
                   }
-                />
+                >
+                  <option value="">선택하기</option>
+                  <option value="매출처">매출처</option>
+                  <option value="매입처">매입처</option>
+                  <option value="주주">주주</option>
+                  <option value="직원">직원</option>
+                  <option value="투자자">투자자</option>
+                  <option value="거래은행">거래은행</option>
+                  <option value="관공서">관공서</option>
+                  <option value="기타">기타</option>
+                </select>
               </div>
               <div className="flex items-center px-2 min-w-[150px] flex-1 bg-white border-r border-[#D9D9D9]">
                 <input

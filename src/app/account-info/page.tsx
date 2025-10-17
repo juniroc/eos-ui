@@ -404,15 +404,20 @@ const handleFileUpload = async (file: File) => {
                       className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                       placeholder="입력하기"
                       value={row.withdrawalFee || 0}
-                      onChange={e =>
+                      onChange={e => {
+                        let value = e.target.value;
+                        // 빈 문자열이 아니고 숫자로 변환 가능하면 leading zero 제거
+                        if (value !== '' && !isNaN(Number(value))) {
+                          value = String(Number(value));
+                        }
                         setRows(prev =>
                           prev.map(r =>
                             r.id === row.id
-                              ? { ...r, withdrawalFee: e.target.value }
+                              ? { ...r, withdrawalFee: value }
                               : r
                           )
-                        )
-                      }
+                        );
+                      }}
                     />
                   </div>
                 </div>

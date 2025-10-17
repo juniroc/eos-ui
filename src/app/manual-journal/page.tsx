@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import ToastMessage from '@/components/ToastMessage';
-import Image from 'next/image';
 
 interface ManualJournalRow {
   id: number;
@@ -47,7 +46,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
   return (
     <div className="flex flex-row items-start w-full">
       {/* 번호 + 일자 그룹 */}
-      <div className="flex flex-col items-start w-[140px] min-w-[140px]">
+      <div className="flex flex-col items-start w-[150px] min-w-[150px]">
         <div className="flex flex-row items-center w-full">
           {/* 번호 컬럼 */}
           <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
@@ -61,25 +60,19 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             </div>
           </div>
           {/* 일자 컬럼 */}
-          <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px]">
+          <div className="flex flex-col justify-center items-start w-[110px] min-w-[110px]">
             {isFirstGroup && (
               <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
                 <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
               </div>
             )}
-            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9] relative">
+            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9]">
               <input
                 type="date"
-                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none opacity-0 absolute inset-0 cursor-pointer" 
+                className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 
                 value={firstRow.date || ''}
                 onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
               />
-              <div className="flex items-center gap-1 pointer-events-none">
-                <span className="text-[10px] text-[#757575]">
-                  {firstRow.date ? new Date(firstRow.date).toLocaleDateString('ko-KR', {year: 'numeric', month: '2-digit', day: '2-digit'}) : ''}
-                </span>
-                <Image src="/icons/calendar.svg" alt="calendar" width={12} height={12} />
-              </div>
             </div>
           </div>
         </div>

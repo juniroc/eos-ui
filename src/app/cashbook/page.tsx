@@ -83,6 +83,7 @@ export default function CashbookPage() {
   const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
   const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
   const [hasDepositData, setHasDepositData] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   
   // 계정과목 및 거래처 옵션
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
@@ -102,6 +103,33 @@ export default function CashbookPage() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // 페이지 첫 진입 시 계정과목 및 거래처 조회
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      if (!token) return;
+
+      try {
+        // 계정과목 조회
+        const accountsData = await getJournalInputAccounts(token);
+        setAccounts(accountsData || []);
+
+        // 거래처 조회
+        const partnersData = await getJournalInputPartners(token);
+        setPartners({
+          companies: partnersData.companies || [],
+          cards: partnersData.cards || [],
+          bankAccounts: partnersData.bankAccounts || []
+        });
+      } catch (error) {
+        console.error('초기 데이터 조회 에러:', error);
+      }
+    };
+
+    if (token) {
+      fetchInitialData();
+    }
+  }, [token]);
 
   // 중복 제거 함수
   const removeDuplicateTransactions = (transactions: CashTransaction[]): CashTransaction[] => {
@@ -135,6 +163,20 @@ export default function CashbookPage() {
       if (filters.maxAmount) params.append('maxAmount', filters.maxAmount.toString());
 
       const url = `https://api.eosxai.com/api/cashbook?${params.toString()}`;
+      
+      // 요청 파라미터 확인 로그
+      console.log('현금출납장 조회 요청:', {
+        url,
+        filters: {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          accountCode: filters.accountCode,
+          partnerId: filters.partnerId,
+          minAmount: filters.minAmount,
+          maxAmount: filters.maxAmount
+        }
+      });
+      
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       
@@ -255,6 +297,7 @@ export default function CashbookPage() {
       setCashTransactions(removeDuplicateTransactions(cashData));
       setDepositTransactions(removeDuplicateTransactions(depositData));
       setHasDepositData(hasDeposit);
+      setHasSearched(true);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
     } finally {
@@ -399,9 +442,11 @@ export default function CashbookPage() {
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
                   <option value="">선택하기</option>
-                  <option value="11111">현금 (11111)</option>
-                  <option value="11112">당좌예금 (11112)</option>
-                  <option value="11113">보통예금 (11113)</option>
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.code}>
+                      {account.name} ({account.code})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -414,13 +459,40 @@ export default function CashbookPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <input
-                  type="text"
-                  placeholder="선택하기"
+                <select
                   value={filters.partnerId || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                />
+                >
+                  <option value="">선택하기</option>
+                  {partners.companies.length > 0 && (
+                    <optgroup label="회사">
+                      {partners.companies.map((company) => (
+                        <option key={`company-${company.id}`} value={company.id}>
+                          {company.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {partners.cards.length > 0 && (
+                    <optgroup label="카드">
+                      {partners.cards.map((card) => (
+                        <option key={`card-${card.id}`} value={card.id}>
+                          {card.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {partners.bankAccounts.length > 0 && (
+                    <optgroup label="은행계좌">
+                      {partners.bankAccounts.map((bankAccount) => (
+                        <option key={`bank-${bankAccount.id}`} value={bankAccount.id}>
+                          {bankAccount.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
               </div>
             </div>
           </div>
@@ -462,9 +534,9 @@ export default function CashbookPage() {
           </div>
         </div>
 
-        {/* 현금 테이블 - 데이터가 있을 때만 표시 */}
+        {/* 현금 테이블 - 조회 후 표시 */}
         <div id="cashbook-tables">
-        {(cashTransactions.length > 0 || loading) && (
+        {hasSearched && (
            <div className="flex flex-col gap-2 mb-4">
              <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">현금</h3>
              <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
@@ -512,8 +584,8 @@ export default function CashbookPage() {
           </div>
         )}
 
-        {/* 보통예금 테이블 - 보통예금 데이터가 있거나 로딩 중일 때 표시 */}
-        {(hasDepositData || loading) && (
+        {/* 보통예금 테이블 - 조회 후 표시 */}
+        {hasSearched && (
            <div className="flex flex-col gap-2 mb-6">
              <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
              <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">

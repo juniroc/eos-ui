@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
 import Image from 'next/image';
+import { getJournalInputAccounts, getJournalInputPartners, type UserAccount, type PartnerItem } from '@/services/financial';
 
 interface Account {
   code: string;
@@ -43,6 +44,20 @@ interface BalanceFilters {
   date: string;
   accountCode?: string;
   partnerId?: string;
+}
+
+type BalanceDataType = 'ACCOUNTS' | 'ACCOUNT' | 'ACCOUNT_PARTNER' | 'PARTNER';
+
+interface BalanceResponse {
+  type: BalanceDataType;
+  date: string;
+  accounts?: BalanceAccount[];
+  account?: Account;
+  partner?: Partner;
+  totalBalance?: number;
+  direction?: 'DEBIT' | 'CREDIT';
+  balance?: number;
+  rows?: BalanceRow[];
 }
 
 // Ledger 관련 타입들
@@ -83,6 +98,7 @@ export default function StatementsPage() {
     partnerId: '',
   });
   const [balanceData, setBalanceData] = useState<BalanceAccount[] | BalancePartner[]>([]);
+  const [, setBalanceType] = useState<BalanceDataType>('ACCOUNTS');
   const [queryDate, setQueryDate] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<{id: string, name: string, account?: Account} | null>(null);
@@ -92,12 +108,45 @@ export default function StatementsPage() {
   const [ledgerData, setLedgerData] = useState<LedgerAccount[] | LedgerPartner[]>([]);
   const [, setLedgerType] = useState<LedgerDataType>('ACCOUNTS');
 
+  // 계정과목 및 거래처 옵션 상태
+  const [accounts, setAccounts] = useState<UserAccount[]>([]);
+  const [partners, setPartners] = useState<PartnerItem[]>([]);
+
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // 페이지 진입 시 계정과목 및 거래처 조회
+  useEffect(() => {
+    const fetchOptions = async () => {
+      if (!token) return;
+
+      try {
+        // 계정과목 조회
+        const accountsData = await getJournalInputAccounts(token);
+        setAccounts(accountsData);
+
+        // 거래처 조회
+        const partnersData = await getJournalInputPartners(token);
+        // 거래처는 companies, cards, bankAccounts를 합쳐서 사용
+        const allPartners = [
+          ...partnersData.companies,
+          ...partnersData.cards,
+          ...partnersData.bankAccounts,
+        ];
+        setPartners(allPartners);
+      } catch (error) {
+        console.error('계정과목 및 거래처 조회 에러:', error);
+      }
+    };
+
+    if (token) {
+      fetchOptions();
+    }
+  }, [token]);
 
   /** 잔액명세서 조회 */
   const fetchBalance = useCallback(async () => {
@@ -114,10 +163,62 @@ export default function StatementsPage() {
       console.log('API 호출 URL:', url);
 
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
+      const data: BalanceResponse = await res.json();
+      
+      console.log('API 응답 데이터:', data, data.rows);
       
       setQueryDate(data.date || filters.date);
-      setBalanceData(data.accounts || []);
+      setBalanceType(data.type);
+
+      // type에 따라 데이터 구조 변환
+      switch (data.type) {
+        case 'ACCOUNTS':
+          setBalanceData(data.accounts || []);
+          break;
+        case 'ACCOUNT':
+          if (data.account && data.rows) {
+            setBalanceData([{
+              account: data.account,
+              totalBalance: data.totalBalance || 0,
+              direction: data.direction || 'DEBIT',
+              rows: data.rows
+            }]);
+          } else {
+            setBalanceData([]);
+          }
+          break;
+        case 'ACCOUNT_PARTNER':
+          if (data.account && data.partner) {
+            setBalanceData([{
+              account: data.account,
+              totalBalance: data.balance || 0,
+              direction: data.direction || 'DEBIT',
+              rows: [{
+                partnerId: data.partner.id,
+                partnerName: data.partner.name,
+                balance: data.balance || 0,
+                direction: data.direction || 'DEBIT'
+              }]
+            }]);
+          } else {
+            setBalanceData([]);
+          }
+          break;
+        case 'PARTNER':
+          if (data.partner && data.rows) {
+            setBalanceData([{
+              partner: data.partner,
+              totalBalance: data.totalBalance || 0,
+              direction: data.direction || 'DEBIT',
+              rows: data.rows
+            }]);
+          } else {
+            setBalanceData([]);
+          }
+          break;
+        default:
+          setBalanceData([]);
+      }
     } catch (err) {
       console.error('잔액명세서 조회 에러:', err);
     }
@@ -209,6 +310,11 @@ export default function StatementsPage() {
       alert('조회일자를 입력해주세요.');
       return;
     }
+    console.log('조회하기 - 필터 정보:', {
+      date: filters.date,
+      accountCode: filters.accountCode || '(전체)',
+      partnerId: filters.partnerId || '(전체)'
+    });
     fetchBalance();
   };
 
@@ -288,13 +394,18 @@ export default function StatementsPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <input
-                  type="text"
-                  placeholder="선택하기"
+                <select
                   value={filters.accountCode || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                />
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#757575] bg-transparent border-none outline-none min-w-0"
+                >
+                  <option value="">전체</option>
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.code}>
+                      {account.code} - {account.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -306,13 +417,18 @@ export default function StatementsPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <input
-                  type="text"
-                  placeholder="선택하기"
+                <select
                   value={filters.partnerId || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                />
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#757575] bg-transparent border-none outline-none min-w-0"
+                >
+                  <option value="">전체</option>
+                  {partners.map((partner) => (
+                    <option key={partner.id} value={partner.id}>
+                      {partner.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -331,43 +447,56 @@ export default function StatementsPage() {
                 </tr>
               </thead>
               <tbody>
-                {balanceData.flatMap((item: BalanceAccount | BalancePartner, itemIndex: number) => 
-                  item.rows?.map((row: BalanceRow, rowIndex: number) => (
-                    <tr key={`${itemIndex}-${rowIndex}`} className="hover:bg-gray-50">
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
-                        {queryDate ? new Date(queryDate).toLocaleDateString('ko-KR', {
-                          year: '2-digit',
-                          month: '2-digit',
-                          day: '2-digit'
-                        }).replace(/\./g, '').replace(/\s/g, '') : '-'}
-                      </td>
-                      <td className="p-2 text-xs border border-[#D9D9D9]">
-                        {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
-                      </td>
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-center">
-                        {row.partnerName ? (
-                          <button 
-                            onClick={() => {
-                              const account = row.account || ('account' in item && item.account ? item.account : undefined);
-                              setSelectedPartner({ 
-                                id: row.partnerId || '', 
-                                name: row.partnerName!,
-                                account: account
-                              });
-                              setIsModalOpen(true);
-                            }}
-                            className="text-[#1ACCFF] underline bg-transparent border-none cursor-pointer"
-                          >
-                            {row.partnerName}
-                          </button>
-                        ) : '-'}
-                      </td>
-                      <td className="p-2 text-xs border border-[#D9D9D9] text-right">
-                        {row.balance.toLocaleString()}원
+                {(() => {
+                  console.log('balanceData:', balanceData);
+                  const allRows = balanceData.flatMap((item: BalanceAccount | BalancePartner, itemIndex: number) => {
+                    console.log('item:', item, 'rows:', item.rows);
+                    if (!item.rows || item.rows.length === 0) return [];
+                    return item.rows.map((row: BalanceRow, rowIndex: number) => (
+                      <tr key={`${itemIndex}-${rowIndex}`} className="hover:bg-gray-50">
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-center">
+                          {queryDate ? new Date(queryDate).toLocaleDateString('ko-KR', {
+                            year: '2-digit',
+                            month: '2-digit',
+                            day: '2-digit'
+                          }).replace(/\./g, '').replace(/\s/g, '') : '-'}
+                        </td>
+                        <td className="p-2 text-xs border border-[#D9D9D9]">
+                          {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
+                        </td>
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-center">
+                          {row.partnerName ? (
+                            <button 
+                              onClick={() => {
+                                const account = row.account || ('account' in item && item.account ? item.account : undefined);
+                                setSelectedPartner({ 
+                                  id: row.partnerId || '', 
+                                  name: row.partnerName!,
+                                  account: account
+                                });
+                                setIsModalOpen(true);
+                              }}
+                              className="text-[#1ACCFF] underline bg-transparent border-none cursor-pointer"
+                            >
+                              {row.partnerName}
+                            </button>
+                          ) : '-'}
+                        </td>
+                        <td className="p-2 text-xs border border-[#D9D9D9] text-right">
+                          {row.balance.toLocaleString()}원
+                        </td>
+                      </tr>
+                    ));
+                  });
+                  console.log('allRows length:', allRows.length);
+                  return allRows.length > 0 ? allRows : (
+                    <tr>
+                      <td colSpan={4} className="p-8 text-xs text-center text-gray-500 border border-[#D9D9D9]">
+                        조회된 데이터가 없습니다.
                       </td>
                     </tr>
-                  )) || []
-                )}
+                  );
+                })()}
               </tbody>
             </table>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import FileUploadBox from '@/components/FileUploadBox';
 import Button from '@/components/Button';
@@ -16,6 +16,12 @@ import {
   type RawTransaction,
   type NewPartner
 } from '@/services/api';
+import {
+  getJournalInputAccounts,
+  getJournalInputPartners,
+  type UserAccount,
+  type PartnerItem
+} from '@/services/financial';
 import Image from 'next/image';
 
 // 기존 인터페이스는 API에서 가져온 타입으로 대체
@@ -51,6 +57,36 @@ export default function AIJournalPage() {
   const [_error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  
+  // 계정과목 및 거래처 목록
+  const [accounts, setAccounts] = useState<UserAccount[]>([]);
+  const [partners, setPartners] = useState<PartnerItem[]>([]);
+
+  // 계정과목 및 거래처 조회
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return;
+      
+      try {
+        const [accountsData, partnersData] = await Promise.all([
+          getJournalInputAccounts(token),
+          getJournalInputPartners(token)
+        ]);
+        
+        setAccounts(accountsData);
+        // 모든 거래처를 하나의 배열로 합침
+        setPartners([
+          ...partnersData.companies,
+          ...partnersData.cards,
+          ...partnersData.bankAccounts
+        ]);
+      } catch (err) {
+        console.error('계정과목/거래처 조회 실패:', err);
+      }
+    };
+    
+    fetchData();
+  }, [token]);
 
   // RawTransaction을 AIJournalTransaction으로 변환하는 함수
   const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
@@ -728,12 +764,18 @@ export default function AIJournalPage() {
                         transaction.debitCredit ? (
                           <div key={`debit-${tIdx}`} className="flex flex-row items-start w-full">
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
+                              <select
+                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.accountName || ''}
                                 onChange={(e) => handleCellChange(voucher.id, transaction.id, 'accountName', e.target.value)}
-                              />
+                              >
+                                <option value="">선택하기</option>
+                                {accounts.map(account => (
+                                  <option key={account.id} value={account.name}>
+                                    {account.code} {account.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                               <input
@@ -749,12 +791,18 @@ export default function AIJournalPage() {
                               <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
                             </div>
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
+                              <select
+                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.partnerName || ''}
                                 onChange={(e) => handleCellChange(voucher.id, transaction.id, 'partnerName', e.target.value)}
-                              />
+                              >
+                                <option value="">선택하기</option>
+                                {partners.map(partner => (
+                                  <option key={partner.id} value={partner.name}>
+                                    {partner.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                         ) : (
@@ -809,12 +857,18 @@ export default function AIJournalPage() {
                         !transaction.debitCredit ? (
                           <div key={`credit-${tIdx}`} className="flex flex-row items-start w-full">
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
+                              <select
+                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.accountName || ''}
                                 onChange={(e) => handleCellChange(voucher.id, transaction.id, 'accountName', e.target.value)}
-                              />
+                              >
+                                <option value="">선택하기</option>
+                                {accounts.map(account => (
+                                  <option key={account.id} value={account.name}>
+                                    {account.code} {account.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                               <input
@@ -830,12 +884,18 @@ export default function AIJournalPage() {
                               <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
                             </div>
                             <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
+                              <select
+                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.partnerName || ''}
                                 onChange={(e) => handleCellChange(voucher.id, transaction.id, 'partnerName', e.target.value)}
-                              />
+                              >
+                                <option value="">선택하기</option>
+                                {partners.map(partner => (
+                                  <option key={partner.id} value={partner.name}>
+                                    {partner.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                         ) : (

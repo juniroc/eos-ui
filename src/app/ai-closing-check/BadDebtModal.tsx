@@ -168,7 +168,8 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
         partnerId: item.partnerId || '',
         partnerName: item.partnerName || '',
         id: `${item.accountCode}-${item.partnerId || 'unknown'}-${index}`,
-        isEditing: false
+        isEditing: false,
+        rate: item.rate * 100
       }));
       setEditableBadDebtItems(editableItems);
       
@@ -387,7 +388,15 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
               <>
                 {/* 대손상각 테이블 */}
                 <div className="w-full">
-                  <table className="w-full border-collapse border border-[#D9D9D9] text-xs text-[#757575]">
+                  <table className="w-full border-collapse border border-[#D9D9D9] text-xs text-[#757575] table-fixed">
+                    <colgroup>
+                      <col className="w-[100px]" />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col className="w-[100px]" />
+                    </colgroup>
                     <thead>
                       <tr>
                         <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-center font-medium">계정과목</th>
@@ -431,12 +440,18 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
                               </select>
                             </td>
                             <td className="p-2 border border-[#D9D9D9] text-center">
-                              <input 
-                                type="text" 
-                                className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                value={`${item.rate}%`}
-                                onChange={(e) => handleBadDebtItemChange(item.id, 'rate', parseFloat(e.target.value.replace('%', '')) || 0)}
-                              />
+                              <div className="flex items-center gap-1 w-[100px]">
+                                <input 
+                                  type="text" 
+                                  className="w-[68px] text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                  value={item.rate}
+                                  onChange={(e) => {
+                                    const numValue = parseFloat(e.target.value) || 0;
+                                    handleBadDebtItemChange(item.id, 'rate', numValue);
+                                  }}
+                                />
+                                <span className="text-[#B3B3B3]">%</span>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -451,15 +466,15 @@ export default function BadDebtModal({ isOpen, onClose, closingDate, onStatusUpd
                       {editableBadDebtItems.length > 0 && (
                         <tr className="bg-[#F5F5F5]">
                           <td className="p-2 border border-[#D9D9D9] text-center font-medium">합계</td>
-                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium"></td>
                           <td className="p-2 border border-[#D9D9D9] text-center font-medium">
                             {editableBadDebtItems.reduce((sum, item) => sum + item.endingBalance, 0).toLocaleString()}
                           </td>
                           <td className="p-2 border border-[#D9D9D9] text-center font-medium">
                             {editableBadDebtItems.reduce((sum, item) => sum + item.amount, 0).toLocaleString()}
                           </td>
-                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
-                          <td className="p-2 border border-[#D9D9D9] text-center font-medium">-</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium"></td>
+                          <td className="p-2 border border-[#D9D9D9] text-center font-medium"></td>
                         </tr>
                       )}
                     </tbody>

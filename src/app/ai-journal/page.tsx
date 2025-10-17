@@ -40,6 +40,7 @@ export default function AIJournalPage() {
   
   // 임시 vouchers 데이터
   const [vouchers, setVouchers] = useState<AIJournalVoucher[]>([]);
+  const [initialVouchers, setInitialVouchers] = useState<AIJournalVoucher[]>([]);
   
   const [, setRawTransactions] = useState<RawTransaction[]>([]);
   const [, setNewPartners] = useState<NewPartner[]>([]);
@@ -61,6 +62,9 @@ export default function AIJournalPage() {
   // 계정과목 및 거래처 목록
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
+  
+  // 변경사항 확인
+  const hasChanges = JSON.stringify(vouchers) !== JSON.stringify(initialVouchers);
 
   // 계정과목 및 거래처 조회
   useEffect(() => {
@@ -377,6 +381,7 @@ export default function AIJournalPage() {
                   console.log('변환된 vouchers:', convertedVouchers);
                   
                   setVouchers(convertedVouchers);
+                  setInitialVouchers(convertedVouchers);
                   setNewPartners((data.newPartners as NewPartner[]) || []);
                   
                   // 통계 계산
@@ -506,6 +511,7 @@ export default function AIJournalPage() {
         setStep('upload');
         setProgress({ processed: 0, total: 100 });
         setVouchers([]);
+        setInitialVouchers([]);
         setNewPartners([]);
         setStats({
           transactionCount: 0,
@@ -578,7 +584,7 @@ export default function AIJournalPage() {
               variant="primary"
               size="small"
               onClick={handleSave}
-              disabled={loading || vouchers.length === 0}
+              disabled={loading || !hasChanges}
               loading={loading}
             >
               저장하기

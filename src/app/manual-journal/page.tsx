@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import ToastMessage from '@/components/ToastMessage';
-import Image from 'next/image';
+import {
+  getJournalInputAccounts,
+  getJournalInputPartners,
+  type UserAccount,
+  type PartnerItem
+} from '@/services/financial';
 
 interface ManualJournalRow {
   id: number;
@@ -31,6 +36,8 @@ interface JournalGroupComponentProps {
   onUpdateRow: (rowId: number, field: keyof ManualJournalRow, value: string) => void;
   debitSubtotal: number;
   creditSubtotal: number;
+  accounts: UserAccount[];
+  partners: PartnerItem[];
 }
 
 // 분개 그룹 컴포넌트
@@ -40,14 +47,16 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
   isFirstGroup,
   onUpdateRow,
   debitSubtotal,
-  creditSubtotal
+  creditSubtotal,
+  accounts,
+  partners
 }) => {
   const [firstRow, secondRow] = group.rows;
 
   return (
     <div className="flex flex-row items-start w-full">
       {/* 번호 + 일자 그룹 */}
-      <div className="flex flex-col items-start w-[140px] min-w-[140px]">
+      <div className="flex flex-col items-start w-[150px] min-w-[150px]">
         <div className="flex flex-row items-center w-full">
           {/* 번호 컬럼 */}
           <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
@@ -61,25 +70,19 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             </div>
           </div>
           {/* 일자 컬럼 */}
-          <div className="flex flex-col justify-center items-start w-[100px] min-w-[100px]">
+          <div className="flex flex-col justify-center items-start w-[110px] min-w-[110px]">
             {isFirstGroup && (
               <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
                 <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
               </div>
             )}
-            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9] relative">
+            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9]">
               <input
                 type="date"
-                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none opacity-0 absolute inset-0 cursor-pointer" 
+                className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 
                 value={firstRow.date || ''}
                 onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
               />
-              <div className="flex items-center gap-1 pointer-events-none">
-                <span className="text-[10px] text-[#757575]">
-                  {firstRow.date ? new Date(firstRow.date).toLocaleDateString('ko-KR', {year: 'numeric', month: '2-digit', day: '2-digit'}) : ''}
-                </span>
-                <Image src="/icons/calendar.svg" alt="calendar" width={12} height={12} />
-              </div>
             </div>
           </div>
         </div>
@@ -115,12 +118,18 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         {/* 차변 첫 번째 입력 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.debitAccount || ''}
               onChange={e => onUpdateRow(firstRow.id, 'debitAccount', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {accounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.code} {account.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <input
@@ -133,29 +142,41 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.debitPartner || ''}
               onChange={e => onUpdateRow(firstRow.id, 'debitPartner', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {partners.map(partner => (
+                <option key={partner.id} value={partner.id}>
+                  {partner.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         
         {/* 차변 두 번째 입력 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.debitAccount || ''}
               onChange={e => onUpdateRow(secondRow.id, 'debitAccount', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {accounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.code} {account.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <input 
               type="number"
-              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              className="flex-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               placeholder="입력하기"
               value={secondRow.debitAmount || ''}
               onChange={e => onUpdateRow(secondRow.id, 'debitAmount', e.target.value)}
@@ -163,12 +184,18 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.debitPartner || ''}
               onChange={e => onUpdateRow(secondRow.id, 'debitPartner', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {partners.map(partner => (
+                <option key={partner.id} value={partner.id}>
+                  {partner.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         
@@ -213,12 +240,18 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         {/* 대변 첫 번째 입력 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.creditAccount || ''}
               onChange={e => onUpdateRow(firstRow.id, 'creditAccount', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {accounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.code} {account.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <input
@@ -231,24 +264,36 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.creditPartner || ''}
               onChange={e => onUpdateRow(firstRow.id, 'creditPartner', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {partners.map(partner => (
+                <option key={partner.id} value={partner.id}>
+                  {partner.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         
         {/* 대변 두 번째 입력 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.creditAccount || ''}
               onChange={e => onUpdateRow(secondRow.id, 'creditAccount', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {accounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.code} {account.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <input 
@@ -261,12 +306,18 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
           </div>
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.creditPartner || ''}
               onChange={e => onUpdateRow(secondRow.id, 'creditPartner', e.target.value)}
-            />
+            >
+              <option value="">선택하기</option>
+              {partners.map(partner => (
+                <option key={partner.id} value={partner.id}>
+                  {partner.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         
@@ -317,9 +368,13 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
 
 export default function ManualJournalPage() {
   const router = useRouter();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, token } = useAuth();
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
+  
+  // 계정과목 및 거래처 목록
+  const [accounts, setAccounts] = useState<UserAccount[]>([]);
+  const [partners, setPartners] = useState<PartnerItem[]>([]);
   
   // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
   const getTodayDate = () => {
@@ -348,6 +403,32 @@ export default function ManualJournalPage() {
     createEmptyGroup(1),
     createEmptyGroup(2)
   ]);
+
+  // 계정과목 및 거래처 조회
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return;
+      
+      try {
+        const [accountsData, partnersData] = await Promise.all([
+          getJournalInputAccounts(token),
+          getJournalInputPartners(token)
+        ]);
+        
+        setAccounts(accountsData);
+        // 모든 거래처를 하나의 배열로 합침
+        setPartners([
+          ...partnersData.companies,
+          ...partnersData.cards,
+          ...partnersData.bankAccounts
+        ]);
+      } catch (err) {
+        console.error('계정과목/거래처 조회 실패:', err);
+      }
+    };
+    
+    fetchData();
+  }, [token]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -570,6 +651,8 @@ export default function ManualJournalPage() {
                 onUpdateRow={updateRow}
                 debitSubtotal={groupDebitSubtotal}
                 creditSubtotal={groupCreditSubtotal}
+                accounts={accounts}
+                partners={partners}
               />
             );
           })}

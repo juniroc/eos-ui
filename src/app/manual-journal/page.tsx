@@ -399,10 +399,9 @@ export default function ManualJournalPage() {
     rows: [createEmptyRow(groupId * 10 + 1), createEmptyRow(groupId * 10 + 2)]
   });
 
-  const [journalGroups, setJournalGroups] = useState<JournalGroup[]>([
-    createEmptyGroup(1),
-    createEmptyGroup(2)
-  ]);
+  const initialGroupsData = [createEmptyGroup(1), createEmptyGroup(2)];
+  const [journalGroups, setJournalGroups] = useState<JournalGroup[]>(initialGroupsData);
+  const [initialJournalGroups, setInitialJournalGroups] = useState<JournalGroup[]>(initialGroupsData);
 
   // 계정과목 및 거래처 조회
   useEffect(() => {
@@ -443,7 +442,10 @@ export default function ManualJournalPage() {
   const getAllRows = (): ManualJournalRow[] => 
     journalGroups.flatMap(group => group.rows);
 
-  /** 저장 버튼 활성화 여부 */
+  /** 변경사항 확인 */
+  const hasChanges = JSON.stringify(journalGroups) !== JSON.stringify(initialJournalGroups);
+  
+  /** 저장할 데이터가 있는지 확인 */
   const hasData = getAllRows().some(
     r =>
       r.date.trim() ||
@@ -477,7 +479,7 @@ export default function ManualJournalPage() {
 
   /** 저장 */
   const handleSave = async () => {
-    if (!hasData) return;
+    if (!hasChanges || !hasData) return;
     
     try {
       const token = localStorage.getItem('accessToken');
@@ -568,10 +570,9 @@ export default function ManualJournalPage() {
         setShowToast(true);
 
         // 저장 후 로컬 데이터 초기화
-        setJournalGroups([
-          createEmptyGroup(1),
-          createEmptyGroup(2)
-        ]);
+        const newInitialGroups = [createEmptyGroup(1), createEmptyGroup(2)];
+        setJournalGroups(newInitialGroups);
+        setInitialJournalGroups(newInitialGroups);
       } else {
         alert('저장 중 문제가 발생했습니다.');
       }
@@ -619,11 +620,11 @@ export default function ManualJournalPage() {
           <div className="flex flex-row justify-end items-center gap-2">
             <button
               className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[28px] font-medium text-[12px] leading-[100%] cursor-pointer ${
-                hasData && !loading
+                hasChanges && hasData && !loading
                   ? 'bg-[#F3F3F3] text-[#1E1E1E]'
                   : 'bg-[#E6E6E6] text-[#B3B3B3]'
               }`}
-              disabled={!hasData || loading}
+              disabled={!hasChanges || !hasData || loading}
               onClick={handleSave}
             >
               저장하기

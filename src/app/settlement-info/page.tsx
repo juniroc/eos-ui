@@ -521,12 +521,12 @@ export default function SettlementInfoPage() {
               <div className="flex flex-col justify-center items-center w-full h-8 bg-white">
                 <button
                   onClick={() => handleDelete(row.id, row.fileId)}
-                  className="flex flex-row justify-center items-center px-1.5 gap-2 bg-[#E6E6E6] cursor-pointer disabled:cursor-not-allowed"
+                  className="flex flex-row justify-center items-center px-1.5 gap-2 bg-[#F3F3F3] cursor-pointer disabled:cursor-not-allowed"
                   disabled={loading}
                   style={{ height: '23px' }}
                 >
                   <span 
-                    className="text-[#B3B3B3] text-[11px] leading-[100%] font-medium"
+                    className="text-[#1E1E1E] text-[11px] leading-[100%] font-medium"
                     style={{ fontFamily: 'Pretendard' }}
                   >
                     삭제

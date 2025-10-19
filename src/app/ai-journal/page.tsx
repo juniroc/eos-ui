@@ -599,7 +599,7 @@ export default function AIJournalPage() {
             </div>
             <div className="flex flex-col items-center p-0 gap-0.5">
               <span className="text-xs leading-[140%] text-center text-[#303030]">
-                파일을 선택하거나 드래그하여 파일을 편하게 업로드하세요.
+                파일을 선택하거나 여기로 드래그하세요.
               </span>
               <span className="text-xs leading-[140%] text-center text-[#767676]">
                 (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)

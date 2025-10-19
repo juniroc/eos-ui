@@ -715,7 +715,7 @@ export default function AIJournalPage() {
                               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
                             </div>
                           )}
-                          <div className="flex flex-col justify-center items-center px-3 py-2 w-full h-[64px] bg-white border-l border-r border-b border-[#D9D9D9]">
+                          <div className="flex flex-col justify-center items-center px-3 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * transactions.length}px` }}>
                             <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{idx + 1}</span>
                           </div>
                         </div>
@@ -726,7 +726,7 @@ export default function AIJournalPage() {
                               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
                             </div>
                           )}
-                          <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9]">
+                          <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * transactions.length}px` }}>
                             <input
                               type="date"
                               className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 
@@ -823,14 +823,10 @@ export default function AIJournalPage() {
                       {/* 차변 소계 행 */}
                       <div className="flex flex-row items-start w-full">
                         <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                        </div>
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                           <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
                             {debitSubtotal.toLocaleString()}
                           </span>
                           <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-                        </div>
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                         </div>
                       </div>
                     </div>
@@ -916,14 +912,10 @@ export default function AIJournalPage() {
                       {/* 대변 소계 행 */}
                       <div className="flex flex-row items-start w-full">
                         <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                        </div>
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                           <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
                             {creditSubtotal.toLocaleString()}
                           </span>
                           <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-                        </div>
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                         </div>
                       </div>
                     </div>

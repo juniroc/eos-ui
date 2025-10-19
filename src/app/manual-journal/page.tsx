@@ -202,14 +202,10 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         {/* 차변 소계 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
               {debitSubtotal.toLocaleString()}
             </span>
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
           </div>
         </div>
       </div>
@@ -324,14 +320,10 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         {/* 대변 소계 행 */}
         <div className="flex flex-row items-start w-full">
           <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
             <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
               {creditSubtotal.toLocaleString()}
             </span>
             <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
           </div>
         </div>
       </div>

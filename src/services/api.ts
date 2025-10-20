@@ -885,12 +885,21 @@ export interface AIJournalVoucher {
 }
 
 export interface NewPartner {
-  id: string;
+  id?: string;
   name: string;
-  businessNumber?: string;
+  businessNumber?: string | null;
   mainItems?: string;
   relationship?: string;
   note?: string;
+  type: 'BANK_ACCOUNT' | 'COMPANY';
+  representative?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  cardIssuer?: string | null;
+  cardNumber?: string | null;
+  bankName?: string | null;
+  accountNumber?: string | null;
 }
 
 // 1단계: 증빙 추출 시작

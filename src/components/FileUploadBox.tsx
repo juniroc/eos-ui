@@ -78,13 +78,13 @@ export default function FileUploadBox({
     if (files && files.length > 0) {
       const file = files[0];
       // 파일 확장자 검증
-      const allowedExtensions = ['.pdf', '.xlsx', '.xls', '.csv', '.jpg', '.jpeg', '.png'];
+      const allowedExtensions = ['.pdf', '.xls', '.xlsx', '.doc', '.docx', '.jpg', '.png', '.gif'];
       const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
       
       if (allowedExtensions.includes(fileExtension)) {
         onFileUpload(file);
       } else {
-        alert('지원하지 않는 파일 형식입니다. (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)');
+        alert('지원하지 않는 파일 형식입니다. (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을 지원합니다)');
       }
     }
   };
@@ -94,7 +94,7 @@ export default function FileUploadBox({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
+        accept=".pdf,.xls,.xlsx,.doc,.docx,.jpg,.png,.gif"
         className="hidden"
         id={id}
         onChange={handleFileChange}
@@ -135,7 +135,7 @@ export default function FileUploadBox({
             </div>
             {showFileTypeInfo && (
               <div className="mt-2" style={{ color: '#434343', fontSize: '12px' }}>
-                (JPG, PNG, PDF, XLSX, XLS, CSV 파일만 지원됩니다.)
+                (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을 지원합니다)
               </div>
             )}
           </div>

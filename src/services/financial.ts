@@ -249,7 +249,7 @@ export interface PartnersResponse {
 
 export interface UserAccount {
   id: string;
-  code: string;
+  code: number;
   name: string;
 }
 

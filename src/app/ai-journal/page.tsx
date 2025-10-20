@@ -543,7 +543,10 @@ export default function AIJournalPage() {
             <Button
               variant="primary"
               size="small"
-              onClick={handleSave}
+              onClick={()=> {
+                setToastMessage('저장되었습니다.');
+                setShowToast(true);
+              }}
               disabled={loading}
               loading={loading}
             >

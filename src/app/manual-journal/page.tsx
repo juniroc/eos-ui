@@ -54,70 +54,76 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
   const [firstRow, secondRow] = group.rows;
 
   return (
-    <div className="flex flex-row items-start w-full">
-      {/* 번호 + 일자 그룹 */}
-      <div className="flex flex-col items-start w-[150px] min-w-[150px]">
-        <div className="flex flex-row items-center w-full">
-          {/* 번호 컬럼 */}
-          <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
-            {isFirstGroup && (
-              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
-              </div>
-            )}
-            <div className="flex flex-col justify-center items-center px-1 py-2 w-full h-[64px] bg-white border-l border-r border-b border-[#D9D9D9]">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
-            </div>
-          </div>
-          {/* 일자 컬럼 */}
-          <div className="flex flex-col justify-center items-start w-[110px] min-w-[110px]">
-            {isFirstGroup && (
-              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
-              </div>
-            )}
-            <div className="flex flex-row justify-center items-center px-2 py-2 w-full h-[64px] bg-white border-r border-b border-[#D9D9D9]">
-              <input
-                type="date"
-                className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 
-                value={firstRow.date || ''}
-                onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-        {/* 소계 */}
-        <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9]">
-          <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
-        </div>
-      </div>
-      
-      {/* 차변 그룹 */}
-      <div className="flex flex-col items-start flex-1 min-w-[241px]">
-        {isFirstGroup && (
-          <>
-            {/* 차변 헤더 */}
-            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+    <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
+      <colgroup>
+        <col style={{ width: '40px' }} />
+        <col style={{ width: '110px' }} />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+        <col />
+      </colgroup>
+      {isFirstGroup && (
+        <thead>
+          <tr className="h-[32px]">
+            <th rowSpan={2} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9] text-center align-middle">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
+            </th>
+            <th rowSpan={2} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
+            </th>
+            <th colSpan={3} className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center">
               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">차변</span>
-            </div>
-            {/* 차변 세부 헤더 */}
-            <div className="flex flex-row items-start w-full">
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
-              </div>
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
-              </div>
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
-              </div>
-            </div>
-          </>
-        )}
-        
-        {/* 차변 첫 번째 입력 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            </th>
+            <th colSpan={3} className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
+            </th>
+            <th rowSpan={2} colSpan={3} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
+            </th>
+          </tr>
+          <tr className="h-[32px]">
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+            </th>
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+            </th>
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+            </th>
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+            </th>
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+            </th>
+            <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+            </th>
+          </tr>
+        </thead>
+      )}
+      <tbody>
+        {/* 첫 번째 데이터 행 */}
+        <tr className="h-[32px]">
+          <td rowSpan={2} className="px-1 py-0 h-[64px] bg-white border-l border-r border-b border-[#D9D9D9] text-center align-middle">
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
+          </td>
+          <td rowSpan={2} className="px-2 py-0 h-[64px] bg-white border-r border-b border-[#D9D9D9] align-middle">
+            <input
+              type="date"
+              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
+              value={firstRow.date || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
+            />
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.debitAccount || ''}
@@ -130,18 +136,20 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              type="number"
-              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={firstRow.debitAmount || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'debitAmount', e.target.value)}
-            />
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <input
+                type="number"
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                placeholder="입력하기"
+                value={firstRow.debitAmount || ''}
+                onChange={e => onUpdateRow(firstRow.id, 'debitAmount', e.target.value)}
+              />
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+            </div>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.debitPartner || ''}
@@ -154,88 +162,8 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-        
-        {/* 차변 두 번째 입력 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.debitAccount || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'debitAccount', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {accounts.map(account => (
-                <option key={account.id} value={account.id}>
-                  {account.code} {account.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              type="number"
-              className="flex-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={secondRow.debitAmount || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'debitAmount', e.target.value)}
-            />
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.debitPartner || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'debitPartner', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {partners.map(partner => (
-                <option key={partner.id} value={partner.id}>
-                  {partner.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        
-        {/* 차변 소계 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
-              {debitSubtotal.toLocaleString()}
-            </span>
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* 대변 그룹 */}
-      <div className="flex flex-col items-start flex-1 min-w-[241px]">
-        {isFirstGroup && (
-          <>
-            {/* 대변 헤더 */}
-            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
-            </div>
-            {/* 대변 세부 헤더 */}
-            <div className="flex flex-row items-start w-full">
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
-              </div>
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
-              </div>
-              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
-              </div>
-            </div>
-          </>
-        )}
-        
-        {/* 대변 첫 번째 입력 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.creditAccount || ''}
@@ -248,18 +176,20 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              type="number"
-              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={firstRow.creditAmount || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'creditAmount', e.target.value)}
-            />
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <input
+                type="number"
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                placeholder="입력하기"
+                value={firstRow.creditAmount || ''}
+                onChange={e => onUpdateRow(firstRow.id, 'creditAmount', e.target.value)}
+              />
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+            </div>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={firstRow.creditPartner || ''}
@@ -272,12 +202,59 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-        
-        {/* 대변 두 번째 입력 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </td>
+          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={firstRow.description || ''}
+              onChange={e => onUpdateRow(firstRow.id, 'description', e.target.value)}
+            />
+          </td>
+        </tr>
+        {/* 두 번째 데이터 행 */}
+        <tr className="h-[32px]">
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              value={secondRow.debitAccount || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'debitAccount', e.target.value)}
+            >
+              <option value="">선택하기</option>
+              {accounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.code} {account.name}
+                </option>
+              ))}
+            </select>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <input 
+                type="number"
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                placeholder="입력하기"
+                value={secondRow.debitAmount || ''}
+                onChange={e => onUpdateRow(secondRow.id, 'debitAmount', e.target.value)}
+              />
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+            </div>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <select 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              value={secondRow.debitPartner || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'debitPartner', e.target.value)}
+            >
+              <option value="">선택하기</option>
+              {partners.map(partner => (
+                <option key={partner.id} value={partner.id}>
+                  {partner.name}
+                </option>
+              ))}
+            </select>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select 
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.creditAccount || ''}
@@ -290,18 +267,20 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              type="number"
-              className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={secondRow.creditAmount || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'creditAmount', e.target.value)}
-            />
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-          </div>
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <input 
+                type="number"
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                placeholder="입력하기"
+                value={secondRow.creditAmount || ''}
+                onChange={e => onUpdateRow(secondRow.id, 'creditAmount', e.target.value)}
+              />
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+            </div>
+          </td>
+          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <select 
               className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
               value={secondRow.creditPartner || ''}
@@ -314,47 +293,41 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-        
-        {/* 대변 소계 행 */}
-        <div className="flex flex-row items-start w-full">
-          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
-              {creditSubtotal.toLocaleString()}
-            </span>
-            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* 적요 그룹 */}
-      <div className="flex flex-col items-start flex-1 min-w-[120px]">
-        {isFirstGroup && (
-          <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
-          </div>
-        )}
-        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-          <input
-            className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-            placeholder="입력하기"
-            value={firstRow.description || ''}
-            onChange={e => onUpdateRow(firstRow.id, 'description', e.target.value)}
-          />
-        </div>
-        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-          <input 
-            className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-            placeholder="입력하기"
-            value={secondRow.description || ''}
-            onChange={e => onUpdateRow(secondRow.id, 'description', e.target.value)}
-          />
-        </div>
-        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-        </div>
-      </div>
-    </div>
+          </td>
+          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <input 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={secondRow.description || ''}
+              onChange={e => onUpdateRow(secondRow.id, 'description', e.target.value)}
+            />
+          </td>
+        </tr>
+        {/* 소계 행 */}
+        <tr className="h-[32px]">
+          <td colSpan={2} className="px-2 py-0 bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9] text-center">
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
+          </td>
+          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+                {debitSubtotal.toLocaleString()}
+              </span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+            </div>
+          </td>
+          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <div className="flex items-center">
+              <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+                {creditSubtotal.toLocaleString()}
+              </span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+            </div>
+          </td>
+          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"></td>
+        </tr>
+      </tbody>
+    </table>
   );
 };
 

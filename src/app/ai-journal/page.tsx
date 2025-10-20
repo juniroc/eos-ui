@@ -61,9 +61,6 @@ export default function AIJournalPage() {
   // 계정과목 및 거래처 목록
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
-  
-  // 변경사항 확인
-  const hasChanges = JSON.stringify(vouchers) !== JSON.stringify(initialVouchers);
 
   // 계정과목 및 거래처 조회
   useEffect(() => {
@@ -110,16 +107,16 @@ export default function AIJournalPage() {
 
   // API 응답의 voucher를 UI 구조로 변환하는 함수
   const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>): AIJournalVoucher => {
-    console.log('변환할 API voucher:', apiVoucher);
-    
     const transactions: AIJournalTransaction[] = [];
+    const voucherId = `voucher-${apiVoucher.transactionId || 'unknown'}`;
+    const voucherDate = (apiVoucher.date as string) || '';
     
     // debits 배열 처리 (차변)
     if (apiVoucher.debits && Array.isArray(apiVoucher.debits)) {
       (apiVoucher.debits as Record<string, unknown>[]).forEach((debit: Record<string, unknown>, index: number) => {
         transactions.push({
           id: `debit-${apiVoucher.transactionId || index}-${index}`,
-          date: (apiVoucher.date as string) || '',
+          date: voucherDate,
           description: (apiVoucher.description as string) || '',
           amount: (debit.amount as number) || 0,
           partnerName: (debit.partner as string) || '',
@@ -135,7 +132,7 @@ export default function AIJournalPage() {
       (apiVoucher.credits as Record<string, unknown>[]).forEach((credit: Record<string, unknown>, index: number) => {
         transactions.push({
           id: `credit-${apiVoucher.transactionId || index}-${index}`,
-          date: (apiVoucher.date as string) || '',
+          date: voucherDate,
           description: (apiVoucher.description as string) || '',
           amount: (credit.amount as number) || 0,
           partnerName: (credit.partner as string) || '',
@@ -146,11 +143,55 @@ export default function AIJournalPage() {
       });
     }
     
-    console.log('변환된 transactions:', transactions);
+    // transactions가 빈 배열이면 차변 2행, 대변 2행 생성
+    if (transactions.length === 0) {
+      transactions.push(
+        {
+          id: `${voucherId}-debit-1`,
+          date: voucherDate,
+          description: '',
+          amount: 0,
+          partnerName: '',
+          accountName: '',
+          debitCredit: true,
+          note: '',
+        },
+        {
+          id: `${voucherId}-debit-2`,
+          date: voucherDate,
+          description: '',
+          amount: 0,
+          partnerName: '',
+          accountName: '',
+          debitCredit: true,
+          note: '',
+        },
+        {
+          id: `${voucherId}-credit-1`,
+          date: voucherDate,
+          description: '',
+          amount: 0,
+          partnerName: '',
+          accountName: '',
+          debitCredit: false,
+          note: '',
+        },
+        {
+          id: `${voucherId}-credit-2`,
+          date: voucherDate,
+          description: '',
+          amount: 0,
+          partnerName: '',
+          accountName: '',
+          debitCredit: false,
+          note: '',
+        }
+      );
+    }
     
     return {
-      id: `voucher-${apiVoucher.transactionId || 'unknown'}`,
-      date: (apiVoucher.date as string) || '',
+      id: voucherId,
+      date: voucherDate,
       description: (apiVoucher.description as string) || (apiVoucher.explanation as string) || '',
       transactions: transactions,
     };
@@ -158,34 +199,20 @@ export default function AIJournalPage() {
 
   // SSE 메시지 처리 헬퍼 함수
   const processSSEMessage = (eventType: string, dataBuffer: string, onProgress: (data: Record<string, unknown>) => void, onComplete: (data: Record<string, unknown>) => void) => {
-    console.log(`=== SSE 메시지 처리 시작 ===`);
-    console.log(`이벤트 타입: "${eventType}"`);
-    console.log(`데이터 길이: ${dataBuffer.length}`);
-    console.log(`데이터 시작: ${dataBuffer.substring(0, 100)}...`);
-    
     try {
       const parsedData = JSON.parse(dataBuffer);
-      console.log(`SSE 이벤트 [${eventType}] 파싱 성공:`, parsedData);
       
       if (eventType === 'progress') {
-        console.log('→ progress 콜백 호출');
         onProgress(parsedData);
       } else if (eventType === 'done') {
-        console.log('→ done 콜백 호출 (2단계 API 시작)');
+        console.log('✓ 1단계 완료 - 2단계 분개 처리 시작');
         onComplete(parsedData);
       } else if (eventType === 'connected') {
-        console.log('SSE 연결됨:', parsedData);
-      } else {
-        console.log('알 수 없는 SSE 이벤트:', eventType, parsedData);
+        console.log('✓ SSE 연결됨');
       }
     } catch (e) {
       console.error('SSE 데이터 파싱 에러:', e);
-      console.error('이벤트 타입:', eventType);
-      console.error('데이터 길이:', dataBuffer.length);
-      console.error('데이터 시작 부분:', dataBuffer.substring(0, 200));
-      console.error('데이터 끝 부분:', dataBuffer.substring(Math.max(0, dataBuffer.length - 200)));
     }
-    console.log(`=== SSE 메시지 처리 완료 ===`);
   };
 
   // SSE 스트림 처리 헬퍼 함수
@@ -195,7 +222,6 @@ export default function AIJournalPage() {
       return;
     }
 
-    console.log('=== SSE 스트림 처리 시작 ===');
     const reader = stream.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -203,51 +229,38 @@ export default function AIJournalPage() {
     try {
       while (true) {
         const { done, value } = await reader.read();
-        if (done) {
-          console.log('SSE 스트림 읽기 완료');
-          break;
-        }
+        if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        console.log(`SSE 청크 수신 (${chunk.length} bytes):`, chunk.substring(0, 200) + '...');
         buffer += chunk;
         
         // 완전한 SSE 메시지를 찾아서 처리
         const lines = buffer.split('\n');
         buffer = lines.pop() || ''; // 마지막 불완전한 줄은 버퍼에 보관
         
-        console.log(`처리할 줄 수: ${lines.length}, 버퍼에 남은 줄: ${buffer ? '있음' : '없음'}`);
-        
         let currentEventType = '';
         let currentDataBuffer = '';
         
         for (const line of lines) {
-          console.log(`처리 중인 줄: "${line}"`);
-          
           if (line.startsWith('event:')) {
             // 이전 메시지가 완료되지 않았다면 처리
             if (currentEventType && currentDataBuffer) {
-              console.log(`이전 메시지 처리: ${currentEventType}`);
               processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
             }
             currentEventType = line.substring(6).trim();
             currentDataBuffer = '';
-            console.log(`새 이벤트 타입 설정: "${currentEventType}"`);
             continue;
           }
           if (line.startsWith('data:')) {
             currentDataBuffer += line.substring(5);
-            console.log(`데이터 추가, 현재 길이: ${currentDataBuffer.length}`);
             continue;
           }
           if (line === '') {
             // 빈 줄이면 메시지 완료
             if (currentEventType && currentDataBuffer) {
-              console.log(`메시지 완료 처리: ${currentEventType}`);
               processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
             } else if (currentDataBuffer && !currentEventType) {
               // event: 없이 data:만 있는 경우 (기본적으로 'done' 이벤트로 처리)
-              console.log(`이벤트 타입 없이 데이터만 있음 - 'done'으로 처리`);
               processSSEMessage('done', currentDataBuffer, onProgress, onComplete);
             }
             currentEventType = '';
@@ -257,11 +270,9 @@ export default function AIJournalPage() {
         
         // 마지막 메시지 처리
         if (currentEventType && currentDataBuffer) {
-          console.log(`마지막 메시지 처리: ${currentEventType}`);
           processSSEMessage(currentEventType, currentDataBuffer, onProgress, onComplete);
         } else if (currentDataBuffer && !currentEventType) {
           // event: 없이 data:만 있는 경우 (기본적으로 'done' 이벤트로 처리)
-          console.log(`마지막 메시지 - 이벤트 타입 없이 데이터만 있음 - 'done'으로 처리`);
           processSSEMessage('done', currentDataBuffer, onProgress, onComplete);
         }
       }
@@ -269,7 +280,6 @@ export default function AIJournalPage() {
       console.error('SSE 스트림 처리 에러:', error);
     } finally {
       reader.releaseLock();
-      console.log('=== SSE 스트림 처리 완료 ===');
     }
   };
 
@@ -288,8 +298,9 @@ export default function AIJournalPage() {
       const fileArray = Array.from(selectedFiles);
       
       // 1단계: 증빙 추출 시작
+      console.log('✓ 1단계 시작: 증빙 추출');
       setStep('extracting');
-      setProgress({ processed: 0, total: 100 });
+      setProgress({ processed: 1, total: 100 });
       
       const extractJob = await startExtractRawTransactions(fileArray, token);
       
@@ -298,59 +309,30 @@ export default function AIJournalPage() {
       
       await processSSEStream(
         extractStream,
-        (data) => {
-          // 진행률 업데이트
-          setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
-      
+        (data) => {      
+          console.log('data', data);
         },
         (data) => {
           // 추출 완료
-          console.log('=== onComplete 콜백 호출됨 ===');
-          console.log('추출 완료 데이터:', data);
-          console.log('데이터 타입:', typeof data);
-          console.log('데이터 키들:', Object.keys(data));
-          
-          // transactions 필드에서 RawTransaction 배열 가져오기
           const rawTransactions = (data.transactions as RawTransaction[]) || [];
-          console.log('추출된 원본 거래내역 개수:', rawTransactions.length);
-          console.log('첫 번째 거래내역:', rawTransactions[0]);
+          console.log(`✓ 1단계 완료: ${rawTransactions.length}개 거래내역 추출`);
           
-          // RawTransaction을 AIJournalTransaction으로 변환
-          const convertedTransactions = rawTransactions.map(convertRawTransactionToAIJournal);
-          console.log('변환된 거래내역 개수:', convertedTransactions.length);
           
           setRawTransactions(rawTransactions);
-          setProgress({ processed: 100, total: 100 });
-          console.log('상태 업데이트 완료');
+          // setProgress({ processed: 100, total: 100 });
           
           // 2단계: 분개 처리 시작
-          console.log('=== 2단계 분개 처리 시작 (setTimeout) ===');
           setTimeout(async () => {
             try {
-              console.log('setTimeout 콜백 실행됨');
-    setStep('processing');
-    setProgress({ processed: 0, total: 100 });
+              console.log('✓ 2단계 시작: 분개 처리');
+              setStep('processing');
+              setProgress({ processed: 5, total: 100 });
 
-              console.log('=== 2단계 분개 처리 시작 ===');
-              console.log('전달할 원본 거래내역 개수:', rawTransactions.length);
-              console.log('전달할 변환된 거래내역 개수:', convertedTransactions.length);
-              console.log('토큰 존재 여부:', !!token);
-              console.log('토큰 길이:', token?.length);
-              
               if (!token) {
                 throw new Error('토큰이 없습니다.');
               }
               
-              if (rawTransactions.length === 0) {
-                console.log('거래내역이 비어있지만 API 호출을 시도합니다.');
-                // 빈 배열이라도 API 호출을 시도 (API가 다른 방식으로 처리할 수 있음)
-              }
-              
-              console.log('startProcessJournalEntries API 호출 시작...');
-              console.log('API 호출 전 마지막 확인 - rawTransactions:', rawTransactions.slice(0, 2));
-              
               const processJob = await startProcessJournalEntries(rawTransactions, token);
-              console.log('startProcessJournalEntries API 응답:', processJob);
               
               // 2단계: 분개 처리 진행률 스트림
               const processStream = await getProcessJournalEntriesStream(processJob.jobId, token);
@@ -359,24 +341,13 @@ export default function AIJournalPage() {
                 processStream,
                 (data) => {
                   // 진행률 업데이트
-                  setProgress({ processed: Number(data.processed) || 0, total: Number(data.total) || 100 });
+                  setProgress({ processed: Math.round(Number(data.processed)/Number(data.total) * 100) || 0, total: 100 });
                 },
                 (data) => {
                   // 분개 처리 완료
-                  console.log('=== 2단계 완료 데이터 ===');
-                  console.log('전체 데이터:', data);
-                  console.log('vouchers 타입:', typeof data.vouchers);
-                  
-                  const vouchersData = data.vouchers as unknown[];
-                  console.log('vouchers 길이:', vouchersData?.length);
-                  console.log('첫 번째 voucher:', vouchersData?.[0]);
-                  console.log('첫 번째 voucher의 키들:', vouchersData?.[0] ? Object.keys(vouchersData[0] as Record<string, unknown>) : '없음');
-                  
-                  // API 응답의 vouchers를 UI 구조로 변환
                   const apiVouchers = (data.vouchers as Record<string, unknown>[]) || [];
                   const convertedVouchers = apiVouchers.map(convertApiVoucherToUI);
-                  
-                  console.log('변환된 vouchers:', convertedVouchers);
+                  console.log(`✓ 2단계 완료: ${convertedVouchers.length}개 전표 생성`);
                   
                   setVouchers(convertedVouchers);
                   setInitialVouchers(convertedVouchers);
@@ -384,16 +355,11 @@ export default function AIJournalPage() {
                   
                   // 통계 계산
                   let debitTotal = 0, creditTotal = 0;
-                  convertedVouchers.forEach((v: AIJournalVoucher, index: number) => {
-                    console.log(`Voucher ${index}:`, v);
-                    console.log(`Voucher ${index} transactions:`, v.transactions);
-                    
+                  convertedVouchers.forEach((v: AIJournalVoucher) => {
                     if (v.transactions && Array.isArray(v.transactions)) {
                       v.transactions.forEach((t: AIJournalTransaction) =>
               t.debitCredit ? (debitTotal += t.amount) : (creditTotal += t.amount)
           );
-                    } else {
-                      console.warn(`Voucher ${index}에 transactions가 없습니다:`, v);
                     }
                   });
 
@@ -495,13 +461,10 @@ export default function AIJournalPage() {
     try {
       setLoading(true);
       
-      console.log('=== 저장 시작 ===');
-      console.log('저장할 vouchers:', vouchers);
-      
       const result = await saveAIJournal(vouchers, token);
       
       if (result.success) {
-        console.log('저장 완료:', result.voucherIds);
+        console.log(`✓ 저장 완료: ${result.voucherIds.length}개 전표 생성`);
         setToastMessage(`저장되었습니다. (전표 ${result.voucherIds.length}개 생성)`);
         setShowToast(true);
         // step 초기화
@@ -581,7 +544,7 @@ export default function AIJournalPage() {
               variant="primary"
               size="small"
               onClick={handleSave}
-              disabled={loading || !hasChanges}
+              disabled={loading}
               loading={loading}
             >
               저장하기
@@ -689,9 +652,6 @@ export default function AIJournalPage() {
 
             <div>
               {vouchers.map((voucher, idx) => {
-                console.log(`렌더링 중인 voucher ${idx}:`, voucher);
-                console.log(`voucher.transactions:`, voucher.transactions);
-                
                 // transactions가 없거나 배열이 아닌 경우 빈 배열로 처리
                 const transactions = voucher.transactions && Array.isArray(voucher.transactions) 
                   ? voucher.transactions 
@@ -712,7 +672,7 @@ export default function AIJournalPage() {
                               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
                             </div>
                           )}
-                          <div className="flex flex-col justify-center items-center px-3 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * transactions.length}px` }}>
+                          <div className="flex flex-col justify-center items-center px-1 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
                             <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{idx + 1}</span>
                           </div>
                         </div>
@@ -723,7 +683,7 @@ export default function AIJournalPage() {
                               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
                             </div>
                           )}
-                          <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * transactions.length}px` }}>
+                          <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
                             <input
                               type="date"
                               className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 

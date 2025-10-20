@@ -82,7 +82,6 @@ export default function CashbookPage() {
   const [loading, setLoading] = useState(false);
   const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
   const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
-  const [hasDepositData, setHasDepositData] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
   // 계정과목 및 거래처 옵션
@@ -183,7 +182,6 @@ export default function CashbookPage() {
       // API 응답 구조에 맞게 데이터 파싱
       let cashData: CashTransaction[] = [];
       let depositData: CashTransaction[] = [];
-      let hasDeposit = false;
       
       // API 응답 구조 처리: results 배열 또는 직접 응답
       if (data && data.results && Array.isArray(data.results)) {
@@ -209,7 +207,6 @@ export default function CashbookPage() {
             }));
             cashData = [...cashData, ...newCashData];
           } else if (item.result && item.result.type === 'DEPOSIT' && item.result.accounts) {
-            hasDeposit = true;
             (item.result.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
               // rows가 있으면 거래 내역 추가
               if (account.rows && account.rows.length > 0) {
@@ -258,7 +255,6 @@ export default function CashbookPage() {
             voucherId: row.voucherId
           }));
         } else if (data.type === 'DEPOSIT' && data.accounts) {
-          hasDeposit = true;
           (data.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
             // rows가 있으면 거래 내역 추가
             if (account.rows && account.rows.length > 0) {
@@ -296,7 +292,6 @@ export default function CashbookPage() {
       // 중복 제거 후 데이터 설정
       setCashTransactions(removeDuplicateTransactions(cashData));
       setDepositTransactions(removeDuplicateTransactions(depositData));
-      setHasDepositData(hasDeposit);
       setHasSearched(true);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);

@@ -326,7 +326,7 @@ export default function SettlementInfoPage() {
   return (
     <div 
       className="flex flex-col items-start p-4 gap-4"
-      style={{ margin: '0 auto' }}
+      style={{ maxWidth: '800px', margin: '0 auto' }}
     >
       {/* Title Section */}
       <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">

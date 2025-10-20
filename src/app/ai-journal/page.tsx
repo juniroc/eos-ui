@@ -62,9 +62,6 @@ export default function AIJournalPage() {
   // 계정과목 및 거래처 목록
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
-  
-  // 변경사항 확인
-  const hasChanges = JSON.stringify(vouchers) !== JSON.stringify(initialVouchers);
 
   // 계정과목 및 거래처 조회
   useEffect(() => {
@@ -550,7 +547,7 @@ export default function AIJournalPage() {
               variant="primary"
               size="small"
               onClick={handleSave}
-              disabled={loading || !hasChanges}
+              disabled={loading}
               loading={loading}
             >
               저장하기

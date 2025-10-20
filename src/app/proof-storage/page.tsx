@@ -138,7 +138,7 @@ export default function ProofStoragePage() {
 
 
   return (
-    <div className="flex flex-col items-start p-4 gap-4">
+    <div className="flex flex-col items-start p-4 gap-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
       {/* Title Section */}
       <div className="flex flex-col items-start p-0 gap-4 self-stretch">
         <div className="flex justify-between items-end p-0 gap-4 self-stretch">

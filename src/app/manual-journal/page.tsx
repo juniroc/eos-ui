@@ -65,7 +65,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
               </div>
             )}
-            <div className="flex flex-col justify-center items-center px-3 py-2 w-full h-[64px] bg-white border-l border-r border-b border-[#D9D9D9]">
+            <div className="flex flex-col justify-center items-center px-1 py-2 w-full h-[64px] bg-white border-l border-r border-b border-[#D9D9D9]">
               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
             </div>
           </div>

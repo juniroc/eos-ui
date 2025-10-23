@@ -119,10 +119,14 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
           </td>
           <td rowSpan={group.rows.length} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9] align-middle">
             <input
-              type="date"
+              type="text"
               className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
-              value={firstRow.date || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'date', e.target.value)}
+              placeholder="yyyy.mm.dd"
+              value={firstRow.date ? firstRow.date.replace(/-/g, '.') : ''}
+              onChange={e => {
+                const value = e.target.value.replace(/[^\d.]/g, '');
+                onUpdateRow(firstRow.id, 'date', value.replace(/\./g, '-'));
+              }}
             />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
@@ -134,7 +138,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               <option value="">선택하기</option>
               {accounts.map(account => (
                 <option key={account.id} value={account.id}>
-                  {account.code} {account.name}
+                  {account.name}
                 </option>
               ))}
             </select>
@@ -174,7 +178,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               <option value="">선택하기</option>
               {accounts.map(account => (
                 <option key={account.id} value={account.id}>
-                  {account.code} {account.name}
+                  {account.name}
                 </option>
               ))}
             </select>
@@ -226,7 +230,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 <option value="">선택하기</option>
                 {accounts.map(account => (
                   <option key={account.id} value={account.id}>
-                    {account.code} {account.name}
+                    {account.name}
                   </option>
                 ))}
               </select>
@@ -266,7 +270,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
                 <option value="">선택하기</option>
                 {accounts.map(account => (
                   <option key={account.id} value={account.id}>
-                    {account.code} {account.name}
+                    {account.name}
                   </option>
                 ))}
               </select>

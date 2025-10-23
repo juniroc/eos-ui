@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
 import Image from 'next/image';
+import ExcelJS from 'exceljs';
 import { getJournalInputAccounts, getJournalInputPartners, type UserAccount, type PartnerItem } from '@/services/financial';
 
 interface Account {
@@ -270,36 +271,103 @@ export default function StatementsPage() {
   }, [isModalOpen, selectedPartner, fetchLedger]);
 
   /** 다운로드 */
-  const handleDownload = () => {
-    // CSV 형태로 다운로드
-    const csvContent = [
-      ['일자', '계정과목', '거래처', '잔액'],
-      ...(Array.isArray(balanceData) ? balanceData : []).flatMap((item: BalanceAccount | BalancePartner) => {
-        if ('account' in item && item.account) {
-          // ACCOUNTS/ACCOUNT 타입
-          return item.rows ? item.rows.map((row: BalanceRow) => [
-            queryDate,
-            `${item.account.code} - ${item.account.name}`,
-            row.partnerName || '',
-            `${row.balance.toLocaleString()}원 (${row.direction === 'DEBIT' ? '차변' : '대변'})`
-          ]) : [];
-        } else if ('partner' in item && item.partner) {
-          // PARTNER 타입
-          return item.rows ? item.rows.map((row: BalanceRow) => [
-            queryDate,
-            row.account ? `${row.account.code} - ${row.account.name}` : '',
-            item.partner.name,
-            `${row.balance.toLocaleString()}원 (${row.direction === 'DEBIT' ? '차변' : '대변'})`
-          ]) : [];
-        }
-        return [];
-      })
-    ].map(row => row.join(',')).join('\n');
+  const handleDownload = async () => {
+    // 날짜를 yymmdd 형식으로 변환
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const yy = String(date.getFullYear()).slice(2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yy}${mm}${dd}`;
+    };
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    // 데이터 준비
+    const tableData = (Array.isArray(balanceData) ? balanceData : []).flatMap((item: BalanceAccount | BalancePartner) => {
+      if ('account' in item && item.account) {
+        // ACCOUNTS/ACCOUNT 타입
+        return item.rows ? item.rows.map((row: BalanceRow) => [
+          formatDate(queryDate),
+          item.account.name,
+          row.partnerName || '',
+          row.balance
+        ]) : [];
+      } else if ('partner' in item && item.partner) {
+        // PARTNER 타입
+        return item.rows ? item.rows.map((row: BalanceRow) => [
+          formatDate(queryDate),
+          row.account ? row.account.name : '',
+          item.partner.name,
+          row.balance
+        ]) : [];
+      }
+      return [];
+    });
+
+    // ExcelJS 워크북 생성
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('잔액명세서');
+
+    // 1행: 타이틀 "명세서"
+    worksheet.mergeCells('A1:D1');
+    const titleCell = worksheet.getCell('A1');
+    titleCell.value = '명세서';
+    titleCell.font = { size: 14 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    
+    // 2행: 빈 줄 (아무것도 하지 않음)
+
+    // 3행: 헤더
+    const headerRow = worksheet.getRow(3);
+    headerRow.values = ['일자', '계정과목', '거래처', '잔액'];
+    headerRow.font = { bold: true };
+    headerRow.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // 4행부터: 데이터
+    tableData.forEach((rowData, index) => {
+      const row = worksheet.getRow(4 + index);
+      row.values = rowData;
+      row.eachCell((cell, colNumber) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+        // 잔액(4열)은 오른쪽 정렬
+        if (colNumber === 4) {
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'left', vertical: 'middle' };
+        }
+      });
+    });
+
+    // 컬럼 너비 설정
+    worksheet.getColumn(1).width = 10;  // 일자
+    worksheet.getColumn(2).width = 30;  // 계정과목
+    worksheet.getColumn(3).width = 30;  // 거래처
+    worksheet.getColumn(4).width = 30;  // 잔액
+
+    // 5열 이후는 숨기기
+    for (let i = 5; i <= 10; i++) {
+      worksheet.getColumn(i).hidden = true;
+    }
+
+    // Excel 파일 다운로드
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `잔액명세서_${filters.date || '전체'}.csv`;
+    link.download = `잔액명세서_${filters.date || '전체'}.xlsx`;
     link.click();
   };
 
@@ -402,7 +470,7 @@ export default function StatementsPage() {
                   <option value="">전체</option>
                   {accounts.map((account) => (
                     <option key={account.id} value={account.code}>
-                      {account.code} - {account.name}
+                      {account.name}
                     </option>
                   ))}
                 </select>
@@ -462,7 +530,7 @@ export default function StatementsPage() {
                           }).replace(/\./g, '').replace(/\s/g, '') : '-'}
                         </td>
                         <td className="p-2 text-xs border border-[#D9D9D9]">
-                          {row.account ? `${row.account.code} - ${row.account.name}` : ('account' in item && item.account ? `${item.account.code} - ${item.account.name}` : '')}
+                          {row.account ? `${row.account.name}` : ('account' in item && item.account ? `${item.account.name}` : '')}
                         </td>
                         <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                           {row.partnerName ? (

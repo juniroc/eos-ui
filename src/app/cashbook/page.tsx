@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import ExcelJS from 'exceljs';
 import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
 interface CashTransaction {
@@ -302,38 +303,174 @@ export default function CashbookPage() {
   }, [token, filters]);
 
   /** 다운로드 */
-  const handleDownload = () => {
-    // CSV 형태로 다운로드
-    const csvContent = [
-      ['구분', '일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'],
-      ...cashTransactions.map(tx => [
-        '현금',
-        tx.date,
-        tx.deposit ? tx.deposit.toLocaleString() : '',
-        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
-        tx.balance.toLocaleString(),
-        tx.accountName,
-        tx.partnerName || '',
-        tx.note || ''
-      ]),
-      ...depositTransactions.flatMap(group => 
-        group.transactions.map(tx => [
-          `보통예금-${group.accountCode}`,
-          tx.date,
-          tx.deposit ? tx.deposit.toLocaleString() : '',
-          tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
-          tx.balance.toLocaleString(),
+  const handleDownload = async () => {
+    // 날짜를 yymmdd 형식으로 변환
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const yy = String(date.getFullYear()).slice(2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yy}${mm}${dd}`;
+    };
+
+    // ExcelJS 워크북 생성
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('현금출납장');
+
+    let currentRow = 1;
+
+    // 1행: 타이틀 "현금출납장"
+    worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+    const titleCell = worksheet.getCell(`A${currentRow}`);
+    titleCell.value = '현금출납장';
+    titleCell.font = { size: 14 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    currentRow++;
+
+    // 2행: 빈 줄
+    currentRow++;
+
+    // 현금 테이블
+    if (cashTransactions.length > 0) {
+      // 부제목: 현금
+      worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+      const cashSubtitleCell = worksheet.getCell(`A${currentRow}`);
+      cashSubtitleCell.value = '현금';
+      cashSubtitleCell.font = { size: 11 };
+      cashSubtitleCell.alignment = { horizontal: 'left', vertical: 'middle' };
+      currentRow++;
+
+      // 헤더
+      const cashHeaderRow = worksheet.getRow(currentRow);
+      cashHeaderRow.values = ['일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'];
+      cashHeaderRow.font = { bold: true };
+      cashHeaderRow.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+      currentRow++;
+
+      // 데이터
+      cashTransactions.forEach((tx) => {
+        const row = worksheet.getRow(currentRow);
+        row.values = [
+          formatDate(tx.date),
+          tx.deposit || '',
+          tx.withdrawal || '',
+          tx.balance,
           tx.accountName,
           tx.partnerName || '',
           tx.note || ''
-        ])
-      )
-    ].map(row => row.join(',')).join('\n');
+        ];
+        row.eachCell((cell, colNumber) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+          };
+          // 숫자 컬럼(입금, 출금, 잔액)은 오른쪽 정렬
+          if (colNumber >= 2 && colNumber <= 4) {
+            cell.alignment = { horizontal: 'right', vertical: 'middle' };
+          } else {
+            cell.alignment = { horizontal: 'left', vertical: 'middle' };
+          }
+        });
+        currentRow++;
+      });
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      // 현금 테이블 후 빈 줄
+      currentRow++;
+    }
+
+    // 보통예금 테이블들
+    depositTransactions.forEach((group, groupIndex) => {
+      if (group.transactions.length > 0) {
+        // 부제목: 보통예금-계좌번호
+        worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+        const depositSubtitleCell = worksheet.getCell(`A${currentRow}`);
+        depositSubtitleCell.value = `보통예금-${group.accountCode}`;
+        depositSubtitleCell.font = { size: 11 };
+        depositSubtitleCell.alignment = { horizontal: 'left', vertical: 'middle' };
+        currentRow++;
+
+        // 헤더
+        const depositHeaderRow = worksheet.getRow(currentRow);
+        depositHeaderRow.values = ['일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'];
+        depositHeaderRow.font = { bold: true };
+        depositHeaderRow.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+          };
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        });
+        currentRow++;
+
+        // 데이터
+        group.transactions.forEach((tx) => {
+          const row = worksheet.getRow(currentRow);
+          row.values = [
+            formatDate(tx.date),
+            tx.deposit || '',
+            tx.withdrawal || '',
+            tx.balance,
+            tx.accountName,
+            tx.partnerName || '',
+            tx.note || ''
+          ];
+          row.eachCell((cell, colNumber) => {
+            cell.border = {
+              top: { style: 'thin', color: { argb: 'FF000000' } },
+              left: { style: 'thin', color: { argb: 'FF000000' } },
+              bottom: { style: 'thin', color: { argb: 'FF000000' } },
+              right: { style: 'thin', color: { argb: 'FF000000' } }
+            };
+            // 숫자 컬럼(입금, 출금, 잔액)은 오른쪽 정렬
+            if (colNumber >= 2 && colNumber <= 4) {
+              cell.alignment = { horizontal: 'right', vertical: 'middle' };
+            } else {
+              cell.alignment = { horizontal: 'left', vertical: 'middle' };
+            }
+          });
+          currentRow++;
+        });
+
+        // 보통예금 테이블 후 빈 줄 (마지막 테이블이 아니면)
+        if (groupIndex < depositTransactions.length - 1) {
+          currentRow++;
+        }
+      }
+    });
+
+    // 컬럼 너비 설정
+    worksheet.getColumn(1).width = 10;  // 일자
+    worksheet.getColumn(2).width = 15;  // 입금
+    worksheet.getColumn(3).width = 15;  // 출금
+    worksheet.getColumn(4).width = 15;  // 잔액
+    worksheet.getColumn(5).width = 20;  // 계정과목
+    worksheet.getColumn(6).width = 20;  // 거래처
+    worksheet.getColumn(7).width = 30;  // 적요
+
+    // 불필요한 열 숨기기
+    for (let i = 8; i <= 11; i++) {
+      worksheet.getColumn(i).hidden = true;
+    }
+
+    // Excel 파일 다운로드
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `현금출납장_${filters.startDate}_${filters.endDate}.csv`;
+    link.download = `현금출납장_${filters.startDate}_${filters.endDate}.xlsx`;
     link.click();
   };
 

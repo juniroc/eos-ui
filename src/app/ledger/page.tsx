@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import ExcelJS from 'exceljs';
 import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
 type dataType = 'ACCOUNT' | 'ACCOUNTS' | 'ACCOUNT_PARTNER' | 'PARTNER';
@@ -212,8 +213,18 @@ export default function LedgerPage() {
   }, [token, filters]);
 
   /** 다운로드 */
-  const handleDownload = () => {
-    // CSV 헤더를 ledgerType에 따라 동적으로 생성
+  const handleDownload = async () => {
+    // 날짜를 yymmdd 형식으로 변환
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const yy = String(date.getFullYear()).slice(2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yy}${mm}${dd}`;
+    };
+
+    // 헤더를 ledgerType에 따라 동적으로 생성
     const headers = ['일자'];
     if (ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') {
       headers.push('계정과목');
@@ -224,36 +235,92 @@ export default function LedgerPage() {
     }
     headers.push('적요');
 
-    // CSV 데이터를 ledgerType에 따라 동적으로 생성
-    const csvContent = [
-      headers,
-      ...(Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => {
-        const rows = 'rows' in account ? account.rows : [];
-        const accountInfo = 'account' in account ? account.account : null;
-        
-        return rows ? rows.map((row: LedgerRow) => {
-          const rowData = [row.date];
-          if (ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') {
-            rowData.push(row.accountName || accountInfo?.name || '');
-          }
-          rowData.push(
-            row.debit.toLocaleString(),
-            row.credit.toLocaleString(),
-            row.balance.toLocaleString()
-          );
-          if (ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') {
-            rowData.push(row.partnerName || '');
-          }
-          rowData.push(row.description || '');
-          return rowData;
-        }) : [];
-      })
-    ].map(row => row.join(',')).join('\n');
+    // 데이터 준비
+    const tableData = (Array.isArray(ledgerData) ? ledgerData : []).flatMap((account: LedgerAccount | LedgerPartner) => {
+      const rows = 'rows' in account ? account.rows : [];
+      const accountInfo = 'account' in account ? account.account : null;
+      
+      return rows ? rows.map((row: LedgerRow) => {
+        const rowData = [formatDate(row.date)];
+        if (ledgerType === 'ACCOUNTS' || ledgerType === 'PARTNER') {
+          rowData.push(row.accountName || accountInfo?.name || '');
+        }
+        rowData.push(
+          row.debit.toString(),
+          row.credit.toString(),
+          row.balance.toString()
+        );
+        if (ledgerType === 'ACCOUNTS' || ledgerType === 'ACCOUNT') {
+          rowData.push(row.partnerName || '');
+        }
+        rowData.push(row.description || '');
+        return rowData;
+      }) : [];
+    });
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    // ExcelJS 워크북 생성
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('원장');
+
+    // 1행: 타이틀 "원장"
+    const titleRange = `A1:${String.fromCharCode(64 + headers.length)}1`;
+    worksheet.mergeCells(titleRange);
+    const titleCell = worksheet.getCell('A1');
+    titleCell.value = '원장';
+    titleCell.font = { size: 14 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    
+    // 2행: 빈 줄
+
+    // 3행: 헤더
+    const headerRow = worksheet.getRow(3);
+    headerRow.values = headers;
+    headerRow.font = { bold: true };
+    headerRow.eachCell((cell) => {
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // 4행부터: 데이터
+    tableData.forEach((rowData, index) => {
+      const row = worksheet.getRow(4 + index);
+      row.values = rowData;
+      row.eachCell((cell, colNumber) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+        // 숫자 열(차변금액, 대변금액, 잔액)은 오른쪽 정렬
+        const isNumberColumn = headers[colNumber - 1] === '차변금액' || 
+                               headers[colNumber - 1] === '대변금액' || 
+                               headers[colNumber - 1] === '잔액';
+        if (isNumberColumn) {
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'left', vertical: 'middle' };
+        }
+      });
+    });
+
+    // 컬럼 너비 설정
+    worksheet.getColumn(1).width = 10;  // 일자
+    for (let i = 2; i <= headers.length; i++) {
+      worksheet.getColumn(i).width = 16;  // 나머지 컬럼
+    }
+
+    // Excel 파일 다운로드
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `원장_${filters.startDate}_${filters.endDate}.csv`;
+    link.download = `원장_${filters.startDate}_${filters.endDate}.xlsx`;
     link.click();
   };
 

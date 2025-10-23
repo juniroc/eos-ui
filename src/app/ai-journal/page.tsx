@@ -464,8 +464,7 @@ export default function AIJournalPage() {
       const result = await saveAIJournal(vouchers, token);
       
       if (result.success) {
-        console.log(`✓ 저장 완료: ${result.voucherIds.length}개 전표 생성`);
-        setToastMessage(`저장되었습니다. (전표 ${result.voucherIds.length}개 생성)`);
+        setToastMessage(`${result.voucherIds.length}개의 전표가 생성되었습니다.`);
         setShowToast(true);
         // step 초기화
         setStep('upload');
@@ -543,10 +542,7 @@ export default function AIJournalPage() {
             <Button
               variant="primary"
               size="small"
-              onClick={()=> {
-                setToastMessage('저장되었습니다.');
-                setShowToast(true);
-              }}
+              onClick={handleSave}
               disabled={loading}
               loading={loading}
             >

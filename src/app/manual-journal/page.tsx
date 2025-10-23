@@ -26,7 +26,7 @@ interface ManualJournalRow {
 
 interface JournalGroup {
   id: number;
-  rows: [ManualJournalRow, ManualJournalRow]; // 각 그룹은 정확히 2개의 행을 가짐
+  rows: ManualJournalRow[]; // 각 그룹은 최소 2개 이상의 행을 가짐
 }
 
 interface JournalGroupComponentProps {
@@ -34,6 +34,7 @@ interface JournalGroupComponentProps {
   groupIndex: number;
   isFirstGroup: boolean;
   onUpdateRow: (rowId: number, field: keyof ManualJournalRow, value: string) => void;
+  onAddAdditionalRow: (groupId: number) => void;
   debitSubtotal: number;
   creditSubtotal: number;
   accounts: UserAccount[];
@@ -46,12 +47,13 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
   groupIndex,
   isFirstGroup,
   onUpdateRow,
+  onAddAdditionalRow,
   debitSubtotal,
   creditSubtotal,
   accounts,
   partners
 }) => {
-  const [firstRow, secondRow] = group.rows;
+  const [firstRow, ...restRows] = group.rows;
 
   return (
     <table className="w-full border-collapse" style={{ tableLayout: 'fixed' }}>
@@ -110,12 +112,12 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         </thead>
       )}
       <tbody>
-        {/* 첫 번째 데이터 행 */}
+        {/* 첫 번째 데이터 행 (번호/일자 rowSpan) */}
         <tr className="h-[32px]">
-          <td rowSpan={2} className="px-1 py-0 h-[64px] bg-white border-l border-r border-b border-[#D9D9D9] text-center align-middle">
+          <td rowSpan={group.rows.length} className="px-1 py-0 bg-white border-l border-r border-b border-[#D9D9D9] text-center align-middle">
             <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
           </td>
-          <td rowSpan={2} className="px-2 py-0 h-[64px] bg-white border-r border-b border-[#D9D9D9] align-middle">
+          <td rowSpan={group.rows.length} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9] align-middle">
             <input
               type="date"
               className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
@@ -212,95 +214,116 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             />
           </td>
         </tr>
-        {/* 두 번째 데이터 행 */}
+        {/* 나머지 행들 (2번째 행부터 모두 동일한 구조) */}
+        {restRows.map((row) => (
+          <tr key={row.id} className="h-[32px]">
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <select
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                value={row.debitAccount || ''}
+                onChange={e => onUpdateRow(row.id, 'debitAccount', e.target.value)}
+              >
+                <option value="">선택하기</option>
+                {accounts.map(account => (
+                  <option key={account.id} value={account.id}>
+                    {account.code} {account.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                  placeholder="입력하기"
+                  value={row.debitAmount || ''}
+                  onChange={e => onUpdateRow(row.id, 'debitAmount', e.target.value)}
+                />
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+              </div>
+            </td>
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <select
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                value={row.debitPartner || ''}
+                onChange={e => onUpdateRow(row.id, 'debitPartner', e.target.value)}
+              >
+                <option value="">선택하기</option>
+                {partners.map(partner => (
+                  <option key={partner.id} value={partner.id}>
+                    {partner.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <select
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                value={row.creditAccount || ''}
+                onChange={e => onUpdateRow(row.id, 'creditAccount', e.target.value)}
+              >
+                <option value="">선택하기</option>
+                {accounts.map(account => (
+                  <option key={account.id} value={account.id}>
+                    {account.code} {account.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                  placeholder="입력하기"
+                  value={row.creditAmount || ''}
+                  onChange={e => onUpdateRow(row.id, 'creditAmount', e.target.value)}
+                />
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+              </div>
+            </td>
+            <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <select
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                value={row.creditPartner || ''}
+                onChange={e => onUpdateRow(row.id, 'creditPartner', e.target.value)}
+              >
+                <option value="">선택하기</option>
+                {partners.map(partner => (
+                  <option key={partner.id} value={partner.id}>
+                    {partner.name}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+              <input
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                placeholder="입력하기"
+                value={row.description || ''}
+                onChange={e => onUpdateRow(row.id, 'description', e.target.value)}
+              />
+            </td>
+          </tr>
+        ))}
+        {/* 추가하기 버튼 행 */}
         <tr className="h-[32px]">
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.debitAccount || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'debitAccount', e.target.value)}
+          <td colSpan={11} className="px-2 py-0 bg-white border-l border-r border-b border-[#D9D9D9]">
+            <button
+              onClick={() => onAddAdditionalRow(group.id)}
+              className="w-full h-full flex flex-row justify-center items-center gap-1 cursor-pointer"
             >
-              <option value="">선택하기</option>
-              {accounts.map(account => (
-                <option key={account.id} value={account.id}>
-                  {account.code} {account.name}
-                </option>
-              ))}
-            </select>
-          </td>
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <div className="flex items-center">
-              <input 
-                type="number"
-                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                placeholder="입력하기"
-                value={secondRow.debitAmount || ''}
-                onChange={e => onUpdateRow(secondRow.id, 'debitAmount', e.target.value)}
-              />
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
-            </div>
-          </td>
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.debitPartner || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'debitPartner', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {partners.map(partner => (
-                <option key={partner.id} value={partner.id}>
-                  {partner.name}
-                </option>
-              ))}
-            </select>
-          </td>
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.creditAccount || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'creditAccount', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {accounts.map(account => (
-                <option key={account.id} value={account.id}>
-                  {account.code} {account.name}
-                </option>
-              ))}
-            </select>
-          </td>
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <div className="flex items-center">
-              <input 
-                type="number"
-                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
-                placeholder="입력하기"
-                value={secondRow.creditAmount || ''}
-                onChange={e => onUpdateRow(secondRow.id, 'creditAmount', e.target.value)}
-              />
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
-            </div>
-          </td>
-          <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              value={secondRow.creditPartner || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'creditPartner', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {partners.map(partner => (
-                <option key={partner.id} value={partner.id}>
-                  {partner.name}
-                </option>
-              ))}
-            </select>
-          </td>
-          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <input 
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={secondRow.description || ''}
-              onChange={e => onUpdateRow(secondRow.id, 'description', e.target.value)}
-            />
+              <div className="w-4 h-4">
+                <svg className="w-4 h-4" fill="none" stroke="#757575" strokeWidth="1" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v8M8 12h8"/>
+                </svg>
+              </div>
+              <span className="font-medium text-[12px] leading-[100%] text-center text-[#757575]">
+                추가하기
+              </span>
+            </button>
           </td>
         </tr>
         {/* 소계 행 */}
@@ -437,8 +460,24 @@ export default function ManualJournalPage() {
         ...group,
         rows: group.rows.map(row => 
           row.id === rowId ? { ...row, [field]: value } : row
-        ) as [ManualJournalRow, ManualJournalRow]
+        )
       }))
+    );
+  };
+
+  /** 추가 행 추가 */
+  const addAdditionalRow = (groupId: number) => {
+    setJournalGroups(prev => 
+      prev.map(group => {
+        if (group.id === groupId) {
+          const newRowId = Date.now();
+          return {
+            ...group,
+            rows: [...group.rows, createEmptyRow(newRowId)]
+          };
+        }
+        return group;
+      })
     );
   };
 
@@ -615,6 +654,7 @@ export default function ManualJournalPage() {
                 groupIndex={index}
                 isFirstGroup={index === 0}
                 onUpdateRow={updateRow}
+                onAddAdditionalRow={addAdditionalRow}
                 debitSubtotal={groupDebitSubtotal}
                 creditSubtotal={groupCreditSubtotal}
                 accounts={accounts}

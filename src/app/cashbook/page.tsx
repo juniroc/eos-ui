@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import ExcelJS from 'exceljs';
 import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
 interface CashTransaction {
@@ -81,7 +82,7 @@ export default function CashbookPage() {
   });
   const [loading, setLoading] = useState(false);
   const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
-  const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
+  const [depositTransactions, setDepositTransactions] = useState<Array<{ accountCode: string; transactions: CashTransaction[] }>>([]);
   const [hasSearched, setHasSearched] = useState(false);
   
   // 계정과목 및 거래처 옵션
@@ -130,20 +131,6 @@ export default function CashbookPage() {
     }
   }, [token]);
 
-  // 중복 제거 함수
-  const removeDuplicateTransactions = (transactions: CashTransaction[]): CashTransaction[] => {
-    const seen = new Set<string>();
-    return transactions.filter(tx => {
-      const key = `${tx.id}-${tx.date}-${tx.balance}`;
-      if (seen.has(key)) {
-        console.warn('중복 거래 발견:', tx);
-        return false;
-      }
-      seen.add(key);
-      return true;
-    });
-  };
-
   /** 현금출납장 조회 */
   const fetchCashbook = useCallback(async () => {
     if (!token) return;
@@ -181,7 +168,7 @@ export default function CashbookPage() {
       
       // API 응답 구조에 맞게 데이터 파싱
       let cashData: CashTransaction[] = [];
-      let depositData: CashTransaction[] = [];
+      const depositDataGroups: Array<{ accountCode: string; transactions: CashTransaction[] }> = [];
       
       // API 응답 구조 처리: results 배열 또는 직접 응답
       if (data && data.results && Array.isArray(data.results)) {
@@ -207,6 +194,8 @@ export default function CashbookPage() {
             }));
             cashData = [...cashData, ...newCashData];
           } else if (item.result && item.result.type === 'DEPOSIT' && item.result.accounts) {
+            const depositTransactionsForAccount: CashTransaction[] = [];
+            
             (item.result.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
               // rows가 있으면 거래 내역 추가
               if (account.rows && account.rows.length > 0) {
@@ -221,7 +210,7 @@ export default function CashbookPage() {
                   note: row.note,
                   voucherId: row.voucherId
                 }));
-                depositData = [...depositData, ...accountData];
+                depositTransactionsForAccount.push(...accountData);
               } else {
                 // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
                 const accountInfo = {
@@ -235,8 +224,13 @@ export default function CashbookPage() {
                   note: `계좌번호: ${account.accountNumber}`,
                   voucherId: undefined
                 };
-                depositData = [...depositData, accountInfo];
+                depositTransactionsForAccount.push(accountInfo);
               }
+            });
+            
+            depositDataGroups.push({
+              accountCode: accountCodeStr,
+              transactions: depositTransactionsForAccount
             });
           }
         });
@@ -255,6 +249,8 @@ export default function CashbookPage() {
             voucherId: row.voucherId
           }));
         } else if (data.type === 'DEPOSIT' && data.accounts) {
+          const depositTransactionsForAccount: CashTransaction[] = [];
+          
           (data.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
             // rows가 있으면 거래 내역 추가
             if (account.rows && account.rows.length > 0) {
@@ -269,7 +265,7 @@ export default function CashbookPage() {
                 note: row.note,
                 voucherId: row.voucherId
               }));
-              depositData = [...depositData, ...accountData];
+              depositTransactionsForAccount.push(...accountData);
             } else {
               // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
               const accountInfo = {
@@ -283,15 +279,21 @@ export default function CashbookPage() {
                 note: `계좌번호: ${account.accountNumber}`,
                 voucherId: undefined
               };
-              depositData = [...depositData, accountInfo];
+              depositTransactionsForAccount.push(accountInfo);
             }
+          });
+          
+          // 특정 계정코드 조회 시 accountCode는 URL 파라미터에서 가져온 값 사용
+          depositDataGroups.push({
+            accountCode: filters.accountCode || 'DEPOSIT',
+            transactions: depositTransactionsForAccount
           });
         }
       }
       
       // 중복 제거 후 데이터 설정
-      setCashTransactions(removeDuplicateTransactions(cashData));
-      setDepositTransactions(removeDuplicateTransactions(depositData));
+      setCashTransactions(cashData);
+      setDepositTransactions(depositDataGroups);
       setHasSearched(true);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
@@ -301,36 +303,174 @@ export default function CashbookPage() {
   }, [token, filters]);
 
   /** 다운로드 */
-  const handleDownload = () => {
-    // CSV 형태로 다운로드
-    const csvContent = [
-      ['구분', '일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'],
-      ...cashTransactions.map(tx => [
-        '현금',
-        tx.date,
-        tx.deposit ? tx.deposit.toLocaleString() : '',
-        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
-        tx.balance.toLocaleString(),
-        tx.accountName,
-        tx.partnerName || '',
-        tx.note || ''
-      ]),
-      ...depositTransactions.map(tx => [
-        '보통예금',
-        tx.date,
-        tx.deposit ? tx.deposit.toLocaleString() : '',
-        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
-        tx.balance.toLocaleString(),
-        tx.accountName,
-        tx.partnerName || '',
-        tx.note || ''
-      ])
-    ].map(row => row.join(',')).join('\n');
+  const handleDownload = async () => {
+    // 날짜를 yymmdd 형식으로 변환
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const yy = String(date.getFullYear()).slice(2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${yy}${mm}${dd}`;
+    };
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    // ExcelJS 워크북 생성
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('현금출납장');
+
+    let currentRow = 1;
+
+    // 1행: 타이틀 "현금출납장"
+    worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+    const titleCell = worksheet.getCell(`A${currentRow}`);
+    titleCell.value = '현금출납장';
+    titleCell.font = { size: 14 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    currentRow++;
+
+    // 2행: 빈 줄
+    currentRow++;
+
+    // 현금 테이블
+    if (cashTransactions.length > 0) {
+      // 부제목: 현금
+      worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+      const cashSubtitleCell = worksheet.getCell(`A${currentRow}`);
+      cashSubtitleCell.value = '현금';
+      cashSubtitleCell.font = { size: 11 };
+      cashSubtitleCell.alignment = { horizontal: 'left', vertical: 'middle' };
+      currentRow++;
+
+      // 헤더
+      const cashHeaderRow = worksheet.getRow(currentRow);
+      cashHeaderRow.values = ['일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'];
+      cashHeaderRow.font = { bold: true };
+      cashHeaderRow.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+      currentRow++;
+
+      // 데이터
+      cashTransactions.forEach((tx) => {
+        const row = worksheet.getRow(currentRow);
+        row.values = [
+          formatDate(tx.date),
+          tx.deposit || '',
+          tx.withdrawal || '',
+          tx.balance,
+          tx.accountName,
+          tx.partnerName || '',
+          tx.note || ''
+        ];
+        row.eachCell((cell, colNumber) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+          };
+          // 숫자 컬럼(입금, 출금, 잔액)은 오른쪽 정렬
+          if (colNumber >= 2 && colNumber <= 4) {
+            cell.alignment = { horizontal: 'right', vertical: 'middle' };
+          } else {
+            cell.alignment = { horizontal: 'left', vertical: 'middle' };
+          }
+        });
+        currentRow++;
+      });
+
+      // 현금 테이블 후 빈 줄
+      currentRow++;
+    }
+
+    // 보통예금 테이블들
+    depositTransactions.forEach((group, groupIndex) => {
+      if (group.transactions.length > 0) {
+        // 부제목: 보통예금-계좌번호
+        worksheet.mergeCells(`A${currentRow}:H${currentRow}`);
+        const depositSubtitleCell = worksheet.getCell(`A${currentRow}`);
+        depositSubtitleCell.value = `보통예금-${group.accountCode}`;
+        depositSubtitleCell.font = { size: 11 };
+        depositSubtitleCell.alignment = { horizontal: 'left', vertical: 'middle' };
+        currentRow++;
+
+        // 헤더
+        const depositHeaderRow = worksheet.getRow(currentRow);
+        depositHeaderRow.values = ['일자', '입금', '출금', '잔액', '계정과목', '거래처', '적요'];
+        depositHeaderRow.font = { bold: true };
+        depositHeaderRow.eachCell((cell) => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+          };
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        });
+        currentRow++;
+
+        // 데이터
+        group.transactions.forEach((tx) => {
+          const row = worksheet.getRow(currentRow);
+          row.values = [
+            formatDate(tx.date),
+            tx.deposit || '',
+            tx.withdrawal || '',
+            tx.balance,
+            tx.accountName,
+            tx.partnerName || '',
+            tx.note || ''
+          ];
+          row.eachCell((cell, colNumber) => {
+            cell.border = {
+              top: { style: 'thin', color: { argb: 'FF000000' } },
+              left: { style: 'thin', color: { argb: 'FF000000' } },
+              bottom: { style: 'thin', color: { argb: 'FF000000' } },
+              right: { style: 'thin', color: { argb: 'FF000000' } }
+            };
+            // 숫자 컬럼(입금, 출금, 잔액)은 오른쪽 정렬
+            if (colNumber >= 2 && colNumber <= 4) {
+              cell.alignment = { horizontal: 'right', vertical: 'middle' };
+            } else {
+              cell.alignment = { horizontal: 'left', vertical: 'middle' };
+            }
+          });
+          currentRow++;
+        });
+
+        // 보통예금 테이블 후 빈 줄 (마지막 테이블이 아니면)
+        if (groupIndex < depositTransactions.length - 1) {
+          currentRow++;
+        }
+      }
+    });
+
+    // 컬럼 너비 설정
+    worksheet.getColumn(1).width = 10;  // 일자
+    worksheet.getColumn(2).width = 15;  // 입금
+    worksheet.getColumn(3).width = 15;  // 출금
+    worksheet.getColumn(4).width = 15;  // 잔액
+    worksheet.getColumn(5).width = 20;  // 계정과목
+    worksheet.getColumn(6).width = 20;  // 거래처
+    worksheet.getColumn(7).width = 30;  // 적요
+
+    // 불필요한 열 숨기기
+    for (let i = 8; i <= 11; i++) {
+      worksheet.getColumn(i).hidden = true;
+    }
+
+    // Excel 파일 다운로드
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `현금출납장_${filters.startDate}_${filters.endDate}.csv`;
+    link.download = `현금출납장_${filters.startDate}_${filters.endDate}.xlsx`;
     link.click();
   };
 
@@ -580,26 +720,26 @@ export default function CashbookPage() {
         )}
 
         {/* 보통예금 테이블 - 조회 후 표시 */}
-        {hasSearched && (
-           <div className="flex flex-col gap-2 mb-6">
-             <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
-             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
-               <thead>
-                 <tr>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
-                 </tr>
-               </thead>
+        {hasSearched && depositTransactions.map((depositGroup, groupIndex) => (
+          <div key={`deposit-group-${groupIndex}`} className="flex flex-col gap-2 mb-6">
+            <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호({depositGroup.accountCode})</h3>
+            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
+              <thead>
+                <tr>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
+                </tr>
+              </thead>
               <tbody>
-                {depositTransactions.length > 0 ? (
-                  depositTransactions.map((tx, index) => (
+                {depositGroup.transactions.length > 0 ? (
+                  depositGroup.transactions.map((tx, index) => (
                     <tr 
-                      key={`deposit-${tx.id}-${index}`}
+                      key={`deposit-${depositGroup.accountCode}-${tx.id}-${index}`}
                     >
                       <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                         {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
@@ -623,10 +763,10 @@ export default function CashbookPage() {
                     </td>
                   </tr>
                 )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
           </div>
-        )}
+        ))}
         </div>
       </div>
     </div>

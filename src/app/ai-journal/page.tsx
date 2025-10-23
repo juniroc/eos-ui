@@ -55,7 +55,6 @@ export default function AIJournalPage() {
   });
   
   const [loading, setLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
@@ -287,12 +286,11 @@ export default function AIJournalPage() {
   // 실제 API 호출로 파일 처리 (2단계 프로세스)
   const processFiles = async (selectedFiles: FileList) => {
     if (!token) {
-      setError('로그인이 필요합니다.');
+      alert('로그인이 필요합니다.');
       return;
     }
 
     setFiles(selectedFiles);
-    setError(null);
     setLoading(true);
 
     try {
@@ -383,7 +381,7 @@ export default function AIJournalPage() {
               );
             } catch (err) {
               console.error('분개 처리 에러:', err);
-              setError(err instanceof Error ? err.message : '분개 처리 중 오류가 발생했습니다.');
+              alert(err instanceof Error ? err.message : '분개 처리 중 오류가 발생했습니다.');
               setStep('upload');
             }
           }, 500);
@@ -392,7 +390,7 @@ export default function AIJournalPage() {
       
     } catch (err) {
       console.error('AI 분개 처리 에러:', err);
-      setError(err instanceof Error ? err.message : 'AI 분개 처리 중 오류가 발생했습니다.');
+      alert(err instanceof Error ? err.message : 'AI 분개 처리 중 오류가 발생했습니다.');
       setStep('upload');
     } finally {
       setLoading(false);
@@ -451,24 +449,22 @@ export default function AIJournalPage() {
   // 저장 핸들러 (새로운 2단계 API 사용)
   const handleSave = async () => {
     if (!token) {
-      setError('로그인이 필요합니다.');
+      alert('로그인이 필요합니다.');
       return;
     }
 
     if (vouchers.length === 0) {
-      setError('저장할 데이터가 없습니다.');
+      alert('저장할 데이터가 없습니다.');
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
       
       const result = await saveAIJournal(vouchers, token);
       
       if (result.success) {
-        console.log(`✓ 저장 완료: ${result.voucherIds.length}개 전표 생성`);
-        setToastMessage(`저장되었습니다. (전표 ${result.voucherIds.length}개 생성)`);
+        setToastMessage(`${result.voucherIds.length}개의 전표가 생성되었습니다.`);
         setShowToast(true);
         // step 초기화
         setStep('upload');
@@ -484,11 +480,11 @@ export default function AIJournalPage() {
           accuracy: 0,
         });
       } else {
-        setError('저장에 실패했습니다.');
+        alert('저장에 실패했습니다.');
       }
     } catch (err) {
       console.error('저장 에러:', err);
-      setError(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
+      alert(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }

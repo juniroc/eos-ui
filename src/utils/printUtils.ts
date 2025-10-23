@@ -81,7 +81,7 @@ export const printElement = (options: PrintOptions) => {
         return Array.from(styleSheet.cssRules)
           .map(rule => rule.cssText)
           .join('\n');
-      } catch (e) {
+      } catch {
         // 외부 스타일시트는 접근할 수 없을 수 있음
         return '';
       }

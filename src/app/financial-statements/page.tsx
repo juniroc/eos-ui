@@ -19,11 +19,6 @@ interface FSRow {
   styles?: Record<string, unknown>;
 }
 
-interface Account {
-  code: string;
-  name: string;
-}
-
 interface TrialBalanceRow {
   account: string;
   debitBalance: number;

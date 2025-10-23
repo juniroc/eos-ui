@@ -880,8 +880,10 @@ export interface AIJournalTransaction {
 export interface AIJournalVoucher {
   id: string;
   date: string;
-  description: string;
   transactions: AIJournalTransaction[];
+  description?: string;
+  departmentId?: string; // 현재 미사용
+  documentId?: string; // 현재 미사용
 }
 
 export interface NewPartner {
@@ -982,58 +984,74 @@ export async function getProcessJournalEntriesStream(jobId: string, token: strin
 }
 
 // 전표 생성 API
-export async function createVoucher(voucherData: {
-  date: string;
-  description?: string;
-  departmentId?: string;
+export async function createVouchers(data: {
   proof?: File;
-}, token: string): Promise<{ id: string; [key: string]: unknown }> {
-  const formData = new FormData();
-  formData.append('date', voucherData.date);
-  
-  if (voucherData.description) {
-    formData.append('description', voucherData.description);
-  }
-  if (voucherData.departmentId) {
-    formData.append('departmentId', voucherData.departmentId);
-  }
-  if (voucherData.proof) {
-    formData.append('proof', voucherData.proof);
-  }
+  vouchers: Array<{
+    date: string;
+    description?: string;
+    departmentId?: string;
+    documentId?: string;
+  }>;
+}, token: string): Promise<{ success: boolean; ids: string[] }> {
+  // proof 파일이 있으면 multipart/form-data로 전송
+  if (data.proof) {
+    const formData = new FormData();
+    formData.append('proof', data.proof);
+    formData.append('vouchers', JSON.stringify(data.vouchers));
 
-  const response = await fetch(`${API_BASE_URL}/api/vouchers`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
-    },
-    body: formData,
-  });
+    const response = await fetch(`${API_BASE_URL}/api/vouchers`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
+      },
+      body: formData,
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || '전표 생성에 실패했습니다.');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '전표 생성에 실패했습니다.');
+    }
+
+    return response.json();
+  } else {
+    // proof 파일이 없으면 application/json으로 전송
+    const response = await fetch(`${API_BASE_URL}/api/vouchers`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ vouchers: data.vouchers }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '전표 생성에 실패했습니다.');
+    }
+
+    return response.json();
   }
-
-  return response.json();
 }
 
 // 거래 생성 API
-export async function createTransaction(transactionData: {
-  voucherId: string;
-  amount: number;
-  partnerId?: string;
-  accountId: string;
-  debitCredit: boolean;
-  note?: string;
-}, token: string): Promise<{ id: string; [key: string]: unknown }> {
+export async function createTransactions(data: {
+  transactions: Array<{
+    voucherId: string;
+    amount: number;
+    partnerId?: string;
+    accountId: string;
+    debitCredit: boolean;
+    note?: string;
+  }>;
+}, token: string): Promise<{ success: boolean; ids: string[] }> {
   const response = await fetch(`${API_BASE_URL}/api/transactions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify(transactionData),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
@@ -1046,42 +1064,41 @@ export async function createTransaction(transactionData: {
 
 // AI 분개 결과 저장 API (새로운 2단계 방식)
 export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean; voucherIds: string[] }> {
-  const voucherIds: string[] = [];
-  
   try {
-    // 각 voucher에 대해 전표 생성 후 거래들 생성
-    for (const voucher of vouchers) {
-      console.log('전표 생성 중:', voucher);
-      
-      // 1단계: 전표 생성
-      const voucherResult = await createVoucher({
+    console.log('전표 생성 중:', vouchers.length, '개');
+    
+    // 1단계: 모든 전표를 한 번에 생성
+    const voucherResult = await createVouchers({
+      vouchers: vouchers.map(voucher => ({
         date: voucher.date,
         description: voucher.description,
-      }, token);
-      
-      const voucherId = voucherResult.id;
-      voucherIds.push(voucherId);
-      
-      console.log('전표 생성 완료:', voucherId);
-      
-      // 2단계: 각 거래 생성
-      for (const transaction of voucher.transactions) {
-        console.log('거래 생성 중:', transaction);
-        
-        await createTransaction({
-          voucherId: voucherId,
-          amount: transaction.amount,
-          accountId: transaction.accountName || '', // 계정과목을 accountId로 사용
-          debitCredit: transaction.debitCredit || false,
-          note: transaction.note,
-          partnerId: transaction.partnerName, // 거래처명을 partnerId로 사용 (실제로는 ID가 필요할 수 있음)
-        }, token);
-        
-        console.log('거래 생성 완료');
-      }
-    }
+        departmentId: voucher.departmentId,
+        documentId: voucher.documentId,
+      }))
+    }, token);
     
-    return { success: true, voucherIds };
+    console.log('전표 생성 완료:', voucherResult.ids);
+    
+    // 2단계: 각 전표의 거래에 voucherId를 매핑하여 모든 거래를 한 번에 생성
+    const allTransactions = vouchers.flatMap((voucher, index) => {
+      const voucherId = voucherResult.ids[index];
+      return voucher.transactions.map(transaction => ({
+        voucherId,
+        amount: transaction.amount,
+        accountId: transaction.accountName || '', // 계정과목을 accountId로 사용
+        debitCredit: transaction.debitCredit || false,
+        note: transaction.note,
+        partnerId: transaction.partnerName, // 거래처명을 partnerId로 사용 (실제로는 ID가 필요할 수 있음)
+      }));
+    });
+    
+    console.log('거래 생성 중:', allTransactions.length, '개');
+    
+    await createTransactions({ transactions: allTransactions }, token);
+    
+    console.log('거래 생성 완료');
+    
+    return { success: true, voucherIds: voucherResult.ids };
   } catch (error) {
     console.error('저장 중 오류:', error);
     throw error;

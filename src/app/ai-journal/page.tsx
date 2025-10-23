@@ -684,10 +684,14 @@ export default function AIJournalPage() {
                           )}
                           <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
                             <input
-                              type="date"
-                              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none" 
-                              value={voucher.date || ''}
-                              onChange={(e) => handleVoucherDescriptionChange(voucher.id, e.target.value)}
+                              type="text"
+                              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
+                              placeholder="yyyy.mm.dd"
+                              value={voucher.date ? voucher.date.replace(/-/g, '.') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/[^\d.]/g, '');
+                                handleVoucherDescriptionChange(voucher.id, value.replace(/\./g, '-'));
+                              }}
                             />
                           </div>
                         </div>
@@ -734,7 +738,7 @@ export default function AIJournalPage() {
                                 <option value="">선택하기</option>
                                 {accounts.map(account => (
                                   <option key={account.id} value={account.name}>
-                                    {account.code} {account.name}
+                                    {account.name}
                                   </option>
                                 ))}
                               </select>
@@ -823,7 +827,7 @@ export default function AIJournalPage() {
                                 <option value="">선택하기</option>
                                 {accounts.map(account => (
                                   <option key={account.id} value={account.name}>
-                                    {account.code} {account.name}
+                                    {account.name}
                                   </option>
                                 ))}
                               </select>

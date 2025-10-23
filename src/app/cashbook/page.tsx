@@ -579,7 +579,7 @@ export default function CashbookPage() {
                   <option value="">선택하기</option>
                   {accounts.map((account) => (
                     <option key={account.id} value={account.code}>
-                      {account.name} ({account.code})
+                      {account.name}
                     </option>
                   ))}
                 </select>

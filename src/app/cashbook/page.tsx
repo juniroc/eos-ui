@@ -81,8 +81,7 @@ export default function CashbookPage() {
   });
   const [loading, setLoading] = useState(false);
   const [cashTransactions, setCashTransactions] = useState<CashTransaction[]>([]);
-  const [depositTransactions, setDepositTransactions] = useState<CashTransaction[]>([]);
-  const [hasDepositData, setHasDepositData] = useState(false);
+  const [depositTransactions, setDepositTransactions] = useState<Array<{ accountCode: string; transactions: CashTransaction[] }>>([]);
   const [hasSearched, setHasSearched] = useState(false);
   
   // 계정과목 및 거래처 옵션
@@ -131,20 +130,6 @@ export default function CashbookPage() {
     }
   }, [token]);
 
-  // 중복 제거 함수
-  const removeDuplicateTransactions = (transactions: CashTransaction[]): CashTransaction[] => {
-    const seen = new Set<string>();
-    return transactions.filter(tx => {
-      const key = `${tx.id}-${tx.date}-${tx.balance}`;
-      if (seen.has(key)) {
-        console.warn('중복 거래 발견:', tx);
-        return false;
-      }
-      seen.add(key);
-      return true;
-    });
-  };
-
   /** 현금출납장 조회 */
   const fetchCashbook = useCallback(async () => {
     if (!token) return;
@@ -182,8 +167,7 @@ export default function CashbookPage() {
       
       // API 응답 구조에 맞게 데이터 파싱
       let cashData: CashTransaction[] = [];
-      let depositData: CashTransaction[] = [];
-      let hasDeposit = false;
+      const depositDataGroups: Array<{ accountCode: string; transactions: CashTransaction[] }> = [];
       
       // API 응답 구조 처리: results 배열 또는 직접 응답
       if (data && data.results && Array.isArray(data.results)) {
@@ -209,7 +193,8 @@ export default function CashbookPage() {
             }));
             cashData = [...cashData, ...newCashData];
           } else if (item.result && item.result.type === 'DEPOSIT' && item.result.accounts) {
-            hasDeposit = true;
+            const depositTransactionsForAccount: CashTransaction[] = [];
+            
             (item.result.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
               // rows가 있으면 거래 내역 추가
               if (account.rows && account.rows.length > 0) {
@@ -224,7 +209,7 @@ export default function CashbookPage() {
                   note: row.note,
                   voucherId: row.voucherId
                 }));
-                depositData = [...depositData, ...accountData];
+                depositTransactionsForAccount.push(...accountData);
               } else {
                 // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
                 const accountInfo = {
@@ -238,8 +223,13 @@ export default function CashbookPage() {
                   note: `계좌번호: ${account.accountNumber}`,
                   voucherId: undefined
                 };
-                depositData = [...depositData, accountInfo];
+                depositTransactionsForAccount.push(accountInfo);
               }
+            });
+            
+            depositDataGroups.push({
+              accountCode: accountCodeStr,
+              transactions: depositTransactionsForAccount
             });
           }
         });
@@ -258,7 +248,8 @@ export default function CashbookPage() {
             voucherId: row.voucherId
           }));
         } else if (data.type === 'DEPOSIT' && data.accounts) {
-          hasDeposit = true;
+          const depositTransactionsForAccount: CashTransaction[] = [];
+          
           (data.accounts as { partnerId: string; partnerName: string; bankName: string; accountNumber: string; openingBalance: number; rows?: unknown[] }[]).forEach((account) => {
             // rows가 있으면 거래 내역 추가
             if (account.rows && account.rows.length > 0) {
@@ -273,7 +264,7 @@ export default function CashbookPage() {
                 note: row.note,
                 voucherId: row.voucherId
               }));
-              depositData = [...depositData, ...accountData];
+              depositTransactionsForAccount.push(...accountData);
             } else {
               // rows가 없어도 계좌 정보는 표시 (openingBalance 기준)
               const accountInfo = {
@@ -287,16 +278,21 @@ export default function CashbookPage() {
                 note: `계좌번호: ${account.accountNumber}`,
                 voucherId: undefined
               };
-              depositData = [...depositData, accountInfo];
+              depositTransactionsForAccount.push(accountInfo);
             }
+          });
+          
+          // 특정 계정코드 조회 시 accountCode는 URL 파라미터에서 가져온 값 사용
+          depositDataGroups.push({
+            accountCode: filters.accountCode || 'DEPOSIT',
+            transactions: depositTransactionsForAccount
           });
         }
       }
       
       // 중복 제거 후 데이터 설정
-      setCashTransactions(removeDuplicateTransactions(cashData));
-      setDepositTransactions(removeDuplicateTransactions(depositData));
-      setHasDepositData(hasDeposit);
+      setCashTransactions(cashData);
+      setDepositTransactions(depositDataGroups);
       setHasSearched(true);
     } catch (err) {
       console.error('현금출납장 조회 에러:', err);
@@ -320,16 +316,18 @@ export default function CashbookPage() {
         tx.partnerName || '',
         tx.note || ''
       ]),
-      ...depositTransactions.map(tx => [
-        '보통예금',
-        tx.date,
-        tx.deposit ? tx.deposit.toLocaleString() : '',
-        tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
-        tx.balance.toLocaleString(),
-        tx.accountName,
-        tx.partnerName || '',
-        tx.note || ''
-      ])
+      ...depositTransactions.flatMap(group => 
+        group.transactions.map(tx => [
+          `보통예금-${group.accountCode}`,
+          tx.date,
+          tx.deposit ? tx.deposit.toLocaleString() : '',
+          tx.withdrawal ? tx.withdrawal.toLocaleString() : '',
+          tx.balance.toLocaleString(),
+          tx.accountName,
+          tx.partnerName || '',
+          tx.note || ''
+        ])
+      )
     ].map(row => row.join(',')).join('\n');
 
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -585,26 +583,26 @@ export default function CashbookPage() {
         )}
 
         {/* 보통예금 테이블 - 조회 후 표시 */}
-        {hasSearched && (
-           <div className="flex flex-col gap-2 mb-6">
-             <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호(거래처)</h3>
-             <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
-               <thead>
-                 <tr>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
-                   <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
-                 </tr>
-               </thead>
+        {hasSearched && depositTransactions.map((depositGroup, groupIndex) => (
+          <div key={`deposit-group-${groupIndex}`} className="flex flex-col gap-2 mb-6">
+            <h3 className="text-[13px] leading-[140%] font-semibold text-[#1E1E1E]">보통예금-계좌번호({depositGroup.accountCode})</h3>
+            <table className="w-full border border-[#D9D9D9] text-sm text-[#757575] table-fixed">
+              <thead>
+                <tr>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[69px]">일자</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">입금</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">출금</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">잔액</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">계정과목</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">거래처</th>
+                  <th className="bg-[#F5F5F5] p-2 border border-[#D9D9D9] text-xs text-[#757575] w-[calc((100%-69px)/6)]">적요</th>
+                </tr>
+              </thead>
               <tbody>
-                {depositTransactions.length > 0 ? (
-                  depositTransactions.map((tx, index) => (
+                {depositGroup.transactions.length > 0 ? (
+                  depositGroup.transactions.map((tx, index) => (
                     <tr 
-                      key={`deposit-${tx.id}-${index}`}
+                      key={`deposit-${depositGroup.accountCode}-${tx.id}-${index}`}
                     >
                       <td className="p-2 text-xs border border-[#D9D9D9] text-center">
                         {tx.date ? new Date(tx.date).toLocaleDateString('ko-KR', {
@@ -628,10 +626,10 @@ export default function CashbookPage() {
                     </td>
                   </tr>
                 )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
           </div>
-        )}
+        ))}
         </div>
       </div>
     </div>

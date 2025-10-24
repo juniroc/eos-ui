@@ -121,6 +121,8 @@ export default function AIJournalPage() {
           amount: (debit.amount as number) || 0,
           partnerName: (debit.partner as string) || '',
           accountName: (debit.account as string) || '',
+          partnerId: (debit.partnerId as string) || '',
+          accountId: (debit.accountId as string) || '',
           debitCredit: true, // 차변
           note: (debit.note as string) || '',
         });
@@ -137,6 +139,8 @@ export default function AIJournalPage() {
           amount: (credit.amount as number) || 0,
           partnerName: (credit.partner as string) || '',
           accountName: (credit.account as string) || '',
+          partnerId: (credit.partnerId as string) || '',
+          accountId: (credit.accountId as string) || '',
           debitCredit: false, // 대변
           note: (credit.note as string) || '',
         });
@@ -427,6 +431,60 @@ export default function AIJournalPage() {
               transactions: voucher.transactions.map(transaction =>
                 transaction.id === transactionId
                   ? { ...transaction, [field]: value }
+                  : transaction
+              )
+            }
+          : voucher
+      )
+    );
+  };
+
+  // 계정과목 선택 핸들러 (name과 id를 함께 저장)
+  const handleAccountChange = (
+    voucherId: string,
+    transactionId: string,
+    accountName: string
+  ) => {
+    const selectedAccount = accounts.find(account => account.name === accountName);
+    setVouchers(prev => 
+      prev.map(voucher => 
+        voucher.id === voucherId
+          ? {
+              ...voucher,
+              transactions: voucher.transactions.map(transaction =>
+                transaction.id === transactionId
+                  ? { 
+                      ...transaction, 
+                      accountName,
+                      accountId: selectedAccount?.id || ''
+                    }
+                  : transaction
+              )
+            }
+          : voucher
+      )
+    );
+  };
+
+  // 거래처 선택 핸들러 (name과 id를 함께 저장)
+  const handlePartnerChange = (
+    voucherId: string,
+    transactionId: string,
+    partnerName: string
+  ) => {
+    const selectedPartner = partners.find(partner => partner.name === partnerName);
+    setVouchers(prev => 
+      prev.map(voucher => 
+        voucher.id === voucherId
+          ? {
+              ...voucher,
+              transactions: voucher.transactions.map(transaction =>
+                transaction.id === transactionId
+                  ? { 
+                      ...transaction, 
+                      partnerName,
+                      partnerId: selectedPartner?.id || ''
+                    }
                   : transaction
               )
             }
@@ -733,7 +791,7 @@ export default function AIJournalPage() {
                               <select
                                 className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.accountName || ''}
-                                onChange={(e) => handleCellChange(voucher.id, transaction.id, 'accountName', e.target.value)}
+                                onChange={(e) => handleAccountChange(voucher.id, transaction.id, e.target.value)}
                               >
                                 <option value="">선택하기</option>
                                 {accounts.map(account => (
@@ -760,7 +818,7 @@ export default function AIJournalPage() {
                               <select
                                 className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.partnerName || ''}
-                                onChange={(e) => handleCellChange(voucher.id, transaction.id, 'partnerName', e.target.value)}
+                                onChange={(e) => handlePartnerChange(voucher.id, transaction.id, e.target.value)}
                               >
                                 <option value="">선택하기</option>
                                 {partners.map(partner => (
@@ -822,7 +880,7 @@ export default function AIJournalPage() {
                               <select
                                 className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.accountName || ''}
-                                onChange={(e) => handleCellChange(voucher.id, transaction.id, 'accountName', e.target.value)}
+                                onChange={(e) => handleAccountChange(voucher.id, transaction.id, e.target.value)}
                               >
                                 <option value="">선택하기</option>
                                 {accounts.map(account => (
@@ -849,7 +907,7 @@ export default function AIJournalPage() {
                               <select
                                 className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
                                 value={transaction.partnerName || ''}
-                                onChange={(e) => handleCellChange(voucher.id, transaction.id, 'partnerName', e.target.value)}
+                                onChange={(e) => handlePartnerChange(voucher.id, transaction.id, e.target.value)}
                               >
                                 <option value="">선택하기</option>
                                 {partners.map(partner => (

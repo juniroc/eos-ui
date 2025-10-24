@@ -376,22 +376,6 @@ export default function AIJournalPage() {
     fetchData();
   }, [token]);
 
-  // RawTransaction을 AIJournalTransaction으로 변환하는 함수
-  // const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
-  //   // transactionType에 따라 차변/대변 결정
-  //   const isDebit = rawTransaction.transactionType === '출금' || rawTransaction.transactionType === '출금 – 기타거래처';
-  //   
-  //   return {
-  //     id: `${rawTransaction.date}_${rawTransaction.counterpartyName}_${rawTransaction.totalAmount}_${Math.random()}`,
-  //     date: rawTransaction.date,
-  //     description: rawTransaction.description,
-  //     amount: rawTransaction.totalAmount,
-  //     partnerName: rawTransaction.counterpartyName,
-  //     accountName: isDebit ? '현금' : '매출', // 기본값, 사용자가 수정 가능
-  //     debitCredit: isDebit,
-  //     note: rawTransaction.items.join(', '),
-  //   };
-  // };
 
   // API 응답의 voucher를 UI 구조로 변환하는 함수
   const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>): AIJournalVoucher => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import FileUploadBox from '@/components/FileUploadBox';
 import Button from '@/components/Button';
@@ -31,6 +31,294 @@ interface ProgressData {
   total: number;
 }
 
+// VoucherRow 컴포넌트 Props
+interface VoucherRowProps {
+  voucher: AIJournalVoucher;
+  idx: number;
+  accounts: UserAccount[];
+  partners: PartnerItem[];
+  onAccountChange: (voucherId: string, transactionId: string, accountName: string) => void;
+  onPartnerChange: (voucherId: string, transactionId: string, partnerName: string) => void;
+  onCellChange: (voucherId: string, transactionId: string, field: keyof AIJournalTransaction, value: string | number | boolean) => void;
+  onVoucherDescriptionChange: (voucherId: string, value: string) => void;
+}
+
+// VoucherRow 컴포넌트 - 메모이제이션으로 불필요한 리렌더링 방지
+const VoucherRow = React.memo(({ 
+  voucher, 
+  idx, 
+  accounts, 
+  partners, 
+  onAccountChange, 
+  onPartnerChange, 
+  onCellChange, 
+  onVoucherDescriptionChange 
+}: VoucherRowProps) => {
+  // transactions를 useMemo로 최적화
+  const transactions = useMemo(() => {
+    return voucher.transactions && Array.isArray(voucher.transactions) 
+      ? voucher.transactions 
+      : [];
+  }, [voucher.transactions]);
+  
+  // 소계 계산을 메모이제이션
+  const debitSubtotal = useMemo(() => 
+    transactions.filter(t => t.debitCredit).reduce((sum, t) => sum + (t.amount || 0), 0),
+    [transactions]
+  );
+  
+  const creditSubtotal = useMemo(() => 
+    transactions.filter(t => !t.debitCredit).reduce((sum, t) => sum + (t.amount || 0), 0),
+    [transactions]
+  );
+
+  return (
+    <div className="flex flex-row items-start w-full">
+      {/* 번호 + 일자 그룹 */}
+      <div className="flex flex-col items-start w-[150px] min-w-[150px]">
+        <div className="flex flex-row items-center w-full">
+          {/* 번호 컬럼 */}
+          <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
+            {idx === 0 && (
+              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
+              </div>
+            )}
+            <div className="flex flex-col justify-center items-center px-1 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{idx + 1}</span>
+            </div>
+          </div>
+          {/* 일자 컬럼 */}
+          <div className="flex flex-col justify-center items-start w-[110px] min-w-[110px]">
+            {idx === 0 && (
+              <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
+              </div>
+            )}
+            <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
+              <input
+                type="text"
+                className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
+                placeholder="yyyy.mm.dd"
+                value={voucher.date ? voucher.date.replace(/-/g, '.') : ''}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^\d.]/g, '');
+                  onVoucherDescriptionChange(voucher.id, value.replace(/\./g, '-'));
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        {/* 소계 */}
+        <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9]">
+          <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
+        </div>
+      </div>
+      
+      {/* 차변 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[241px]">
+        {idx === 0 && (
+          <>
+            {/* 차변 헤더 */}
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">차변</span>
+            </div>
+            {/* 차변 세부 헤더 */}
+            <div className="flex flex-row items-start w-full">
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* 차변 입력 행들 */}
+        {transactions.map((transaction, tIdx) => (
+          transaction.debitCredit ? (
+            <div key={`debit-${tIdx}`} className="flex flex-row items-start w-full">
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  value={transaction.accountName || ''}
+                  onChange={(e) => onAccountChange(voucher.id, transaction.id, e.target.value)}
+                >
+                  <option value="">선택하기</option>
+                  {accounts.map(account => (
+                    <option key={account.id} value={account.name}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <input
+                  type="text"
+                  className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  placeholder="입력하기"
+                  value={transaction.amount ? transaction.amount.toLocaleString() : ''}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                    onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
+                  }}
+                />
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+              </div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  value={transaction.partnerName || ''}
+                  onChange={(e) => onPartnerChange(voucher.id, transaction.id, e.target.value)}
+                >
+                  <option value="">선택하기</option>
+                  {partners.map(partner => (
+                    <option key={partner.id} value={partner.name}>
+                      {partner.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ) : (
+            <div key={`debit-empty-${tIdx}`} className="flex flex-row items-start w-full">
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+            </div>
+          )
+        ))}
+        
+        {/* 차변 소계 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+              {debitSubtotal.toLocaleString()}
+            </span>
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* 대변 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[241px]">
+        {idx === 0 && (
+          <>
+            {/* 대변 헤더 */}
+            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
+            </div>
+            {/* 대변 세부 헤더 */}
+            <div className="flex flex-row items-start w-full">
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              </div>
+              <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
+                <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              </div>
+            </div>
+          </>
+        )}
+        
+        {/* 대변 입력 행들 */}
+        {transactions.map((transaction, tIdx) => (
+          !transaction.debitCredit ? (
+            <div key={`credit-${tIdx}`} className="flex flex-row items-start w-full">
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  value={transaction.accountName || ''}
+                  onChange={(e) => onAccountChange(voucher.id, transaction.id, e.target.value)}
+                >
+                  <option value="">선택하기</option>
+                  {accounts.map(account => (
+                    <option key={account.id} value={account.name}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <input
+                  type="text"
+                  className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  placeholder="입력하기"
+                  value={transaction.amount ? transaction.amount.toLocaleString() : ''}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                    onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
+                  }}
+                />
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+              </div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                <select
+                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                  value={transaction.partnerName || ''}
+                  onChange={(e) => onPartnerChange(voucher.id, transaction.id, e.target.value)}
+                >
+                  <option value="">선택하기</option>
+                  {partners.map(partner => (
+                    <option key={partner.id} value={partner.name}>
+                      {partner.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ) : (
+            <div key={`credit-empty-${tIdx}`} className="flex flex-row items-start w-full">
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
+            </div>
+          )
+        ))}
+        
+        {/* 대변 소계 행 */}
+        <div className="flex flex-row items-start w-full">
+          <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+              {creditSubtotal.toLocaleString()}
+            </span>
+            <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* 적요 그룹 */}
+      <div className="flex flex-col items-start flex-1 min-w-[120px]">
+        {idx === 0 && (
+          <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
+          </div>
+        )}
+        {transactions.map((transaction, tIdx) => (
+          <div key={`description-${tIdx}`} className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+            <input
+              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              placeholder="입력하기"
+              value={tIdx === 0 ? voucher.description || '' : ''}
+              onChange={(e) => tIdx === 0 && onVoucherDescriptionChange(voucher.id, e.target.value)}
+            />
+          </div>
+        ))}
+        <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+        </div>
+      </div>
+    </div>
+  );
+});
+
+VoucherRow.displayName = 'VoucherRow';
+
 export default function AIJournalPage() {
   const { token } = useAuth();
 
@@ -40,7 +328,7 @@ export default function AIJournalPage() {
   
   // 임시 vouchers 데이터
   const [vouchers, setVouchers] = useState<AIJournalVoucher[]>([]);
-  const [initialVouchers, setInitialVouchers] = useState<AIJournalVoucher[]>([]);
+  // const [initialVouchers, setInitialVouchers] = useState<AIJournalVoucher[]>([]);
   
   const [, setRawTransactions] = useState<RawTransaction[]>([]);
   const [, setNewPartners] = useState<NewPartner[]>([]);
@@ -89,21 +377,21 @@ export default function AIJournalPage() {
   }, [token]);
 
   // RawTransaction을 AIJournalTransaction으로 변환하는 함수
-  const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
-    // transactionType에 따라 차변/대변 결정
-    const isDebit = rawTransaction.transactionType === '출금' || rawTransaction.transactionType === '출금 – 기타거래처';
-    
-    return {
-      id: `${rawTransaction.date}_${rawTransaction.counterpartyName}_${rawTransaction.totalAmount}_${Math.random()}`,
-      date: rawTransaction.date,
-      description: rawTransaction.description,
-      amount: rawTransaction.totalAmount,
-      partnerName: rawTransaction.counterpartyName,
-      accountName: isDebit ? '현금' : '매출', // 기본값, 사용자가 수정 가능
-      debitCredit: isDebit,
-      note: rawTransaction.items.join(', '),
-    };
-  };
+  // const convertRawTransactionToAIJournal = (rawTransaction: RawTransaction): AIJournalTransaction => {
+  //   // transactionType에 따라 차변/대변 결정
+  //   const isDebit = rawTransaction.transactionType === '출금' || rawTransaction.transactionType === '출금 – 기타거래처';
+  //   
+  //   return {
+  //     id: `${rawTransaction.date}_${rawTransaction.counterpartyName}_${rawTransaction.totalAmount}_${Math.random()}`,
+  //     date: rawTransaction.date,
+  //     description: rawTransaction.description,
+  //     amount: rawTransaction.totalAmount,
+  //     partnerName: rawTransaction.counterpartyName,
+  //     accountName: isDebit ? '현금' : '매출', // 기본값, 사용자가 수정 가능
+  //     debitCredit: isDebit,
+  //     note: rawTransaction.items.join(', '),
+  //   };
+  // };
 
   // API 응답의 voucher를 UI 구조로 변환하는 함수
   const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>): AIJournalVoucher => {
@@ -354,7 +642,7 @@ export default function AIJournalPage() {
                   console.log(`✓ 2단계 완료: ${convertedVouchers.length}개 전표 생성`);
                   
                   setVouchers(convertedVouchers);
-                  setInitialVouchers(convertedVouchers);
+                  // setInitialVouchers(convertedVouchers);
                   setNewPartners((data.newPartners as NewPartner[]) || []);
                   
                   // 통계 계산
@@ -416,93 +704,116 @@ export default function AIJournalPage() {
     processFiles(fileList);
   };
 
-  // 표 데이터 수정 핸들러
-  const handleCellChange = (
+  // 표 데이터 수정 핸들러 - useCallback으로 최적화
+  const handleCellChange = useCallback((
     voucherId: string,
     transactionId: string,
     field: keyof AIJournalTransaction,
     value: string | number | boolean
   ) => {
-    setVouchers(prev => 
-      prev.map(voucher => 
-        voucher.id === voucherId
-          ? {
-              ...voucher,
-              transactions: voucher.transactions.map(transaction =>
-                transaction.id === transactionId
-                  ? { ...transaction, [field]: value }
-                  : transaction
-              )
-            }
-          : voucher
-      )
-    );
-  };
+    setVouchers(prev => {
+      // 변경이 필요한 voucher의 인덱스만 찾기
+      const voucherIndex = prev.findIndex(v => v.id === voucherId);
+      if (voucherIndex === -1) return prev;
+      
+      const voucher = prev[voucherIndex];
+      const transactionIndex = voucher.transactions.findIndex(t => t.id === transactionId);
+      if (transactionIndex === -1) return prev;
+      
+      // 변경된 부분만 새로 생성
+      const newTransactions = [...voucher.transactions];
+      newTransactions[transactionIndex] = {
+        ...newTransactions[transactionIndex],
+        [field]: value
+      };
+      
+      const newVouchers = [...prev];
+      newVouchers[voucherIndex] = {
+        ...voucher,
+        transactions: newTransactions
+      };
+      
+      return newVouchers;
+    });
+  }, []);
 
-  // 계정과목 선택 핸들러 (name과 id를 함께 저장)
-  const handleAccountChange = (
+  // 계정과목 선택 핸들러 - useCallback으로 최적화
+  const handleAccountChange = useCallback((
     voucherId: string,
     transactionId: string,
     accountName: string
   ) => {
-    const selectedAccount = accounts.find(account => account.name === accountName);
-    setVouchers(prev => 
-      prev.map(voucher => 
-        voucher.id === voucherId
-          ? {
-              ...voucher,
-              transactions: voucher.transactions.map(transaction =>
-                transaction.id === transactionId
-                  ? { 
-                      ...transaction, 
-                      accountName,
-                      accountId: selectedAccount?.id || ''
-                    }
-                  : transaction
-              )
-            }
-          : voucher
-      )
-    );
-  };
+    setVouchers(prev => {
+      const voucherIndex = prev.findIndex(v => v.id === voucherId);
+      if (voucherIndex === -1) return prev;
+      
+      const voucher = prev[voucherIndex];
+      const transactionIndex = voucher.transactions.findIndex(t => t.id === transactionId);
+      if (transactionIndex === -1) return prev;
+      
+      const newTransactions = [...voucher.transactions];
+      newTransactions[transactionIndex] = {
+        ...newTransactions[transactionIndex],
+        accountName,
+        accountId: accounts.find(account => account.name === accountName)?.id || ''
+      };
+      
+      const newVouchers = [...prev];
+      newVouchers[voucherIndex] = {
+        ...voucher,
+        transactions: newTransactions
+      };
+      
+      return newVouchers;
+    });
+  }, [accounts]);
 
-  // 거래처 선택 핸들러 (name과 id를 함께 저장)
-  const handlePartnerChange = (
+  // 거래처 선택 핸들러 - useCallback으로 최적화
+  const handlePartnerChange = useCallback((
     voucherId: string,
     transactionId: string,
     partnerName: string
   ) => {
-    const selectedPartner = partners.find(partner => partner.name === partnerName);
-    setVouchers(prev => 
-      prev.map(voucher => 
-        voucher.id === voucherId
-          ? {
-              ...voucher,
-              transactions: voucher.transactions.map(transaction =>
-                transaction.id === transactionId
-                  ? { 
-                      ...transaction, 
-                      partnerName,
-                      partnerId: selectedPartner?.id || ''
-                    }
-                  : transaction
-              )
-            }
-          : voucher
-      )
-    );
-  };
+    setVouchers(prev => {
+      const voucherIndex = prev.findIndex(v => v.id === voucherId);
+      if (voucherIndex === -1) return prev;
+      
+      const voucher = prev[voucherIndex];
+      const transactionIndex = voucher.transactions.findIndex(t => t.id === transactionId);
+      if (transactionIndex === -1) return prev;
+      
+      const newTransactions = [...voucher.transactions];
+      newTransactions[transactionIndex] = {
+        ...newTransactions[transactionIndex],
+        partnerName,
+        partnerId: partners.find(partner => partner.name === partnerName)?.id || ''
+      };
+      
+      const newVouchers = [...prev];
+      newVouchers[voucherIndex] = {
+        ...voucher,
+        transactions: newTransactions
+      };
+      
+      return newVouchers;
+    });
+  }, [partners]);
 
-  // 전표 설명 수정 핸들러
-  const handleVoucherDescriptionChange = (voucherId: string, value: string) => {
-    setVouchers(prev => 
-      prev.map(voucher => 
-        voucher.id === voucherId
-          ? { ...voucher, description: value }
-          : voucher
-      )
-    );
-  };
+  // 전표 설명 수정 핸들러 - useCallback으로 최적화
+  const handleVoucherDescriptionChange = useCallback((voucherId: string, value: string) => {
+    setVouchers(prev => {
+      const voucherIndex = prev.findIndex(v => v.id === voucherId);
+      if (voucherIndex === -1) return prev;
+      
+      const newVouchers = [...prev];
+      newVouchers[voucherIndex] = {
+        ...prev[voucherIndex],
+        description: value
+      };
+      
+      return newVouchers;
+    });
+  }, []);
 
   // 저장 핸들러 (새로운 2단계 API 사용)
   const handleSave = async () => {
@@ -528,7 +839,7 @@ export default function AIJournalPage() {
         setStep('upload');
         setProgress({ processed: 0, total: 100 });
         setVouchers([]);
-        setInitialVouchers([]);
+        // setInitialVouchers([]);
         setNewPartners([]);
         setStats({
           transactionCount: 0,
@@ -708,259 +1019,19 @@ export default function AIJournalPage() {
             </div>
 
             <div>
-              {vouchers.map((voucher, idx) => {
-                // transactions가 없거나 배열이 아닌 경우 빈 배열로 처리
-                const transactions = voucher.transactions && Array.isArray(voucher.transactions) 
-                  ? voucher.transactions 
-                  : [];
-                
-                const debitSubtotal = transactions.filter(t => t.debitCredit).reduce((sum, t) => sum + (t.amount || 0), 0);
-                const creditSubtotal = transactions.filter(t => !t.debitCredit).reduce((sum, t) => sum + (t.amount || 0), 0);
-
-                return (
-                  <div key={`voucher-${idx}`} className="flex flex-row items-start w-full">
-                    {/* 번호 + 일자 그룹 */}
-                    <div className="flex flex-col items-start w-[150px] min-w-[150px]">
-                      <div className="flex flex-row items-center w-full">
-                        {/* 번호 컬럼 */}
-                        <div className="flex flex-col justify-center items-start w-[40px] min-w-[40px]">
-                          {idx === 0 && (
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
-                            </div>
-                          )}
-                          <div className="flex flex-col justify-center items-center px-1 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
-                            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{idx + 1}</span>
-                          </div>
-                        </div>
-                        {/* 일자 컬럼 */}
-                        <div className="flex flex-col justify-center items-start w-[110px] min-w-[110px]">
-                          {idx === 0 && (
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
-                            </div>
-                          )}
-                          <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
-                            <input
-                              type="text"
-                              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
-                              placeholder="yyyy.mm.dd"
-                              value={voucher.date ? voucher.date.replace(/-/g, '.') : ''}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(/[^\d.]/g, '');
-                                handleVoucherDescriptionChange(voucher.id, value.replace(/\./g, '-'));
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      {/* 소계 */}
-                      <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9]">
-                        <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
-                      </div>
-                    </div>
-                    
-                    {/* 차변 그룹 */}
-                    <div className="flex flex-col items-start flex-1 min-w-[241px]">
-                      {idx === 0 && (
-                        <>
-                          {/* 차변 헤더 */}
-                          <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-                            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">차변</span>
-                          </div>
-                          {/* 차변 세부 헤더 */}
-                          <div className="flex flex-row items-start w-full">
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
-                            </div>
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
-                            </div>
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      
-                      {/* 차변 입력 행들 */}
-                      {transactions.map((transaction, tIdx) => (
-                        transaction.debitCredit ? (
-                          <div key={`debit-${tIdx}`} className="flex flex-row items-start w-full">
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <select
-                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                value={transaction.accountName || ''}
-                                onChange={(e) => handleAccountChange(voucher.id, transaction.id, e.target.value)}
-                              >
-                                <option value="">선택하기</option>
-                                {accounts.map(account => (
-                                  <option key={account.id} value={account.name}>
-                                    {account.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                type="text"
-                                className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
-                                value={transaction.amount ? transaction.amount.toLocaleString() : ''}
-                                onChange={(e) => {
-                                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                                  handleCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
-                                }}
-                              />
-                              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-                            </div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <select
-                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                value={transaction.partnerName || ''}
-                                onChange={(e) => handlePartnerChange(voucher.id, transaction.id, e.target.value)}
-                              >
-                                <option value="">선택하기</option>
-                                {partners.map(partner => (
-                                  <option key={partner.id} value={partner.name}>
-                                    {partner.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        ) : (
-                          <div key={`debit-empty-${tIdx}`} className="flex flex-row items-start w-full">
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                          </div>
-                        )
-                      ))}
-                      
-                      {/* 차변 소계 행 */}
-                      <div className="flex flex-row items-start w-full">
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                          <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
-                            {debitSubtotal.toLocaleString()}
-                          </span>
-                          <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* 대변 그룹 */}
-                    <div className="flex flex-col items-start flex-1 min-w-[241px]">
-                      {idx === 0 && (
-                        <>
-                          {/* 대변 헤더 */}
-                          <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[32px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-                            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
-                          </div>
-                          {/* 대변 세부 헤더 */}
-                          <div className="flex flex-row items-start w-full">
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
-                            </div>
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[80px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
-                            </div>
-                            <div className="flex flex-row justify-center items-center p-2 gap-2 flex-1 min-w-[60px] h-[32px] bg-[#F5F5F5] border-r border-b border-[#D9D9D9]">
-                              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      
-                      {/* 대변 입력 행들 */}
-                      {transactions.map((transaction, tIdx) => (
-                        !transaction.debitCredit ? (
-                          <div key={`credit-${tIdx}`} className="flex flex-row items-start w-full">
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <select
-                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                value={transaction.accountName || ''}
-                                onChange={(e) => handleAccountChange(voucher.id, transaction.id, e.target.value)}
-                              >
-                                <option value="">선택하기</option>
-                                {accounts.map(account => (
-                                  <option key={account.id} value={account.name}>
-                                    {account.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <input
-                                type="text"
-                                className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                placeholder="입력하기"
-                                value={transaction.amount ? transaction.amount.toLocaleString() : ''}
-                                onChange={(e) => {
-                                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                                  handleCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
-                                }}
-                              />
-                              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-                            </div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                              <select
-                                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                                value={transaction.partnerName || ''}
-                                onChange={(e) => handlePartnerChange(voucher.id, transaction.id, e.target.value)}
-                              >
-                                <option value="">선택하기</option>
-                                {partners.map(partner => (
-                                  <option key={partner.id} value={partner.name}>
-                                    {partner.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                        ) : (
-                          <div key={`credit-empty-${tIdx}`} className="flex flex-row items-start w-full">
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                            <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-                          </div>
-                        )
-                      ))}
-                      
-                      {/* 대변 소계 행 */}
-                      <div className="flex flex-row items-start w-full">
-                        <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                          <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
-                            {creditSubtotal.toLocaleString()}
-                          </span>
-                          <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* 적요 그룹 */}
-                    <div className="flex flex-col items-start flex-1 min-w-[120px]">
-                      {idx === 0 && (
-                        <div className="flex flex-row justify-center items-center p-2 gap-2 w-full h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9]">
-                          <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
-                        </div>
-                      )}
-                      {transactions.map((transaction, tIdx) => (
-                        <div key={`description-${tIdx}`} className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                          <input
-                            className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                            placeholder="입력하기"
-                            value={tIdx === 0 ? voucher.description || '' : ''}
-                            onChange={(e) => tIdx === 0 && handleVoucherDescriptionChange(voucher.id, e.target.value)}
-                          />
-                        </div>
-                      ))}
-                      <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {vouchers.map((voucher, idx) => (
+                <VoucherRow
+                  key={voucher.id}
+                  voucher={voucher}
+                  idx={idx}
+                  accounts={accounts}
+                  partners={partners}
+                  onAccountChange={handleAccountChange}
+                  onPartnerChange={handlePartnerChange}
+                  onCellChange={handleCellChange}
+                  onVoucherDescriptionChange={handleVoucherDescriptionChange}
+                />
+              ))}
             </div>
           </>
         )}

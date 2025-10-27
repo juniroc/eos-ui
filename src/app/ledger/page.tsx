@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import AutocompleteInput from '@/components/AutocompleteInput';
 import ExcelJS from 'exceljs';
 import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
@@ -121,6 +122,13 @@ export default function LedgerPage() {
     cards: [],
     bankAccounts: []
   });
+
+  // 모든 거래처를 하나의 배열로 통합
+  const allPartners = useMemo(() => [
+    ...partners.companies,
+    ...partners.cards,
+    ...partners.bankAccounts
+  ], [partners]);
 
   // 인증되지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
@@ -421,18 +429,14 @@ export default function LedgerPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.accountCode || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">선택하기</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.code}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setFilters(prev => ({ ...prev, accountCode: value }))}
+                  items={accounts}
+                  getItemId={(item) => String(item.code)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
             </div>
           </div>
@@ -444,40 +448,14 @@ export default function LedgerPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.partnerId || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">선택하기</option>
-                  {partners.companies.length > 0 && (
-                    <optgroup label="회사">
-                      {partners.companies.map((company) => (
-                        <option key={`company-${company.id}`} value={company.id}>
-                          {company.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                  {partners.cards.length > 0 && (
-                    <optgroup label="카드">
-                      {partners.cards.map((card) => (
-                        <option key={`card-${card.id}`} value={card.id}>
-                          {card.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                  {partners.bankAccounts.length > 0 && (
-                    <optgroup label="은행계좌">
-                      {partners.bankAccounts.map((bankAccount) => (
-                        <option key={`bank-${bankAccount.id}`} value={bankAccount.id}>
-                          {bankAccount.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                </select>
+                  onChange={(value) => setFilters(prev => ({ ...prev, partnerId: value }))}
+                  items={allPartners}
+                  getItemId={(item) => String(item.id)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
             </div>
           </div>

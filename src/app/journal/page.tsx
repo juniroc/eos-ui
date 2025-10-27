@@ -8,11 +8,14 @@ import {
   fetchJournalData, 
   batchSaveVouchers,
   saveVoucher, 
+  getJournalInputPartners,
   type Transaction, 
   type Voucher, 
-  type JournalFilters 
+  type JournalFilters,
+  type PartnerItem 
 } from '@/services/financial';
 import ToastMessage from '@/components/ToastMessage';
+import AutocompleteInput from '@/components/AutocompleteInput';
 
 function JournalPageContent() {
   const router = useRouter();
@@ -60,6 +63,7 @@ function JournalPageContent() {
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [loading, setLoading] = useState({ isLoading: false, message: '' });
+  const [partners, setPartners] = useState<PartnerItem[]>([]);
   const [filters, setFilters] = useState<JournalFilters>(() => {
     const defaultDates = getDefaultDates();
     return {
@@ -80,6 +84,28 @@ function JournalPageContent() {
       router.push('/login');
     }
   }, [isAuthenticated, authLoading, router]);
+
+  // 거래처 데이터 가져오기
+  useEffect(() => {
+    const fetchPartners = async () => {
+      if (!token) return;
+      
+      try {
+        const data = await getJournalInputPartners(token);
+        // companies, cards, bankAccounts를 모두 합쳐서 하나의 배열로 만듦
+        const allPartners = [
+          ...data.companies,
+          ...data.cards,
+          ...data.bankAccounts
+        ];
+        setPartners(allPartners);
+      } catch (error) {
+        console.error('거래처 조회 에러:', error);
+      }
+    };
+
+    fetchPartners();
+  }, [token]);
 
   /** 전표 조회 */
   const fetchJournal = useCallback(async () => {
@@ -286,9 +312,9 @@ function JournalPageContent() {
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
                   <option value="">선택하기</option>
-                  <option value="현금">현금</option>
-                  <option value="당좌예금">당좌예금</option>
-                  <option value="예금">예금</option>
+                  <option value="11111">현금</option>
+                  <option value="11112">당좌예금</option>
+                  <option value="11113">보통예금</option>
                 </select>
               </div>
             </div>
@@ -301,14 +327,15 @@ function JournalPageContent() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.partnerId || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
+                  onChange={(value) => setFilters(prev => ({ ...prev, partnerId: value }))}
+                  items={partners}
+                  getItemId={(item) => item.id}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">선택하기</option>
-                  {/* 나중에 거래처 옵션들을 추가할 예정 */}
-                </select>
+                />
               </div>
             </div>
           </div>
@@ -390,9 +417,13 @@ function JournalPageContent() {
                             className="w-full focus:outline-none text-center"
                             value={voucher.date || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].date = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? { ...v, date: e.target.value }
+                                    : v
+                                )
+                              );
                             }}
                           />
                       </td>
@@ -404,9 +435,20 @@ function JournalPageContent() {
                             placeholder="입력하기"
                             value={transaction.accountName || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].transactions[index].accountName = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? {
+                                        ...v,
+                                        transactions: v.transactions.map((t, tIdx) => 
+                                          tIdx === index 
+                                            ? { ...t, accountName: e.target.value }
+                                            : t
+                                        )
+                                      }
+                                    : v
+                                )
+                              );
                             }}
                           />
                         ) : (
@@ -422,9 +464,21 @@ function JournalPageContent() {
                               value={transaction.amount ? transaction.amount.toLocaleString() : ''}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/,/g, '');
-                                const newVouchers = [...vouchers];
-                                newVouchers[voucherIndex].transactions[index].amount = Number(value) || 0;
-                                setVouchers(newVouchers);
+                                const numValue = Number(value) || 0;
+                                setVouchers(prev => 
+                                  prev.map((v, vIdx) => 
+                                    vIdx === voucherIndex 
+                                      ? {
+                                          ...v,
+                                          transactions: v.transactions.map((t, tIdx) => 
+                                            tIdx === index 
+                                              ? { ...t, amount: numValue }
+                                              : t
+                                          )
+                                        }
+                                      : v
+                                  )
+                                );
                               }}
                             />
                             <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
@@ -440,9 +494,20 @@ function JournalPageContent() {
                             placeholder="입력하기"
                             value={transaction.partnerName || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].transactions[index].partnerName = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? {
+                                        ...v,
+                                        transactions: v.transactions.map((t, tIdx) => 
+                                          tIdx === index 
+                                            ? { ...t, partnerName: e.target.value }
+                                            : t
+                                        )
+                                      }
+                                    : v
+                                )
+                              );
                             }}
                           />
                         ) : (
@@ -457,9 +522,20 @@ function JournalPageContent() {
                             placeholder="입력하기"
                             value={transaction.accountName || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].transactions[index].accountName = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? {
+                                        ...v,
+                                        transactions: v.transactions.map((t, tIdx) => 
+                                          tIdx === index 
+                                            ? { ...t, accountName: e.target.value }
+                                            : t
+                                        )
+                                      }
+                                    : v
+                                )
+                              );
                             }}
                           />
                         ) : (
@@ -475,9 +551,21 @@ function JournalPageContent() {
                               value={transaction.amount ? transaction.amount.toLocaleString() : ''}
                               onChange={(e) => {
                                 const value = e.target.value.replace(/,/g, '');
-                                const newVouchers = [...vouchers];
-                                newVouchers[voucherIndex].transactions[index].amount = Number(value) || 0;
-                                setVouchers(newVouchers);
+                                const numValue = Number(value) || 0;
+                                setVouchers(prev => 
+                                  prev.map((v, vIdx) => 
+                                    vIdx === voucherIndex 
+                                      ? {
+                                          ...v,
+                                          transactions: v.transactions.map((t, tIdx) => 
+                                            tIdx === index 
+                                              ? { ...t, amount: numValue }
+                                              : t
+                                          )
+                                        }
+                                      : v
+                                  )
+                                );
                               }}
                             />
                             <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
@@ -493,9 +581,20 @@ function JournalPageContent() {
                             placeholder="입력하기"
                             value={transaction.partnerName || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].transactions[index].partnerName = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? {
+                                        ...v,
+                                        transactions: v.transactions.map((t, tIdx) => 
+                                          tIdx === index 
+                                            ? { ...t, partnerName: e.target.value }
+                                            : t
+                                        )
+                                      }
+                                    : v
+                                )
+                              );
                             }}
                           />
                         ) : (
@@ -510,9 +609,20 @@ function JournalPageContent() {
                             placeholder="입력하기"
                             value={transaction.note || ''}
                             onChange={(e) => {
-                              const newVouchers = [...vouchers];
-                              newVouchers[voucherIndex].transactions[index].note = e.target.value;
-                              setVouchers(newVouchers);
+                              setVouchers(prev => 
+                                prev.map((v, vIdx) => 
+                                  vIdx === voucherIndex 
+                                    ? {
+                                        ...v,
+                                        transactions: v.transactions.map((t, tIdx) => 
+                                          tIdx === index 
+                                            ? { ...t, note: e.target.value }
+                                            : t
+                                        )
+                                      }
+                                    : v
+                                )
+                              );
                             }}
                           />
                         ) : (

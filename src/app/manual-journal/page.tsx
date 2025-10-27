@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import ToastMessage from '@/components/ToastMessage';
+import AutocompleteInput from '@/components/AutocompleteInput';
 import {
   getJournalInputAccounts,
   getJournalInputPartners,
@@ -130,18 +131,14 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            <AutocompleteInput
               value={firstRow.debitAccount || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'debitAccount', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {accounts.map(account => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => onUpdateRow(firstRow.id, 'debitAccount', value)}
+              items={accounts}
+              getItemId={(item) => item.id}
+              getItemLabel={(item) => item.name}
+              placeholder="입력하기"
+            />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <div className="flex items-center">
@@ -156,32 +153,24 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             </div>
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            <AutocompleteInput
               value={firstRow.debitPartner || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'debitPartner', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {partners.map(partner => (
-                <option key={partner.id} value={partner.id}>
-                  {partner.name}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => onUpdateRow(firstRow.id, 'debitPartner', value)}
+              items={partners}
+              getItemId={(item) => item.id}
+              getItemLabel={(item) => item.name}
+              placeholder="입력하기"
+            />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            <AutocompleteInput
               value={firstRow.creditAccount || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'creditAccount', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {accounts.map(account => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => onUpdateRow(firstRow.id, 'creditAccount', value)}
+              items={accounts}
+              getItemId={(item) => item.id}
+              getItemLabel={(item) => item.name}
+              placeholder="입력하기"
+            />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <div className="flex items-center">
@@ -196,18 +185,14 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             </div>
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-            <select
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+            <AutocompleteInput
               value={firstRow.creditPartner || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'creditPartner', e.target.value)}
-            >
-              <option value="">선택하기</option>
-              {partners.map(partner => (
-                <option key={partner.id} value={partner.id}>
-                  {partner.name}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => onUpdateRow(firstRow.id, 'creditPartner', value)}
+              items={partners}
+              getItemId={(item) => item.id}
+              getItemLabel={(item) => item.name}
+              placeholder="입력하기"
+            />
           </td>
           <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <input
@@ -222,18 +207,14 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         {restRows.map((row) => (
           <tr key={row.id} className="h-[32px]">
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-              <select
-                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              <AutocompleteInput
                 value={row.debitAccount || ''}
-                onChange={e => onUpdateRow(row.id, 'debitAccount', e.target.value)}
-              >
-                <option value="">선택하기</option>
-                {accounts.map(account => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onUpdateRow(row.id, 'debitAccount', value)}
+                items={accounts}
+                getItemId={(item) => item.id}
+                getItemLabel={(item) => item.name}
+                placeholder="입력하기"
+              />
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <div className="flex items-center">
@@ -248,32 +229,24 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               </div>
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-              <select
-                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              <AutocompleteInput
                 value={row.debitPartner || ''}
-                onChange={e => onUpdateRow(row.id, 'debitPartner', e.target.value)}
-              >
-                <option value="">선택하기</option>
-                {partners.map(partner => (
-                  <option key={partner.id} value={partner.id}>
-                    {partner.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onUpdateRow(row.id, 'debitPartner', value)}
+                items={partners}
+                getItemId={(item) => item.id}
+                getItemLabel={(item) => item.name}
+                placeholder="입력하기"
+              />
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-              <select
-                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              <AutocompleteInput
                 value={row.creditAccount || ''}
-                onChange={e => onUpdateRow(row.id, 'creditAccount', e.target.value)}
-              >
-                <option value="">선택하기</option>
-                {accounts.map(account => (
-                  <option key={account.id} value={account.id}>
-                    {account.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onUpdateRow(row.id, 'creditAccount', value)}
+                items={accounts}
+                getItemId={(item) => item.id}
+                getItemLabel={(item) => item.name}
+                placeholder="입력하기"
+              />
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <div className="flex items-center">
@@ -288,18 +261,14 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               </div>
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
-              <select
-                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              <AutocompleteInput
                 value={row.creditPartner || ''}
-                onChange={e => onUpdateRow(row.id, 'creditPartner', e.target.value)}
-              >
-                <option value="">선택하기</option>
-                {partners.map(partner => (
-                  <option key={partner.id} value={partner.id}>
-                    {partner.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => onUpdateRow(row.id, 'creditPartner', value)}
+                items={partners}
+                getItemId={(item) => item.id}
+                getItemLabel={(item) => item.name}
+                placeholder="입력하기"
+              />
             </td>
             <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <input

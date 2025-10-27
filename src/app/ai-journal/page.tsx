@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import FileUploadBox from '@/components/FileUploadBox';
 import Button from '@/components/Button';
 import ToastMessage from '@/components/ToastMessage';
+import AutocompleteInput from '@/components/AutocompleteInput';
 import { 
   startExtractRawTransactions, 
   getExtractRawTransactionsStream,
@@ -37,8 +38,8 @@ interface VoucherRowProps {
   idx: number;
   accounts: UserAccount[];
   partners: PartnerItem[];
-  onAccountChange: (voucherId: string, transactionId: string, accountName: string) => void;
-  onPartnerChange: (voucherId: string, transactionId: string, partnerName: string) => void;
+  onAccountChange: (voucherId: string, transactionId: string, accountId: string) => void;
+  onPartnerChange: (voucherId: string, transactionId: string, partnerId: string) => void;
   onCellChange: (voucherId: string, transactionId: string, field: keyof AIJournalTransaction, value: string | number | boolean) => void;
   onVoucherDescriptionChange: (voucherId: string, value: string) => void;
 }
@@ -143,18 +144,14 @@ const VoucherRow = React.memo(({
           transaction.debitCredit ? (
             <div key={`debit-${tIdx}`} className="flex flex-row items-start w-full">
               <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <select
-                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  value={transaction.accountName || ''}
-                  onChange={(e) => onAccountChange(voucher.id, transaction.id, e.target.value)}
-                >
-                  <option value="">선택하기</option>
-                  {accounts.map(account => (
-                    <option key={account.id} value={account.name}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
+                <AutocompleteInput
+                  value={transaction.accountId || ''}
+                  onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
+                  items={accounts}
+                  getItemId={(item) => item.id}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
               <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                 <input
@@ -170,18 +167,14 @@ const VoucherRow = React.memo(({
                 <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
               </div>
               <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <select
-                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  value={transaction.partnerName || ''}
-                  onChange={(e) => onPartnerChange(voucher.id, transaction.id, e.target.value)}
-                >
-                  <option value="">선택하기</option>
-                  {partners.map(partner => (
-                    <option key={partner.id} value={partner.name}>
-                      {partner.name}
-                    </option>
-                  ))}
-                </select>
+                <AutocompleteInput
+                  value={transaction.partnerId || ''}
+                  onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
+                  items={partners}
+                  getItemId={(item) => String(item.id)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
             </div>
           ) : (
@@ -232,18 +225,14 @@ const VoucherRow = React.memo(({
           !transaction.debitCredit ? (
             <div key={`credit-${tIdx}`} className="flex flex-row items-start w-full">
               <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <select
-                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  value={transaction.accountName || ''}
-                  onChange={(e) => onAccountChange(voucher.id, transaction.id, e.target.value)}
-                >
-                  <option value="">선택하기</option>
-                  {accounts.map(account => (
-                    <option key={account.id} value={account.name}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
+                <AutocompleteInput
+                  value={transaction.accountId || ''}
+                  onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
+                  items={accounts}
+                  getItemId={(item) => item.id}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
               <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
                 <input
@@ -259,18 +248,14 @@ const VoucherRow = React.memo(({
                 <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
               </div>
               <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <select
-                  className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  value={transaction.partnerName || ''}
-                  onChange={(e) => onPartnerChange(voucher.id, transaction.id, e.target.value)}
-                >
-                  <option value="">선택하기</option>
-                  {partners.map(partner => (
-                    <option key={partner.id} value={partner.name}>
-                      {partner.name}
-                    </option>
-                  ))}
-                </select>
+                <AutocompleteInput
+                  value={transaction.partnerId || ''}
+                  onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
+                  items={partners}
+                  getItemId={(item) => String(item.id)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
+                />
               </div>
             </div>
           ) : (
@@ -725,7 +710,7 @@ export default function AIJournalPage() {
   const handleAccountChange = useCallback((
     voucherId: string,
     transactionId: string,
-    accountName: string
+    accountId: string
   ) => {
     setVouchers(prev => {
       const voucherIndex = prev.findIndex(v => v.id === voucherId);
@@ -735,11 +720,12 @@ export default function AIJournalPage() {
       const transactionIndex = voucher.transactions.findIndex(t => t.id === transactionId);
       if (transactionIndex === -1) return prev;
       
+      const account = accounts.find(a => a.id === accountId);
       const newTransactions = [...voucher.transactions];
       newTransactions[transactionIndex] = {
         ...newTransactions[transactionIndex],
-        accountName,
-        accountId: accounts.find(account => account.name === accountName)?.id || ''
+        accountId,
+        accountName: account?.name || ''
       };
       
       const newVouchers = [...prev];
@@ -756,7 +742,7 @@ export default function AIJournalPage() {
   const handlePartnerChange = useCallback((
     voucherId: string,
     transactionId: string,
-    partnerName: string
+    partnerId: string
   ) => {
     setVouchers(prev => {
       const voucherIndex = prev.findIndex(v => v.id === voucherId);
@@ -766,11 +752,12 @@ export default function AIJournalPage() {
       const transactionIndex = voucher.transactions.findIndex(t => t.id === transactionId);
       if (transactionIndex === -1) return prev;
       
+      const partner = partners.find(p => String(p.id) === partnerId);
       const newTransactions = [...voucher.transactions];
       newTransactions[transactionIndex] = {
         ...newTransactions[transactionIndex],
-        partnerName,
-        partnerId: partners.find(partner => partner.name === partnerName)?.id || ''
+        partnerId,
+        partnerName: partner?.name || ''
       };
       
       const newVouchers = [...prev];

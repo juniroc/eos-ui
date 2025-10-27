@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import AutocompleteInput from '@/components/AutocompleteInput';
 import ExcelJS from 'exceljs';
 import { getJournalInputPartners, getJournalInputAccounts, type PartnerItem, type UserAccount } from '@/services/financial';
 
@@ -577,11 +578,13 @@ export default function CashbookPage() {
                   className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 >
                   <option value="">선택하기</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.code}>
-                      {account.name}
-                    </option>
-                  ))}
+                  {accounts
+                    .filter(account => ['11111', '11112', '11113'].includes(account.code.toString()))
+                    .map((account) => (
+                      <option key={account.id} value={account.code}>
+                        {account.name}
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>
@@ -594,40 +597,15 @@ export default function CashbookPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.partnerId || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">선택하기</option>
-                  {partners.companies.length > 0 && (
-                    <optgroup label="회사">
-                      {partners.companies.map((company) => (
-                        <option key={`company-${company.id}`} value={company.id}>
-                          {company.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                  {partners.cards.length > 0 && (
-                    <optgroup label="카드">
-                      {partners.cards.map((card) => (
-                        <option key={`card-${card.id}`} value={card.id}>
-                          {card.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                  {partners.bankAccounts.length > 0 && (
-                    <optgroup label="은행계좌">
-                      {partners.bankAccounts.map((bankAccount) => (
-                        <option key={`bank-${bankAccount.id}`} value={bankAccount.id}>
-                          {bankAccount.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )}
-                </select>
+                  onChange={(value) => setFilters(prev => ({ ...prev, partnerId: value }))}
+                  items={[...partners.companies, ...partners.cards, ...partners.bankAccounts]}
+                  getItemId={(item) => item.id}
+                  getItemLabel={(item) => item.name}
+                  placeholder="입력하기"
+                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#B3B3B3] min-w-0"
+                />
               </div>
             </div>
           </div>

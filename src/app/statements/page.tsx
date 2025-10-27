@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
 import PrintButton from '@/components/PrintButton';
+import AutocompleteInput from '@/components/AutocompleteInput';
 import Image from 'next/image';
 import ExcelJS from 'exceljs';
 import { getJournalInputAccounts, getJournalInputPartners, type UserAccount, type PartnerItem } from '@/services/financial';
@@ -462,18 +463,14 @@ export default function StatementsPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.accountCode || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#757575] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">전체</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.code}>
-                      {account.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setFilters(prev => ({ ...prev, accountCode: value }))}
+                  items={accounts}
+                  getItemId={(item) => String(item.code)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="전체"
+                />
               </div>
             </div>
           </div>
@@ -485,18 +482,14 @@ export default function StatementsPage() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.partnerId || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, partnerId: e.target.value }))}
-                  className="flex-1 text-[12px] leading-[100%] text-xs text-[#757575] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">전체</option>
-                  {partners.map((partner) => (
-                    <option key={partner.id} value={partner.id}>
-                      {partner.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setFilters(prev => ({ ...prev, partnerId: value }))}
+                  items={partners}
+                  getItemId={(item) => String(item.id)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="전체"
+                />
               </div>
             </div>
           </div>

@@ -872,7 +872,9 @@ export interface AIJournalTransaction {
   description: string;
   amount: number;
   partnerName?: string;
+  partnerId?: string; // 거래처 ID
   accountName?: string;
+  accountId?: string; // 계정과목 ID
   debitCredit?: boolean; // true: 차변, false: 대변
   note?: string;
 }
@@ -1085,10 +1087,10 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
       return voucher.transactions.map(transaction => ({
         voucherId,
         amount: transaction.amount,
-        accountId: transaction.accountName || '', // 계정과목을 accountId로 사용
+        accountId: transaction.accountId || '',
         debitCredit: transaction.debitCredit || false,
         note: transaction.note,
-        partnerId: transaction.partnerName, // 거래처명을 partnerId로 사용 (실제로는 ID가 필요할 수 있음)
+        partnerId: transaction.partnerId,
       }));
     });
     

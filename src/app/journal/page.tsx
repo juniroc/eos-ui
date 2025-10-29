@@ -12,7 +12,9 @@ import {
   type Transaction, 
   type Voucher, 
   type JournalFilters,
-  type PartnerItem 
+  type PartnerItem, 
+  UserAccount,
+  getJournalInputAccounts
 } from '@/services/financial';
 import ToastMessage from '@/components/ToastMessage';
 import AutocompleteInput from '@/components/AutocompleteInput';
@@ -63,6 +65,7 @@ function JournalPageContent() {
   const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [loading, setLoading] = useState({ isLoading: false, message: '' });
+  const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
   const [filters, setFilters] = useState<JournalFilters>(() => {
     const defaultDates = getDefaultDates();
@@ -87,10 +90,15 @@ function JournalPageContent() {
 
   // 거래처 데이터 가져오기
   useEffect(() => {
-    const fetchPartners = async () => {
+    const fetchInitialData = async () => {
       if (!token) return;
       
       try {
+        // 계정과목 조회
+        const accountsData = await getJournalInputAccounts(token);
+        setAccounts(accountsData || []);
+
+        // 거래처 조회
         const data = await getJournalInputPartners(token);
         // companies, cards, bankAccounts를 모두 합쳐서 하나의 배열로 만듦
         const allPartners = [
@@ -104,7 +112,7 @@ function JournalPageContent() {
       }
     };
 
-    fetchPartners();
+    fetchInitialData();
   }, [token]);
 
   /** 전표 조회 */
@@ -306,16 +314,15 @@ function JournalPageContent() {
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
               <div className="flex flex-row items-center py-2 px-2 gap-2 bg-white h-full">
-                <select
+                <AutocompleteInput
                   value={filters.accountCode || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, accountCode: e.target.value }))}
+                  onChange={(value) => setFilters(prev => ({ ...prev, accountCode: value }))}
+                  items={accounts}
+                  getItemId={(item) => String(item.code)}
+                  getItemLabel={(item) => item.name}
+                  placeholder="선택하기"
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
-                >
-                  <option value="">선택하기</option>
-                  <option value="11111">현금</option>
-                  <option value="11112">당좌예금</option>
-                  <option value="11113">보통예금</option>
-                </select>
+                />
               </div>
             </div>
           </div>

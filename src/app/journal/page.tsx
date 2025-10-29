@@ -235,7 +235,7 @@ function JournalPageContent() {
                   <p className="text-[12px] leading-[140%] text-[#767676]">필요한 내용을 입력하고 정보를 저장하세요.</p>
                 </div>
               </div>
-              <div className="flex flex-row justify-end items-center gap-2 w-41">
+              <div className="flex flex-row justify-end items-center gap-2">
                 <Button
                   variant="primary"
                   onClick={handleSearch}

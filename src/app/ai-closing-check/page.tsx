@@ -313,11 +313,11 @@ export default function AIClosingCheckPage() {
             <div className="h-5 border-l border-[#D9D9D9]"></div>
             
             {/* Manual Check Button */}
-            <div className="w-[90px] h-[28px]">
+            <div className="h-[28px]">
               <button
                 onClick={() => handleCheck('manual')}
                 disabled={loading}
-                className="flex justify-center items-center py-2 px-3 gap-2 w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
+                className="flex justify-center items-center py-2 px-3 gap-2 min-w-[90px] h-[28px] bg-[#2C2C2C] text-[#F5F5F5] text-[12px] leading-[100%] font-medium cursor-pointer"
               >
                 {loading ? '처리중...' : '직접 점검하기'}
               </button>

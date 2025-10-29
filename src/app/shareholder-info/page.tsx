@@ -322,8 +322,8 @@ export default function ShareholderInfoPage() {
           <div className="flex flex-col items-start p-0 w-full sm:w-[346px] h-[46px]">
             {/* Menu Heading */}
             <div className="flex flex-col items-start py-[6px] px-0 pb-[2px] w-64 h-[29px] rounded-lg">
-              <div className="flex flex-row items-start p-0 w-14 h-[21px]">
-                <h2 className="w-14 h-[21px] font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+              <div className="flex flex-row items-start p-0 h-[21px]">
+                <h2 className="h-[21px] font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
                   주주 정보
                 </h2>
               </div>

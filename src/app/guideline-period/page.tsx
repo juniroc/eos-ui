@@ -199,7 +199,7 @@ export default function GuidelinePeriodPage() {
           <div className="flex flex-col items-start flex-1">
             {/* Menu Heading */}
             <div className="flex flex-col items-start pt-1.5 pb-0.5 w-64 rounded-lg">
-              <div className="flex flex-row items-start w-14 h-[21px]">
+              <div className="flex flex-row items-start h-[21px]">
                 <span className="font-pretendard font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
                   지침 주기
                 </span>

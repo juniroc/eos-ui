@@ -268,8 +268,8 @@ export default function EmployeeInfoPage() {
         <div className="flex flex-row justify-between items-end gap-4 w-full">
           <div className="flex flex-col items-start w-[346px]">
             <div className="flex flex-col items-start p-[6px_0px_2px] w-64 rounded-lg">
-              <div className="flex flex-row items-start w-14">
-                <h2 className="w-14 font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
+              <div className="flex flex-row items-start">
+                <h2 className="font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
                   직원 정보
                 </h2>
               </div>

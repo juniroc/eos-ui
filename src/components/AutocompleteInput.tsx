@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -24,9 +25,8 @@ function AutocompleteInput<T>({
 }: AutocompleteInputProps<T>) {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredItems, setFilteredItems] = useState<T[]>([]);
+  const [filteredItems, setFilteredItems] = useState<T[]>(items);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
-  const [isTyping, setIsTyping] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,20 +39,17 @@ function AutocompleteInput<T>({
 
   // input 변경 시 필터링 (드롭다운은 자동으로 열지 않음)
   useEffect(() => {
+    const filtered = items.filter(item =>
+      getItemLabel(item).toLowerCase().includes(inputValue.toLowerCase())
+    );
     if (inputValue.trim()) {
-      const filtered = items.filter(item =>
-        getItemLabel(item).toLowerCase().includes(inputValue.toLowerCase())
-      );
       setFilteredItems(filtered);
-      // isTyping이 true일 때만 드롭다운 열기
-      if (isTyping) {
-        setIsOpen(filtered.length > 0);
-      }
-    } else {
-      setFilteredItems([]);
-      setIsOpen(false);
+    } 
+
+    if (!inputValue.trim()) {
+      setFilteredItems(items);
     }
-  }, [inputValue, items, getItemLabel, isTyping]);
+  }, [inputValue, items, getItemLabel]);
 
   // 드롭다운 위치 계산
   useEffect(() => {
@@ -112,12 +109,10 @@ function AutocompleteInput<T>({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    setIsTyping(true); // 타이핑 시작
     
     // 입력값이 비어있으면 선택된 항목도 초기화
     if (!newValue.trim()) {
       onChange('');
-      setIsTyping(false);
     }
   };
 
@@ -125,26 +120,23 @@ function AutocompleteInput<T>({
     setInputValue(getItemLabel(item));
     onChange(getItemId(item));
     setIsOpen(false);
-    setIsTyping(false); // 선택 완료 후 타이핑 상태 해제
   };
 
   const handleInputFocus = () => {
-    // 포커스 시에도 타이핑 모드 활성화
-    setIsTyping(true);
-    if (inputValue.trim() && filteredItems.length > 0) {
+    // if (filteredItems.length > 0) {
       setIsOpen(true);
-    }
+    // }
   };
 
   const handleInputBlur = () => {
     // blur 시 타이핑 상태 해제
     setTimeout(() => {
-      setIsTyping(false);
+      setIsOpen(false);
     }, 200);
   };
 
   const renderDropdown = () => {
-    if (!isOpen || filteredItems.length === 0) return null;
+    if (!isOpen) return null;
 
     return createPortal(
       <div 
@@ -158,25 +150,36 @@ function AutocompleteInput<T>({
         }}
         className="mt-1 bg-white border border-[#D9D9D9] shadow-lg max-h-[200px] overflow-y-auto"
       >
-        {filteredItems.map((item, index) => (
-          <div
-            key={`${getItemId(item)}-${index}`}
-            className="px-2 py-2 cursor-pointer hover:bg-[#F5F5F5] font-medium text-[12px] leading-[100%] text-[#757575]"
-            onMouseDown={(e) => {
-              e.preventDefault();
-              handleSelectItem(item);
-            }}
-          >
-            {getItemLabel(item)}
+        {filteredItems.length > 0 ? (
+          filteredItems.map((item, index) => (
+            <div
+              key={`${getItemId(item)}-${index}`}
+              className="px-2 py-2 cursor-pointer hover:bg-[#F5F5F5] font-medium text-[12px] leading-[100%] text-[#757575]"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelectItem(item);
+              }}
+            >
+              {getItemLabel(item)}
+            </div>
+          ))
+        ) : (
+          <div className="px-2 py-2 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">
+            목록이 없습니다
           </div>
-        ))}
+        )}
       </div>,
       document.body
     );
   };
 
+  const handleArrowClick = () => {
+    setIsOpen(true);
+    inputRef.current?.focus();
+  };
+
   return (
-    <div ref={containerRef} className="relative w-full h-4 flex items-center">
+    <div ref={containerRef} className="relative w-full h-4 flex items-center gap-[2px]">
       <input
         ref={inputRef}
         type="text"
@@ -188,6 +191,7 @@ function AutocompleteInput<T>({
         onBlur={handleInputBlur}
       />
       {renderDropdown()}
+      <Image src="/icons/arrow_down.svg" alt="arrow" width={16} height={16} onClick={handleArrowClick}/>
     </div>
   );
 }

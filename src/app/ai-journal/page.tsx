@@ -424,9 +424,9 @@ export default function AIJournalPage() {
 
 
   // API 응답의 voucher를 UI 구조로 변환하는 함수
-  const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>): AIJournalVoucher => {
+  const convertApiVoucherToUI = (apiVoucher: Record<string, unknown>, index: number): AIJournalVoucher => {
     const transactions: AIJournalTransaction[] = [];
-    const voucherId = `voucher-${apiVoucher.transactionId || 'unknown'}`;
+    const voucherId = `voucher-${apiVoucher.transactionId || `${Date.now()}-${index}`}`;
     const voucherDate = (apiVoucher.date as string) || '';
     
     // debits 배열 처리 (차변)
@@ -668,7 +668,7 @@ export default function AIJournalPage() {
                 (data) => {
                   // 분개 처리 완료
                   const apiVouchers = (data.vouchers as Record<string, unknown>[]) || [];
-                  const convertedVouchers = apiVouchers.map(convertApiVoucherToUI);
+                  const convertedVouchers = apiVouchers.map((apiVoucher, index) => convertApiVoucherToUI(apiVoucher, index));
                   console.log(`✓ 2단계 완료: ${convertedVouchers.length}개 전표 생성`);
                   
                   setVouchers(convertedVouchers);

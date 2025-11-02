@@ -50,8 +50,8 @@ interface DepRow {
 interface ApplyTransaction {
   accountId: string;
   account: string, 
-  partnerId: string, 
-  partner: string, 
+  partnerId?: string, 
+  partner?: string, 
   amount: number, 
   debitCredit: boolean, 
   note: string;

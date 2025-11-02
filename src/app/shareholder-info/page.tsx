@@ -328,13 +328,13 @@ export default function ShareholderInfoPage() {
                 </h2>
               </div>
             </div>
-            <p className="w-full h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
+            <p className="h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-full sm:w-[153px] h-7">
+          <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-full h-7">
             {/* 파일 업로드 버튼 */}
             <div className="flex flex-row items-start p-0 h-7">
               <button

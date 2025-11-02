@@ -266,7 +266,7 @@ export default function EmployeeInfoPage() {
       {/* Header */}
       <div className="flex flex-col items-start gap-4 w-full min-w-[520px]">
         <div className="flex flex-row justify-between items-end gap-4 w-full">
-          <div className="flex flex-col items-start w-[346px]">
+          <div className="flex flex-col items-start">
             <div className="flex flex-col items-start p-[6px_0px_2px] w-64 rounded-lg">
               <div className="flex flex-row items-start">
                 <h2 className="font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-[#1E1E1E]">
@@ -274,7 +274,7 @@ export default function EmployeeInfoPage() {
                 </h2>
               </div>
             </div>
-            <p className="w-[346px] font-['Pretendard'] text-[12px] leading-[140%] text-center text-[#767676]">
+            <p className="font-['Pretendard'] text-[12px] leading-[140%] text-center text-[#767676]">
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>

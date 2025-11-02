@@ -319,7 +319,7 @@ export default function ShareholderInfoPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end p-0 gap-4 w-full min-h-[46px] mb-4">
           {/* Title Group */}
-          <div className="flex flex-col items-start p-0 w-full sm:w-[346px] h-[46px]">
+          <div className="flex flex-col items-start p-0 w-full h-[46px]">
             {/* Menu Heading */}
             <div className="flex flex-col items-start py-[6px] px-0 pb-[2px] w-64 h-[29px] rounded-lg">
               <div className="flex flex-row items-start p-0 h-[21px]">
@@ -328,7 +328,7 @@ export default function ShareholderInfoPage() {
                 </h2>
               </div>
             </div>
-            <p className="w-full sm:w-[346px] h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
+            <p className="w-full h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>

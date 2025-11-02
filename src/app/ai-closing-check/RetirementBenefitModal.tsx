@@ -50,19 +50,12 @@ interface EditableRetirementBenefitItem extends RetirementBenefitItem {
 // API 응답 타입 (결산 반영 시 받는 간단한 구조)
 interface ApplyTransaction {
   accountId: string;
-  account: {
-    id: string;
-    code: number;
-    name: string;
-  };
-  partnerId?: string;
-  partner?: {
-    id: string;
-    name: string;
-  };
+  account: string;
   amount: number;
-  debitCredit: boolean;
-  note?: string;
+  partnerId?: string;
+  partner?: string;
+  note: string;
+  debitCredit: boolean; 
 }
 
 interface ApplyRetirementBenefitResponse {
@@ -552,31 +545,59 @@ export default function RetirementBenefitModal({
                     <tbody>
                       {retirementBenefitVoucherData && retirementBenefitVoucherData.transactions?.length > 0 ? (
                         <>
-                          {retirementBenefitVoucherData.transactions.map((transaction, index) => (
-                            <tr key={index} className="h-8">
-                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{formatDate(retirementBenefitVoucherData.voucher.date)}</td>
-                              {transaction.debitCredit ? (
-                                <>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.partner?.name || '-'}</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                </>
-                              ) : (
-                                <>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.account?.name || '-'}</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.amount.toLocaleString()}</td>
-                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.partner?.name || '-'}</td>
-                                </>
-                              )}
-                              <td className="p-2 border border-[#D9D9D9] text-center h-8">{transaction.note}</td>
-                            </tr>
-                          ))}
+                          {(() => {
+                            // 차변과 대변 거래 분리
+                            const debitTransactions = retirementBenefitVoucherData.transactions.filter(t => t.debitCredit);
+                            const creditTransactions = retirementBenefitVoucherData.transactions.filter(t => !t.debitCredit);
+                            
+                            // 더 많은 쪽의 길이만큼 행 생성
+                            const maxRows = Math.max(debitTransactions.length, creditTransactions.length);
+                            
+                            return Array.from({ length: maxRows }).map((_, rowIndex) => {
+                              const debitTx = debitTransactions[rowIndex];
+                              const creditTx = creditTransactions[rowIndex];
+                              
+                              return (
+                                <tr key={`row-${rowIndex}`} className="h-8">
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                    {rowIndex === 0 ? formatDate(retirementBenefitVoucherData.voucher.date) : ''}
+                                  </td>
+                                  {/* 차변 칸 */}
+                                  {debitTx ? (
+                                    <>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{debitTx.account || '-'}</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{debitTx.amount.toLocaleString()}</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{debitTx.partner || '-'}</td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    </>
+                                  )}
+                                  {/* 대변 칸 */}
+                                  {creditTx ? (
+                                    <>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{creditTx.account || '-'}</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{creditTx.amount.toLocaleString()}</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">{creditTx.partner || '-'}</td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                      <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    </>
+                                  )}
+                                  {/* 적요 칸 */}
+                                  <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                    {debitTx?.note || creditTx?.note || '-'}
+                                  </td>
+                                </tr>
+                              );
+                            });
+                          })()}
                           <tr className="h-8">
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 font-medium bg-[#F5F5F5]">소계</td>
                             <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>

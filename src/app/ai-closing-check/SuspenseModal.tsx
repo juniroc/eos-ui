@@ -12,7 +12,7 @@ interface SuspenseTransaction {
   accountId: string;
   accountCode: string;
   accountName: string;
-  debitCredit: 'DEBIT' | 'CREDIT';
+  debitCredit: boolean;
   amount: number;
   partnerId?: string;
   partnerName?: string;
@@ -38,6 +38,8 @@ interface SuspenseData {
 
 interface EditableSuspenseTransaction extends SuspenseTransaction {
   isEditing?: boolean;
+  voucherId?: string;
+  voucherDate?: string;
 }
 
 interface SuspenseModalProps {
@@ -119,7 +121,9 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
         voucher.transactions.forEach(transaction => {
           allTransactions.push({
             ...transaction,
-            isEditing: false
+            isEditing: false,
+            voucherId: voucher.voucherId,
+            voucherDate: voucher.date
           });
         });
       });
@@ -197,7 +201,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
         transactions: transactions.map(transaction => ({
           accountId: transaction.accountId,
           amount: transaction.amount,
-          debitCredit: transaction.debitCredit === 'DEBIT',
+          debitCredit: transaction.debitCredit,
           partnerId: transaction.partnerId,
           note: transaction.note,
         })),
@@ -324,15 +328,15 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                     <tbody>
                       {transactions.map((transaction) => (
                         <tr key={transaction.id}>
-                          <td className="p-2 border border-[#D9D9D9] text-center">{data?.vouchers[0]?.date ? formatDate(data.vouchers[0].date) : ''}</td>
+                          <td className="p-2 border border-[#D9D9D9] text-center">{transaction.voucherDate ? formatDate(transaction.voucherDate) : ''}</td>
                           {/* 차변 섹션 */}
-                          {transaction.debitCredit === 'DEBIT' ? (
+                          {transaction.debitCredit ? (
                             <>
                               <td className="p-2 border border-[#D9D9D9] text-center">
                                 <input
                                   type="text"
                                   className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
+                                  value={`${getTransactionValue(transaction.id, 'accountName')}`}
                                   onChange={(e) => {
                                     const [code, ...nameParts] = e.target.value.split(' ');
                                     handleTransactionChange(transaction.id, 'accountCode', code || '');
@@ -372,7 +376,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                                 <input
                                   type="text"
                                   className="w-full px-2 text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                  value={`${getTransactionValue(transaction.id, 'accountCode')} ${getTransactionValue(transaction.id, 'accountName')}`}
+                                  value={`${getTransactionValue(transaction.id, 'accountName')}`}
                                   onChange={(e) => {
                                     const [code, ...nameParts] = e.target.value.split(' ');
                                     handleTransactionChange(transaction.id, 'accountCode', code || '');
@@ -417,7 +421,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                         <td className="p-2 border border-[#D9D9D9] text-center font-medium text-[#B3B3B3]">-</td>
                         <td className="p-2 border border-[#D9D9D9] text-center font-medium">
                           {transactions
-                            .filter(t => t.debitCredit === 'DEBIT')
+                            .filter(t => t.debitCredit)
                             .reduce((sum, t) => sum + t.amount, 0)
                             .toLocaleString()}
                         </td>
@@ -425,7 +429,7 @@ const SuspenseModal: React.FC<SuspenseModalProps> = ({
                         <td className="p-2 border border-[#D9D9D9] text-center font-medium text-[#B3B3B3]">-</td>
                         <td className="p-2 border border-[#D9D9D9] text-center font-medium">
                           {transactions
-                            .filter(t => t.debitCredit === 'CREDIT')
+                            .filter(t => !t.debitCredit)
                             .reduce((sum, t) => sum + t.amount, 0)
                             .toLocaleString()}
                         </td>

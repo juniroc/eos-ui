@@ -62,6 +62,24 @@ const VoucherRow = React.memo(({
       : [];
   }, [voucher.transactions]);
   
+  // 차변과 대변 개수 계산
+  const debitCount = useMemo(() => 
+    transactions.filter(t => t.debitCredit).length,
+    [transactions]
+  );
+  
+  const creditCount = useMemo(() => 
+    transactions.filter(t => !t.debitCredit).length,
+    [transactions]
+  );
+  
+  // 더 많은 쪽의 개수 계산 (최소 2)
+  const maxRowCount = useMemo(() => {
+    console.log(debitCount, creditCount)
+    return Math.max(debitCount, creditCount, 2)},
+    [debitCount, creditCount]
+  );
+  
   // 소계 계산을 메모이제이션
   const debitSubtotal = useMemo(() => 
     transactions.filter(t => t.debitCredit).reduce((sum, t) => sum + (t.amount || 0), 0),
@@ -85,7 +103,7 @@ const VoucherRow = React.memo(({
                 <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
               </div>
             )}
-            <div className="flex flex-col justify-center items-center px-1 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
+            <div className="flex flex-col justify-center items-center px-1 py-2 w-full bg-white border-l border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (maxRowCount || 1)}px` }}>
               <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{idx + 1}</span>
             </div>
           </div>
@@ -96,7 +114,7 @@ const VoucherRow = React.memo(({
                 <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
               </div>
             )}
-            <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (transactions.length || 2)}px` }}>
+            <div className="flex flex-row justify-center items-center px-2 py-2 w-full bg-white border-r border-b border-[#D9D9D9]" style={{ height: `${32 * (maxRowCount || 1)}px` }}>
               <input
                 type="text"
                 className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
@@ -140,51 +158,71 @@ const VoucherRow = React.memo(({
         )}
         
         {/* 차변 입력 행들 */}
-        {transactions.map((transaction, tIdx) => (
-          transaction.debitCredit ? (
-            <div key={`debit-${tIdx}`} className="flex flex-row items-start w-full">
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <AutocompleteInput
-                  value={transaction.accountId || ''}
-                  onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
-                  items={accounts}
-                  getItemId={(item) => item.id}
-                  getItemLabel={(item) => item.name}
-                  placeholder="선택하기"
-                />
-              </div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <input
-                  type="text"
-                  className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  placeholder="입력하기"
-                  value={transaction.amount ? transaction.amount.toLocaleString() : ''}
-                  onChange={(e) => {
-                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                    onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
-                  }}
-                />
-                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-              </div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <AutocompleteInput
-                  value={transaction.partnerId || ''}
-                  onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
-                  items={partners}
-                  getItemId={(item) => String(item.id)}
-                  getItemLabel={(item) => item.name}
-                  placeholder="선택하기"
-                />
-              </div>
-            </div>
-          ) : (
-            <div key={`debit-empty-${tIdx}`} className="flex flex-row items-start w-full">
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-            </div>
-          )
-        ))}
+        {(() => {
+          const debitTransactions = transactions.filter(t => t.debitCredit);
+          const minRows = 2;
+          const rowsToRender = Math.max(debitTransactions.length, minRows);
+          
+          return Array.from({ length: rowsToRender }).map((_, rowIdx) => {
+            const transaction = debitTransactions[rowIdx];
+            
+            if (transaction) {
+              // 실제 데이터가 있는 행
+              return (
+                <div key={`debit-${rowIdx}`} className="flex flex-row items-start w-full">
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <AutocompleteInput
+                      value={transaction.accountId || ''}
+                      onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
+                      items={accounts}
+                      getItemId={(item) => item.id}
+                      getItemLabel={(item) => item.name}
+                      placeholder="선택하기"
+                    />
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <input
+                      type="text"
+                      className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                      placeholder="입력하기"
+                      value={transaction.amount ? transaction.amount.toLocaleString() : ''}
+                      onChange={(e) => {
+                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                        onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
+                      }}
+                    />
+                    <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <AutocompleteInput
+                      value={transaction.partnerId || ''}
+                      onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
+                      items={partners}
+                      getItemId={(item) => String(item.id)}
+                      getItemLabel={(item) => item.name}
+                      placeholder="선택하기"
+                    />
+                  </div>
+                </div>
+              );
+            } else {
+              // 빈 행
+              return (
+                <div key={`debit-empty-${rowIdx}`} className="flex flex-row items-start w-full">
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                </div>
+              );
+            }
+          });
+        })()}
         
         {/* 차변 소계 행 */}
         <div className="flex flex-row items-start w-full">
@@ -221,51 +259,71 @@ const VoucherRow = React.memo(({
         )}
         
         {/* 대변 입력 행들 */}
-        {transactions.map((transaction, tIdx) => (
-          !transaction.debitCredit ? (
-            <div key={`credit-${tIdx}`} className="flex flex-row items-start w-full">
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <AutocompleteInput
-                  value={transaction.accountId || ''}
-                  onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
-                  items={accounts}
-                  getItemId={(item) => item.id}
-                  getItemLabel={(item) => item.name}
-                  placeholder="선택하기"
-                />
-              </div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <input
-                  type="text"
-                  className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-                  placeholder="입력하기"
-                  value={transaction.amount ? transaction.amount.toLocaleString() : ''}
-                  onChange={(e) => {
-                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                    onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
-                  }}
-                />
-                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
-              </div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-                <AutocompleteInput
-                  value={transaction.partnerId || ''}
-                  onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
-                  items={partners}
-                  getItemId={(item) => String(item.id)}
-                  getItemLabel={(item) => item.name}
-                  placeholder="선택하기"
-                />
-              </div>
-            </div>
-          ) : (
-            <div key={`credit-empty-${tIdx}`} className="flex flex-row items-start w-full">
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-              <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]"></div>
-            </div>
-          )
-        ))}
+        {(() => {
+          const creditTransactions = transactions.filter(t => !t.debitCredit);
+          const minRows = 2;
+          const rowsToRender = Math.max(creditTransactions.length, minRows);
+          
+          return Array.from({ length: rowsToRender }).map((_, rowIdx) => {
+            const transaction = creditTransactions[rowIdx];
+            
+            if (transaction) {
+              // 실제 데이터가 있는 행
+              return (
+                <div key={`credit-${rowIdx}`} className="flex flex-row items-start w-full">
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <AutocompleteInput
+                      value={transaction.accountId || ''}
+                      onChange={(accountId) => onAccountChange(voucher.id, transaction.id, accountId)}
+                      items={accounts}
+                      getItemId={(item) => item.id}
+                      getItemLabel={(item) => item.name}
+                      placeholder="선택하기"
+                    />
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <input
+                      type="text"
+                      className="flex-1 h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                      placeholder="입력하기"
+                      value={transaction.amount ? transaction.amount.toLocaleString() : ''}
+                      onChange={(e) => {
+                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                        onCellChange(voucher.id, transaction.id, 'amount', parseInt(numericValue) || 0);
+                      }}
+                    />
+                    <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3]">원</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <AutocompleteInput
+                      value={transaction.partnerId || ''}
+                      onChange={(partnerId) => onPartnerChange(voucher.id, transaction.id, partnerId)}
+                      items={partners}
+                      getItemId={(item) => String(item.id)}
+                      getItemLabel={(item) => item.name}
+                      placeholder="선택하기"
+                    />
+                  </div>
+                </div>
+              );
+            } else {
+              // 빈 행
+              return (
+                <div key={`credit-empty-${rowIdx}`} className="flex flex-row items-start w-full">
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[80px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                  <div className="flex flex-row items-center p-2 flex-1 min-w-[60px] h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+                    <span className="text-[12px] text-[#D9D9D9]">-</span>
+                  </div>
+                </div>
+              );
+            }
+          });
+        })()}
         
         {/* 대변 소계 행 */}
         <div className="flex flex-row items-start w-full">
@@ -285,16 +343,19 @@ const VoucherRow = React.memo(({
             <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
           </div>
         )}
-        {transactions.map((transaction, tIdx) => (
-          <div key={`description-${tIdx}`} className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
-            <input
-              className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
-              placeholder="입력하기"
-              value={tIdx === 0 ? voucher.description || '' : ''}
-              onChange={(e) => tIdx === 0 && onVoucherDescriptionChange(voucher.id, e.target.value)}
-            />
-          </div>
-        ))}
+        {(() => {
+          // maxRowCount만큼 적요 행 생성
+          return Array.from({ length: maxRowCount }).map((_, rowIdx) => (
+            <div key={`description-${rowIdx}`} className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
+              <input
+                className="w-full h-[12px] font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                placeholder="입력하기"
+                value={rowIdx === 0 ? voucher.description || '' : ''}
+                onChange={(e) => rowIdx === 0 && onVoucherDescriptionChange(voucher.id, e.target.value)}
+              />
+            </div>
+          ));
+        })()}
         <div className="flex flex-row items-center p-2 w-full h-[32px] bg-white border-r border-b border-[#D9D9D9]">
         </div>
       </div>

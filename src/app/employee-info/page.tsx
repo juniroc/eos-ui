@@ -278,14 +278,14 @@ export default function EmployeeInfoPage() {
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
-          <div className="flex flex-row justify-end items-center gap-2 w-[153px]">
+          <div className="flex flex-row justify-end items-center gap-2">
             {/* 파일 업로드 */}
             <button
               className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] hover:bg-[#E0E0E0]"
               onClick={() => document.getElementById('employeeFile')?.click()}
               disabled={loading}
             >
-              <span className="w-[55px] font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#1E1E1E]">
+              <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-[#1E1E1E]">
                 파일 업로드
               </span>
             </button>
@@ -502,7 +502,7 @@ export default function EmployeeInfoPage() {
               <div className="w-4 h-4">
                 <Image src="/icons/plus_circle.svg" alt="추가" width={16} height={16} />
               </div>
-              <span className="w-[42px] font-['Pretendard'] font-medium text-[12px] leading-[100%] text-center text-[#757575]">
+              <span className="font-['Pretendard'] font-medium text-[12px] leading-[100%] text-center text-[#757575]">
                 추가하기
               </span>
             </button>

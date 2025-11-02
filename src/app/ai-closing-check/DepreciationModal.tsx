@@ -49,19 +49,12 @@ interface DepRow {
 // API 응답 타입 (결산 반영 시 받는 간단한 구조)
 interface ApplyTransaction {
   accountId: string;
-  account: {
-    id: string;
-    code: number;
-    name: string;
-  };
-  partnerId?: string;
-  partner?: {
-    id: string;
-    name: string;
-  };
-  amount: number;
-  debitCredit: boolean;
-  note?: string;
+  account: string, 
+  partnerId: string, 
+  partner: string, 
+  amount: number, 
+  debitCredit: boolean, 
+  note: string;
 }
 
 interface ApplyDepreciationResponse {
@@ -576,106 +569,136 @@ export default function DepreciationModal({
                   <tbody>
                     {editableVoucherData ? (
                       <>
-                        {editableVoucherData.transactions?.map((transaction, index) => (
-                          <tr key={index} className="h-8">
-                            <td className="p-2 border border-[#D9D9D9] text-center h-8">{formatDate(editableVoucherData.voucher.date)}</td>
-                            {transaction.debitCredit ? (
-                              <>
+                        {(() => {
+                          // 차변과 대변 거래 분리
+                          const debitTransactions = editableVoucherData.transactions
+                            ?.map((transaction, index) => ({ transaction, originalIndex: index }))
+                            .filter(({ transaction }) => transaction.debitCredit) || [];
+                          
+                          const creditTransactions = editableVoucherData.transactions
+                            ?.map((transaction, index) => ({ transaction, originalIndex: index }))
+                            .filter(({ transaction }) => !transaction.debitCredit) || [];
+                          
+                          // 더 많은 쪽의 길이만큼 행 생성
+                          const maxRows = Math.max(debitTransactions.length, creditTransactions.length);
+                          
+                          return Array.from({ length: maxRows }).map((_, rowIndex) => {
+                            const debitItem = debitTransactions[rowIndex];
+                            const creditItem = creditTransactions[rowIndex];
+                            
+                            return (
+                              <tr key={`row-${rowIndex}`} className="h-8">
                                 <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="text" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.account?.name || ''}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'account', {
-                                        ...transaction.account,
-                                        name: e.target.value
-                                      });
-                                    }}
-                                  />
+                                  {rowIndex === 0 ? formatDate(editableVoucherData.voucher.date) : ''}
                                 </td>
+                                {/* 차변 칸 */}
+                                {debitItem ? (
+                                  <>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="text" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={debitItem.transaction.account || ''}
+                                        onChange={(e) => {
+                                          handleTransactionChange(debitItem.originalIndex, 'account', e.target.value);
+                                        }}
+                                      />
+                                    </td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="number" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={debitItem.transaction.amount}
+                                        onChange={(e) => {
+                                          handleTransactionChange(debitItem.originalIndex, 'amount', parseInt(e.target.value) || 0);
+                                        }}
+                                      />
+                                    </td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="text" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={debitItem.transaction.partner || ''}
+                                        onChange={(e) => {
+                                          handleTransactionChange(debitItem.originalIndex, 'partner', e.target.value);
+                                        }}
+                                      />
+                                    </td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  </>
+                                )}
+                                {/* 대변 칸 */}
+                                {creditItem ? (
+                                  <>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="text" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={creditItem.transaction.account || ''}
+                                        onChange={(e) => {
+                                          handleTransactionChange(creditItem.originalIndex, 'account', e.target.value);
+                                        }}
+                                      />
+                                    </td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="number" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={creditItem.transaction.amount}
+                                        onChange={(e) => {
+                                          handleTransactionChange(creditItem.originalIndex, 'amount', parseInt(e.target.value) || 0);
+                                        }}
+                                      />
+                                    </td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">
+                                      <input 
+                                        type="text" 
+                                        className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                        value={creditItem.transaction.partner || ''}
+                                        onChange={(e) => {
+                                          handleTransactionChange(creditItem.originalIndex, 'partner', e.target.value);
+                                        }}
+                                      />
+                                    </td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                    <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
+                                  </>
+                                )}
+                                {/* 적요 칸 */}
                                 <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="number" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.amount}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
-                                    }}
-                                  />
+                                  {debitItem ? (
+                                    <input 
+                                      type="text" 
+                                      className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                      value={debitItem.transaction.note || ''}
+                                      onChange={(e) => {
+                                        handleTransactionChange(debitItem.originalIndex, 'note', e.target.value);
+                                      }}
+                                    />
+                                  ) : creditItem ? (
+                                    <input 
+                                      type="text" 
+                                      className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
+                                      value={creditItem.transaction.note || ''}
+                                      onChange={(e) => {
+                                        handleTransactionChange(creditItem.originalIndex, 'note', e.target.value);
+                                      }}
+                                    />
+                                  ) : '-'}
                                 </td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="text" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.partner?.name || ''}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'partner', {
-                                        ...transaction.partner,
-                                        name: e.target.value
-                                      });
-                                    }}
-                                  />
-                                </td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                              </>
-                            ) : (
-                              <>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">-</td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="text" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.account?.name || ''}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'account', {
-                                        ...transaction.account,
-                                        name: e.target.value
-                                      });
-                                    }}
-                                  />
-                                </td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="number" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.amount}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'amount', parseInt(e.target.value) || 0);
-                                    }}
-                                  />
-                                </td>
-                                <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                                  <input 
-                                    type="text" 
-                                    className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                    value={transaction.partner?.name || ''}
-                                    onChange={(e) => {
-                                      handleTransactionChange(index, 'partner', {
-                                        ...transaction.partner,
-                                        name: e.target.value
-                                      });
-                                    }}
-                                  />
-                                </td>
-                              </>
-                            )}
-                            <td className="p-2 border border-[#D9D9D9] text-center h-8">
-                              <input 
-                                type="text" 
-                                className="w-full text-center border-none bg-transparent focus:outline-none text-[#B3B3B3]"
-                                value={transaction.note || ''}
-                                onChange={(e) => {
-                                  handleTransactionChange(index, 'note', e.target.value);
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        ))}
+                              </tr>
+                            );
+                          });
+                        })()}
                         <tr className="h-8">
                           <td className="p-2 border border-[#D9D9D9] text-center h-8 font-medium bg-[#F5F5F5]">소계</td>
                           <td className="p-2 border border-[#D9D9D9] text-center h-8 text-[#B3B3B3]">-</td>

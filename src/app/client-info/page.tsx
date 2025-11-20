@@ -337,7 +337,7 @@ export default function ClientInfoPage() {
             <div className="flex items-center justify-center min-w-[100px] w-[150px] bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span className="text-[12px] font-medium text-[#757575]">우리회사와의 관계</span>
             </div>
-            <div className="flex items-center justify-center min-w-[150px] flex-1 bg-[#F5F5F5] border-r border-[#D9D9D9]">
+            <div className="flex items-center justify-center min-w-[162px] flex-1 bg-[#F5F5F5] border-r border-[#D9D9D9]">
               <span className="text-[12px] font-medium text-[#757575]">기타 거래처 이해를 위한 참고사항</span>
             </div>
             <div className="flex items-center justify-center w-[64px] bg-[#F5F5F5]">
@@ -422,7 +422,7 @@ export default function ClientInfoPage() {
                   <option value="기타">기타</option>
                 </select>
               </div>
-              <div className="flex items-center px-2 min-w-[150px] flex-1 bg-white border-r border-[#D9D9D9]">
+              <div className="flex items-center px-2 min-w-[162px] flex-1 bg-white border-r border-[#D9D9D9]">
                 <input
                   className="w-full text-[12px] text-[#B3B3B3] focus:outline-none bg-transparent"
                   placeholder="입력하기"

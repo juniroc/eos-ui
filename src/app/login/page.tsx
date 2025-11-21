@@ -169,7 +169,7 @@ export default function LoginPage() {
 
           {/* 하단 로고 및 저작권 */}
           <div className="mt-12 flex flex-col items-center">
-            <Image src="/logo.png" alt="logo" width={56} height={32} />
+            <Image src="/eos-logo.svg" alt="logo" width={80} height={28} />
             <p className="text-xs text-[#B3B3B3] mt-[8px]">© 2025 EOSSOLUTION, Inc.</p>
           </div>
         </div>

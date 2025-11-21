@@ -361,7 +361,7 @@ export default function LedgerPage() {
               <div className="flex flex-col items-start w-64">
                 <div className="flex flex-col items-start py-1.5 px-0 pb-0.5 rounded-lg">
                   <div className="flex flex-row items-start">
-                    <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">원장</h2>
+                    <h2 className="text-[15px] leading-[140%] font-semibold text-[#1E1E1E]">계정원장</h2>
                   </div>
                   <p className="text-[12px] leading-[140%] text-[#767676]">조회기간을 선택하고 결산점검을 시작하세요.</p>
                 </div>

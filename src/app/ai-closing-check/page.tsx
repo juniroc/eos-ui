@@ -335,7 +335,7 @@ export default function AIClosingCheckPage() {
                 }}
               >
                 <span className="text-[12px] leading-[100%] font-medium bg-gradient-to-r from-[#00D2FF] via-[#4B5CDD] to-[#BE26FF] bg-clip-text text-transparent">
-                  {loading ? '처리중...' : 'AI에게 맡기기'}
+                  {loading ? '처리중...' : '간편결산처리'}
                 </span>
               </button>
             </div>

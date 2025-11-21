@@ -42,13 +42,12 @@ const navigationItems = [
     icon: '/icons/book_black.png',
     iconGrey: '/icons/book_grey.png',
     subItems: [
-      { id: 'proof-storage', label: '증빙보관소' },
       { id: 'journal', label: '전표/수정' },
-      { id: 'account-ledger', label: '계정원장' },
       { id: 'cashbook', label: '현금출납장' },
-      { id: 'ledger', label: '원장' },
-      { id: 'statements', label: '명세서' },
+      { id: 'ledger', label: '계정원장' },
+      { id: 'statements', label: '계정명세서' },
       { id: 'financial-statements', label: '재무제표' },
+      { id: 'proof-storage', label: '증빙보관소' },
     ],
   },
   {
@@ -69,8 +68,20 @@ const navigationItems = [
     ],
   },
   {
-    id: 'ai-tax',
-    label: 'AI 세무',
+    id: 'withholding-tax',
+    label: '원천세',
+    icon: '/icons/feather_black.png',
+    iconGrey: '/icons/feather_grey.png',
+  },
+  {
+    id: 'vat',
+    label: '부가세',
+    icon: '/icons/feather_black.png',
+    iconGrey: '/icons/feather_grey.png',
+  },
+  {
+    id: 'corporate-tax',
+    label: '법인세',
     icon: '/icons/feather_black.png',
     iconGrey: '/icons/feather_grey.png',
   },
@@ -104,9 +115,9 @@ export default function Sidebar({
   };
 
   const handleSubMenuClick = (subId: string) => {
-    // account-ledger 선택 시 cashbook으로 이동
+    // account-ledger 선택 시 라우팅 이동 없음
     if (subId === 'account-ledger') {
-      onSectionChange('cashbook');
+      return;
     } else {
       onSectionChange(subId);
     }
@@ -131,7 +142,7 @@ export default function Sidebar({
         {/* 로고 섹션 */}
         <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
           <div className="flex flex-col justify-center items-center h-7">
-            <Image src="/logo.png" alt="logo" width={80} height={28}/>
+            <Image src="/eos-logo.svg" alt="logo" width={80} height={28}/>
           </div>
         </div>
 
@@ -215,29 +226,73 @@ export default function Sidebar({
           {/* 세무 섹션 */}
           <div className="w-full flex flex-col items-start gap-2">
             <div className="flex flex-row items-center gap-[2px] h-3 rounded">
-              <span className="text-xs font-medium text-[#757575]">세무</span>
+              <span className="text-xs font-medium text-[#757575]">AI세무</span>
             </div>
-            <button
-              onClick={() => handleMenuClick('ai-tax', false)}
-              onMouseEnter={() => setHoveredMenu('ai-tax')}
-              className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                getCurrentActiveMenu() === 'ai-tax'
-                  ? 'bg-[#E6E6E6]'
-                  : 'hover:bg-[#E6E6E6]'
-              }`}
-            >
-              <Image
-                src={getCurrentActiveMenu() === 'ai-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
-                alt="AI 세무"
-                width={16}
-                height={16}
-              />
-              <span className={`text-xs font-medium text-center ${
-                getCurrentActiveMenu() === 'ai-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-              }`}>
-                AI 세무
-              </span>
-            </button>
+            <div className="flex flex-col items-start gap-[2px]">
+              <button
+                onClick={() => handleMenuClick('withholding-tax', false)}
+                onMouseEnter={() => setHoveredMenu('withholding-tax')}
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
+                  getCurrentActiveMenu() === 'withholding-tax'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'withholding-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
+                  alt="원천세"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'withholding-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  원천세
+                </span>
+              </button>
+              <button
+                onClick={() => handleMenuClick('vat', false)}
+                onMouseEnter={() => setHoveredMenu('vat')}
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
+                  getCurrentActiveMenu() === 'vat'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'vat' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
+                  alt="부가세"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'vat' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  부가세
+                </span>
+              </button>
+              <button
+                onClick={() => handleMenuClick('corporate-tax', false)}
+                onMouseEnter={() => setHoveredMenu('corporate-tax')}
+                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
+                  getCurrentActiveMenu() === 'corporate-tax'
+                    ? 'bg-[#E6E6E6]'
+                    : 'hover:bg-[#E6E6E6]'
+                }`}
+              >
+                <Image
+                  src={getCurrentActiveMenu() === 'corporate-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
+                  alt="법인세"
+                  width={16}
+                  height={16}
+                />
+                <span className={`text-xs font-medium text-center ${
+                  getCurrentActiveMenu() === 'corporate-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
+                }`}>
+                  법인세
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* 구분선 */}
@@ -337,32 +392,6 @@ export default function Sidebar({
                 {navigationItems
                   .find(i => i.id === hoveredMenu)
                   ?.subItems?.map((sub) => {
-                    // 회계장부의 특별한 구조: 원장, 명세서, 재무제표는 들여쓰기
-                    const isIndented = hoveredMenu === 'accounting' && 
-                      (sub.id === 'ledger' || sub.id === 'statements' || sub.id === 'cashbook');
-                    
-                    if (isIndented) {
-                      return (
-                        <div key={sub.id} className="flex flex-col items-start pl-4 gap-[10px] w-[92px] h-7">
-                        <button
-                          key={sub.id}
-                          onClick={() => handleSubMenuClick(sub.id)}
-                          className={`flex flex-row items-center p-2 gap-[6px] w-[76px] h-7 rounded transition-colors cursor-pointer ${
-                            activeSection === sub.id
-                              ? 'bg-[#E6E6E6]'
-                              : 'hover:bg-[#E6E6E6]'
-                          }`}
-                        >
-                            <span className={`text-xs font-medium leading-[100%] text-center ${
-                              activeSection === sub.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                            }`}>
-                              {sub.label}
-                            </span>
-                          </button>
-                        </div>
-                      );
-                    }
-
                     return (
                       <button
                         key={sub.id}

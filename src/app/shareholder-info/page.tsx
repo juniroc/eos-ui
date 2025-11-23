@@ -319,7 +319,7 @@ export default function ShareholderInfoPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end p-0 gap-4 w-full min-h-[46px] mb-4">
           {/* Title Group */}
-          <div className="flex flex-col items-start p-0 w-full sm:w-[346px] h-[46px]">
+          <div className="flex flex-col items-start p-0 w-full">
             {/* Menu Heading */}
             <div className="flex flex-col items-start py-[6px] px-0 pb-[2px] w-64 h-[29px] rounded-lg">
               <div className="flex flex-row items-start p-0 h-[21px]">
@@ -328,19 +328,19 @@ export default function ShareholderInfoPage() {
                 </h2>
               </div>
             </div>
-            <p className="w-full sm:w-[346px] h-[17px] font-['Pretendard'] font-normal text-xs leading-[140%] text-left sm:text-center text-[#767676]">
+            <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-left text-[#767676]">
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 w-full sm:w-[153px] h-7">
+          <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 h-7">
             {/* 파일 업로드 버튼 */}
             <div className="flex flex-row items-start p-0 h-7">
               <button
                 onClick={() => document.getElementById('shareholderFile')?.click()}
                 disabled={loading}
-                className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 min-w-[79px] h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
               >
                 파일 업로드
               </button>
@@ -351,7 +351,7 @@ export default function ShareholderInfoPage() {
               <button
                 onClick={handleSave}
                 disabled={!hasData || loading}
-                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
+                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 min-w-[66px] h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
                   !hasData || loading 
                     ? 'bg-[#E6E6E6] text-[#B3B3B3]' 
                     : 'bg-[#F3F3F3] text-[#1E1E1E]'

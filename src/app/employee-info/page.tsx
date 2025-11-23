@@ -274,7 +274,7 @@ export default function EmployeeInfoPage() {
                 </h2>
               </div>
             </div>
-            <p className="w-[346px] font-['Pretendard'] text-[12px] leading-[140%] text-center text-[#767676]">
+            <p className="font-['Pretendard'] text-[12px] leading-[140%] text-[#767676]">
               파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
             </p>
           </div>

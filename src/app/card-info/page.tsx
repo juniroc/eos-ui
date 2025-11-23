@@ -265,7 +265,7 @@ export default function CardInfoPage() {
                     </span>
                   </div>
                 </div>
-                <span className="text-xs leading-[140%] text-center text-[#767676]">
+                <span className="text-xs leading-[140%] text-[#767676]">
                   파일을 업로드해서 자동으로 입력하거나 직접 입력하고 정보를 저장하세요.
                 </span>
               </div>

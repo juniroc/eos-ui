@@ -347,34 +347,24 @@ function JournalPageContent() {
             </div>
           </div>
 
-          {/* 최소금액 */}
+          {/* 금액 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최소금액</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">금액</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
-              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+              <div className="flex flex-row items-center py-2 px-2 bg-white h-full gap-2">
                 <input
                   type="number"
-                  placeholder="입력하기"
+                  placeholder="입력"
                   value={filters.minAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
-              </div>
-            </div>
-          </div>
-
-          {/* 최대금액 */}
-          <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
-            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최대금액</span>
-            </div>
-            <div className="flex flex-col justify-center flex-1 min-w-0">
-              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+                <span className="text-[12px] leading-[100%] font-medium text-[#757575] shrink-0">~</span>
                 <input
                   type="number"
-                  placeholder="입력하기"
+                  placeholder="입력"
                   value={filters.maxAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"

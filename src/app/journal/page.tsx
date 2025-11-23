@@ -361,7 +361,7 @@ function JournalPageContent() {
                   onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
-                <span className="text-[12px] leading-[100%] font-medium text-[#757575] shrink-0">-</span>
+                <span className="text-[12px] leading-[100%] font-medium text-[#757575] shrink-0">~</span>
                 <input
                   type="number"
                   placeholder="입력"

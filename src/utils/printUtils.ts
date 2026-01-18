@@ -20,7 +20,7 @@ export interface PrintOptions {
  */
 export const printCurrentPage = (options: PrintOptions = {}) => {
   const { title, delay = 100, onBeforePrint, onAfterPrint } = options;
-  
+
   if (onBeforePrint) {
     onBeforePrint();
   }
@@ -34,12 +34,12 @@ export const printCurrentPage = (options: PrintOptions = {}) => {
   // 인쇄 실행
   setTimeout(() => {
     window.print();
-    
+
     // 제목 복원
     if (title) {
       document.title = originalTitle;
     }
-    
+
     if (onAfterPrint) {
       onAfterPrint();
     }
@@ -49,9 +49,53 @@ export const printCurrentPage = (options: PrintOptions = {}) => {
 /**
  * 특정 요소만 인쇄합니다
  */
+const syncFormValues = (source: HTMLElement, target: HTMLElement) => {
+  const sourceInputs = source.querySelectorAll<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >('input, textarea, select');
+  const targetInputs = target.querySelectorAll<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >('input, textarea, select');
+
+  sourceInputs.forEach((sourceEl, index) => {
+    const targetEl = targetInputs[index];
+    if (!targetEl) return;
+
+    if (targetEl instanceof HTMLInputElement) {
+      if (targetEl.type === 'checkbox' || targetEl.type === 'radio') {
+        targetEl.checked = sourceEl.checked;
+        if (sourceEl.checked) {
+          targetEl.setAttribute('checked', 'checked');
+        } else {
+          targetEl.removeAttribute('checked');
+        }
+      } else {
+        targetEl.value = sourceEl.value;
+        targetEl.setAttribute('value', sourceEl.value);
+      }
+    }
+
+    if (targetEl instanceof HTMLTextAreaElement) {
+      targetEl.value = sourceEl.value;
+      targetEl.textContent = sourceEl.value;
+    }
+
+    if (targetEl instanceof HTMLSelectElement) {
+      Array.from(targetEl.options).forEach((opt, i) => {
+        opt.selected = sourceEl.options[i]?.selected ?? false;
+        if (opt.selected) {
+          opt.setAttribute('selected', 'selected');
+        } else {
+          opt.removeAttribute('selected');
+        }
+      });
+    }
+  });
+};
+
 export const printElement = (options: PrintOptions) => {
   const { selector, title, delay = 100, onBeforePrint, onAfterPrint } = options;
-  
+
   if (!selector) {
     console.error('printElement: selector is required');
     return;
@@ -59,7 +103,9 @@ export const printElement = (options: PrintOptions) => {
 
   const element = document.querySelector(selector);
   if (!element) {
-    console.error(`printElement: Element with selector "${selector}" not found`);
+    console.error(
+      `printElement: Element with selector "${selector}" not found`
+    );
     return;
   }
 
@@ -89,9 +135,14 @@ export const printElement = (options: PrintOptions) => {
     .join('\n');
 
   // 링크된 스타일시트 복사
-  const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+  const linkTags = Array.from(
+    document.querySelectorAll('link[rel="stylesheet"]')
+  )
     .map(link => link.outerHTML)
     .join('\n');
+
+  const clonedElement = element.cloneNode(true) as HTMLElement;
+  syncFormValues(element, clonedElement);
 
   // HTML 구성
   const htmlContent = `
@@ -163,7 +214,7 @@ export const printElement = (options: PrintOptions) => {
         </style>
       </head>
       <body>
-        ${element.outerHTML}
+        ${clonedElement.outerHTML}
       </body>
     </html>
   `;
@@ -174,7 +225,7 @@ export const printElement = (options: PrintOptions) => {
   // 인쇄 실행
   setTimeout(() => {
     printWindow.print();
-    
+
     // 인쇄 후 창 닫기
     setTimeout(() => {
       printWindow.close();
@@ -188,7 +239,10 @@ export const printElement = (options: PrintOptions) => {
 /**
  * 모달이나 팝업 컴포넌트를 인쇄합니다
  */
-export const printModal = (modalSelector: string, options: Omit<PrintOptions, 'selector'> = {}) => {
+export const printModal = (
+  modalSelector: string,
+  options: Omit<PrintOptions, 'selector'> = {}
+) => {
   printElement({
     ...options,
     selector: modalSelector,

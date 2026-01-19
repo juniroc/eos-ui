@@ -7,6 +7,7 @@ import Form15 from '@/components/documentCreate/template/Form15/Form15';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
   const [scale, setScale] = useState(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [stampImage, setStampImage] = useState<string | null>(null);
 
   const handleSelectStamp = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,7 +17,7 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
     const url = URL.createObjectURL(file);
     setStampImage(url);
   };
-  const [eulCount, setEulCount] = useState(0);
+
 
   if (!isOpen) return null;
   return (

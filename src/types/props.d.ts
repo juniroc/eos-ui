@@ -1,4 +1,4 @@
-export type ModalProps<T = {}> = T & {
+export type ModalProps<T = object> = T & {
     isOpen: boolean;
     onClose: () => void;
 }

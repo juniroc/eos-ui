@@ -882,10 +882,12 @@ export default function VatForm15({
           <span className="relative inline-block text-[8pt] text-[#7E7E7E] cursor-pointer">
             (서명 또는 인)
             {imageSource && (
-              <img
-                src={imageSource}
-                alt="stamp"
-                className="absolute
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageSource}
+                  alt="stamp"
+                  className="absolute
         left-1/2
         top-1/2
         -translate-x-1/2
@@ -893,7 +895,8 @@ export default function VatForm15({
         w-[48pt]
         h-[48pt]
         pointer-events-none"
-              />
+                />
+              </>
             )}
           </span>
         </p>

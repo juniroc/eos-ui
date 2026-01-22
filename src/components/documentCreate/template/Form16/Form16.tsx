@@ -10,7 +10,7 @@ export default function Form16() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '17pt', textIndent: '-9pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제16호서식(1)]
             <span className="s2">
-              <개정 2019. 3. 20.>
+              &lt;개정 2019. 3. 20.&gt;
             </span>
           </p>
         </li>
@@ -63,11 +63,13 @@ export default function Form16() {
             </p>
           </td>
           <td style={{ width: '1pt', border: 'none', borderTop: '1pt solid #000', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '155.5pt', border: 'none', borderTop: '1pt solid #000', borderBottom: '1pt solid #000', padding: '1pt', verticalAlign: 'middle' }}>
             <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '18pt' }} type="text" />
           </td>
           <td style={{ width: '1pt', borderLeft: '1pt solid #000', borderTop: '1pt solid #000', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '150pt', border: 'none', borderTop: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
             <p className="s5" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'left', margin: '0', paddingLeft: '6pt' }}>
@@ -75,6 +77,7 @@ export default function Form16() {
             </p>
           </td>
           <td style={{ width: '1pt', border: 'none', borderTop: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '160pt', border: 'none', borderTop: '1pt solid #000', padding: '1pt', verticalAlign: 'middle' }}>
             <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '18pt' }} type="text" />
@@ -90,17 +93,22 @@ export default function Form16() {
             </p>
           </td>
           <td style={{ width: '1pt', border: 'none', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '155.5pt', border: 'none', borderBottom: '1pt solid #000', padding: '1pt', verticalAlign: 'middle' }}>
             <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '18pt' }} type="text" />
           </td>
           <td style={{ width: '1pt', borderLeft: '1pt solid #000', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '150pt', border: 'none', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '1pt', border: 'none', borderBottom: '1pt solid #000', padding: '0', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '160pt', border: 'none', borderBottom: '1pt solid #000', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
         </tr>
       </table>

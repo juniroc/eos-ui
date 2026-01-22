@@ -4,6 +4,34 @@ import ModalContainer from '@/components/modal/ModalContainer';
 import { printElement } from '@/utils/printUtils';
 import PreviewWrapper from '@/components/documentCreate/template/PreviewWrapper';
 import Form15 from '@/components/documentCreate/template/Form15/Form15';
+import Form16 from './template/Form16/Form16';
+import Form16_2 from './template/Form16_2/Form16_2';
+import Form19 from './template/Form19/Form19';
+import Form19_2 from './template/Form19_2/Form19_2';
+import Form19_3 from './template/Form19_3/Form19_3';
+import Form20 from './template/Form20/Form20';
+import Form21_1 from './template/Form21_1/Form21_1';
+import Form21_2 from './template/Form21_2/Form21_2';
+import Form25 from './template/Form25/Form25';
+import Form27 from './template/Form27/Form27';
+import Form28 from './template/Form28/Form28';
+import Form32 from './template/Form32/Form32';
+import Form33 from './template/Form33/Form33';
+import Form38 from './template/Form38/Form38';
+import Form38_2 from './template/Form38_2/Form38_2';
+import Form39 from './template/Form39/Form39';
+import Form39_2 from './template/Form39_2/Form39_2';
+import Form40 from './template/Form40/Form40';
+import Form40_2 from './template/Form40_2/Form40_2';
+import Form41 from './template/Form41/Form41';
+import Form41_2 from './template/Form41_2/Form41_2';
+import Form42 from './template/Form42/Form42';
+import Form47 from './template/Form47/Form47';
+import Form47_2 from './template/Form47_2/Form47_2';
+import FormJoteuk69 from './template/FormJoteuk69/FormJoteuk69';
+import FormJoteuk69_2 from './template/FormJoteuk69_2/FormJoteuk69_2';
+import FormJoteuk69_2_1 from './template/FormJoteuk69_2_1/FormJoteuk69_2_1';
+import FormJoteuk69_2_2 from './template/FormJoteuk69_2_2/FormJoteuk69_2_2';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
   const [scale, setScale] = useState(1);
@@ -63,6 +91,34 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
               >
                 <PreviewWrapper>
                   <Form15 />
+                  <Form16 />
+                  <Form16_2 />
+                  <Form19 />
+                  <Form19_2 />
+                  <Form19_3 />
+                  <Form20 />
+                  <Form21_1 />
+                  <Form21_2 />
+                  <Form25 />
+                  <Form27 />
+                  <Form28 />
+                  <Form32 />
+                  <Form33 />
+                  <Form38 />
+                  <Form38_2 />
+                  <Form39 />
+                  <Form39_2 />
+                  <Form40 />
+                  <Form40_2 />
+                  <Form41 />
+                  <Form41_2 />
+                  <Form42 />
+                  <Form47 />
+                  <Form47_2 />
+                  <FormJoteuk69 />
+                  <FormJoteuk69_2 />
+                  <FormJoteuk69_2_1 />
+                  <FormJoteuk69_2_2 />
                 </PreviewWrapper>
               </div>
             </div>

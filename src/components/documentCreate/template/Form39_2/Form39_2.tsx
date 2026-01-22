@@ -10,7 +10,7 @@ export default function Form39_2() {
           <p style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-9pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제38호서식(2)]
             <span className="s1">
-              <개정 2024. 3. 22.>
+              &lt;개정 2024. 3. 22.&gt;
             </span>
           </p>
         </li>

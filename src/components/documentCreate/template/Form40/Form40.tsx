@@ -10,7 +10,7 @@ export default function Form40() {
           <p style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-9pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제40호서식(1)]
             <span className="s1">
-              <개정 2025. 3. 21.>
+              &lt;개정 2025. 3. 21.&gt;
             </span>
           </p>
         </li>
@@ -319,10 +319,13 @@ export default function Form40() {
             </p>
           </td>
           <td style={{ width: '65pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#939393', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#939393', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '51pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#939393', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#939393', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '45pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#939393', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#939393', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '89pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#939393', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#939393', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', verticalAlign: 'middle' }}>
             <input className="number-input" style={{ width: 'calc(100% - 4pt)', height: 'calc(100% - 4pt)', border: 'none', outline: 'none', background: '#ffffff', padding: '1pt', fontSize: '9pt', fontFamily: 'Arial', textAlign: 'right', margin: '1pt 2pt 1pt 1pt' }} type="text" />

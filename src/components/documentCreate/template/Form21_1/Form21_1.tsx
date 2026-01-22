@@ -10,7 +10,7 @@ export default function Form21_1() {
           <p style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-11pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제21호서식]
             <span style={{ color: '#00F' }}>
-              <개정 2025. 3. 21.>
+              &lt;개정 2025. 3. 21.&gt;
             </span>
           </p>
         </li>
@@ -51,7 +51,7 @@ export default function Form21_1() {
         </tr>
       </table>
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-        <br  />
+        <br />
       </p>
       <table style={{ width: '624pt', borderCollapse: 'collapse', margin: '0', padding: '0' }}>
         <tr >
@@ -84,7 +84,7 @@ export default function Form21_1() {
         <tr style={{ height: '18pt' }}>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="4">
             <p style={{ textIndent: '0pt', textAlign: 'left', margin: '0', padding: '0', lineHeight: '0', height: '0' }}>
-              <br  />
+              <br />
             </p>
             <p className="s3" style={{ paddingLeft: '3pt', paddingTop: '0', marginTop: '0', textIndent: '0pt', textAlign: 'left' }}>
               사업자
@@ -132,14 +132,10 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ paddingTop: '3pt', paddingLeft: '4pt', textIndent: '0pt', textAlign: 'left' }}>
@@ -147,29 +143,19 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '18pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -206,10 +192,10 @@ export default function Form21_1() {
           <td style={{ verticalAlign: 'middle', width: '72pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <input className="cell-input" type="text" />
           </td>
-          <td style={{ verticalAlign: 'middle', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E', position: 'relative!important', padding: '0!important', margin: '0!important' }} colSpan="1">
+          <td style={{ verticalAlign: 'middle', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E', position: 'relative', padding: '0', margin: '0' }} colSpan="1">
             <input className="cell-input" type="text" />
           </td>
-          <td style={{ verticalAlign: 'middle', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E', position: 'relative!important', padding: '0!important', margin: '0!important' }} colSpan="7">
+          <td style={{ verticalAlign: 'middle', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E', position: 'relative', padding: '0', margin: '0' }} colSpan="7">
             <input className="cell-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '73pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }} colSpan="5">
@@ -239,7 +225,7 @@ export default function Form21_1() {
         </tr>
       </table>
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-        <br  />
+        <br />
       </p>
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
       </p>
@@ -293,15 +279,15 @@ export default function Form21_1() {
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="9">
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '130%', textAlign: 'center', fontSize: '9pt' }}>
               과세
-              <br  />
+              <br />
               표준
-              <br  />
+              <br />
               <span style={{ display: 'block', marginTop: '5pt' }}>
                 및
               </span>
               <span style={{ display: 'block', marginTop: '5pt' }}>
                 매출
-                <br  />
+                <br />
                 세액
               </span>
             </p>
@@ -322,9 +308,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ textIndent: '0pt', lineHeight: '8pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -332,9 +316,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '171pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -349,9 +331,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ textIndent: '0pt', lineHeight: '8pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -359,9 +339,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -376,9 +354,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ textIndent: '0pt', lineHeight: '8pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -386,9 +362,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -403,9 +377,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ textIndent: '0pt', lineHeight: '8pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -413,9 +385,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -435,9 +405,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ paddingTop: '1pt', textIndent: '0pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -445,9 +413,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -462,9 +428,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s9" style={{ textIndent: '0pt', textAlign: 'center', fontSize: '9pt', color: '#000', paddingLeft: '0pt' }}>
@@ -472,9 +436,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -489,19 +451,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -516,19 +472,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
-          <td style={{ verticalAlign: 'middle', width: '171pt', borderTop: '1pt solid #7E7E7E', borderLeft: '1pt solid #7E7E7E', borderBottom: '1pt solid #7E7E7E', borderRight: '0 !important', borderRightWidth: '0 !important', borderRightStyle: 'none !important', borderRightColor: 'transparent !important' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+          <td style={{ verticalAlign: 'middle', width: '171pt', borderTop: '1pt solid #7E7E7E', borderLeft: '1pt solid #7E7E7E', borderBottom: '1pt solid #7E7E7E', borderRight: '0', borderRightWidth: '0', borderRightStyle: 'none', borderRightColor: 'transparent' }}>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -543,19 +493,15 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s6" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center', paddingLeft: '0pt' }}>
               ㉮
             </p>
           </td>
-          <td style={{ verticalAlign: 'middle', width: '171pt', borderTop: '1pt solid #7E7E7E', borderLeft: 'none !important', borderBottom: '1pt solid #7E7E7E', borderRight: 'none' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+          <td style={{ verticalAlign: 'middle', width: '171pt', borderTop: '1pt solid #7E7E7E', borderLeft: 'none', borderBottom: '1pt solid #7E7E7E', borderRight: 'none' }}>
+            <input className="text-input" type="text" />
           </td>
         </tr>
       </table>
@@ -563,7 +509,7 @@ export default function Form21_1() {
         <tr style={{ height: '15pt' }}>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="9">
             <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
+              <br />
             </p>
             <p className="s3" style={{ paddingLeft: '7pt', paddingRight: '5pt', textIndent: '0pt', lineHeight: '110%', textAlign: 'left', fontSize: '9pt' }}>
               매입 세액
@@ -585,19 +531,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '90pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -612,19 +552,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} bgColor="#D5D5D5">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -639,19 +573,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -666,19 +594,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -693,19 +615,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -720,19 +636,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -747,19 +657,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -774,19 +678,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -801,9 +699,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '120pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}>
@@ -811,9 +707,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -828,9 +722,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '171pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -850,19 +742,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2" bgColor="#D5D5D5">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '171pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -884,19 +770,13 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -918,9 +798,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} rowSpan="2">
             <p className="s3" style={{ paddingTop: '1pt', textIndent: '0pt', textAlign: 'center' }}>
@@ -928,9 +806,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }} rowSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -952,9 +828,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '120pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#999999', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#999999', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -962,9 +836,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#999999' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -979,9 +851,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '120pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#999999', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#999999', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -989,9 +859,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#999999', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1006,9 +874,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -1016,9 +882,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1033,9 +897,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} bgColor="#D5D5D5">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -1043,9 +905,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1060,9 +920,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} bgColor="#D5D5D5">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -1070,9 +928,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1087,9 +943,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }} bgColor="#D5D5D5">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -1097,9 +951,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1114,9 +966,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '161pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
             <p className="s3" style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}>
@@ -1124,9 +974,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1141,9 +989,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1153,14 +999,12 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '134pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
       </table>
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-        <br  />
+        <br />
       </p>
       <table style={{ borderCollapse: 'collapse', marginLeft: '5.929pt' }} cellSpacing="0">
         <tr style={{ height: '15pt' }}>
@@ -1175,9 +1019,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '132pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }} colSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '70pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }}>
             <p className="s3" style={{ paddingLeft: '3pt', textIndent: '0pt', lineHeight: '10pt', textAlign: 'left' }}>
@@ -1185,9 +1027,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '141pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080' }} colSpan="2">
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '15pt' }}>
@@ -1197,9 +1037,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '72pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '70pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }}>
             <p className="s3" style={{ paddingLeft: '17pt', textIndent: '0pt', lineHeight: '10pt', textAlign: 'left' }}>
@@ -1207,9 +1045,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '70pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ verticalAlign: 'middle', width: '70pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080' }}>
             <p className="s3" style={{ paddingLeft: '17pt', textIndent: '0pt', lineHeight: '10pt', textAlign: 'left' }}>
@@ -1217,9 +1053,7 @@ export default function Form21_1() {
             </p>
           </td>
           <td style={{ verticalAlign: 'middle', width: '71pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080' }}>
-            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
-              <br  />
-            </p>
+            <input className="text-input" type="text" />
           </td>
         </tr>
       </table>

@@ -8,7 +8,7 @@ export default function Form15() {
       <p className="s1" style={{ paddingTop: '3pt', paddingLeft: '8pt', textIndent: '0pt', textAlign: 'left' }}>
         [별지 제15호서식]
         <span className="s2">
-          <개정 2024. 3. 22.>
+          &lt;개정 2024. 3. 22.&gt;
         </span>
       </p>
       <p className="s3" style={{ paddingTop: '9pt', paddingBottom: '12pt', textIndent: '0pt', textAlign: 'center' }}>

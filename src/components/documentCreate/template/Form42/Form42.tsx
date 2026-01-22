@@ -94,6 +94,7 @@ export default function Form42() {
             <input className="form-input form-input-text" style={{ width: '114pt', height: '20pt', padding: '1.5pt', verticalAlign: 'middle', float: 'right', marginRight: '1pt', fontSize: '10pt' }} type="text" />
           </td>
           <td style={{ width: '282pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#939393', borderLeftStyle: 'none', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
+            <input className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '29pt' }}>

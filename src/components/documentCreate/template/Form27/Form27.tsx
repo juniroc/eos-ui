@@ -10,7 +10,7 @@ export default function Form27() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '19pt', textIndent: '-11pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제27호서식]
             <span style={{ color: '#00F' }}>
-              <개정 2022. 3. 18.>
+              &lt;개정 2022. 3. 18.&gt;
             </span>
           </p>
         </li>

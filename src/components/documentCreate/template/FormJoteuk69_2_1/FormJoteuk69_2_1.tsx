@@ -10,7 +10,7 @@ export default function FormJoteuk69_2_1() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-10pt', textAlign: 'left' }}>
             조세특례제한법 시행규칙[별지 제69호의2서식(1)]
             <span style={{ color: '#00F' }}>
-              <개정 2016.3.14.>
+              &lt;개정 2016.3.14.&gt;
             </span>
           </p>
         </li>

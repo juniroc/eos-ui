@@ -183,19 +183,25 @@ export default function Form32() {
             </p>
           </td>
           <td style={{ width: '28pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '43pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '72pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '86pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '44pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#939393', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '67pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#939393', borderBottomStyle: 'solid', borderBottomWidth: '1pt', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />

@@ -14,7 +14,7 @@
     margin: 0;
     padding: 0;
     text-indent: 0;
-  }}
+  }
 }
 
 @layer components {
@@ -122,8 +122,10 @@
   line-height: 1em !important;
   background: transparent;
   box-sizing: border-box !important;
-/* 모든 테이블의 폭과 정렬 통일 */
-table { box-sizing: border-box !important; border: none !important;
+  }
+  .form21_1 /* 모든 테이블의 폭과 정렬 통일 */
+table {
+     box-sizing: border-box !important; border: none !important;
   }
   .form21_1 table[style*="width:624pt"] {
     box-sizing: border-box !important; border: none !important;
@@ -139,7 +141,7 @@ table { box-sizing: border-box !important; border: none !important;
   line-height: 1em !important;
   outline: none;
   }
-  .form21_1 td[style*="width:30pt"][style*="세율"], .form21_1 td[style*="width:30pt"]:has(p:contains("세율")) {
+  .form21_1 td[style*="width:30pt"][style*="세율"] {
     max-width: 30pt !important; width: 30pt !important; min-width: 30pt !important;
   }
   .form21_1 /* 테이블 3을 제외한 모든 테이블에만 table-layout: fixed 적용 */

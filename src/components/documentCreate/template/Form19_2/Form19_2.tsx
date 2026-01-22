@@ -10,7 +10,7 @@ export default function Form19_2() {
           <p style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-10pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제19호서식(2)]
             <span style={{ color: '#00F' }}>
-              <개정 2022. 3. 18.>
+              &lt;개정 2022. 3. 18.&gt;
             </span>
           </p>
         </li>

@@ -10,7 +10,7 @@ export default function Form16_2() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-11pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제16호서식(2)]
             <span className="s2">
-              <개정 2019. 3. 20.>
+              &lt;개정 2019. 3. 20.&gt;
             </span>
           </p>
         </li>

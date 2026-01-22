@@ -10,7 +10,7 @@ export default function FormJoteuk69_2() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-10pt', textAlign: 'left' }}>
             조세특례제한법 시행규칙 [별지 제69호서식(2)]
             <span style={{ color: '#00F' }}>
-              <개정 2019. 3. 20.>
+              &lt;개정 2019. 3. 20.&gt;
             </span>
           </p>
         </li>
@@ -30,7 +30,7 @@ export default function FormJoteuk69_2() {
         <input className="form-input form-input-date" style={{ width: '20pt', minWidth: '20pt', height: '15pt', padding: '1pt', fontSize: '10pt', textAlign: 'center', fontFamily: 'Arial, sans-serif' }} type="text" />
         기)
       </p>
-      <table style={{ borderCollapse: 'collapse', marginLeft: 'auto', marginRight: '20pt', width: '350pt !important', tableLayout: 'fixed', marginTop: '0', marginBottom: '10pt', paddingBottom: '0', border: '1.5pt solid black' }} cellSpacing="0">
+      <table style={{ borderCollapse: 'collapse', marginLeft: 'auto', marginRight: '20pt', width: '350pt', tableLayout: 'fixed', marginTop: '0', marginBottom: '10pt', paddingBottom: '0', border: '1.5pt solid black' }} cellSpacing="0">
         <tr style={{ height: '19pt' }}>
           <td style={{ width: '150pt', borderTopStyle: 'solid', borderTopWidth: '1.5pt', borderTopColor: 'black', borderBottomStyle: 'solid', borderBottomWidth: '1.5pt', borderBottomColor: 'black', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E', borderLeftStyle: 'solid', borderLeftWidth: '1.5pt', borderLeftColor: 'black', verticalAlign: 'middle', padding: '0' }}>
             <p style={{ fontFamily: '돋움, monospace', fontSize: '11pt', textAlign: 'center', margin: '0', padding: '0', lineHeight: '1' }}>

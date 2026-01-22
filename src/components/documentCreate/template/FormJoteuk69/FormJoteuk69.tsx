@@ -13,7 +13,7 @@ export default function FormJoteuk69() {
               [별지 제69호서식(1)]
             </span>
             <span className="s3">
-              <개정 2025. 6. 30.>
+              &lt;개정 2025. 6. 30.&gt;
             </span>
           </p>
         </li>
@@ -31,6 +31,7 @@ export default function FormJoteuk69() {
       <table style={{ borderCollapse: 'collapse', marginLeft: '0', width: '620pt', tableLayout: 'fixed', marginTop: '3pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#7E7E7E', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#7E7E7E' }} cellSpacing="0">
         <tr style={{ height: '15pt' }}>
           <td style={{ width: '378pt', backgroundColor: '#C0C0C0', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#7E7E7E' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '242pt', backgroundColor: '#C0C0C0', paddingLeft: '4pt', verticalAlign: 'middle' }}>
             <span style={{ fontFamily: '돋움, sans-serif', fontSize: '9pt' }}>

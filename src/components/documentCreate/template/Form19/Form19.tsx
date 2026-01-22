@@ -10,7 +10,7 @@ export default function Form19() {
           ■부가가치세법 시행규칙 [별지 제19호서식(1)]
         </span>
         <span className="s2">
-          <개정 2022. 3. 18.>
+          &lt;개정 2022. 3. 18.&gt;
         </span>
       </p>
       <p style={{ paddingTop: '10pt', textIndent: '0pt', textAlign: 'center' }}>

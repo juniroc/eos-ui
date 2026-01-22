@@ -10,7 +10,7 @@ export default function Form47() {
           <p style={{ paddingTop: '2pt', paddingLeft: '17pt', textIndent: '-9pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제47호서식(1)]
             <span className="s1">
-              <개정 2024. 3. 22.>
+              &lt;개정 2024. 3. 22.&gt;
             </span>
           </p>
         </li>

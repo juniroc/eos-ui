@@ -10,7 +10,7 @@ export default function Form38() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-9pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제38호서식(1)]
             <span className="s2">
-              <개정 2024. 3. 22.>
+              &lt;개정 2024. 3. 22.&gt;
             </span>
           </p>
         </li>
@@ -25,20 +25,20 @@ export default function Form38() {
         </span>
       </p>
       <p style={{ textIndent: '0pt', textAlign: 'center' }}>
-        <input className="form-input form-input-text" style={{ width: '40pt', height: '20pt', minWidth: '40pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '40pt', height: '20pt', minWidth: '40pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         년
         <span style={{ paddingLeft: '15pt' }}>
         </span>
         제
-        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         기 (
-        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         월
-        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         일 ~
-        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         월
-        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+        <input className="form-input form-input-text" style={{ width: '20pt', height: '20pt', minWidth: '20pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
         일)
       </p>
       <p style={{ paddingTop: '1pt', textIndent: '0pt', textAlign: 'left' }}>
@@ -59,13 +59,13 @@ export default function Form38() {
                 <p className="s5" style={{ paddingTop: '3pt', paddingLeft: '6pt', textIndent: '0pt', textAlign: 'left', display: 'inline-block', margin: '0', width: '130pt' }}>
                   ① 사업자등록번호
                 </p>
-                <input className="form-input form-input-text" style={{ width: 'calc(100% - 150pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+                <input className="form-input form-input-text" style={{ width: 'calc(100% - 150pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
               </td>
               <td style={{ width: '205pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }} colSpan="4">
                 <p className="s5" style={{ paddingTop: '3pt', paddingLeft: '5pt', textIndent: '0pt', textAlign: 'left', display: 'inline-block', margin: '0', width: '110pt' }}>
                   ② 상호(법인명)
                 </p>
-                <input className="form-input form-input-text" style={{ width: 'calc(100% - 130pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+                <input className="form-input form-input-text" style={{ width: 'calc(100% - 130pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
               </td>
             </tr>
             <tr style={{ height: '35pt' }}>
@@ -73,13 +73,13 @@ export default function Form38() {
                 <p className="s5" style={{ paddingTop: '3pt', paddingLeft: '6pt', textIndent: '0pt', textAlign: 'left', display: 'inline-block', margin: '0', width: '130pt' }}>
                   ③ 성명(대표자)
                 </p>
-                <input className="form-input form-input-text" style={{ width: 'calc(100% - 150pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+                <input className="form-input form-input-text" style={{ width: 'calc(100% - 150pt)', height: '20pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
               </td>
               <td style={{ width: '205pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }} colSpan="4">
                 <p className="s5" style={{ paddingTop: '3pt', paddingLeft: '5pt', textIndent: '0pt', textAlign: 'left', display: 'inline-block', margin: '0', width: '110pt' }}>
                   ④ 사업장 소재지
                 </p>
-                <textarea className="form-input form-input-text" style={{ width: 'calc(100% - 130pt)', height: '30pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontSize: '9pt', resize: 'none', overflowY: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word', fontFamily: 'Arial !important' }}>
+                <textarea className="form-input form-input-text" style={{ width: 'calc(100% - 130pt)', height: '30pt', marginLeft: '10pt', display: 'inline-block', verticalAlign: 'middle', fontSize: '9pt', resize: 'none', overflowY: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word', fontFamily: 'Arial' }}>
                 </textarea>
               </td>
             </tr>
@@ -103,7 +103,7 @@ export default function Form38() {
                 <p className="s5" style={{ display: 'inline-block', verticalAlign: 'middle', margin: '0', paddingLeft: '5pt', paddingRight: '5pt' }}>
                   ~
                 </p>
-                <input className="form-input form-input-text" style={{ width: '40pt', height: '20pt', minWidth: '40pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial !important' }} type="text" />
+                <input className="form-input form-input-text" style={{ width: '40pt', height: '20pt', minWidth: '40pt', display: 'inline-block', verticalAlign: 'middle', textAlign: 'center', fontFamily: 'Arial' }} type="text" />
                 <p className="s5" style={{ display: 'inline-block', verticalAlign: 'middle', margin: '0', paddingLeft: '2pt' }}>
                   년
                 </p>
@@ -637,10 +637,10 @@ export default function Form38() {
             </p>
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '34pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
@@ -676,7 +676,7 @@ export default function Form38() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
         </tr>
         <tr style={{ height: '20pt' }}>
@@ -686,10 +686,10 @@ export default function Form38() {
             </p>
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '34pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
@@ -725,7 +725,7 @@ export default function Form38() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
         </tr>
         <tr style={{ height: '20pt' }}>
@@ -735,10 +735,10 @@ export default function Form38() {
             </p>
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '34pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
@@ -774,7 +774,7 @@ export default function Form38() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
         </tr>
         <tr style={{ height: '20pt' }}>
@@ -784,10 +784,10 @@ export default function Form38() {
             </p>
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '34pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
@@ -823,7 +823,7 @@ export default function Form38() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
         </tr>
         <tr style={{ height: '20pt' }}>
@@ -833,10 +833,10 @@ export default function Form38() {
             </p>
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '64pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
           <td style={{ width: '34pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#808080', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
@@ -872,7 +872,7 @@ export default function Form38() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderTopColor: '#808080', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#808080', borderBottomStyle: 'solid', borderBottomWidth: '1pt', padding: '1pt', verticalAlign: 'middle' }}>
-            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial !important' }} type="text" />
+            <input className="form-input form-input-text" style={{ width: 'calc(100% - 2pt)', height: '20pt', padding: '1pt', verticalAlign: 'middle', fontFamily: 'Arial' }} type="text" />
           </td>
         </tr>
       </table>

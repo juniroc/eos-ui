@@ -10,7 +10,7 @@ export default function Form25() {
           <p className="s1" style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-10pt', textAlign: 'left' }}>
             부가가치세법 시행규칙 [별지 제25호서식]
             <span className="s2">
-              <개정 2021. 10. 28.>
+              &lt;개정 2021. 10. 28.&gt;
             </span>
           </p>
         </li>
@@ -244,14 +244,19 @@ export default function Form25() {
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt' }} />
           </td>
           <td style={{ width: '68pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '82pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '49pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '47pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
+            <input className="text-input" type="text" />
           </td>
           <td style={{ width: '53pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderLeftColor: '#ADADAD', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderBottomColor: '#ADADAD', borderRightStyle: 'solid', borderRightWidth: '1pt', borderRightColor: '#ADADAD', padding: '1pt', verticalAlign: 'middle' }}>
             <NumericInput style={{ width: 'calc(100% - 2pt)', height: '20pt' }} />

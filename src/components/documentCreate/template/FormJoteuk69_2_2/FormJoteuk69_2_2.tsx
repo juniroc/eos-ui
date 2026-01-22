@@ -10,7 +10,7 @@ export default function FormJoteuk69_2_2() {
           <p style={{ paddingTop: '2pt', paddingLeft: '18pt', textIndent: '-10pt', textAlign: 'left' }}>
             조세특례제한법 시행규칙[별지 제69호의2서식(2)]
             <span style={{ color: '#00F' }}>
-              <개정 2016.3.14.>
+              &lt;개정 2016.3.14.&gt;
             </span>
           </p>
         </li>
@@ -30,7 +30,7 @@ export default function FormJoteuk69_2_2() {
         <input className="form-input form-input-date" style={{ width: '20pt', minWidth: '20pt', height: '15pt', padding: '1pt', fontSize: '11pt', textAlign: 'center', fontFamily: 'Arial, sans-serif' }} type="text" />
         )
       </p>
-      <table style={{ borderCollapse: 'collapse', marginLeft: 'auto', marginRight: '15pt', width: '350pt !important', tableLayout: 'fixed', height: '15pt', border: '1.5pt solid black' }} cellSpacing="0">
+      <table style={{ borderCollapse: 'collapse', marginLeft: 'auto', marginRight: '15pt', width: '350pt', tableLayout: 'fixed', height: '15pt', border: '1.5pt solid black' }} cellSpacing="0">
         <tr style={{ height: '15pt' }}>
           <td style={{ width: '150pt', verticalAlign: 'middle', textAlign: 'center', borderRight: '1pt solid #7E7E7E', padding: '0' }}>
             <p style={{ fontFamily: '돋움, monospace', fontSize: '11pt', textAlign: 'center', margin: '0', padding: '0', lineHeight: '1' }}>

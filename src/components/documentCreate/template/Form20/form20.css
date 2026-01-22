@@ -1,0 +1,90 @@
+/* form20 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form20 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form20 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }}
+}
+
+@layer components {
+  .form20 .s1 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form20 .s3 {
+    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
+  }
+  .form20 .s4 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form20 h2 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form20 .s5 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form20 p {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; margin:0pt;
+  }
+  .form20 h3 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
+  }
+  .form20 h1 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt;
+  }
+  .form20 .s6 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 1pt;
+  }
+  .form20 .s7 {
+    color: #7E7E7E; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form20 li {
+    display: block;
+  }
+  .form20 #l1 {
+    padding-left: 0pt;
+  }
+  .form20 #l1> li>*:first-child:before {
+    content: "■ "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form20 #l2 {
+    padding-left: 0pt;counter-reset: c2 1;
+  }
+  .form20 #l2> li>*:first-child:before {
+    counter-increment: c2; content: counter(c2, decimal)". "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form20 #l2> li:first-child>*:first-child:before {
+    counter-increment: c2 0;
+  }
+  .form20 table, .form20 tbody {
+    vertical-align: top; overflow: visible;
+  }
+  .form20 input.form-input {
+    width: calc(100% - 2pt); height: calc(100% - 2pt); border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
+  }
+  .form20 input.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form20 input.form-input-numeric {
+    text-align: right; font-family: Arial; font-size: 10pt;
+  }
+  .form20 input.form-input-text {
+    text-align: center; font-family: Arial; font-size: 10pt;
+  }
+  .form20 input.form-input-checkbox {
+    width: 18pt; height: 18pt; border: none; outline: none; background: #ffffff; padding: 0; font-family: Arial; font-size: 10pt; text-align: center; cursor: pointer;
+  }
+  .form20 input.form-input-checkbox:focus {
+    border: 0.5pt solid #999;
+  }
+}

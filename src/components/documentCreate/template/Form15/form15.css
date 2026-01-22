@@ -1,283 +1,237 @@
-/* =========================
-   Tailwind 선언
-========================= */
+/* form15 Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =========================
-   Reset
-========================= */
 @layer base {
-    .form-15 {
-        width: 624pt;
-        margin: 0 auto;
-        padding-bottom: 20pt;
-    }
+  .form15 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
 
-    .form-15 * {
-        margin: 0;
-        padding: 0;
-        text-indent: 0;
-    }
-
-    table,
-    tbody {
-        vertical-align: top;
-        overflow: visible;
-    }
-
-    table p {
-        font-size: 9pt !important;
-        line-height: 120% !important;
-    }
-
-    li {
-        display: block;
-    }
-
-    p {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-        margin: 0pt;
-    }
-
-    h1 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 13pt;
-    }
-
-    h2 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 11pt;
-    }
+  .form15 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }}
 }
 
-/* =========================
-   서식 클래스 (s1 ~ s15)
-========================= */
 @layer components {
-    .s1 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 8pt;
-    }
-
-    .s2 {
-        color: #00F;
-        font-family: 돋움체, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 9pt;
-    }
-
-    .s3 {
-        color: black;
-        font-family: HY견고딕, serif;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 16.5pt;
-    }
-
-    .s4 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 9pt;
-    }
-
-    .s5 {
-        color: black;
-        font-family: 돋움체, monospace;
-        font-style: normal;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 11pt;
-    }
-
-    .s6 {
-        color: black;
-        font-family: 돋움체, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-    }
-
-    .s7 {
-        color: black;
-        font-family: 돋움체, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 9pt;
-    }
-
-    .s8 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-    }
-
-    .s9 {
-        color: black;
-        font-family: 바탕, serif;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 9pt;
-    }
-
-    .s10 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-    }
-
-    .s11 {
-        color: black;
-        font-family: 바탕, serif;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-    }
-
-    .s12 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 9pt;
-    }
-
-    .s13 {
-        color: #7E7E7E;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 8pt;
-    }
-
-    .s14 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 10pt;
-        vertical-align: 1pt;
-    }
-
-    .s15 {
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 8pt;
-    }
-}
-
-/* =========================
-   List Counter (원본 유지)
-========================= */
-@layer components {
-    #l1 {
-        padding-left: 0pt;
-        counter-reset: c1 1;
-    }
-
-    #l1 > li > *:first-child:before {
-        counter-increment: c1;
-        content: counter(c1, decimal) ". ";
-        color: black;
-        font-style: normal;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    #l1 > li:first-child > *:first-child:before {
-        counter-increment: c1 0;
-    }
-
-    #l2 {
-        padding-left: 0pt;
-        counter-reset: d1 1;
-    }
-
-    #l2 > li > *:first-child:before {
-        counter-increment: d1;
-        content: counter(d1, decimal) ". ";
-        color: black;
-        font-family: 돋움, monospace;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: none;
-        font-size: 8pt;
-    }
-
-    #l2 > li:first-child > *:first-child:before {
-        counter-increment: d1 0;
-    }
-}
-
-/* =========================
-   Input (원본 그대로)
-========================= */
-@layer components {
-    input.form-input {
-        width: 100%;
-        height: 100%;
-        border: none;
-        outline: none;
-        background: transparent;
-        padding: 1pt;
-        font-family: Arial;
-        font-size: 9pt;
-        box-sizing: border-box;
-    }
-
-    input.form-input:focus {
-        border: 0.5pt solid #999;
-    }
-
-    input.form-input-numeric {
-        text-align: right;
-        font-family: Arial;
-        font-size: 9pt;
-    }
-
-    input.form-input-text {
-        text-align: left;
-        font-family: Arial;
-        font-size: 9pt;
-    }
+  .form15 .s1 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 8pt;
+  }
+  .form15 .s2 {
+    color: #00F;
+      font-family: 돋움체, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 9pt;
+  }
+  .form15 .s3 {
+    color: black;
+      font-family: HY견고딕, serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 16.5pt;
+  }
+  .form15 .s4 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 9pt;
+  }
+  .form15 .s5 {
+    color: black;
+      font-family: 돋움체, monospace;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 11pt;
+  }
+  .form15 .s6 {
+    color: black;
+      font-family: 돋움체, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+  }
+  .form15 .s7 {
+    color: black;
+      font-family: 돋움체, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 9pt;
+  }
+  .form15 h2 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 11pt;
+  }
+  .form15 .s8 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+  }
+  .form15 p {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+      margin: 0pt;
+  }
+  .form15 .s9 {
+    color: black;
+      font-family: 바탕, serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 9pt;
+  }
+  .form15 .s10 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+  }
+  .form15 .s11 {
+    color: black;
+      font-family: 바탕, serif;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+  }
+  .form15 .s12 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 9pt;
+  }
+  .form15 .s13 {
+    color: #7E7E7E;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 8pt;
+  }
+  .form15 h1 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 13pt;
+  }
+  .form15 .s14 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 10pt;
+      vertical-align: 1pt;
+  }
+  .form15 .s15 {
+    color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 8pt;
+  }
+  .form15 li {
+    display: block;
+  }
+  .form15 #l1 {
+    padding-left: 0pt;
+      counter-reset: c1 1;
+  }
+  .form15 #l1>li>*:first-child:before {
+    counter-increment: c1;
+      content: counter(c1, decimal)". ";
+      color: black;
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: none;
+  }
+  .form15 #l1>li:first-child>*:first-child:before {
+    counter-increment: c1 0;
+  }
+  .form15 li {
+    display: block;
+  }
+  .form15 #l2 {
+    padding-left: 0pt;
+      counter-reset: d1 1;
+  }
+  .form15 #l2>li>*:first-child:before {
+    counter-increment: d1;
+      content: counter(d1, decimal)". ";
+      color: black;
+      font-family: 돋움, monospace;
+      font-style: normal;
+      font-weight: normal;
+      text-decoration: none;
+      font-size: 8pt;
+  }
+  .form15 #l2>li:first-child>*:first-child:before {
+    counter-increment: d1 0;
+  }
+  .form15 table, .form15 tbody {
+    vertical-align: top;
+      overflow: visible;
+  }
+  .form15 table p {
+    font-size: 9pt !important;
+      line-height: 120% !important;
+  }
+  .form15 input.form-input {
+    width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 1pt;
+      font-family: Arial;
+      font-size: 9pt;
+      box-sizing: border-box;
+  }
+  .form15 input.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form15 input.form-input-numeric {
+    text-align: right;
+      font-family: Arial;
+      font-size: 9pt;
+  }
+  .form15 input.form-input-text {
+    text-align: left;
+      font-family: Arial;
+      font-size: 9pt;
+  }
 }

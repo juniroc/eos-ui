@@ -1,0 +1,196 @@
+<!DOCTYPE  html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>[별지 제33호서식] 사업장현황명세서(부가가치세법 시행규칙)</title><meta name="author" content="법제처 국가법령정보센터"/><style type="text/css"> * {margin:0; padding:0; text-indent:0; }
+ .s1 { color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ .s2 { color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt; }
+ h2 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+ .s3 { color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s4 { color: black; font-family:돋움체; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+ .s5 { color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .s6 { color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s7 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .s8 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s9 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .s10 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s11 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s12 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 4pt; }
+ .s13 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ h1 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt; }
+ .s14 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 1pt; }
+ h3 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt; }
+ p { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt; }
+ li {display: block; }
+ #l1 {padding-left: 0pt; }
+ #l1> li>*:first-child:before {content: "■ "; color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ li {display: block; }
+ #l2 {padding-left: 0pt;counter-reset: d1 1; }
+ #l2> li>*:first-child:before {counter-increment: d1; content: counter(d1, decimal)". "; color: black; font-style: normal; font-weight: bold; text-decoration: none; }
+ #l2> li:first-child>*:first-child:before {counter-increment: d1 0;  }
+ table, tbody {vertical-align: top; overflow: visible; }
+ td {vertical-align: middle; text-align: center; }
+ body {width: 624pt; height: 882pt; margin: 0 auto; padding-bottom: 20pt; background: #ffffff; }
+input.form-input {width: calc(100% - 2pt); height: 20pt; border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial, monospace; font-size: 10pt; box-sizing: border-box; }
+input.form-input:focus {border: 0.5pt solid #999; }
+input.form-input-numeric {text-align: right; font-family: Arial, monospace; font-size: 10pt; }
+input.form-input-text {text-align: left; font-family: Arial, monospace; font-size: 10pt; }
+</style><script type="text/javascript">
+ function formatNumber(input) {
+     var value = input.value.replace(/[^0-9]/g, '');
+     if (value) {
+         value = parseInt(value, 10).toLocaleString('ko-KR');
+         input.value = value;
+     } else {
+         input.value = '';
+     }
+ }
+ function initInputs() {
+     var numericInputs = document.querySelectorAll('input.form-input-numeric');
+     numericInputs.forEach(function(input) {
+         input.addEventListener('input', function() {
+             formatNumber(this);
+         });
+         input.addEventListener('blur', function() {
+             formatNumber(this);
+         });
+     });
+ }
+ // 도장박스 추가 기능
+ function initStampBoxes() {
+   // "(서명 또는 인)" 텍스트를 포함하는 모든 span 요소 찾기
+   const allSpans = document.querySelectorAll('span');
+   const signSpans = [];
+   
+   allSpans.forEach(function(span) {
+     if (span.textContent && span.textContent.includes('(서명 또는 인)')) {
+       signSpans.push(span);
+     }
+   });
+   
+   signSpans.forEach(function(signSpan) {
+     // 부모 요소 찾기 (position: relative를 추가하기 위해)
+     const parent = signSpan.parentElement;
+     if (!parent) return;
+     
+     // 부모 요소에 position: relative 추가
+     const parentStyle = parent.getAttribute('style') || '';
+     if (!parentStyle.includes('position')) {
+       parent.setAttribute('style', parentStyle + ';position: relative;');
+     } else if (!parentStyle.includes('position: relative')) {
+       parent.setAttribute('style', parentStyle.replace(/position[^;]*;?/g, 'position: relative;'));
+     }
+     
+     // span 요소를 클릭 가능하게 만들기
+     signSpan.style.cursor = 'pointer';
+     signSpan.style.position = 'relative';
+     
+     // 클릭 이벤트 추가
+     signSpan.addEventListener('click', function(e) {
+       e.stopPropagation();
+       e.preventDefault();
+       
+       // 기존 도장박스가 있으면 제거
+       const existingBox = parent.querySelector('.stamp-input-box');
+       if (existingBox) {
+         existingBox.remove();
+         return;
+       }
+       
+       // 텍스트 span의 위치를 기준으로 박스 위치 계산 (60pt = 약 80px, 1pt ≈ 1.33px)
+       const spanRect = signSpan.getBoundingClientRect();
+       const parentRect = parent.getBoundingClientRect();
+       const spanTop = spanRect.top - parentRect.top;
+       const spanLeft = spanRect.left - parentRect.left;
+       const spanWidth = spanRect.width;
+       const spanHeight = spanRect.height;
+       const boxSize = 80; // 60pt ≈ 80px
+       
+       // 새로운 입력박스 생성 (텍스트를 박스 중앙에 배치)
+       const stampBox = document.createElement('div');
+       stampBox.className = 'stamp-input-box';
+       // 텍스트의 중앙을 박스의 중앙에 맞춤
+       const boxTop = spanTop + (spanHeight / 2) - (boxSize / 2);
+       const boxLeft = spanLeft + (spanWidth / 2) - (boxSize / 2);
+       
+       stampBox.setAttribute('style', 'position: absolute; display: block; width: 60pt; height: 60pt; min-width: 60pt; min-height: 60pt; max-width: 60pt; max-height: 60pt; background: transparent; border: none !important; outline: none; left: ' + boxLeft + 'px; top: ' + boxTop + 'px; cursor: pointer; box-sizing: border-box; z-index: 9999;');
+       stampBox.setAttribute('data-clicked', 'false');
+       
+       // 도장박스 클릭 시 테두리 토글
+       stampBox.addEventListener('click', function(e) {
+         e.stopPropagation();
+         e.preventDefault();
+         var clickedBox = e.target.closest('.stamp-input-box') || stampBox;
+         var isClicked = clickedBox.getAttribute('data-clicked') === 'true';
+         isClicked = !isClicked;
+         clickedBox.setAttribute('data-clicked', isClicked ? 'true' : 'false');
+         if (isClicked) {
+           clickedBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+         } else {
+           clickedBox.style.setProperty('border', 'none', 'important');
+         }
+       });
+       
+       // hover 시 테두리 표시 (클릭 상태가 아닐 때만)
+       stampBox.addEventListener('mouseenter', function(e) {
+         var hoveredBox = e.target.closest('.stamp-input-box') || stampBox;
+         var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+         if (!isClicked) {
+           hoveredBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+         }
+       });
+       stampBox.addEventListener('mouseleave', function(e) {
+         var hoveredBox = e.target.closest('.stamp-input-box') || stampBox;
+         var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+         if (!isClicked) {
+           hoveredBox.style.setProperty('border', 'none', 'important');
+         }
+       });
+       
+       // 이미지를 표시할 영역 (백엔드에서 이미지를 뿌려줄 수 있도록)
+       const stampImg = document.createElement('img');
+       stampImg.setAttribute('style', 'width: 100%; height: 100%; object-fit: contain; display: none;');
+       stampImg.className = 'stamp-image';
+       stampBox.appendChild(stampImg);
+       
+       parent.appendChild(stampBox);
+     });
+   });
+ }
+ 
+ // 주차장 유무 선택 기능
+ function initParkingSelection() {
+   const parkingOptions = document.querySelectorAll('.parking-option');
+   parkingOptions.forEach(function(option) {
+     option.addEventListener('click', function(e) {
+       e.stopPropagation();
+       e.preventDefault();
+       
+       // 같은 그룹의 모든 옵션에서 서클 제거
+       const parent = option.parentElement;
+       const allOptions = parent.querySelectorAll('.parking-option');
+       allOptions.forEach(function(opt) {
+         const existingCircle = opt.querySelector('.parking-circle');
+         if (existingCircle) {
+           existingCircle.remove();
+         }
+       });
+       
+      // 클릭된 옵션에 서클 생성
+      const circle = document.createElement('div');
+      circle.className = 'parking-circle';
+      
+      // 텍스트 크기 측정
+      const rect = option.getBoundingClientRect();
+      const textSize = Math.max(rect.width, rect.height);
+      const circleSize = textSize + 1; // 여유 공간 최소화
+      
+      circle.setAttribute('style', 'position: absolute; width: ' + circleSize + 'px; height: ' + circleSize + 'px; border: 1pt solid #000; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; box-sizing: border-box;');
+      option.appendChild(circle);
+     });
+   });
+ }
+ 
+ window.onload = function() {
+   initInputs();
+   initStampBoxes();
+   initParkingSelection();
+ };
+</script></head><body><ul id="l1"><li data-list-text="■"><p class="s1" style="padding-top: 2pt;padding-left: 17pt;text-indent: -9pt;text-align: left;">부가가치세법 시행규칙 [별지 제33호서식]</p></li></ul><p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><br/></p><p class="s2" style="text-indent: 0pt;text-align: center;letter-spacing: 2pt;">사업장현황명세서</p><h2 style="padding-top: 2pt;text-indent: 0pt;text-align: center;"><input type="text" class="form-input form-input-text" style="width:40pt;height:20pt;min-width:40pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>년<span style="padding-left:15pt;"></span>제<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>기(<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>월<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>일~<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>월<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>일)</h2><p style="padding-top: 9pt;text-indent: 0pt;text-align: left;"><br/></p><p style="width:624pt;height:20pt;background:#c0c0c0;margin:0 auto;padding:1pt;vertical-align:middle;line-height:20pt;"><span style="display:inline-block;width:30pt;"></span>접수번호<span style="display:inline-block;width:100pt;"></span>접수일<span style="display:inline-block;width:350pt;"></span>처리기간<span style="display:inline-block;width:10pt;"></span>즉시<span style="display:inline-block;width:50pt;"></span></p><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/><ol id="l2"><li data-list-text="1."><p class="s4" style="padding-top: 7pt;text-indent: 0pt;text-align: left;">인적사항</p><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;margin-left:auto;margin-right:auto;width:624pt;table-layout:fixed" cellspacing="0"><tr style="height:31pt"><td style="width:161pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle;white-space:nowrap"><p class="s5" style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;text-align: left;display:inline-block;margin:0;margin-right:5pt;width:90pt;">상호<span class="s6">(법인명)</span></p><input type="text" class="form-input form-input-text" style="width:calc(100% - 100pt);height:20pt;padding:1pt;vertical-align:middle;display:inline-block;font-family:Arial;"/></td><td style="width:161pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle;white-space:nowrap"><p class="s5" style="padding-top: 2pt;padding-left: 4pt;text-indent: 0pt;text-align: left;display:inline-block;margin:0;margin-right:5pt;width:90pt;">성명<span class="s6">(대표자명)</span></p><input type="text" class="form-input form-input-text" style="width:calc(100% - 100pt);height:20pt;padding:1pt;vertical-align:middle;display:inline-block;font-family:Arial;"/></td><td style="width:158pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;padding:1pt;vertical-align:middle;white-space:nowrap"><p class="s5" style="padding-top: 2pt;padding-left: 4pt;text-indent: 0pt;text-align: left;display:inline-block;margin:0;margin-right:5pt;width:90pt;">사업자등록번호</p><input type="text" class="form-input form-input-text" style="width:calc(100% - 100pt);height:20pt;padding:1pt;vertical-align:middle;display:inline-block;font-family:Arial;"/></td></tr></table><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/></li><li data-list-text="2."><h2 style="padding-top: 8pt;text-indent: 0pt;text-align: left;">기본사항<span class="s7">(자가ㆍ타가)  ②</span><span class="s8">~⑤란은 음식점업자 및 숙박업자만 적습니다.</span></h2><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;margin-left:auto;margin-right:auto;width:624pt;table-layout:fixed" cellspacing="0"><tr style="height:21pt"><td style="width:133pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" colspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">① 사업장</p></td><td style="width:48pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">②</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">객실 수</p></td><td style="width:46pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">③</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">탁자 수</p></td><td style="width:44pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">④</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">의자 수</p></td><td style="width:47pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑤</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">주차장</p></td><td style="width:45pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="3"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑥</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">종업원 수</p></td><td style="width:117pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D" colspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑦ 차량</p></td></tr><tr style="height:26pt"><td style="width:31pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">대지</p></td><td style="width:102pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" colspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 13pt;text-align: center;">건물(지하<input type="text" class="form-input form-input-numeric" style="width:20pt;height:15pt;min-width:20pt;display:inline-block;vertical-align:middle;font-family:Arial;"/>층,</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 11pt;text-align: center;">지상<input type="text" class="form-input form-input-numeric" style="width:20pt;height:15pt;min-width:20pt;display:inline-block;vertical-align:middle;font-family:Arial;"/>층)</p></td><td style="width:38pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="2"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">승용차</p></td><td style="width:79pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;padding:1pt;vertical-align:middle" rowspan="2"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">화물차</p></td></tr><tr style="height:12pt"><td style="width:59pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 10pt;text-align: center;">바닥면적</p></td><td style="width:43pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 10pt;text-align: center;">연면적</p></td></tr><tr style="height:37pt"><td style="width:31pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">㎡</p></td><td style="width:59pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">㎡</p></td><td style="width:43pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">㎡</p></td><td style="width:48pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">개</p></td><td style="width:46pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">개</p></td><td style="width:44pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">개</p></td><td style="width:47pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;position: relative;"><span class="parking-option" data-value="yes" style="cursor: pointer;position: relative;display: inline-block;padding: 0 5pt;margin-right: 5pt;">유</span><span class="parking-option" data-value="no" style="cursor: pointer;position: relative;display: inline-block;padding: 0 5pt;">무</span></p></td><td style="width:45pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">명</p></td><td style="width:38pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">대</p></td><td style="width:79pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: right;">대</p></td></tr></table><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/></li><li data-list-text="3."><h2 style="padding-top: 8pt;text-indent: 0pt;text-align: left;">기본경비<span class="s7">(6월, 12월 기준)                              </span><span class="s8">(단위 : 천원)</span></h2></li></ol><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;margin-left:auto;margin-right:auto;width:624pt;table-layout:fixed" cellspacing="0"><tr style="height:21pt"><td style="width:124pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" colspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑧ 임차료</p></td><td style="width:50pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑨</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">전기ㆍ가스료</p></td><td style="width:58pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑩</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">수도료</p></td><td style="width:65pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑪</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">인건비</p></td><td style="width:68pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">⑫</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">기타</p></td><td style="width:115pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D" rowspan="2"><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 13pt;text-align: center;">⑬</p><p class="s9" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;line-height: 13pt;text-align: center;">월 기본경비 합계</p></td></tr><tr style="height:21pt"><td style="width:62pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">보증금</p></td><td style="width:62pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p class="s10" style="padding-top: 0pt;padding-bottom: 0pt;padding-left: 0pt;padding-right: 0pt;text-indent: 0pt;text-align: center;">월세</p></td></tr><tr style="height:32pt"><td style="width:62pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:62pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:50pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:58pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:65pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:68pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td><td style="width:115pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt;padding:1pt;vertical-align:middle;font-family:Arial;font-size:9pt;"/></td></tr></table><p class="s7" style="padding-top: 10pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">「부가가치세법 시행령」 제91조제2항의 표 제8호에 따라 사업장현황명세서를 제출합니다.</p><p class="s11" style="padding-top: 6pt;text-indent: 0pt;text-align: right;"><input type="text" class="form-input form-input-text" style="width:40pt;height:20pt;min-width:40pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>년<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>월<input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;min-width:20pt;display:inline-block;vertical-align:middle;text-align:center;font-family:Arial;"/>일</p><p class="s12" style="padding-top: 8pt;text-indent: 0pt;text-align: right;position: relative;">신고인<span style="display:inline-block;width:30pt;"></span><input type="text" class="form-input form-input-text" style="width:100pt;height:20pt;display:inline-block;vertical-align:middle;margin:0 20pt;text-align:center;font-family:Arial;"/><span class="s13" style="text-align: right;">(서명 또는 인)</span></p><h1 style="padding-top: 4pt;padding-bottom: 2pt;padding-left: 51pt;text-indent: 0pt;text-align: left;">세 무 서 장<span style="display:inline-block;width:20pt;"></span><span class="s14">귀하</span></h1><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/><p style="padding-top: 120pt;text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/><h3 style="padding-top: 4pt;text-indent: 0pt;text-align: center;">작 성 방 법<span class="s7">(3. 기본경비란)</span></h3><p style="text-indent: 0pt;text-align: left;"/><p style="padding-top: 14pt;padding-left: 17pt;text-indent: 0pt;text-align: left;">⑧ 임차료 중 보증금란: 확정신고 최종월(6월 또는 12월) 현재 임차건물의 임차보증금을 적습니다.</p><p style="padding-top: 2pt;padding-left: 17pt;text-indent: 0pt;text-align: left;">⑧ 임차료 중 월세란: 확정신고 최종월(6월 또는 12월)의 임차료를 적습니다.</p><p style="padding-top: 2pt;padding-left: 17pt;text-indent: 0pt;text-align: left;">⑨~⑫: 확정신고 최종월(6월 또는 12월)의 경비를 각각 적습니다.</p><p style="padding-top: 2pt;padding-left: 17pt;text-indent: 0pt;text-align: left;">⑬: ⑧ 임차료 중 월세란부터 ⑫ 기타란까지의 경비를 더한 금액을 적습니다.</p><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0 auto;"/></body></html>

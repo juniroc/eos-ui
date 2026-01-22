@@ -1,0 +1,75 @@
+/* form47_2 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form47_2 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form47_2 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }}
+}
+
+@layer components {
+  .form47_2 p {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt;
+  }
+  .form47_2 .s1 {
+    color: black; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
+  }
+  .form47_2 .s2 {
+    color: black; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 15.5pt;
+  }
+  .form47_2 h1 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form47_2 .s3 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
+  }
+  .form47_2 .s4 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form47_2 .s5 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form47_2 h2 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
+  }
+  .form47_2 .s6 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form47_2 li {
+    display: block;
+  }
+  .form47_2 #l1 {
+    padding-left: 0pt;
+  }
+  .form47_2 #l1> li>*:first-child:before {
+    content: "■ "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form47_2 table, .form47_2 tbody {
+    vertical-align: top; overflow: visible;
+  }
+  .form47_2 .form-input {
+    border:none;background-color:#ffffff;font-family:Arial, sans-serif;font-size:9pt;padding:1.5pt;margin:0;box-sizing:border-box;outline:none;width:100%;height:100%;
+  }
+  .form47_2 .form-input:focus {
+    border:0.5pt solid #999;outline:none;
+  }
+  .form47_2 .form-input-text {
+    text-align:left;
+  }
+  .form47_2 .form-input-numeric {
+    text-align:right;
+  }
+  .form47_2 .form-input-date {
+    text-align:center;
+  }
+}

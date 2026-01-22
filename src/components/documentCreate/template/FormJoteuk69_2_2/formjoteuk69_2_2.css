@@ -1,0 +1,54 @@
+/* form-joteuk69_2_2 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form-joteuk69_2_2 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form-joteuk69_2_2 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }}
+}
+
+@layer components {
+  .form-joteuk69_2_2 p {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt;
+  }
+  .form-joteuk69_2_2 .s2 {
+    color: #282828; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
+  }
+  .form-joteuk69_2_2 .s4 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form-joteuk69_2_2 .s5 {
+    color: black; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 13.5pt;
+  }
+  .form-joteuk69_2_2 .s6 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form-joteuk69_2_2 .s7 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form-joteuk69_2_2 .s8 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form-joteuk69_2_2 li {
+    display: block;
+  }
+  .form-joteuk69_2_2 #l1 {
+    padding-left: 0pt;
+  }
+  .form-joteuk69_2_2 #l1> li>*:first-child:before {
+    content: "■ "; color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form-joteuk69_2_2 table, .form-joteuk69_2_2 tbody {
+    vertical-align: top; overflow: visible;
+  }
+}

@@ -1,0 +1,177 @@
+<!DOCTYPE  html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>[별지 제20호서식] 전자세금계산서 발급세액공제신고서(부가가치세법 시행규칙)</title><meta name="author" content="법제처 국가법령정보센터"/><style type="text/css"> * {margin:0; padding:0; text-indent:0; }
+ .s1 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .s3 { color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt; }
+ .s4 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ h2 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+ .s5 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ p { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; margin:0pt; }
+ h3 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt; }
+ h1 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt; }
+ .s6 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 1pt; }
+ .s7 { color: #7E7E7E; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ li {display: block; }
+ #l1 {padding-left: 0pt; }
+ #l1> li>*:first-child:before {content: "■ "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ #l2 {padding-left: 0pt;counter-reset: c2 1; }
+ #l2> li>*:first-child:before {counter-increment: c2; content: counter(c2, decimal)". "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+ #l2> li:first-child>*:first-child:before {counter-increment: c2 0;  }
+ table, tbody {vertical-align: top; overflow: visible; }
+body {width: 624pt; margin: 0 auto; padding-bottom: 20pt; background: #ffffff; }
+input.form-input {width: calc(100% - 2pt); height: calc(100% - 2pt); border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box; }
+input.form-input:focus {border: 0.5pt solid #999; }
+input.form-input-numeric {text-align: right; font-family: Arial; font-size: 10pt; }
+input.form-input-text {text-align: center; font-family: Arial; font-size: 10pt; }
+input.form-input-checkbox {width: 18pt; height: 18pt; border: none; outline: none; background: #ffffff; padding: 0; font-family: Arial; font-size: 10pt; text-align: center; cursor: pointer; }
+input.form-input-checkbox:focus {border: 0.5pt solid #999; }
+</style><script type="text/javascript">
+function formatNumber(input) {
+    var value = input.value.replace(/[^0-9]/g, '');
+    if (value) {
+        value = parseInt(value, 10).toLocaleString('ko-KR');
+        input.value = value;
+    } else {
+        input.value = '';
+    }
+}
+function initInputs() {
+    var numericInputs = document.querySelectorAll('input.form-input-numeric');
+    numericInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            formatNumber(this);
+        });
+        input.addEventListener('blur', function() {
+            formatNumber(this);
+        });
+    });
+    var checkboxInputs = document.querySelectorAll('input.form-input-checkbox');
+    checkboxInputs.forEach(function(input) {
+        input.addEventListener('click', function() {
+            var groupName = this.getAttribute('data-group');
+            var allInGroup = document.querySelectorAll('input.form-input-checkbox[data-group="' + groupName + '"]');
+            allInGroup.forEach(function(inp) {
+                inp.value = '';
+            });
+            this.value = 'O';
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+}
+// 도장박스 추가 기능
+function initStampBoxes() {
+  // "(서명 또는 인)" 텍스트를 포함하는 모든 span 요소 찾기
+  const allSpans = document.querySelectorAll('span');
+  const signSpans = [];
+  
+  allSpans.forEach(function(span) {
+    if (span.textContent && span.textContent.includes('(서명 또는 인)')) {
+      signSpans.push(span);
+    }
+  });
+  
+  signSpans.forEach(function(signSpan) {
+    // 부모 요소 찾기 (position: relative를 추가하기 위해)
+    const parent = signSpan.parentElement;
+    if (!parent) return;
+    
+    // 부모 요소에 position: relative 추가
+    const parentStyle = parent.getAttribute('style') || '';
+    if (!parentStyle.includes('position')) {
+      parent.setAttribute('style', parentStyle + ';position: relative;');
+    } else if (!parentStyle.includes('position: relative')) {
+      parent.setAttribute('style', parentStyle.replace(/position[^;]*;?/g, 'position: relative;'));
+    }
+    
+    // span 요소를 클릭 가능하게 만들기
+    signSpan.style.cursor = 'pointer';
+    signSpan.style.position = 'relative';
+    
+    // 클릭 이벤트 추가
+    signSpan.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      // 기존 도장박스가 있으면 제거
+      const existingBox = parent.querySelector('.stamp-input-box');
+      if (existingBox) {
+        existingBox.remove();
+        return;
+      }
+      
+      // 텍스트 span의 위치를 기준으로 박스 위치 계산 (60pt = 약 80px, 1pt ≈ 1.33px)
+      const spanRect = signSpan.getBoundingClientRect();
+      const parentRect = parent.getBoundingClientRect();
+      const spanTop = spanRect.top - parentRect.top;
+      const spanLeft = spanRect.left - parentRect.left;
+      const spanWidth = spanRect.width;
+      const spanHeight = spanRect.height;
+      const boxSize = 80; // 60pt ≈ 80px
+      
+      // 새로운 입력박스 생성 (텍스트를 박스 중앙에 배치)
+      const stampBox = document.createElement('div');
+      stampBox.className = 'stamp-input-box';
+      // 텍스트의 중앙을 박스의 중앙에 맞춤
+      const boxTop = spanTop + (spanHeight / 2) - (boxSize / 2);
+      const boxLeft = spanLeft + (spanWidth / 2) - (boxSize / 2);
+      
+      stampBox.setAttribute('style', 'position: absolute; display: block; width: 60pt; height: 60pt; min-width: 60pt; min-height: 60pt; max-width: 60pt; max-height: 60pt; background: transparent; border: none !important; outline: none; left: ' + boxLeft + 'px; top: ' + boxTop + 'px; cursor: pointer; box-sizing: border-box; z-index: 9999;');
+      stampBox.setAttribute('data-clicked', 'false');
+      
+      // 도장박스 클릭 시 테두리 토글
+      stampBox.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var clickedBox = e.target.closest('.stamp-input-box') || stampBox;
+        var isClicked = clickedBox.getAttribute('data-clicked') === 'true';
+        isClicked = !isClicked;
+        clickedBox.setAttribute('data-clicked', isClicked ? 'true' : 'false');
+        if (isClicked) {
+          clickedBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+        } else {
+          clickedBox.style.setProperty('border', 'none', 'important');
+        }
+      });
+      
+      // hover 시 테두리 표시 (클릭 상태가 아닐 때만)
+      stampBox.addEventListener('mouseenter', function(e) {
+        var hoveredBox = e.target.closest('.stamp-input-box') || stampBox;
+        var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+        if (!isClicked) {
+          hoveredBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+        }
+      });
+      stampBox.addEventListener('mouseleave', function(e) {
+        var hoveredBox = e.target.closest('.stamp-input-box') || stampBox;
+        var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+        if (!isClicked) {
+          hoveredBox.style.setProperty('border', 'none', 'important');
+        }
+      });
+      
+      // 이미지를 표시할 영역 (백엔드에서 이미지를 뿌려줄 수 있도록)
+      const stampImg = document.createElement('img');
+      stampImg.setAttribute('style', 'width: 100%; height: 100%; object-fit: contain; display: none;');
+      stampImg.className = 'stamp-image';
+      stampBox.appendChild(stampImg);
+      
+      parent.appendChild(stampBox);
+    });
+  });
+}
+
+window.onload = function() {
+    initInputs();
+    initStampBoxes();
+    // 문서 높이 측정
+    setTimeout(function() {
+        var height = document.body.scrollHeight;
+        var heightPt = (height * 72) / 96; // 픽셀을 pt로 변환 (96 DPI 기준)
+        console.log('문서 세로 길이: ' + heightPt.toFixed(2) + 'pt (' + height + 'px)');
+    }, 100);
+};
+</script></head><body><ul id="l1"><li data-list-text="■"><p class="s1" style="padding-top: 2pt;padding-left: 18pt;text-indent: -11pt;text-align: left;">부가가치세법 시행규칙 [별지 제20호서식] <span style=" color: #00F;">&lt;개정 2022. 3. 18.&gt;</span></p><p style="text-indent: 0pt;text-align: left;"><br/></p><p class="s3" style="text-indent: 0pt;text-align: center;padding-top: 20pt;padding-bottom: 15pt;">전자세금계산서 발급세액공제신고서</p><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;width:624pt;margin-left:0pt" cellspacing="0"><tr style="height:19pt"><td style="width:141pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" bgcolor="#BABABA"><p class="s4" style="padding-top: 1pt;padding-left: 3pt;text-indent: 0pt;text-align: left;">접수번호</p></td><td style="width:243pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D" bgcolor="#BABABA"><p class="s4" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">접수일</p></td><td style="width:240pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080" bgcolor="#BABABA"><p class="s4" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">처리기간 즉시</p></td></tr></table><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0;padding:0;"/><ol id="l2"><li data-list-text="1."><h2 style="padding-top: 6pt;padding-left: 27pt;text-indent: -13pt;text-align: left;">신고인 인적사항</h2><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;width:624pt;margin-left:0pt;table-layout:fixed" cellspacing="0"><tr style="height:32pt"><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080"><p class="s5" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">① 상호</p></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-text" style="width:calc(100% - 2pt);height:20pt;text-align:left;"/></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080"><p class="s5" style="padding-top: 1pt;padding-left: 4pt;text-indent: 0pt;text-align: left;">② 사업자등록번호</p></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-text" style="width:calc(100% - 2pt);height:20pt;text-align:left;"/></td></tr><tr style="height:32pt"><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080"><p class="s5" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">③ 성명</p></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-text" style="width:calc(100% - 2pt);height:20pt;text-align:left;"/></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080"><p class="s5" style="padding-top: 1pt;padding-left: 4pt;text-indent: 0pt;text-align: left;">④ 전화번호</p></td><td style="width:156pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-text" style="width:calc(100% - 2pt);height:20pt;text-align:left;"/></td></tr><tr style="height:32pt"><td style="width:624pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;padding:1pt;vertical-align:middle" colspan="4"><p class="s5" style="display:inline-block;margin:0;padding:0;padding-left:5pt;vertical-align:middle;">⑤ 사업장 소재지</p><input type="text" class="form-input form-input-text" style="width:500pt;height:20pt;display:inline-block;vertical-align:middle;margin-left:5pt;box-sizing:border-box;"/></td></tr><tr style="height:32pt"><td style="width:624pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080" colspan="4"><p class="s5" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">⑥ 직전연도 사업장별 공급가액(면세공급가액 포함) 합계액 3억원 미만 개인사업자 여부</p><p class="s5" style="padding-bottom: 4pt;padding-left: 383pt;text-indent: 0pt;line-height: 13pt;text-align: right;">[<input type="text" class="form-input-checkbox" data-group="personal-business" style="width:18pt;height:18pt;display:inline-block;vertical-align:middle;"/>] 여, [<input type="text" class="form-input-checkbox" data-group="personal-business" style="width:18pt;height:18pt;display:inline-block;vertical-align:middle;"/>] 부</p></td></tr></table><p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0;padding:0;"/></li><li data-list-text="2."><h2 style="padding-top: 8pt;padding-left: 26pt;text-indent: -13pt;text-align: left;">전자세금계산서 발급세액공제 계산신고 내용</h2></li></ol></li></ul><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0;padding:0;"/><p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><br/></p><h3 style="padding-left: 18pt;text-indent: 0pt;text-align: left;">가. 공제대상 세액</h3><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;width:560pt;margin-left:auto;margin-right:auto" cellspacing="0"><tr style="height:41pt"><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#4B4B4B;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s5" style="padding-top: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑦</p><p class="s5" style="padding-left: 14pt;padding-right: 13pt;text-indent: 0pt;line-height: 100%;text-align: center;">전자세금계산서 발급건수</p></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s5" style="padding-top: 3pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑧</p><p class="s5" style="text-indent: 0pt;line-height: 100%;text-align: center;">건당 공제금액</p></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s5" style="padding-top: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑨</p><p class="s5" style="padding-left: 8pt;padding-right: 8pt;text-indent: 0pt;line-height: 100%;text-align: center;">공제가능 세액</p><p class="s5" style="padding-left: 0pt;text-indent: 0pt;line-height: 100%;text-align: center;">(⑦ × ⑧)</p></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#4B4B4B"><p class="s5" style="padding-top: 3pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑩</p><p class="s5" style="padding-left: 10pt;padding-right: 10pt;text-indent: 30pt;line-height: 100%;text-align: left;">해당 공제세액  (⑨과 ⑬ 중 적은 금액)</p></td></tr><tr style="height:26pt"><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#4B4B4B;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt"/></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s4" style="padding-top: 7pt;text-indent: 0pt;text-align: center;">200원</p></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt"/></td><td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#4B4B4B;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt"/></td></tr></table><p style="padding-top: 10pt;text-indent: 0pt;text-align: left;"><br/></p><h3 style="padding-left: 18pt;text-indent: 0pt;text-align: left;">나. 공제 한도액 계산</h3><p style="text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;width:560pt;margin-left:auto;margin-right:auto" cellspacing="0"><tr style="height:44pt"><td style="width:186pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#4B4B4B;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s5" style="padding-top: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑪</p><p class="s5" style="text-indent: 0pt;line-height: 100%;text-align: center;">연간 공제한도액</p></td><td style="width:187pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s5" style="padding-top: 4pt;padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑫</p><p class="s5" style="padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 100%;text-align: center;">기 공제세액</p></td><td style="width:187pt;border-top-style:solid;border-top-width:1pt;border-top-color:#4B4B4B;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#808080;border-right-style:solid;border-right-width:1pt;border-right-color:#4B4B4B"><p class="s5" style="padding-top: 4pt;padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;">⑬</p><p class="s5" style="padding-left: 18pt;padding-right: 18pt;text-indent: 0pt;line-height: 100%;text-align: center;">해당 과세기간 공제한도액 (⑪ - ⑫)</p></td></tr><tr style="height:29pt"><td style="width:186pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#4B4B4B;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#808080"><p class="s4" style="padding-top: 8pt;text-indent: 0pt;text-align: center;">100만원</p></td><td style="width:187pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#808080;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt"/></td><td style="width:187pt;border-top-style:solid;border-top-width:1pt;border-top-color:#808080;border-left-style:solid;border-left-width:1pt;border-left-color:#808080;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#4B4B4B;border-right-style:solid;border-right-width:1pt;border-right-color:#4B4B4B;padding:1pt;vertical-align:middle"><input type="text" class="form-input form-input-numeric" style="width:calc(100% - 2pt);height:20pt"/></td></tr></table><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0;padding:0;"/><p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br/></p><p style="padding-left: 12pt;text-indent: 0pt;text-align: left;">「부가가치세법」 제47조에 따라 전자세금계산서 발급세액공제를 받기 위하여 위와 같이 신고합니다.</p><p class="s1" style="padding-top: 20pt;text-indent: 0pt;text-align: right;line-height: 1;margin:0;"><input type="text" class="form-input form-input-text" style="width:40pt;height:20pt;display:inline-block;vertical-align:middle;margin:0 2pt;background:transparent;font-family:Arial;font-size:9pt;text-align:center;"/>년 <input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;display:inline-block;vertical-align:middle;margin:0 2pt;background:transparent;font-family:Arial;font-size:9pt;text-align:center;"/>월 <input type="text" class="form-input form-input-text" style="width:20pt;height:20pt;display:inline-block;vertical-align:middle;margin:0 2pt;background:transparent;font-family:Arial;font-size:9pt;text-align:center;"/>일</p><p style="padding-top: 0pt;text-indent: 0pt;text-align: right;line-height: 1;margin:0;position: relative;"><span style="padding-right:30pt;">신고인</span><input type="text" class="form-input form-input-text" style="width:100pt;height:20pt;display:inline-block;vertical-align:middle;margin:0 20pt;background:#ffffff;font-family:돋움체, monospace;font-size:10pt;text-align:center;box-sizing:border-box;"/><span class="s7">(서명 또는 인)</span></p><h1 style="padding-top: 0pt;padding-left: 29pt;text-indent: 0pt;text-align: left;line-height: 1;margin:0;">세무서장<span style="padding-left:20pt;"></span><span class="s6">귀하</span></h1><p style="text-indent: 0pt;text-align: left;"><br/></p><hr style="width:624pt;border:none;border-top:1pt solid #000;margin:0;padding:0;"/><p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p><table style="border-collapse:collapse;width:624pt;margin-left:0pt" cellspacing="0"><tr style="height:35pt"><td style="width:60pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p style="text-indent: 0pt;text-align: left;"><br/></p><p class="s4" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">첨부서류</p></td><td style="width:500pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D;border-right-style:solid;border-right-width:1pt;border-right-color:#5D5D5D"><p style="text-indent: 0pt;text-align: left;"><br/></p><p class="s4" style="padding-left: 5pt;text-indent: 0pt;text-align: left;">없음</p></td><td style="width:64pt;border-top-style:solid;border-top-width:1pt;border-top-color:#5D5D5D;border-left-style:solid;border-left-width:1pt;border-left-color:#5D5D5D;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#5D5D5D"><p class="s4" style="padding-top: 2pt;padding-left: 10pt;padding-right: 15pt;text-indent: -4pt;line-height: 14pt;text-align: left;">수수료 없음</p></td></tr></table></body></html>

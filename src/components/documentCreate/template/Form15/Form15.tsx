@@ -1,5 +1,6 @@
 'use client';
 import './form15.css';
+import NumericInput from '@/components/documentCreate/template/Form15/NumericInput';
 
 export default function Form15() {
   return (
@@ -654,13 +655,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -682,13 +681,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -710,13 +707,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -764,13 +759,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -855,13 +848,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -883,13 +874,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -911,13 +900,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -965,13 +952,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -1024,13 +1009,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1052,13 +1035,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1080,13 +1061,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1134,13 +1113,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -1192,13 +1169,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1219,13 +1194,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1246,13 +1219,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1298,13 +1269,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -1674,13 +1643,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1702,13 +1669,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1730,13 +1695,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1787,13 +1750,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1815,13 +1776,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1840,13 +1799,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -2176,13 +2133,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2203,13 +2158,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2230,13 +2183,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2257,13 +2208,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2281,13 +2230,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -2768,13 +2715,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2795,13 +2740,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2822,13 +2765,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2849,13 +2790,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2876,13 +2815,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2903,13 +2840,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2930,13 +2865,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2957,13 +2890,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2981,13 +2912,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -3425,13 +3354,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3452,13 +3379,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3479,13 +3404,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3506,13 +3429,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3533,13 +3454,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3560,13 +3479,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3584,13 +3501,11 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-numeric"
+                <NumericInput
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                   }}
-                  type="text"
                 />
               </td>
             </tr>
@@ -3970,10 +3885,11 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
+            <NumericInput
+              style={{
+                width: 'calc(100% - 2pt)',
+                height: 'calc(100% - 2pt)',
+              }}
             />
           </td>
           <td
@@ -4020,10 +3936,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4042,10 +3956,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
         </tr>
@@ -4146,10 +4058,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4196,10 +4106,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4218,10 +4126,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
         </tr>
@@ -4322,10 +4228,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4372,10 +4276,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4394,10 +4296,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
         </tr>
@@ -4494,10 +4394,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4542,10 +4440,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -4563,10 +4459,8 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-numeric"
+            <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
         </tr>
@@ -4586,8 +4480,7 @@ export default function Form15() {
         className="s12"
         style={{ paddingTop: '7pt', textIndent: '0pt', textAlign: 'right' }}
       >
-        <input
-          className="form-input form-input-numeric"
+        <NumericInput
           style={{
             width: '25pt',
             height: '18pt',
@@ -4598,11 +4491,9 @@ export default function Form15() {
             fontFamily: '돋움, monospace',
             fontSize: '9pt',
           }}
-          type="text"
         />
         년
-        <input
-          className="form-input form-input-numeric"
+        <NumericInput
           style={{
             width: '15pt',
             height: '18pt',
@@ -4613,11 +4504,9 @@ export default function Form15() {
             fontFamily: '돋움, monospace',
             fontSize: '9pt',
           }}
-          type="text"
         />
         월
-        <input
-          className="form-input form-input-numeric"
+        <NumericInput
           style={{
             width: '15pt',
             height: '18pt',
@@ -4628,7 +4517,6 @@ export default function Form15() {
             fontFamily: '돋움, monospace',
             fontSize: '9pt',
           }}
-          type="text"
         />
         일
       </p>

@@ -31,7 +31,7 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
             <div className="w-[264px] h-[100%] flex justify-center items-center ml-4">
               왼쪽 영역
             </div>
-            <div className="w-[672px] h-[100%] flex flex-col justify-start">
+            <div className="w-[624px] h-[100%] flex flex-col justify-start">
               <div className="w-[100%] h-[28px] flex justify-center items-center mb-3 flex-none">
                 <button onClick={() => setScale(scale + 0.2)}>+</button>
                 <button onClick={() => setScale(scale - 0.2)}>-</button>

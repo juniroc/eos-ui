@@ -338,8 +338,8 @@ export default function VatStoredDocumentsPage() {
               <div 
                 className="grid w-full"
                 style={{
-                  gridTemplateColumns: '80px minmax(250px, auto) 1fr 1fr 63px',
-                  gridAutoRows: `${rowHeight}px`,
+                  gridTemplateColumns: '80px minmax(280px, auto) 1fr 1fr',
+                  gridAutoRows: `minmax(${rowHeight}px, auto)`,
                 }}
               >
                 {/* 헤더 행 */}
@@ -355,9 +355,7 @@ export default function VatStoredDocumentsPage() {
                 <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 4 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">업로드한 관련 파일</span>
                 </div>
-                <button className={`flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9] cursor-pointer hover:bg-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 5 }}>
-                  <span className="text-[11px] leading-[100%] text-[#B3B3B3]">업로드</span>
-                </button>
+
 
                 {/* 데이터 행들 */}
                 {hasSearched && allTableRows.map(({ report, reportRowIndex, globalRowIndex }) => {
@@ -383,17 +381,17 @@ export default function VatStoredDocumentsPage() {
                       {/* 서류명 - 첫 번째 행에만 표시하고 병합 */}
                       {reportRowIndex === 0 ? (
                         <div
-                          className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9] p-2 overflow-visible`}
-                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2, minWidth: '250px', width: '100%' }}
+                          className={`flex flex-col items-start justify-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9] p-2`}
+                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2, minWidth: '280px' }}
                         >
                           <span
                             onClick={() => handleReportClick(report.id)}
-                            className="text-[10px] leading-[140%] text-[#757575] cursor-pointer hover:underline mb-1 block w-full"
+                            className="text-[10px] leading-[140%] text-[#757575] cursor-pointer hover:underline mb-2 block"
                           >
                             {report.title}
                           </span>
                           {/* Action Buttons */}
-                          <div className="flex flex-row gap-1 w-full" ref={openMenuReportId === report.id ? menuRef : null}>
+                          <div className="flex flex-row gap-1 flex-wrap" ref={openMenuReportId === report.id ? menuRef : null}>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -401,7 +399,7 @@ export default function VatStoredDocumentsPage() {
                                 setShowDeleteModal(true);
                                 setOpenMenuReportId(null);
                               }}
-                              className="px-2 py-1 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6] whitespace-nowrap flex-shrink-0"
+                              className="px-2 py-1 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6] whitespace-nowrap"
                             >
                               삭제
                             </button>
@@ -414,7 +412,7 @@ export default function VatStoredDocumentsPage() {
                                   setShowWorkModal(true);
                                   setOpenMenuReportId(null);
                                 }}
-                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-shrink-0"
+                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap"
                               >
                                 수정신고
                               </button>
@@ -426,7 +424,7 @@ export default function VatStoredDocumentsPage() {
                                   setShowPreviewModal(true);
                                   setOpenMenuReportId(null);
                                 }}
-                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-shrink-0"
+                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap"
                               >
                                 재작업
                               </button>
@@ -446,11 +444,11 @@ export default function VatStoredDocumentsPage() {
                           {(() => {
                             const reportRows = allTableRows.filter(r => r.report.id === report.id);
                             return (
-                              <div className="flex flex-col w-full">
+                              <div className="flex flex-col w-full h-full">
                                 {reportRows.map((reportRow, idx) => (
                                   <div
                                     key={idx}
-                                    className={`flex flex-row items-center justify-between p-2 ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
+                                    className={`flex flex-row items-center justify-between p-2 min-h-[32px] ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
                                   >
                                     {reportRow.row.form ? (
                                       <>
@@ -488,14 +486,14 @@ export default function VatStoredDocumentsPage() {
                           {(() => {
                             const reportRows = allTableRows.filter(r => r.report.id === report.id);
                             return (
-                              <div className="flex flex-col w-full">
+                              <div className="flex flex-col w-full h-full">
                                 {reportRows.map((reportRow, idx) => {
                                   const docs = reportRow.row.form?.uploadedDocuments || [];
                                   const firstDoc = docs[0];
                                   return (
                                     <div
                                       key={idx}
-                                      className={`flex flex-row items-center justify-between p-2 ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
+                                      className={`flex flex-row items-center justify-between p-2 min-h-[32px] ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
                                     >
                                       {firstDoc ? (
                                         <>
@@ -537,19 +535,7 @@ export default function VatStoredDocumentsPage() {
                         <div className="bg-white border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 4 }}></div>
                       )}
                       
-                      {/* Upload Button Column - 첫 번째 행에만 표시 */}
-                      {reportRowIndex === 0 ? (
-                        <div 
-                          className={`flex flex-col justify-center items-center bg-[#E6E6E6] border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
-                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 5 }}
-                        >
-                          <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 cursor-pointer hover:bg-[#D9D9D9]">
-                            <span className="text-[11px] leading-[100%] text-[#B3B3B3]">업로드</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className={`bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`} style={{ gridRow: globalRowIndex + 1, gridColumn: 5 }}></div>
-                      )}
+                      
                     </React.Fragment>
                   );
                 })}

@@ -34,25 +34,25 @@ export default function VatDocumentCreatePage() {
     }
   }, [token]);
 
+  /** 도장 조회 */
+  const fetchStamp = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      const url = await getStamp(token);
+      setStampImageUrl(url);
+    } catch {
+      // 404는 정상 (도장이 없는 경우)
+      setStampImageUrl(null);
+    }
+  }, [token]);
+
   useEffect(() => {
     if (isAuthenticated && token) {
       fetchVatCompanyInfo();
       fetchStamp();
     }
-  }, [isAuthenticated, token, fetchVatCompanyInfo]);
-
-  /** 도장 조회 */
-  const fetchStamp = useCallback(async () => {
-    if (!token) return;
-
-    try {
-      const url = await getStamp(token);
-      setStampImageUrl(url);
-    } catch (err) {
-      // 404는 정상 (도장이 없는 경우)
-      setStampImageUrl(null);
-    }
-  }, [token]);
+  }, [isAuthenticated, token, fetchVatCompanyInfo, fetchStamp]);
 
   /** 도장 업로드 */
   const handleStampUpload = async (file: File) => {
@@ -156,9 +156,9 @@ export default function VatDocumentCreatePage() {
   }
 
   // 서류 생성 버튼 활성화 조건
-  const canCreateDocument = 
-    reportingPeriodStart !== '' && 
-    reportingPeriodEnd !== '' && 
+  const canCreateDocument =
+    reportingPeriodStart !== '' &&
+    reportingPeriodEnd !== '' &&
     stampImageUrl !== null;
 
   /** 서류 생성하기 */
@@ -619,11 +619,10 @@ export default function VatDocumentCreatePage() {
           <button
             onClick={handleCreateDocument}
             disabled={!canCreateDocument || loading}
-            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
-              !canCreateDocument || loading
+            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${!canCreateDocument || loading
                 ? 'bg-[#E6E6E6] text-[#B3B3B3]'
                 : 'bg-[#F3F3F3] text-[#1E1E1E]'
-            }`}
+              }`}
           >
             서류 생성하기
           </button>

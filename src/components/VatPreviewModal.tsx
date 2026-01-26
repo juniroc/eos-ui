@@ -181,7 +181,7 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
   return (
     <>
       <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50 p-4">
-        <div className="flex flex-row items-start p-0 max-w-[1280px] w-full h-[840px] max-h-[90vh] bg-[#F5F5F5] relative isolate">
+        <div className="flex flex-col items-center p-0 max-w-[1280px] w-full h-[840px] max-h-[90vh] bg-[#F5F5F5] flex-none order-0 flex-grow-0 relative isolate">
           {/* Header with Breadcrumb and Close Button */}
           <div className="absolute top-0 left-0 right-0 flex flex-row justify-between items-center p-3 h-[40px] bg-white border-b border-[#D9D9D9] z-10">
             <Breadcrumb mainMenu="부가세" subMenu="서류생성" thirdMenu="내용입력" />
@@ -312,9 +312,12 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
             <div className="flex flex-col items-start flex-1 h-full bg-white p-4 gap-4 overflow-y-auto min-w-0 flex-grow">
               {/* Header */}
               <div className="flex flex-col items-start w-full gap-2">
-                <div className="flex flex-row items-center justify-between w-full">
+                <div className="flex flex-row items-center w-full gap-1">
                   <span className="text-[14px] leading-[140%] text-[#1E1E1E] font-semibold">
-                    서류 보기 납부할 세액(환급받을 세액): 000,000,000,000원
+                    서류 보기                
+                  </span>
+                  <span className="text-[11px] leading-[100%] text-[#757575]">
+                    납부할 세액(환급받을 세액): 000,000,000,000원
                   </span>
                 </div>
                 

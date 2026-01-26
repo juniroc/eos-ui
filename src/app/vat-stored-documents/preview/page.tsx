@@ -304,8 +304,11 @@ export default function VatStoredDocumentsPreviewPage() {
           <div className="flex flex-col items-start w-full gap-2">
             <div className="flex flex-row items-center justify-between w-full">
               <span className="text-[14px] leading-[140%] text-[#1E1E1E] font-semibold">
-                서류 보기 납부할 세액(환급받을 세액): 000,000,000,000원
+                서류 보기                
               </span>
+              <span className="text-[11px] leading-[100%] text-[#757575]">
+                  납부할 세액(환급받을 세액): 000,000,000,000원
+                </span>
             </div>
             
             {/* Action Buttons */}

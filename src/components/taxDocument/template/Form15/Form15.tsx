@@ -5,11 +5,19 @@ import { useState } from 'react';
 import { Form15Data } from '@/components/taxDocument/template/Form15/types';
 import NumericInput from '@/components/taxDocument/template/Form15/NumericInput';
 import TaxFreePurchaseAmountTable from '@/components/taxDocument/template/Form15/TaxFreePurchaseAmountTable';
-import { mockForm15Constants } from '@/components/taxDocument/template/Form15/constants';
+import {
+  baseFarmerPurchaseItem,
+  mockForm15Constants,
+} from '@/components/taxDocument/template/Form15/constants';
 import Input from '@/components/taxDocument/template/Form15/Input';
 
 export default function Form15() {
   const [data, setData] = useState<Form15Data>(mockForm15Constants);
+
+  const farmerItems = Array.from(
+    { length: 3 },
+    (_, i) => data.farmerPurchaseItems[i] ?? baseFarmerPurchaseItem
+  );
 
   const updater = <K extends keyof Form15Data>(
     field: K,
@@ -19,6 +27,24 @@ export default function Form15() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const farmerItemUpdater = <
+    K extends keyof Form15Data['farmerPurchaseItems'][number],
+  >(
+    index: number,
+    field: K,
+    value: Form15Data['farmerPurchaseItems'][number][K]
+  ) => {
+    const items = [...data.farmerPurchaseItems];
+    const target = items[index] ?? baseFarmerPurchaseItem;
+
+    items[index] = {
+      ...target,
+      [field]: value,
+    };
+
+    updater('farmerPurchaseItems', items);
   };
 
   return (
@@ -2819,6 +2845,8 @@ export default function Form15() {
             }}
           >
             <NumericInput
+              value={data.farmerPurchaseTotalCount}
+              onChange={value => updater('farmerPurchaseTotalCount', value)}
               style={{
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
@@ -2844,10 +2872,10 @@ export default function Form15() {
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="form-input form-input-text"
+            <Input
+              value={data.farmerPurchaseTotalItemName}
+              onChange={value => updater('farmerPurchaseTotalItemName', value)}
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
             />
           </td>
           <td
@@ -2870,6 +2898,8 @@ export default function Form15() {
             }}
           >
             <NumericInput
+              value={data.farmerPurchaseTotalQuantity}
+              onChange={value => updater('farmerPurchaseTotalQuantity', value)}
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
             />
           </td>
@@ -2890,513 +2920,214 @@ export default function Form15() {
             }}
           >
             <NumericInput
+              value={data.farmerPurchaseTotalAmt}
+              onChange={value => updater('farmerPurchaseTotalAmt', value)}
               style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
             />
           </td>
         </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-            }}
-          >
-            <p
-              className="s4"
+        {farmerItems.map((item, index) => (
+          <tr key={`farmer-item-${index}`} style={{ height: '15pt' }}>
+            <td
               style={{
-                paddingTop: '1pt',
-                paddingLeft: '1pt',
-                textIndent: '0pt',
-                lineHeight: '11pt',
-                textAlign: 'center',
+                width: '45pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
               }}
             >
-              1
-            </p>
-          </td>
-          <td
-            style={{
-              width: '84pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '105pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '38pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '83pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '82pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-            }}
-          >
-            <p
-              className="s4"
+              <p
+                className="s4"
+                style={{
+                  paddingTop: '1pt',
+                  paddingLeft: '1pt',
+                  textIndent: '0pt',
+                  lineHeight: '11pt',
+                  textAlign: 'center',
+                }}
+              >
+                {index + 1}
+              </p>
+            </td>
+            <td
               style={{
-                paddingTop: '1pt',
-                paddingLeft: '1pt',
-                textIndent: '0pt',
-                lineHeight: '11pt',
-                textAlign: 'center',
+                width: '84pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
               }}
             >
-              2
-            </p>
-          </td>
-          <td
-            style={{
-              width: '84pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '105pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '38pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '83pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '82pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-            }}
-          >
-            <p
-              className="s4"
+              <Input
+                value={item.sellerName}
+                onChange={value =>
+                  farmerItemUpdater(index, 'sellerName', value)
+                }
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+            <td
               style={{
-                paddingTop: '1pt',
-                paddingLeft: '1pt',
-                textIndent: '0pt',
-                lineHeight: '11pt',
-                textAlign: 'center',
+                width: '105pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
               }}
             >
-              3
-            </p>
-          </td>
-          <td
-            style={{
-              width: '84pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '105pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '38pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '83pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="form-input form-input-text"
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-              type="text"
-            />
-          </td>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#7E7E7E',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-          <td
-            style={{
-              width: '82pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#7E7E7E',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#7E7E7E',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              padding: '1pt',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{ width: 'calc(100% - 2pt)', height: 'calc(100% - 2pt)' }}
-            />
-          </td>
-        </tr>
+              <Input
+                value={item.sellerResNumber}
+                onChange={value =>
+                  farmerItemUpdater(index, 'sellerResNumber', value)
+                }
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+            <td
+              style={{
+                width: '38pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
+              }}
+            >
+              <NumericInput
+                value={item.itemCount}
+                onChange={value => farmerItemUpdater(index, 'itemCount', value)}
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+            <td
+              style={{
+                width: '83pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
+              }}
+            >
+              <Input
+                value={item.itemName}
+                onChange={value => farmerItemUpdater(index, 'itemName', value)}
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+            <td
+              style={{
+                width: '45pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                borderRightStyle: 'solid',
+                borderRightWidth: '1pt',
+                borderRightColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
+              }}
+            >
+              <NumericInput
+                value={item.quantity}
+                onChange={value => farmerItemUpdater(index, 'quantity', value)}
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+            <td
+              style={{
+                width: '82pt',
+                borderTopStyle: 'solid',
+                borderTopWidth: '1pt',
+                borderTopColor: '#7E7E7E',
+                borderLeftStyle: 'solid',
+                borderLeftWidth: '1pt',
+                borderLeftColor: '#7E7E7E',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1pt',
+                borderBottomColor: '#7E7E7E',
+                padding: '1pt',
+                verticalAlign: 'middle',
+              }}
+            >
+              <NumericInput
+                value={item.purchasePrice}
+                onChange={value =>
+                  farmerItemUpdater(index, 'purchasePrice', value)
+                }
+                style={{
+                  width: 'calc(100% - 2pt)',
+                  height: 'calc(100% - 2pt)',
+                }}
+              />
+            </td>
+          </tr>
+        ))}
       </table>
       <p
         style={{

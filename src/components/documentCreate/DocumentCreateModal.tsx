@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { ModalProps } from '@/types/props';
 import ModalContainer from '@/components/modal/ModalContainer';
 import { printElement } from '@/utils/printUtils';
-import PreviewWrapper from '@/components/documentCreate/template/PreviewWrapper';
-import Form20 from '@/components/documentCreate/template/Form20/Form20';
+import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
+import Form15 from '@/components/taxDocument/template/Form15/Form15';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
   const [scale, setScale] = useState(1);
@@ -61,7 +61,7 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
                 print:border-none print:overflow-visible"
               >
                 <PreviewWrapper>
-                  <Form20 />
+                  <Form15 />
                 </PreviewWrapper>
               </div>
             </div>

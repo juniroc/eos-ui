@@ -138,7 +138,7 @@ export default function ProofStoragePage() {
 
 
   return (
-    <div className="flex flex-col items-start p-4 gap-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="flex flex-col items-start p-4 gap-4">
       {/* Title Section */}
       <div className="flex flex-col items-start p-0 gap-4 self-stretch">
         <div className="flex justify-between items-end p-0 gap-4 self-stretch">
@@ -241,9 +241,9 @@ export default function ProofStoragePage() {
                 <td className="p-1 bg-white border border-[#D9D9D9] text-center">
                   <button
                     onClick={() => handleDelete(row.id)}
-                    className="py-1.5 px-1.5 bg-[#EC221F] h-[23px] flex items-center justify-center mx-auto"
+                    className="py-1.5 px-1.5 bg-[#F3F3F3] h-[23px] flex items-center justify-center mx-auto"
                   >
-                    <span className="text-[11px] font-medium leading-[100%] text-[#F5F5F5]">삭제</span>
+                    <span className="text-[11px] font-medium leading-[100%] text-[#303030]">삭제</span>
                   </button>
                 </td>
               </tr>

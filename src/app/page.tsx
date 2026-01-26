@@ -156,7 +156,7 @@ export default function BusinessInfoPage() {
 
 
   return (
-    <div className="flex flex-col items-center p-0 bg-white" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="flex flex-col items-center p-0 bg-white" style={{ maxWidth: '840px', margin: '0 auto' }}>
       <div className="flex flex-col items-center p-0 w-full">
         {/* Content */}
         <div className="flex flex-col items-start p-4 gap-4 w-full">

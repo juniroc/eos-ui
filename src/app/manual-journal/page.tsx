@@ -9,7 +9,7 @@ import {
   getJournalInputAccounts,
   getJournalInputPartners,
   type UserAccount,
-  type PartnerItem
+  type PartnerItem,
 } from '@/services/financial';
 
 interface ManualJournalRow {
@@ -34,7 +34,11 @@ interface JournalGroupComponentProps {
   group: JournalGroup;
   groupIndex: number;
   isFirstGroup: boolean;
-  onUpdateRow: (rowId: number, field: keyof ManualJournalRow, value: string) => void;
+  onUpdateRow: (
+    rowId: number,
+    field: keyof ManualJournalRow,
+    value: string
+  ) => void;
   onAddAdditionalRow: (groupId: number) => void;
   debitSubtotal: number;
   creditSubtotal: number;
@@ -52,7 +56,7 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
   debitSubtotal,
   creditSubtotal,
   accounts,
-  partners
+  partners,
 }) => {
   const [firstRow, ...restRows] = group.rows;
 
@@ -74,40 +78,78 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
       {isFirstGroup && (
         <thead>
           <tr className="h-[32px]">
-            <th rowSpan={2} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9] text-center align-middle">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">번호</span>
+            <th
+              rowSpan={2}
+              className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-l border-t border-r border-b border-[#D9D9D9] text-center align-middle"
+            >
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                번호
+              </span>
             </th>
-            <th rowSpan={2} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">일자</span>
+            <th
+              rowSpan={2}
+              className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle"
+            >
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                일자
+              </span>
             </th>
-            <th colSpan={3} className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">차변</span>
+            <th
+              colSpan={3}
+              className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center"
+            >
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                차변
+              </span>
             </th>
-            <th colSpan={3} className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">대변</span>
+            <th
+              colSpan={3}
+              className="px-2 py-0 bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center"
+            >
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                대변
+              </span>
             </th>
-            <th rowSpan={2} colSpan={3} className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">적요</span>
+            <th
+              rowSpan={2}
+              colSpan={3}
+              className="px-2 py-0 h-[64px] bg-[#F5F5F5] border-t border-r border-b border-[#D9D9D9] text-center align-middle"
+            >
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                적요
+              </span>
             </th>
           </tr>
           <tr className="h-[32px]">
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                계정과목
+              </span>
             </th>
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                금액
+              </span>
             </th>
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                거래처
+              </span>
             </th>
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">계정과목</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                계정과목
+              </span>
             </th>
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">금액</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                금액
+              </span>
             </th>
             <th className="px-2 py-0 bg-[#F5F5F5] border-r border-b border-[#D9D9D9] text-center">
-              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">거래처</span>
+              <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+                거래처
+              </span>
             </th>
           </tr>
         </thead>
@@ -115,13 +157,21 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
       <tbody>
         {/* 첫 번째 데이터 행 (번호/일자 rowSpan) */}
         <tr className="h-[32px]">
-          <td rowSpan={group.rows.length} className="px-1 py-0 bg-white border-l border-r border-b border-[#D9D9D9] text-center align-middle">
-            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">{groupIndex + 1}</span>
+          <td
+            rowSpan={group.rows.length}
+            className="px-1 py-0 bg-white border-l border-r border-b border-[#D9D9D9] text-center align-middle"
+          >
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+              {groupIndex + 1}
+            </span>
           </td>
-          <td rowSpan={group.rows.length} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9] align-middle">
+          <td
+            rowSpan={group.rows.length}
+            className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9] align-middle"
+          >
             <input
               type="text"
-              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center" 
+              className="w-full text-[12px] leading-[100%] text-[#757575] bg-transparent border-none outline-none text-center"
               placeholder="yyyy.mm.dd"
               value={firstRow.date ? firstRow.date.replace(/-/g, '.') : ''}
               onChange={e => {
@@ -133,10 +183,12 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <AutocompleteInput
               value={firstRow.debitAccount || ''}
-              onChange={(value) => onUpdateRow(firstRow.id, 'debitAccount', value)}
+              onChange={value =>
+                onUpdateRow(firstRow.id, 'debitAccount', value)
+              }
               items={accounts}
-              getItemId={(item) => item.id}
-              getItemLabel={(item) => item.name}
+              getItemId={item => item.id}
+              getItemLabel={item => item.name}
               placeholder="입력하기"
             />
           </td>
@@ -144,31 +196,39 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <div className="flex items-center">
               <input
                 type="number"
-                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="입력하기"
                 value={firstRow.debitAmount || ''}
-                onChange={e => onUpdateRow(firstRow.id, 'debitAmount', e.target.value)}
+                onChange={e =>
+                  onUpdateRow(firstRow.id, 'debitAmount', e.target.value)
+                }
               />
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">
+                원
+              </span>
             </div>
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <AutocompleteInput
               value={firstRow.debitPartner || ''}
-              onChange={(value) => onUpdateRow(firstRow.id, 'debitPartner', value)}
+              onChange={value =>
+                onUpdateRow(firstRow.id, 'debitPartner', value)
+              }
               items={partners}
-              getItemId={(item) => item.id}
-              getItemLabel={(item) => item.name}
+              getItemId={item => item.id}
+              getItemLabel={item => item.name}
               placeholder="입력하기"
             />
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <AutocompleteInput
               value={firstRow.creditAccount || ''}
-              onChange={(value) => onUpdateRow(firstRow.id, 'creditAccount', value)}
+              onChange={value =>
+                onUpdateRow(firstRow.id, 'creditAccount', value)
+              }
               items={accounts}
-              getItemId={(item) => item.id}
-              getItemLabel={(item) => item.name}
+              getItemId={item => item.id}
+              getItemLabel={item => item.name}
               placeholder="입력하기"
             />
           </td>
@@ -176,43 +236,54 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
             <div className="flex items-center">
               <input
                 type="number"
-                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="입력하기"
                 value={firstRow.creditAmount || ''}
-                onChange={e => onUpdateRow(firstRow.id, 'creditAmount', e.target.value)}
+                onChange={e =>
+                  onUpdateRow(firstRow.id, 'creditAmount', e.target.value)
+                }
               />
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">
+                원
+              </span>
             </div>
           </td>
           <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
             <AutocompleteInput
               value={firstRow.creditPartner || ''}
-              onChange={(value) => onUpdateRow(firstRow.id, 'creditPartner', value)}
+              onChange={value =>
+                onUpdateRow(firstRow.id, 'creditPartner', value)
+              }
               items={partners}
-              getItemId={(item) => item.id}
-              getItemLabel={(item) => item.name}
+              getItemId={item => item.id}
+              getItemLabel={item => item.name}
               placeholder="입력하기"
             />
           </td>
-          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+          <td
+            colSpan={3}
+            className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"
+          >
             <input
-              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+              className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
               placeholder="입력하기"
               value={firstRow.description || ''}
-              onChange={e => onUpdateRow(firstRow.id, 'description', e.target.value)}
+              onChange={e =>
+                onUpdateRow(firstRow.id, 'description', e.target.value)
+              }
             />
           </td>
         </tr>
         {/* 나머지 행들 (2번째 행부터 모두 동일한 구조) */}
-        {restRows.map((row) => (
+        {restRows.map(row => (
           <tr key={row.id} className="h-[32px]">
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <AutocompleteInput
                 value={row.debitAccount || ''}
-                onChange={(value) => onUpdateRow(row.id, 'debitAccount', value)}
+                onChange={value => onUpdateRow(row.id, 'debitAccount', value)}
                 items={accounts}
-                getItemId={(item) => item.id}
-                getItemLabel={(item) => item.name}
+                getItemId={item => item.id}
+                getItemLabel={item => item.name}
                 placeholder="입력하기"
               />
             </td>
@@ -220,31 +291,35 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               <div className="flex items-center">
                 <input
                   type="number"
-                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="입력하기"
                   value={row.debitAmount || ''}
-                  onChange={e => onUpdateRow(row.id, 'debitAmount', e.target.value)}
+                  onChange={e =>
+                    onUpdateRow(row.id, 'debitAmount', e.target.value)
+                  }
                 />
-                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">
+                  원
+                </span>
               </div>
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <AutocompleteInput
                 value={row.debitPartner || ''}
-                onChange={(value) => onUpdateRow(row.id, 'debitPartner', value)}
+                onChange={value => onUpdateRow(row.id, 'debitPartner', value)}
                 items={partners}
-                getItemId={(item) => item.id}
-                getItemLabel={(item) => item.name}
+                getItemId={item => item.id}
+                getItemLabel={item => item.name}
                 placeholder="입력하기"
               />
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <AutocompleteInput
                 value={row.creditAccount || ''}
-                onChange={(value) => onUpdateRow(row.id, 'creditAccount', value)}
+                onChange={value => onUpdateRow(row.id, 'creditAccount', value)}
                 items={accounts}
-                getItemId={(item) => item.id}
-                getItemLabel={(item) => item.name}
+                getItemId={item => item.id}
+                getItemLabel={item => item.name}
                 placeholder="입력하기"
               />
             </td>
@@ -252,45 +327,63 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
               <div className="flex items-center">
                 <input
                   type="number"
-                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+                  className="flex-1 min-w-0 font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="입력하기"
                   value={row.creditAmount || ''}
-                  onChange={e => onUpdateRow(row.id, 'creditAmount', e.target.value)}
+                  onChange={e =>
+                    onUpdateRow(row.id, 'creditAmount', e.target.value)
+                  }
                 />
-                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">원</span>
+                <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#B3B3B3] shrink-0">
+                  원
+                </span>
               </div>
             </td>
             <td className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
               <AutocompleteInput
                 value={row.creditPartner || ''}
-                onChange={(value) => onUpdateRow(row.id, 'creditPartner', value)}
+                onChange={value => onUpdateRow(row.id, 'creditPartner', value)}
                 items={partners}
-                getItemId={(item) => item.id}
-                getItemLabel={(item) => item.name}
+                getItemId={item => item.id}
+                getItemLabel={item => item.name}
                 placeholder="입력하기"
               />
             </td>
-            <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+            <td
+              colSpan={3}
+              className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"
+            >
               <input
-                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none" 
+                className="w-full font-medium text-[12px] leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                 placeholder="입력하기"
                 value={row.description || ''}
-                onChange={e => onUpdateRow(row.id, 'description', e.target.value)}
+                onChange={e =>
+                  onUpdateRow(row.id, 'description', e.target.value)
+                }
               />
             </td>
           </tr>
         ))}
         {/* 추가하기 버튼 행 */}
         <tr className="h-[32px]">
-          <td colSpan={11} className="px-2 py-0 bg-white border-l border-r border-b border-[#D9D9D9]">
+          <td
+            colSpan={11}
+            className="px-2 py-0 bg-white border-l border-r border-b border-[#D9D9D9]"
+          >
             <button
               onClick={() => onAddAdditionalRow(group.id)}
               className="w-full h-full flex flex-row justify-center items-center gap-1 cursor-pointer"
             >
               <div className="w-4 h-4">
-                <svg className="w-4 h-4" fill="none" stroke="#757575" strokeWidth="1" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 8v8M8 12h8"/>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="#757575"
+                  strokeWidth="1"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v8M8 12h8" />
                 </svg>
               </div>
               <span className="font-medium text-[12px] leading-[100%] text-center text-[#757575]">
@@ -301,26 +394,44 @@ const JournalGroupComponent: React.FC<JournalGroupComponentProps> = ({
         </tr>
         {/* 소계 행 */}
         <tr className="h-[32px]">
-          <td colSpan={2} className="px-2 py-0 bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9] text-center">
-            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">소계</span>
+          <td
+            colSpan={2}
+            className="px-2 py-0 bg-[#F5F5F5] border-l border-r border-b border-[#D9D9D9] text-center"
+          >
+            <span className="font-medium text-[12px] leading-[100%] text-[#757575]">
+              소계
+            </span>
           </td>
-          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+          <td
+            colSpan={3}
+            className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"
+          >
             <div className="flex items-center">
               <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
                 {debitSubtotal.toLocaleString()}
               </span>
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+                원
+              </span>
             </div>
           </td>
-          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]">
+          <td
+            colSpan={3}
+            className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"
+          >
             <div className="flex items-center">
               <span className="flex-1 font-medium text-[12px] leading-[100%] text-[#757575]">
                 {creditSubtotal.toLocaleString()}
               </span>
-              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">원</span>
+              <span className="ml-1 font-medium text-[12px] leading-[100%] text-[#757575]">
+                원
+              </span>
             </div>
           </td>
-          <td colSpan={3} className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"></td>
+          <td
+            colSpan={3}
+            className="px-2 py-0 bg-white border-r border-b border-[#D9D9D9]"
+          ></td>
         </tr>
       </tbody>
     </table>
@@ -332,11 +443,11 @@ export default function ManualJournalPage() {
   const { isAuthenticated, loading: authLoading, token } = useAuth();
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  
+
   // 계정과목 및 거래처 목록
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [partners, setPartners] = useState<PartnerItem[]>([]);
-  
+
   // 오늘 날짜를 YYYY-MM-DD 형식으로 반환
   const getTodayDate = () => {
     const today = new Date();
@@ -345,48 +456,51 @@ export default function ManualJournalPage() {
 
   const createEmptyRow = (id: number): ManualJournalRow => ({
     id,
-      date: getTodayDate(),
-      debitAccount: '',
-      debitAmount: '',
-      debitPartner: '',
-      creditAccount: '',
-      creditAmount: '',
-      creditPartner: '',
-      description: '',
+    date: getTodayDate(),
+    debitAccount: '',
+    debitAmount: '',
+    debitPartner: '',
+    creditAccount: '',
+    creditAmount: '',
+    creditPartner: '',
+    description: '',
   });
 
   const createEmptyGroup = (groupId: number): JournalGroup => ({
     id: groupId,
-    rows: [createEmptyRow(groupId * 10 + 1), createEmptyRow(groupId * 10 + 2)]
+    rows: [createEmptyRow(groupId * 10 + 1), createEmptyRow(groupId * 10 + 2)],
   });
 
-  const initialGroupsData = [createEmptyGroup(1), createEmptyGroup(2)];
-  const [journalGroups, setJournalGroups] = useState<JournalGroup[]>(initialGroupsData);
-  const [initialJournalGroups, setInitialJournalGroups] = useState<JournalGroup[]>(initialGroupsData);
+  // const initialGroupsData = [createEmptyGroup(1), createEmptyGroup(2)];
+  const initialGroupsData = [createEmptyGroup(1)];
+  const [journalGroups, setJournalGroups] =
+    useState<JournalGroup[]>(initialGroupsData);
+  const [initialJournalGroups, setInitialJournalGroups] =
+    useState<JournalGroup[]>(initialGroupsData);
 
   // 계정과목 및 거래처 조회
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return;
-      
+
       try {
         const [accountsData, partnersData] = await Promise.all([
           getJournalInputAccounts(token),
-          getJournalInputPartners(token)
+          getJournalInputPartners(token),
         ]);
-        
+
         setAccounts(accountsData);
         // 모든 거래처를 하나의 배열로 합침
         setPartners([
           ...partnersData.companies,
           ...partnersData.cards,
-          ...partnersData.bankAccounts
+          ...partnersData.bankAccounts,
         ]);
       } catch (err) {
         console.error('계정과목/거래처 조회 실패:', err);
       }
     };
-    
+
     fetchData();
   }, [token]);
 
@@ -400,12 +514,13 @@ export default function ManualJournalPage() {
   const [loading] = useState(false);
 
   // 모든 행을 평면화하여 가져오는 헬퍼 함수
-  const getAllRows = (): ManualJournalRow[] => 
+  const getAllRows = (): ManualJournalRow[] =>
     journalGroups.flatMap(group => group.rows);
 
   /** 변경사항 확인 */
-  const hasChanges = JSON.stringify(journalGroups) !== JSON.stringify(initialJournalGroups);
-  
+  const hasChanges =
+    JSON.stringify(journalGroups) !== JSON.stringify(initialJournalGroups);
+
   /** 저장할 데이터가 있는지 확인 */
   const hasData = getAllRows().some(
     r =>
@@ -419,7 +534,6 @@ export default function ManualJournalPage() {
       r.description.trim()
   );
 
-
   /** 그룹 추가 */
   const addGroup = () => {
     const newGroupId = Math.max(...journalGroups.map(g => g.id)) + 1;
@@ -427,26 +541,30 @@ export default function ManualJournalPage() {
   };
 
   /** 특정 행 업데이트 */
-  const updateRow = (rowId: number, field: keyof ManualJournalRow, value: string) => {
-    setJournalGroups(prev => 
+  const updateRow = (
+    rowId: number,
+    field: keyof ManualJournalRow,
+    value: string
+  ) => {
+    setJournalGroups(prev =>
       prev.map(group => ({
         ...group,
-        rows: group.rows.map(row => 
+        rows: group.rows.map(row =>
           row.id === rowId ? { ...row, [field]: value } : row
-        )
+        ),
       }))
     );
   };
 
   /** 추가 행 추가 */
   const addAdditionalRow = (groupId: number) => {
-    setJournalGroups(prev => 
+    setJournalGroups(prev =>
       prev.map(group => {
         if (group.id === groupId) {
           const newRowId = Date.now();
           return {
             ...group,
-            rows: [...group.rows, createEmptyRow(newRowId)]
+            rows: [...group.rows, createEmptyRow(newRowId)],
           };
         }
         return group;
@@ -457,7 +575,7 @@ export default function ManualJournalPage() {
   /** 저장 */
   const handleSave = async () => {
     if (!hasChanges || !hasData) return;
-    
+
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
@@ -469,32 +587,40 @@ export default function ManualJournalPage() {
       const allVouchers = getAllRows().map(row => {
         const transactions = [
           // 차변 거래
-          ...(row.debitAccount && row.debitAmount ? [{
-            // id: String(Math.floor(Date.now() + Math.random() * 1000)),
-            accountId: row.debitAccount,
-            partnerId: row.debitPartner || undefined,
-            amount: parseFloat(row.debitAmount) || undefined,
-            note: row.description || undefined,
-            debitCredit: true
-          }] : []),
+          ...(row.debitAccount && row.debitAmount
+            ? [
+                {
+                  // id: String(Math.floor(Date.now() + Math.random() * 1000)),
+                  accountId: row.debitAccount,
+                  partnerId: row.debitPartner || undefined,
+                  amount: parseFloat(row.debitAmount) || undefined,
+                  note: row.description || undefined,
+                  debitCredit: true,
+                },
+              ]
+            : []),
           // 대변 거래
-          ...(row.creditAccount && row.creditAmount ? [{
-            // id: String(Math.floor(Date.now() + Math.random() * 1000) + 1),
-            accountId: row.creditAccount,
-            partnerId: row.creditPartner || undefined,
-            amount: parseFloat(row.creditAmount) || undefined,
-            note: row.description || undefined,
-            debitCredit: false
-          }] : [])
+          ...(row.creditAccount && row.creditAmount
+            ? [
+                {
+                  // id: String(Math.floor(Date.now() + Math.random() * 1000) + 1),
+                  accountId: row.creditAccount,
+                  partnerId: row.creditPartner || undefined,
+                  amount: parseFloat(row.creditAmount) || undefined,
+                  note: row.description || undefined,
+                  debitCredit: false,
+                },
+              ]
+            : []),
         ];
 
         return {
           voucher: {
-          //   id: row.voucherId || String(Date.now()),
+            //   id: row.voucherId || String(Date.now()),
             date: row.date || undefined,
-          //   description: row.description || undefined,
+            //   description: row.description || undefined,
           },
-          transactions
+          transactions,
         };
       });
 
@@ -503,7 +629,9 @@ export default function ManualJournalPage() {
         if (voucher.transactions.length > 0) {
           for (const transaction of voucher.transactions) {
             if (!transaction.amount || transaction.debitCredit === undefined) {
-              alert('거래 내역에 필수 항목(금액, 차변/대변 구분)이 누락되었습니다.');
+              alert(
+                '거래 내역에 필수 항목(금액, 차변/대변 구분)이 누락되었습니다.'
+              );
               return;
             }
           }
@@ -511,7 +639,9 @@ export default function ManualJournalPage() {
       }
 
       // 빈 transactions 배열인 voucher 제거
-      const vouchers = allVouchers.filter(voucher => voucher.transactions.length > 0);
+      const vouchers = allVouchers.filter(
+        voucher => voucher.transactions.length > 0
+      );
 
       // 저장할 voucher가 없는 경우
       if (vouchers.length === 0) {
@@ -519,14 +649,17 @@ export default function ManualJournalPage() {
         return;
       }
 
-      const res = await fetch('https://api.eosxai.com/api/vouchers/upsert-with-transactions/batch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ items: vouchers }),
-      });
+      const res = await fetch(
+        'https://api.eosxai.com/api/vouchers/upsert-with-transactions/batch',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ items: vouchers }),
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -536,8 +669,12 @@ export default function ManualJournalPage() {
       const data = await res.json();
       if (data.success) {
         // data.results 배열의 각 항목에서 error 여부 확인
-        const hasErrors = data.results && data.results.some((result: { error?: boolean | string }) => result.error);
-        
+        const hasErrors =
+          data.results &&
+          data.results.some(
+            (result: { error?: boolean | string }) => result.error
+          );
+
         if (hasErrors) {
           alert('저장 중 문제가 발생했습니다.');
           return;
@@ -592,7 +729,7 @@ export default function ManualJournalPage() {
               필요한 내용을 입력하고 정보를 저장하세요.
             </p>
           </div>
-          
+
           {/* Buttons */}
           <div className="flex flex-row justify-end items-center gap-2">
             <button
@@ -615,10 +752,14 @@ export default function ManualJournalPage() {
         <div className="flex flex-col items-start">
           {/* 분개 그룹들 렌더링 */}
           {journalGroups.map((group, index) => {
-            const groupDebitSubtotal = group.rows.reduce((sum, row) => 
-              sum + (parseFloat(row.debitAmount) || 0), 0);
-            const groupCreditSubtotal = group.rows.reduce((sum, row) => 
-              sum + (parseFloat(row.creditAmount) || 0), 0);
+            const groupDebitSubtotal = group.rows.reduce(
+              (sum, row) => sum + (parseFloat(row.debitAmount) || 0),
+              0
+            );
+            const groupCreditSubtotal = group.rows.reduce(
+              (sum, row) => sum + (parseFloat(row.creditAmount) || 0),
+              0
+            );
 
             return (
               <JournalGroupComponent
@@ -643,9 +784,15 @@ export default function ManualJournalPage() {
               className="flex flex-row justify-center items-center px-3 py-2 gap-1 w-full min-w-[200px] h-[40px] bg-white border-l border-r border-b border-[#D9D9D9] cursor-pointer"
             >
               <div className="w-4 h-4">
-                <svg className="w-4 h-4" fill="none" stroke="#757575" strokeWidth="1" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 8v8M8 12h8"/>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="#757575"
+                  strokeWidth="1"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v8M8 12h8" />
                 </svg>
               </div>
               <span className="font-medium text-[12px] leading-[100%] text-center text-[#757575]">
@@ -656,7 +803,7 @@ export default function ManualJournalPage() {
         </div>
       </div>
 
-      <ToastMessage 
+      <ToastMessage
         message={toastMessage}
         isVisible={showToast}
         onHide={() => setShowToast(false)}

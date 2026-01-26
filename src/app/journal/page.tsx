@@ -347,34 +347,24 @@ function JournalPageContent() {
             </div>
           </div>
 
-          {/* 최소금액 */}
+          {/* 금액 */}
           <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
             <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최소금액</span>
+              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">금액</span>
             </div>
             <div className="flex flex-col justify-center flex-1 min-w-0">
-              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+              <div className="flex flex-row items-center py-2 px-2 bg-white h-full gap-2">
                 <input
                   type="number"
-                  placeholder="입력하기"
+                  placeholder="입력"
                   value={filters.minAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, minAmount: e.target.value ? Number(e.target.value) : undefined }))}
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                 />
-              </div>
-            </div>
-          </div>
-
-          {/* 최대금액 */}
-          <div className="flex flex-row items-stretch flex-1 min-w-[130px] border-l border-[#D9D9D9]">
-            <div className="flex flex-row justify-center items-center py-2 px-1 gap-1 w-[60px] md:w-[70px] bg-[#F5F5F5] border-r border-[#D9D9D9] shrink-0">
-              <span className="text-[11px] md:text-[12px] leading-[100%] font-medium text-[#757575] text-center">최대금액</span>
-            </div>
-            <div className="flex flex-col justify-center flex-1 min-w-0">
-              <div className="flex flex-row items-center py-2 px-2 bg-white h-full">
+                <span className="text-[12px] leading-[100%] font-medium text-[#757575] shrink-0">~</span>
                 <input
                   type="number"
-                  placeholder="입력하기"
+                  placeholder="입력"
                   value={filters.maxAmount || ''}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxAmount: e.target.value ? Number(e.target.value) : undefined }))}
                   className="flex-1 text-[12px] leading-[100%] font-medium text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
@@ -388,7 +378,9 @@ function JournalPageContent() {
         {loading.isLoading ? (
           <div className="p-8 text-center text-xs">{loading.message}</div>
         ) : vouchers.length > 0 && (
-          vouchers.map((voucher, voucherIndex) => (
+          vouchers
+            .filter((voucher) => voucher.transactions && voucher.transactions.length > 0)
+            .map((voucher, voucherIndex) => (
             <div key={voucher.id}>
               {/* 전표 테이블 */}
               <table className="w-full border border-[#D9D9D9] text-xs text-[#757575] table-fixed">
@@ -416,228 +408,258 @@ function JournalPageContent() {
                 </thead>
                 <tbody>
                   {/* 전표 데이터 행들 */}
-                  {voucher.transactions.map((transaction, index) => (
-                    <tr key={`${voucher.id}-${index}`}>
-                        <td className="p-2 border border-[#D9D9D9] text-center w-[120px]">
-                          <input
-                            type="date"
-                            className="w-full focus:outline-none text-center"
-                            value={voucher.date || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? { ...v, date: e.target.value }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                      </td>
-                      {/* 차변 */}
-                        <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
-                        {transaction.debitCredit === true ? (
-                          <input
-                            className="w-full focus:outline-none"
-                            placeholder="입력하기"
-                            value={transaction.accountName || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? {
-                                        ...v,
-                                        transactions: v.transactions.map((t, tIdx) => 
-                                          tIdx === index 
-                                            ? { ...t, accountName: e.target.value }
-                                            : t
-                                        )
-                                      }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                        <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
-                        {transaction.debitCredit === true ? (
-                          <div className="flex items-center w-full overflow-hidden">
+                  {(() => {
+                    // 차변과 대변 거래 분리 (원래 인덱스 유지)
+                    const debitTransactions = voucher.transactions
+                      .map((transaction, index) => ({ transaction, originalIndex: index }))
+                      .filter(({ transaction }) => transaction.debitCredit === true);
+                    
+                    const creditTransactions = voucher.transactions
+                      .map((transaction, index) => ({ transaction, originalIndex: index }))
+                      .filter(({ transaction }) => transaction.debitCredit === false);
+                    
+                    // 더 많은 쪽의 길이만큼 행 생성
+                    const maxRows = Math.max(debitTransactions.length, creditTransactions.length);
+                    
+                    return Array.from({ length: maxRows }).map((_, rowIndex) => {
+                      const debitItem = debitTransactions[rowIndex];
+                      const creditItem = creditTransactions[rowIndex];
+                      
+                      return (
+                        <tr key={`${voucher.id}-row-${rowIndex}`}>
+                          <td className="p-2 border border-[#D9D9D9] text-center w-[120px]">
                             <input
-                              className="flex-1 focus:outline-none text-right min-w-0"
-                              placeholder="0"
-                              value={transaction.amount ? transaction.amount.toLocaleString() : ''}
+                              type="date"
+                              className="w-full focus:outline-none text-center"
+                              value={voucher.date || ''}
                               onChange={(e) => {
-                                const value = e.target.value.replace(/,/g, '');
-                                const numValue = Number(value) || 0;
                                 setVouchers(prev => 
                                   prev.map((v, vIdx) => 
                                     vIdx === voucherIndex 
-                                      ? {
-                                          ...v,
-                                          transactions: v.transactions.map((t, tIdx) => 
-                                            tIdx === index 
-                                              ? { ...t, amount: numValue }
-                                              : t
-                                          )
-                                        }
+                                      ? { ...v, date: e.target.value }
                                       : v
                                   )
                                 );
                               }}
                             />
-                            <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
-                          </div>
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                        <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
-                        {transaction.debitCredit === true ? (
-                          <input
-                            className="w-full focus:outline-none"
-                            placeholder="입력하기"
-                            value={transaction.partnerName || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? {
-                                        ...v,
-                                        transactions: v.transactions.map((t, tIdx) => 
-                                          tIdx === index 
-                                            ? { ...t, partnerName: e.target.value }
-                                            : t
+                          </td>
+                          {/* 차변 칸 */}
+                          {debitItem ? (
+                            <>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <input
+                                  className="w-full focus:outline-none"
+                                  placeholder="입력하기"
+                                  value={debitItem.transaction.accountName || ''}
+                                  onChange={(e) => {
+                                    setVouchers(prev => 
+                                      prev.map((v, vIdx) => 
+                                        vIdx === voucherIndex 
+                                          ? {
+                                              ...v,
+                                              transactions: v.transactions.map((t, tIdx) => 
+                                                tIdx === debitItem.originalIndex 
+                                                  ? { ...t, accountName: e.target.value }
+                                                  : t
+                                              )
+                                            }
+                                          : v
+                                      )
+                                    );
+                                  }}
+                                />
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="flex items-center w-full overflow-hidden">
+                                  <input
+                                    className="flex-1 focus:outline-none text-right min-w-0"
+                                    placeholder="0"
+                                    value={debitItem.transaction.amount ? debitItem.transaction.amount.toLocaleString() : ''}
+                                    onChange={(e) => {
+                                      const value = e.target.value.replace(/,/g, '');
+                                      const numValue = Number(value) || 0;
+                                      setVouchers(prev => 
+                                        prev.map((v, vIdx) => 
+                                          vIdx === voucherIndex 
+                                            ? {
+                                                ...v,
+                                                transactions: v.transactions.map((t, tIdx) => 
+                                                  tIdx === debitItem.originalIndex 
+                                                    ? { ...t, amount: numValue }
+                                                    : t
+                                                )
+                                              }
+                                            : v
                                         )
-                                      }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                      {/* 대변 */}
-                        <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
-                        {transaction.debitCredit === false ? (
-                          <input
-                            className="w-full focus:outline-none"
-                            placeholder="입력하기"
-                            value={transaction.accountName || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? {
-                                        ...v,
-                                        transactions: v.transactions.map((t, tIdx) => 
-                                          tIdx === index 
-                                            ? { ...t, accountName: e.target.value }
-                                            : t
+                                      );
+                                    }}
+                                  />
+                                  <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
+                                </div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
+                                <input
+                                  className="w-full focus:outline-none"
+                                  placeholder="입력하기"
+                                  value={debitItem.transaction.partnerName || ''}
+                                  onChange={(e) => {
+                                    setVouchers(prev => 
+                                      prev.map((v, vIdx) => 
+                                        vIdx === voucherIndex 
+                                          ? {
+                                              ...v,
+                                              transactions: v.transactions.map((t, tIdx) => 
+                                                tIdx === debitItem.originalIndex 
+                                                  ? { ...t, partnerName: e.target.value }
+                                                  : t
+                                              )
+                                            }
+                                          : v
+                                      )
+                                    );
+                                  }}
+                                />
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="w-full"></div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="w-full"></div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
+                                <div className="w-full"></div>
+                              </td>
+                            </>
+                          )}
+                          {/* 대변 칸 */}
+                          {creditItem ? (
+                            <>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <input
+                                  className="w-full focus:outline-none"
+                                  placeholder="입력하기"
+                                  value={creditItem.transaction.accountName || ''}
+                                  onChange={(e) => {
+                                    setVouchers(prev => 
+                                      prev.map((v, vIdx) => 
+                                        vIdx === voucherIndex 
+                                          ? {
+                                              ...v,
+                                              transactions: v.transactions.map((t, tIdx) => 
+                                                tIdx === creditItem.originalIndex 
+                                                  ? { ...t, accountName: e.target.value }
+                                                  : t
+                                              )
+                                            }
+                                          : v
+                                      )
+                                    );
+                                  }}
+                                />
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="flex items-center w-full overflow-hidden">
+                                  <input
+                                    className="flex-1 focus:outline-none text-right min-w-0"
+                                    placeholder="0"
+                                    value={creditItem.transaction.amount ? creditItem.transaction.amount.toLocaleString() : ''}
+                                    onChange={(e) => {
+                                      const value = e.target.value.replace(/,/g, '');
+                                      const numValue = Number(value) || 0;
+                                      setVouchers(prev => 
+                                        prev.map((v, vIdx) => 
+                                          vIdx === voucherIndex 
+                                            ? {
+                                                ...v,
+                                                transactions: v.transactions.map((t, tIdx) => 
+                                                  tIdx === creditItem.originalIndex 
+                                                    ? { ...t, amount: numValue }
+                                                    : t
+                                                )
+                                              }
+                                            : v
                                         )
-                                      }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                        <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
-                        {transaction.debitCredit === false ? (
-                          <div className="flex items-center w-full overflow-hidden">
-                            <input
-                              className="flex-1 focus:outline-none text-right min-w-0"
-                              placeholder="0"
-                              value={transaction.amount ? transaction.amount.toLocaleString() : ''}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(/,/g, '');
-                                const numValue = Number(value) || 0;
-                                setVouchers(prev => 
-                                  prev.map((v, vIdx) => 
-                                    vIdx === voucherIndex 
-                                      ? {
-                                          ...v,
-                                          transactions: v.transactions.map((t, tIdx) => 
-                                            tIdx === index 
-                                              ? { ...t, amount: numValue }
-                                              : t
-                                          )
-                                        }
-                                      : v
-                                  )
-                                );
-                              }}
-                            />
-                            <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
-                          </div>
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                        <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
-                        {transaction.debitCredit === false ? (
-                          <input
-                            className="w-full focus:outline-none"
-                            placeholder="입력하기"
-                            value={transaction.partnerName || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? {
-                                        ...v,
-                                        transactions: v.transactions.map((t, tIdx) => 
-                                          tIdx === index 
-                                            ? { ...t, partnerName: e.target.value }
-                                            : t
-                                        )
-                                      }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                      {/* 적요 */}
-                        <td className="p-2 border border-[#D9D9D9] w-3/10 min-w-[150px]">
-                        {index === 0 ? (
-                          <input
-                            className="w-full focus:outline-none"
-                            placeholder="입력하기"
-                            value={transaction.note || ''}
-                            onChange={(e) => {
-                              setVouchers(prev => 
-                                prev.map((v, vIdx) => 
-                                  vIdx === voucherIndex 
-                                    ? {
-                                        ...v,
-                                        transactions: v.transactions.map((t, tIdx) => 
-                                          tIdx === index 
-                                            ? { ...t, note: e.target.value }
-                                            : t
-                                        )
-                                      }
-                                    : v
-                                )
-                              );
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full"></div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                                      );
+                                    }}
+                                  />
+                                  <span className="text-gray-400 text-xs ml-1 shrink-0">원</span>
+                                </div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
+                                <input
+                                  className="w-full focus:outline-none"
+                                  placeholder="입력하기"
+                                  value={creditItem.transaction.partnerName || ''}
+                                  onChange={(e) => {
+                                    setVouchers(prev => 
+                                      prev.map((v, vIdx) => 
+                                        vIdx === voucherIndex 
+                                          ? {
+                                              ...v,
+                                              transactions: v.transactions.map((t, tIdx) => 
+                                                tIdx === creditItem.originalIndex 
+                                                  ? { ...t, partnerName: e.target.value }
+                                                  : t
+                                              )
+                                            }
+                                          : v
+                                      )
+                                    );
+                                  }}
+                                />
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="w-full"></div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[120px]">
+                                <div className="w-full"></div>
+                              </td>
+                              <td className="p-2 border border-[#D9D9D9] min-w-[100px]">
+                                <div className="w-full"></div>
+                              </td>
+                            </>
+                          )}
+                          {/* 적요 칸 */}
+                          <td className="p-2 border border-[#D9D9D9] w-3/10 min-w-[150px]">
+                            {rowIndex === 0 ? (
+                              <input
+                                className="w-full focus:outline-none"
+                                placeholder="입력하기"
+                                value={debitItem?.transaction.note || creditItem?.transaction.note || ''}
+                                onChange={(e) => {
+                                  const targetTransaction = debitItem || creditItem;
+                                  if (targetTransaction) {
+                                    setVouchers(prev => 
+                                      prev.map((v, vIdx) => 
+                                        vIdx === voucherIndex 
+                                          ? {
+                                              ...v,
+                                              transactions: v.transactions.map((t, tIdx) => 
+                                                tIdx === targetTransaction.originalIndex 
+                                                  ? { ...t, note: e.target.value }
+                                                  : t
+                                              )
+                                            }
+                                          : v
+                                      )
+                                    );
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full"></div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    });
+                  })()}
                   
                   {/* 소계 행 */}
                   <tr>

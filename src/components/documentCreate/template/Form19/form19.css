@@ -1,0 +1,72 @@
+/* form19 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form19 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form19 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }
+}
+
+@layer components {
+  .form19 .s1 {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form19 .s2 {
+    color: #00F; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form19 .s3 {
+    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
+  }
+  .form19 .s4 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form19 .s5 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form19 .s6 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form19 h1 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form19 p {
+    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt; margin:0pt;
+  }
+  .form19 table, .form19 tbody {
+    vertical-align: top; overflow: visible;
+  }
+  .form19 input.form-input {
+    width: 100%; height: 100%; border: none; outline: none; background: transparent; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
+  }
+  .form19 input.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form19 textarea.form-input {
+    width: 100%; border: none; outline: none; background: transparent; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
+  }
+  .form19 textarea.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form19 input.form-input-numeric {
+    text-align: right; font-family: Arial; font-size: 10pt;
+  }
+  .form19 input.form-input-text {
+    text-align: left; font-family: Arial; font-size: 10pt;
+  }
+  .form19 input.form-input-address {
+    text-align: left; font-family: Arial; font-size: 10pt;
+  }
+  .form19 textarea.form-input-address {
+    text-align: left; font-family: Arial; font-size: 10pt; resize: none;
+  }
+}

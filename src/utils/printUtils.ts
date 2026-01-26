@@ -63,11 +63,13 @@ const syncFormValues = (source: HTMLElement, target: HTMLElement) => {
 
     if (targetEl instanceof HTMLInputElement) {
       if (targetEl.type === 'checkbox' || targetEl.type === 'radio') {
-        targetEl.checked = sourceEl.checked;
-        if (sourceEl.checked) {
-          targetEl.setAttribute('checked', 'checked');
-        } else {
-          targetEl.removeAttribute('checked');
+        if (sourceEl instanceof HTMLInputElement) {
+          targetEl.checked = sourceEl.checked;
+          if (sourceEl.checked) {
+            targetEl.setAttribute('checked', 'checked');
+          } else {
+            targetEl.removeAttribute('checked');
+          }
         }
       } else {
         targetEl.value = sourceEl.value;
@@ -81,14 +83,16 @@ const syncFormValues = (source: HTMLElement, target: HTMLElement) => {
     }
 
     if (targetEl instanceof HTMLSelectElement) {
-      Array.from(targetEl.options).forEach((opt, i) => {
-        opt.selected = sourceEl.options[i]?.selected ?? false;
-        if (opt.selected) {
-          opt.setAttribute('selected', 'selected');
-        } else {
-          opt.removeAttribute('selected');
-        }
-      });
+      if (sourceEl instanceof HTMLSelectElement) {
+        Array.from(targetEl.options).forEach((opt, i) => {
+          opt.selected = sourceEl.options[i]?.selected ?? false;
+          if (opt.selected) {
+            opt.setAttribute('selected', 'selected');
+          } else {
+            opt.removeAttribute('selected');
+          }
+        });
+      }
     }
   });
 };
@@ -141,8 +145,9 @@ export const printElement = (options: PrintOptions) => {
     .map(link => link.outerHTML)
     .join('\n');
 
+
   const clonedElement = element.cloneNode(true) as HTMLElement;
-  syncFormValues(element, clonedElement);
+  syncFormValues(element as HTMLElement, clonedElement);
 
   // HTML 구성
   const htmlContent = `

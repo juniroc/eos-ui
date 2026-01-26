@@ -1381,13 +1381,26 @@ export async function uploadStamp(file: File, token: string): Promise<{ success:
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
+      // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
     },
     body: formData,
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || '도장 업로드에 실패했습니다.');
+    const errorText = await response.text();
+    let errorData;
+    try {
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = { error: errorText || `도장 업로드에 실패했습니다. (${response.status})` };
+    }
+    console.error('도장 업로드 API 에러:', {
+      status: response.status,
+      statusText: response.statusText,
+      errorData,
+      errorText,
+    });
+    throw new Error(errorData.error || errorData.message || `도장 업로드에 실패했습니다. (${response.status})`);
   }
 
   return response.json();

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getVatCompanyInfo, saveVatCompanyInfo, uploadStamp, getStamp, deleteStamp, type VatCompanyInfo } from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
+import VatDocumentCreateModal from '@/components/documentCreate/VatDocumentCreateModal';
 
 export default function VatDocumentCreatePage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function VatDocumentCreatePage() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
@@ -74,7 +76,8 @@ export default function VatDocumentCreatePage() {
       setShowToast(true);
     } catch (err) {
       console.error('도장 업로드 에러:', err);
-      alert('도장 업로드에 실패했습니다.');
+      const errorMessage = err instanceof Error ? err.message : '도장 업로드에 실패했습니다.';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -163,13 +166,12 @@ export default function VatDocumentCreatePage() {
 
   /** 서류 생성하기 */
   const handleCreateDocument = () => {
-    if (!canCreateDocument) return;
-    alert('서류 생성 기능은 준비 중입니다.');
+    setIsModalOpen(true);
   };
 
   return (
     <div>
-      <div className="mx-auto my-4">
+      <div className="mx-auto my-4 mr-4">
         {/* 메인 컨텐츠 영역 - 2열 구조 */}
         <div className="flex flex-row items-start p-0 gap-4 w-full">
           {/* 왼쪽: 신고기간 + 회사정보 */}
@@ -618,7 +620,7 @@ export default function VatDocumentCreatePage() {
               <div className="flex flex-row justify-end items-center p-0 gap-2">
                 <button
                   onClick={handleCreateDocument}
-                  disabled={!canCreateDocument || loading}
+                  // disabled={!canCreateDocument || loading}
                   className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${!canCreateDocument || loading
                     ? 'bg-[#E6E6E6] text-[#B3B3B3]'
                     : 'bg-[#F3F3F3] text-[#1E1E1E]'
@@ -636,6 +638,11 @@ export default function VatDocumentCreatePage() {
         message={toastMessage}
         isVisible={showToast}
         onHide={() => setShowToast(false)}
+      />
+
+      <VatDocumentCreateModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );

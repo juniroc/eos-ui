@@ -89,27 +89,15 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
       >
         {/* Outer Container - 1280x840, #F5F5F5 */}
         <div 
-          className="flex flex-row items-start p-0 relative"
-          style={{
-            width: '1280px',
-            height: '840px',
-            background: '#F5F5F5',
-            isolation: 'isolate',
-          }}
+          className="flex flex-row items-start p-0 pb-4 relative overflow-scroll bg-white w-1/2 h-9/10"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Inner Container - 1240x800, #FFFFFF */}
           <div 
-            className="flex flex-row items-start p-0 relative"
-            style={{
-              width: '1240px',
-              height: '800px',
-              background: '#FFFFFF',
-              margin: '20px auto 0',
-            }}
+            className="flex flex-row items-start p-0 relative w-full h-full"
           >
             {/* Header */}
-            <div className="absolute top-0 left-0 right-0 flex flex-row justify-between items-center p-4 bg-white border-b border-[#D9D9D9] z-10">
+            <div className="absolute top-0 left-0 right-0 flex flex-row justify-between items-center p-4 bg-white z-10">
               <div className="flex flex-row items-center gap-2">
                 <span className="text-[14px] leading-[140%] text-[#1E1E1E] font-semibold">
                   서류보기
@@ -135,11 +123,8 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
             </div>
 
             {/* Document Viewer - Full Width */}
-            <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden mt-[60px]">
-              <div className="flex flex-col items-center justify-center w-full h-full bg-white border border-[#D9D9D9]">
-                <p className="text-[11px] text-[#B3B3B3]">
-                  {selectedForm ? `${selectedForm.name} 내용이 여기에 표시됩니다.` : '서류를 선택해주세요.'}
-                </p>
+            <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden mt-[60px] border border-[#D9D9D9] m-4">
+              <div className="flex flex-col items-center justify-center w-full h-full bg-white">
               </div>
             </div>
           </div>

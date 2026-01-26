@@ -1,8 +1,26 @@
 'use client';
 import './form15.css';
-import NumericInput from '@/components/documentCreate/template/Form15/NumericInput';
+import BusinessInfoTable from '@/components/taxDocument/template/Form15/BusinessInfoTable';
+import { useState } from 'react';
+import { Form15Data } from '@/components/taxDocument/template/Form15/types';
+import NumericInput from '@/components/taxDocument/template/Form15/NumericInput';
+import TaxFreePurchaseAmountTable from '@/components/taxDocument/template/Form15/TaxFreePurchaseAmountTable';
+import { mockForm15Constants } from '@/components/taxDocument/template/Form15/constants';
+import Input from '@/components/taxDocument/template/Form15/Input';
 
 export default function Form15() {
+  const [data, setData] = useState<Form15Data>(mockForm15Constants);
+
+  const updater = <K extends keyof Form15Data>(
+    field: K,
+    value: Form15Data[K]
+  ) => {
+    setData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   return (
     <div className="form-15">
       <p
@@ -159,1147 +177,8 @@ export default function Form15() {
         }}
       />
       <ol id="l1">
-        <li data-list-text="1.">
-          <p
-            className="s5"
-            style={{
-              paddingTop: '1pt',
-              paddingLeft: '22pt',
-              textIndent: '-13pt',
-              textAlign: 'left',
-              lineHeight: '150%',
-            }}
-          >
-            신고인 인적사항
-          </p>
-          <table
-            style={{
-              borderCollapse: 'collapse',
-              width: '624pt',
-              marginLeft: '0pt',
-            }}
-            cellSpacing="0"
-          >
-            <tr style={{ height: '16pt' }}>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                }}
-              >
-                <p
-                  className="s6"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '6pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ① 상호<span className="s7">(법인명)</span>
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '162pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                }}
-              >
-                <p
-                  className="s6"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '5pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ② 사업자등록번호
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '162pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                  type="text"
-                />
-              </td>
-            </tr>
-            <tr style={{ height: '16pt' }}>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                }}
-              >
-                <p
-                  className="s6"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '6pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ③ 업태
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '162pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                }}
-              >
-                <p
-                  className="s6"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '5pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ④ 종목
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '162pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                  type="text"
-                />
-              </td>
-            </tr>
-          </table>
-          <p
-            style={{
-              textIndent: '0pt',
-              textAlign: 'left',
-              height: '5pt',
-              margin: '0pt',
-              padding: '0pt',
-              lineHeight: '5pt',
-            }}
-          >
-            <br />
-          </p>
-          <hr
-            style={{
-              width: '624pt',
-              border: 'none',
-              borderTop: '1pt solid #000',
-              margin: '0',
-              padding: '0',
-            }}
-          />
-        </li>
-        <li data-list-text="2.">
-          <h2
-            style={{
-              paddingTop: '1pt',
-              paddingBottom: '1pt',
-              paddingLeft: '24pt',
-              textIndent: '-15pt',
-              textAlign: 'left',
-              lineHeight: '150%',
-            }}
-          >
-            면세농산물등 매입가액 합계
-          </h2>
-          <table
-            style={{
-              borderCollapse: 'collapse',
-              width: '624pt',
-              marginLeft: '0pt',
-            }}
-            cellSpacing="0"
-          >
-            <tr style={{ height: '16pt' }}>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-                colSpan={2}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  구 분
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '67pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑤ 매입처 수
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '52pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑥ 건 수
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '83pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑦ 매입가액
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '49pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑧ 공제율
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '81pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-              >
-                <p
-                  className="s8"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑨ 의제매입세액
-                </p>
-              </td>
-            </tr>
-            <tr style={{ height: '15pt' }}>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-                colSpan={2}
-              >
-                <p
-                  className="s4"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑩ 합 계
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '67pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '52pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '83pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '49pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                    textAlign: 'center',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '81pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-            </tr>
-            <tr style={{ height: '15pt' }}>
-              <td
-                style={{
-                  width: '73pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-                rowSpan={2}
-              >
-                <p
-                  className="s4"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    paddingRight: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  사업자로부터의
-                  <br />매 입 분
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '77pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                }}
-              >
-                <p
-                  className="s4"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '3pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ⑪ 계 산 서
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '67pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '52pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '83pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '49pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                    textAlign: 'center',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '81pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-            </tr>
-            <tr style={{ height: '15pt' }}>
-              <td
-                style={{
-                  width: '77pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                }}
-              >
-                <p
-                  className="s4"
-                  style={{
-                    paddingTop: '1pt',
-                    paddingLeft: '3pt',
-                    textIndent: '0pt',
-                    textAlign: 'left',
-                  }}
-                >
-                  ⑫ 신용카드 등
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '67pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '52pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '83pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '49pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                    textAlign: 'center',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '81pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderBottomColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-            </tr>
-            <tr style={{ height: '15pt' }}>
-              <td
-                style={{
-                  width: '150pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  verticalAlign: 'middle',
-                  display: 'table-cell',
-                }}
-                colSpan={2}
-              >
-                <p
-                  className="s4"
-                  style={{
-                    paddingTop: '0pt',
-                    paddingLeft: '0pt',
-                    textIndent: '0pt',
-                    textAlign: 'center',
-                    margin: '0',
-                  }}
-                >
-                  ⑬ 농어민 등으로부터의 매입분
-                </p>
-              </td>
-              <td
-                style={{
-                  width: '67pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '52pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '83pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  width: '49pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  borderRightStyle: 'solid',
-                  borderRightWidth: '1pt',
-                  borderRightColor: '#7E7E7E',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <input
-                  className="form-input form-input-text"
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                    textAlign: 'center',
-                  }}
-                  type="text"
-                />
-              </td>
-              <td
-                style={{
-                  width: '81pt',
-                  borderTopStyle: 'solid',
-                  borderTopWidth: '1pt',
-                  borderTopColor: '#7E7E7E',
-                  borderLeftStyle: 'solid',
-                  borderLeftWidth: '1pt',
-                  borderLeftColor: '#7E7E7E',
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '1pt',
-                  padding: '1pt',
-                  verticalAlign: 'middle',
-                }}
-              >
-                <NumericInput
-                  style={{
-                    width: 'calc(100% - 2pt)',
-                    height: 'calc(100% - 2pt)',
-                  }}
-                />
-              </td>
-            </tr>
-          </table>
-          <p
-            style={{
-              textIndent: '0pt',
-              textAlign: 'left',
-              height: '5pt',
-              margin: '0pt',
-              padding: '0pt',
-              lineHeight: '5pt',
-            }}
-          >
-            <br />
-          </p>
-          <hr
-            style={{
-              width: '624pt',
-              border: 'none',
-              borderTop: '1pt solid #000',
-              margin: '0',
-              padding: '0',
-            }}
-          />
-        </li>
+        <BusinessInfoTable {...data} onChange={updater} />
+        <TaxFreePurchaseAmountTable {...data} onChange={updater} />
         <li data-list-text="3.">
           <h2
             style={{
@@ -1644,6 +523,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.baseTotalAmt}
+                  onChange={value => updater('baseTotalAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -1670,6 +551,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.basePlannedAmt}
+                  onChange={value => updater('basePlannedAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -1696,6 +579,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.basePlannedAmt}
+                  onChange={value => updater('basePlannedAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -1721,14 +606,14 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-text"
+                <Input
+                  value={data.limitRate}
+                  onChange={value => updater('limitRate', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                     textAlign: 'center',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -1751,6 +636,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.limitAmt}
+                  onChange={value => updater('limitAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -1777,6 +664,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.currentPurchaseAmt}
+                  onChange={value => updater('currentPurchaseAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -1800,6 +689,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.deductibleTargetAmt}
+                  onChange={value => updater('deductibleTargetAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2105,14 +996,14 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-text"
+                <Input
+                  value={data.deductionRate}
+                  onChange={value => updater('deductionRate', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                     textAlign: 'center',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -2134,6 +1025,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.deductibleTaxAmt}
+                  onChange={value => updater('deductibleTaxAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2159,6 +1052,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.preDeductedTotal}
+                  onChange={value => updater('preDeductedTotal', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2184,6 +1079,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.preDeductedPlanned}
+                  onChange={value => updater('preDeductedPlanned', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2209,6 +1106,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.preDeductedEarly}
+                  onChange={value => updater('preDeductedEarly', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2231,6 +1130,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.finalDeductibleTax}
+                  onChange={value => updater('finalDeductibleTax', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2716,6 +1617,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufBaseTotal}
+                  onChange={value => updater('manufBaseTotal', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2741,6 +1644,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufBaseTerm1}
+                  onChange={value => updater('manufBaseTerm1', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2766,6 +1671,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufBaseTerm2}
+                  onChange={value => updater('manufBaseTerm2', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2790,7 +1697,9 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <NumericInput
+                <Input
+                  value={data.manufLimitRate}
+                  onChange={value => updater('manufLimitRate', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2816,6 +1725,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufLimitAmt}
+                  onChange={value => updater('manufLimitAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2841,6 +1752,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPurchaseTotal}
+                  onChange={value => updater('manufPurchaseTotal', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2866,6 +1779,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPurchaseTerm1}
+                  onChange={value => updater('manufPurchaseTerm1', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2891,6 +1806,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPurchaseTerm2}
+                  onChange={value => updater('manufPurchaseTerm2', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -2913,6 +1830,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufTargetAmt}
+                  onChange={value => updater('manufTargetAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3326,14 +2245,14 @@ export default function Form15() {
                   verticalAlign: 'middle',
                 }}
               >
-                <input
-                  className="form-input form-input-text"
+                <Input
+                  value={data.manufDeductionRate}
+                  onChange={value => updater('manufDeductionRate', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
                     textAlign: 'center',
                   }}
-                  type="text"
                 />
               </td>
               <td
@@ -3355,6 +2274,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufDeductibleTaxAmt}
+                  onChange={value => updater('manufDeductibleTaxAmt', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3380,6 +2301,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPreDedTotal}
+                  onChange={value => updater('manufPreDedTotal', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3405,6 +2328,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPreDedTerm1}
+                  onChange={value => updater('manufPreDedTerm1', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3430,6 +2355,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPreDedTerm2Total}
+                  onChange={value => updater('manufPreDedTerm2Total', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3455,6 +2382,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPreDedTerm2Planned}
+                  onChange={value => updater('manufPreDedTerm2Planned', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3480,6 +2409,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufPreDedTerm2Early}
+                  onChange={value => updater('manufPreDedTerm2Early', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -3502,6 +2433,8 @@ export default function Form15() {
                 }}
               >
                 <NumericInput
+                  value={data.manufFinalDeductibleTax}
+                  onChange={value => updater('manufFinalDeductibleTax', value)}
                   style={{
                     width: 'calc(100% - 2pt)',
                     height: 'calc(100% - 2pt)',
@@ -4480,7 +3413,9 @@ export default function Form15() {
         className="s12"
         style={{ paddingTop: '7pt', textIndent: '0pt', textAlign: 'right' }}
       >
-        <NumericInput
+        <Input
+          value={data.writeYear}
+          onChange={value => updater('writeYear', value.replace(/[^0-9]/g, ''))}
           style={{
             width: '25pt',
             height: '18pt',
@@ -4494,6 +3429,9 @@ export default function Form15() {
         />
         년
         <NumericInput
+          value={Number(data.writeMonth)}
+          onChange={value => updater('writeMonth', value.toString())}
+          maxLength={2}
           style={{
             width: '15pt',
             height: '18pt',
@@ -4507,6 +3445,9 @@ export default function Form15() {
         />
         월
         <NumericInput
+          value={Number(data.writeDay)}
+          onChange={value => updater('writeDay', value.toString())}
+          maxLength={2}
           style={{
             width: '15pt',
             height: '18pt',
@@ -4529,8 +3470,9 @@ export default function Form15() {
         }}
       >
         신고인
-        <input
-          className="form-input form-input-text"
+        <Input
+          value={data.submitterName}
+          onChange={value => updater('submitterName', value)}
           style={{
             width: '100pt',
             height: '20pt',
@@ -4542,7 +3484,6 @@ export default function Form15() {
             fontFamily: '돋움, monospace',
             fontSize: '9pt',
           }}
-          type="text"
         />
         <span className="s13">(서명 또는 인)</span>
       </p>

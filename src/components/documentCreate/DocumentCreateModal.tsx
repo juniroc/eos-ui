@@ -3,7 +3,7 @@ import { ModalProps } from '@/types/props';
 import ModalContainer from '@/components/modal/ModalContainer';
 import { printElement } from '@/utils/printUtils';
 import PreviewWrapper from '@/components/documentCreate/template/PreviewWrapper';
-import Form15 from '@/components/documentCreate/template/Form15/Form15';
+import TaxDocument from '@/components/taxDocument/TaxDocument';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
   const [scale, setScale] = useState(1);
@@ -61,7 +61,7 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
                 print:border-none print:overflow-visible"
               >
                 <PreviewWrapper>
-                  <Form15 />
+                  <TaxDocument type={'FORM15'} data={{}} />
                 </PreviewWrapper>
               </div>
             </div>

@@ -3,12 +3,13 @@
 import { ChangeEvent, CSSProperties, useMemo, useState } from 'react';
 
 type Props = {
-  value: number;
-  onChange: (value: number | null) => void;
+  value?: number;
+  onChange?: (value: number) => void;
+  maxLength?: number;
   style?: CSSProperties;
 };
 
-const NumericInput = ({ value, onChange, style }: Props) => {
+const NumericInput = ({ value, onChange, maxLength, style }: Props) => {
   const [rawValue, setRawValue] = useState<string | null>(null);
 
   const digitsOnly = (str: string) => str.replace(/[^0-9]/g, '');
@@ -18,15 +19,15 @@ const NumericInput = ({ value, onChange, style }: Props) => {
     return Number(digits).toLocaleString('ko-KR');
   };
 
-  const parseDigitsToNumber = (digits: string): number | null => {
-    if (!digits) return null;
+  const parseDigitsToNumber = (digits: string): number => {
+    if (!digits) return 0;
     return Number(digits);
   };
 
   const displayValue = useMemo(() => {
     if (rawValue !== null) return rawValue;
     if (value === null) return '';
-    return value.toLocaleString('ko-KR');
+    return value?.toLocaleString('ko-KR');
   }, [rawValue, value]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +35,7 @@ const NumericInput = ({ value, onChange, style }: Props) => {
     const formatted = formatDigits(digits);
 
     setRawValue(formatted); // ✅ 숫자 외 입력은 즉시 제거됨
-    onChange(parseDigitsToNumber(digits)); // ✅ 외부는 number로 유지
+    onChange && onChange(parseDigitsToNumber(digits)); // ✅ 외부는 number로 유지
   };
 
   const handleBlur = () => {
@@ -47,6 +48,7 @@ const NumericInput = ({ value, onChange, style }: Props) => {
       className="form-input form-input-numeric"
       style={style}
       value={displayValue}
+      maxLength={maxLength}
       onChange={handleChange}
       onBlur={handleBlur}
       inputMode="numeric"

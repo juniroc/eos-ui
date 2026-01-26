@@ -16,6 +16,7 @@ import {
 import type { VatForm, VatUploadedDocument } from '@/services/vat';
 import ToastMessage from '@/components/ToastMessage';
 import VatPreviewModal from '@/components/VatPreviewModal';
+import VatSimplePreviewModal from '@/components/VatSimplePreviewModal';
 
 export default function VatStoredDocumentsPage() {
   const router = useRouter();
@@ -34,6 +35,9 @@ export default function VatStoredDocumentsPage() {
   const [openMenuReportId, setOpenMenuReportId] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewReportId, setPreviewReportId] = useState<string | null>(null);
+  const [showSimplePreviewModal, setShowSimplePreviewModal] = useState(false);
+  const [simplePreviewReportId, setSimplePreviewReportId] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -63,9 +67,10 @@ export default function VatStoredDocumentsPage() {
 
   useEffect(() => {
     if (token && isAuthenticated) {
-      fetchReports();
+      // 초기 로딩 완료 처리 (조회 전까지 데이터 불러오지 않음)
+      setLoading(false);
     }
-  }, [token, isAuthenticated, fetchReports]);
+  }, [token, isAuthenticated]);
 
   // 외부 클릭시 메뉴 닫기
   useEffect(() => {
@@ -86,21 +91,12 @@ export default function VatStoredDocumentsPage() {
   };
 
   const handleSearch = () => {
+    setHasSearched(true);
     fetchReports();
   };
 
-  // 날짜 필터링된 신고서 목록
-  const filteredReports = selectedDate
-    ? reports.filter((report) => {
-        const reportDate = new Date(report.lastModifiedAt);
-        const filterDate = new Date(selectedDate);
-        return (
-          reportDate.getFullYear() === filterDate.getFullYear() &&
-          reportDate.getMonth() === filterDate.getMonth() &&
-          reportDate.getDate() === filterDate.getDate()
-        );
-      })
-    : reports;
+  // 신고서 목록 (필터링 없이 전체 표시)
+  const filteredReports = reports;
 
   const formatDateForDisplay = (dateString: string) => {
     if (!dateString) return '';
@@ -111,10 +107,10 @@ export default function VatStoredDocumentsPage() {
     return `${year}/${month}/${day}`;
   };
 
-  // 서류명 클릭 - preview 모달 열기
+  // 서류명 클릭 - simple preview 모달 열기
   const handleReportClick = (reportId: string) => {
-    setPreviewReportId(reportId);
-    setShowPreviewModal(true);
+    setSimplePreviewReportId(reportId);
+    setShowSimplePreviewModal(true);
   };
 
   // 신고서 삭제
@@ -287,108 +283,84 @@ export default function VatStoredDocumentsPage() {
         </div>
 
         {/* Table - 헤더와 데이터를 하나의 연속된 표로 */}
-        {filteredReports.length === 0 ? (
-          <div className="flex flex-col items-center justify-center w-full py-8">
-            <span className="text-[11px] leading-[140%] text-[#B3B3B3]">
-              조회된 서류가 없습니다.
-            </span>
-          </div>
-        ) : (
-          (() => {
-            // 모든 report의 행들을 미리 계산
+        {(() => {
+            // 모든 report의 행들을 미리 계산 - form 단위로 행 생성
             const allTableRows: Array<{
               report: VatReport;
-              row: { type: 'form' | 'document'; form?: VatForm; document?: VatUploadedDocument };
+              row: { form?: VatForm };
               reportRowIndex: number;
               globalRowIndex: number;
             }> = [];
-            
+
             let globalRowIndex = 1; // 헤더가 0번째 행
-            
+
             filteredReports.forEach((report) => {
-              const reportRows: Array<{ type: 'form' | 'document'; form?: VatForm; document?: VatUploadedDocument }> = [];
-              
-              report.forms?.forEach((form) => {
-                reportRows.push({ type: 'form', form });
-                if (form.uploadedDocuments && form.uploadedDocuments.length > 0) {
-                  form.uploadedDocuments.forEach((doc) => {
-                    reportRows.push({ type: 'document', form, document: doc });
-                  });
-                }
-              });
-              
-              if (reportRows.length === 0) {
-                reportRows.push({ type: 'form' });
-              }
-              
-              reportRows.forEach((row, reportRowIndex) => {
+              const forms = report.forms || [];
+
+              if (forms.length === 0) {
                 allTableRows.push({
                   report,
-                  row,
-                  reportRowIndex,
+                  row: {},
+                  reportRowIndex: 0,
                   globalRowIndex: globalRowIndex++,
                 });
-              });
+              } else {
+                forms.forEach((form, idx) => {
+                  allTableRows.push({
+                    report,
+                    row: { form },
+                    reportRowIndex: idx,
+                    globalRowIndex: globalRowIndex++,
+                  });
+                });
+              }
             });
-            
+
             const rowHeight = 32;
-            
+
             // 각 report의 시작 행과 끝 행 계산
             const reportRowRanges = new Map<string, { start: number; end: number; totalRows: number }>();
             let currentRow = 1;
-            
+
             filteredReports.forEach((report) => {
-              const reportRows: Array<{ type: 'form' | 'document'; form?: VatForm; document?: VatUploadedDocument }> = [];
-              
-              report.forms?.forEach((form) => {
-                reportRows.push({ type: 'form', form });
-                if (form.uploadedDocuments && form.uploadedDocuments.length > 0) {
-                  form.uploadedDocuments.forEach((doc) => {
-                    reportRows.push({ type: 'document', form, document: doc });
-                  });
-                }
-              });
-              
-              if (reportRows.length === 0) {
-                reportRows.push({ type: 'form' });
-              }
-              
+              const formsCount = Math.max(report.forms?.length || 0, 1);
+
               reportRowRanges.set(report.id, {
                 start: currentRow,
-                end: currentRow + reportRows.length - 1,
-                totalRows: reportRows.length,
+                end: currentRow + formsCount - 1,
+                totalRows: formsCount,
               });
-              
-              currentRow += reportRows.length;
+
+              currentRow += formsCount;
             });
             
             return (
               <div 
                 className="grid w-full"
                 style={{
-                  gridTemplateColumns: '80px 150px 1fr 1fr 63px',
+                  gridTemplateColumns: '80px minmax(250px, auto) 1fr 1fr 63px',
                   gridAutoRows: `${rowHeight}px`,
                 }}
               >
                 {/* 헤더 행 */}
-                <div className="flex flex-row items-center p-2 bg-white border-l border-t border-r border-[#D9D9D9]" style={{ gridRow: 1, gridColumn: 1 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-l border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 1 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">작성일자</span>
                 </div>
-                <div className="flex flex-row items-center p-2 bg-white border-t border-r border-[#D9D9D9]" style={{ gridRow: 1, gridColumn: 2 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 2 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">서류명</span>
                 </div>
-                <div className="flex flex-row items-center p-2 bg-white border-t border-r border-[#D9D9D9]" style={{ gridRow: 1, gridColumn: 3 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 3 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">첨부서류명</span>
                 </div>
-                <div className="flex flex-row items-center p-2 bg-white border-t border-r border-[#D9D9D9]" style={{ gridRow: 1, gridColumn: 4 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 4 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">업로드한 관련 파일</span>
                 </div>
-                <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] border-t border-r border-[#D9D9D9] cursor-pointer hover:bg-[#D9D9D9]" style={{ gridRow: 1, gridColumn: 5 }}>
+                <button className={`flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9] cursor-pointer hover:bg-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 5 }}>
                   <span className="text-[11px] leading-[100%] text-[#B3B3B3]">업로드</span>
                 </button>
-                
+
                 {/* 데이터 행들 */}
-                {allTableRows.map(({ report, reportRowIndex, globalRowIndex }) => {
+                {hasSearched && allTableRows.map(({ report, reportRowIndex, globalRowIndex }) => {
                   const range = reportRowRanges.get(report.id)!;
                   const isFirstDataRow = globalRowIndex === 1;
                   
@@ -410,56 +382,55 @@ export default function VatStoredDocumentsPage() {
                       
                       {/* 서류명 - 첫 번째 행에만 표시하고 병합 */}
                       {reportRowIndex === 0 ? (
-                        <div 
-                          className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
-                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2 }}
+                        <div
+                          className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9] p-2 overflow-visible`}
+                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2, minWidth: '250px', width: '100%' }}
                         >
-                          <button
+                          <span
                             onClick={() => handleReportClick(report.id)}
-                            className="w-full text-left p-2 hover:bg-[#F5F5F5]"
+                            className="text-[10px] leading-[140%] text-[#757575] cursor-pointer hover:underline mb-1 block w-full"
                           >
-                            <span className="text-[10px] leading-[140%] text-[#757575] cursor-pointer">
-                              {report.title}
-                            </span>
-                          </button>
+                            {report.title}
+                          </span>
                           {/* Action Buttons */}
-                          <div className="relative w-full p-2" ref={openMenuReportId === report.id ? menuRef : null}>
-                            <div className="flex flex-row gap-1">
+                          <div className="flex flex-row gap-1 w-full" ref={openMenuReportId === report.id ? menuRef : null}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportToDelete(report.id);
+                                setShowDeleteModal(true);
+                                setOpenMenuReportId(null);
+                              }}
+                              className="px-2 py-1 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6] whitespace-nowrap flex-shrink-0"
+                            >
+                              삭제
+                            </button>
+                            {report.isCompleted ? (
                               <button
-                                onClick={() => {
-                                  setReportToDelete(report.id);
-                                  setShowDeleteModal(true);
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setReportToWork(report.id);
+                                  setWorkActionType('amendment');
+                                  setShowWorkModal(true);
                                   setOpenMenuReportId(null);
                                 }}
-                                className="px-2 py-1 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6]"
+                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-shrink-0"
                               >
-                                삭제
+                                수정신고
                               </button>
-                              {report.isCompleted ? (
-                                <button
-                                  onClick={() => {
-                                    setReportToWork(report.id);
-                                    setWorkActionType('amendment');
-                                    setShowWorkModal(true);
-                                    setOpenMenuReportId(null);
-                                  }}
-                                  className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a]"
-                                >
-                                  수정신고
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    setPreviewReportId(report.id);
-                                    setShowPreviewModal(true);
-                                    setOpenMenuReportId(null);
-                                  }}
-                                  className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a]"
-                                >
-                                  재작업
-                                </button>
-                              )}
-                            </div>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPreviewReportId(report.id);
+                                  setShowPreviewModal(true);
+                                  setOpenMenuReportId(null);
+                                }}
+                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-shrink-0"
+                              >
+                                재작업
+                              </button>
+                            )}
                           </div>
                         </div>
                       ) : (
@@ -468,7 +439,7 @@ export default function VatStoredDocumentsPage() {
                       
                       {/* 첨부서류명 - 첫 번째 행에만 표시하고 병합 */}
                       {reportRowIndex === 0 ? (
-                        <div 
+                        <div
                           className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 3, minWidth: '240px' }}
                         >
@@ -477,11 +448,11 @@ export default function VatStoredDocumentsPage() {
                             return (
                               <div className="flex flex-col w-full">
                                 {reportRows.map((reportRow, idx) => (
-                                  <div 
+                                  <div
                                     key={idx}
                                     className={`flex flex-row items-center justify-between p-2 ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
                                   >
-                                    {reportRow.row.type === 'form' && reportRow.row.form ? (
+                                    {reportRow.row.form ? (
                                       <>
                                         <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
                                           {reportRow.row.form.name}
@@ -507,10 +478,10 @@ export default function VatStoredDocumentsPage() {
                       ) : (
                         <div className="bg-white border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 3 }}></div>
                       )}
-                      
+
                       {/* 업로드한 관련 파일 - 첫 번째 행에만 표시하고 병합 */}
                       {reportRowIndex === 0 ? (
-                        <div 
+                        <div
                           className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 4, minWidth: '240px' }}
                         >
@@ -518,41 +489,46 @@ export default function VatStoredDocumentsPage() {
                             const reportRows = allTableRows.filter(r => r.report.id === report.id);
                             return (
                               <div className="flex flex-col w-full">
-                                {reportRows.map((reportRow, idx) => (
-                                  <div 
-                                    key={idx}
-                                    className={`flex flex-row items-center justify-between p-2 ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
-                                  >
-                                    {reportRow.row.type === 'document' && reportRow.row.document ? (
-                                      <>
-                                        <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
-                                          {reportRow.row.document.name}
-                                        </span>
-                                        <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
-                                          <button
-                                            onClick={() => handleDownloadDocument(reportRow.row.document!.id)}
-                                            className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                          >
-                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                              <path d="M5 0.5V7M5 7L2.5 4.5M5 7L7.5 4.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                                              <path d="M0.5 8.5H9.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round"/>
-                                            </svg>
-                                          </button>
-                                          <button
-                                            onClick={() => handleDeleteDocument(reportRow.row.document!.id)}
-                                            className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                          >
-                                            <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                              <path d="M2.5 2.5L7.5 7.5M2.5 7.5L7.5 2.5" stroke="#C00F0C" strokeWidth="1.2" strokeLinecap="round"/>
-                                            </svg>
-                                          </button>
-                                        </div>
-                                      </>
-                                    ) : (
-                                      <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
-                                    )}
-                                  </div>
-                                ))}
+                                {reportRows.map((reportRow, idx) => {
+                                  const docs = reportRow.row.form?.uploadedDocuments || [];
+                                  const firstDoc = docs[0];
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className={`flex flex-row items-center justify-between p-2 ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
+                                    >
+                                      {firstDoc ? (
+                                        <>
+                                          <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
+                                            {firstDoc.name}
+                                            {docs.length > 1 && ` 외 ${docs.length - 1}개`}
+                                          </span>
+                                          <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
+                                            <button
+                                              onClick={() => handleDownloadDocument(firstDoc.id)}
+                                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                            >
+                                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M5 0.5V7M5 7L2.5 4.5M5 7L7.5 4.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                <path d="M0.5 8.5H9.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round"/>
+                                              </svg>
+                                            </button>
+                                            <button
+                                              onClick={() => handleDeleteDocument(firstDoc.id)}
+                                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                            >
+                                              <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.5 2.5L7.5 7.5M2.5 7.5L7.5 2.5" stroke="#C00F0C" strokeWidth="1.2" strokeLinecap="round"/>
+                                              </svg>
+                                            </button>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             );
                           })()}
@@ -579,8 +555,7 @@ export default function VatStoredDocumentsPage() {
                 })}
               </div>
             );
-          })()
-        )}
+          })()}
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -695,6 +670,16 @@ export default function VatStoredDocumentsPage() {
           setPreviewReportId(null);
         }}
         reportId={previewReportId}
+      />
+
+      {/* Simple Preview Modal - 서류명 클릭 시 열림 */}
+      <VatSimplePreviewModal
+        isOpen={showSimplePreviewModal}
+        onClose={() => {
+          setShowSimplePreviewModal(false);
+          setSimplePreviewReportId(null);
+        }}
+        reportId={simplePreviewReportId}
       />
     </>
   );

@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getVatCompanyInfo, saveVatCompanyInfo, type VatCompanyInfo } from '@/services/api';
+import { getVatCompanyInfo, saveVatCompanyInfo, uploadStamp, getStamp, deleteStamp, type VatCompanyInfo } from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
+import Image from 'next/image';
 
 export default function VatDocumentCreatePage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function VatDocumentCreatePage() {
   const [reportingPeriodStart, setReportingPeriodStart] = useState<string>('');
   const [reportingPeriodEnd, setReportingPeriodEnd] = useState<string>('');
   const [vatCompanyInfo, setVatCompanyInfo] = useState<VatCompanyInfo | null>(null);
+  const [stampImageUrl, setStampImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
@@ -19,7 +21,7 @@ export default function VatDocumentCreatePage() {
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
     if (!token) return;
-    
+
     try {
       setLoading(true);
       const data = await getVatCompanyInfo(token);
@@ -35,13 +37,73 @@ export default function VatDocumentCreatePage() {
   useEffect(() => {
     if (isAuthenticated && token) {
       fetchVatCompanyInfo();
+      fetchStamp();
     }
   }, [isAuthenticated, token, fetchVatCompanyInfo]);
+
+  /** 도장 조회 */
+  const fetchStamp = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      const url = await getStamp(token);
+      setStampImageUrl(url);
+    } catch (err) {
+      // 404는 정상 (도장이 없는 경우)
+      setStampImageUrl(null);
+    }
+  }, [token]);
+
+  /** 도장 업로드 */
+  const handleStampUpload = async (file: File) => {
+    if (!token) return;
+    
+    // PNG/JPG 파일만 허용
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('PNG 또는 JPG 파일만 업로드 가능합니다.');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await uploadStamp(file, token);
+      // 업로드 후 다시 조회
+      await fetchStamp();
+      setToastMessage('도장이 업로드되었습니다!');
+      setShowToast(true);
+    } catch (err) {
+      console.error('도장 업로드 에러:', err);
+      alert('도장 업로드에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /** 도장 삭제 */
+  const handleStampDelete = async () => {
+    if (!token) return;
+    
+    if (!confirm('도장을 삭제하시겠습니까?')) return;
+    
+    try {
+      setLoading(true);
+      await deleteStamp(token);
+      setStampImageUrl(null);
+      setToastMessage('도장이 삭제되었습니다!');
+      setShowToast(true);
+    } catch (err) {
+      console.error('도장 삭제 에러:', err);
+      alert('도장 삭제에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /** 회사정보 저장 */
   const handleSaveCompanyInfo = async () => {
     if (!token || !vatCompanyInfo) return;
-    
+
     try {
       setLoading(true);
       const updateData = {
@@ -58,7 +120,7 @@ export default function VatDocumentCreatePage() {
         mobilePhone: vatCompanyInfo.mobilePhone,
         email: vatCompanyInfo.email,
       };
-      
+
       const savedData = await saveVatCompanyInfo(updateData, token);
       setVatCompanyInfo(savedData);
       setToastMessage('회사정보가 저장되었습니다!');
@@ -109,7 +171,7 @@ export default function VatDocumentCreatePage() {
               </div>
             </div>
           </div>
-          
+
           {/* 저장 버튼 */}
           {vatCompanyInfo && (
             <div className="flex flex-row justify-start sm:justify-end items-center p-0 gap-2 h-7">
@@ -177,7 +239,7 @@ export default function VatDocumentCreatePage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* 회사정보 필드들 - 2열 구조 */}
               <div className="flex flex-col items-start p-0 gap-0 w-full">
                 {/* Row 1: 회사명, 대표자명 */}
@@ -441,9 +503,107 @@ export default function VatDocumentCreatePage() {
             </div>
           </div>
         )}
+
+        {/* 도장 관리 영역 */}
+        <div className="flex flex-col items-start p-0 gap-4 mb-4">
+          <div className="flex flex-col items-start p-0 gap-4 w-full">
+            <div className="flex flex-row items-end p-0 gap-5 w-full">
+              <div className="flex flex-col items-start p-0">
+                <div className="flex flex-row items-center p-0 gap-4 w-full">
+                  <h3 className="text-sm leading-[140%] text-[#1E1E1E]">도장</h3>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-start p-0 gap-4 w-[200px]">
+              {/* 도장 업로드 영역 */}
+              {!stampImageUrl ? (
+                <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-[200px] bg-white border border-dashed border-[#D9D9D9]">
+                  <div className="flex items-center justify-center">
+                    <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+                  </div>
+                  <div className="flex flex-col items-center p-0 gap-0.5">
+                    <span className="text-xs leading-[140%] text-center text-[#303030]">
+                      파일을 업로드하세요.
+                    </span>
+                    <span className="text-xs leading-[140%] text-center text-[#767676]">
+                      (PNG 파일을 지원합니다)
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleStampUpload(file);
+                    }}
+                    disabled={loading}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center p-0 gap-2 w-[200px]">
+                  <div className="relative w-[200px] h-[200px] border border-[#D9D9D9]">
+                    <Image
+                      src={stampImageUrl}
+                      alt="도장"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* 도장 관리 버튼 */}
+              <div className="flex flex-row justify-center items-center p-0 gap-2 w-full">
+                {!stampImageUrl ? (
+                  <label className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E] cursor-pointer">
+                    업로드
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleStampUpload(file);
+                      }}
+                      disabled={loading}
+                    />
+                  </label>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/png,image/jpeg,image/jpg';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) handleStampUpload(file);
+                        };
+                        input.click();
+                      }}
+                      disabled={loading}
+                      className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
+                    >
+                      로드
+                    </button>
+                    <button
+                      onClick={handleStampDelete}
+                      disabled={loading}
+                      className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] text-xs leading-[100%] text-[#B3B3B3] disabled:opacity-50"
+                    >
+                      삭제
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <ToastMessage 
+      <ToastMessage
         message={toastMessage}
         isVisible={showToast}
         onHide={() => setShowToast(false)}

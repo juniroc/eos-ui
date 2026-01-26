@@ -1,0 +1,81 @@
+/* form25 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form25 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form25 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }
+}
+
+@layer components {
+  .form25 .s1 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 .s2 {
+    color: #00F; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 .s3 {
+    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt; letter-spacing: 1pt;
+  }
+  .form25 h1 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form25 .s4 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form25 .s5 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 .p, .form25 p {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; margin:0pt;
+  }
+  .form25 .s6 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form25 .s7 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 .s8 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 .s9 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 li {
+    display: block;
+  }
+  .form25 #l1 {
+    padding-left: 0pt;
+  }
+  .form25 #l1> li>*:first-child:before {
+    content: "■ "; color: black; font-family:Arial; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form25 table, .form25 tbody {
+    vertical-align: top; overflow: visible;
+  }
+  .form25 input.form-input {
+    width: 100%; height: 20pt; border: none; outline: none; background: transparent; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
+  }
+  .form25 input.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form25 input.form-input-numeric {
+    text-align: right; font-family: Arial; font-size: 10pt;
+  }
+  .form25 input.form-input-text {
+    text-align: left; font-family: Arial; font-size: 10pt;
+  }
+  .form25 table:nth-of-type(2) p {
+    line-height: 120% !important;
+  }
+}

@@ -44,7 +44,7 @@ export default function VatDocumentCreatePage() {
   /** 도장 조회 */
   const fetchStamp = useCallback(async () => {
     if (!token) return;
-    
+
     try {
       const url = await getStamp(token);
       setStampImageUrl(url);
@@ -57,14 +57,14 @@ export default function VatDocumentCreatePage() {
   /** 도장 업로드 */
   const handleStampUpload = async (file: File) => {
     if (!token) return;
-    
+
     // PNG/JPG 파일만 허용
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
     if (!allowedTypes.includes(file.type)) {
       alert('PNG 또는 JPG 파일만 업로드 가능합니다.');
       return;
     }
-    
+
     try {
       setLoading(true);
       await uploadStamp(file, token);
@@ -83,9 +83,9 @@ export default function VatDocumentCreatePage() {
   /** 도장 삭제 */
   const handleStampDelete = async () => {
     if (!token) return;
-    
+
     if (!confirm('도장을 삭제하시겠습니까?')) return;
-    
+
     try {
       setLoading(true);
       await deleteStamp(token);
@@ -154,6 +154,18 @@ export default function VatDocumentCreatePage() {
   if (!isAuthenticated) {
     return null; // 리다이렉트가 처리됨
   }
+
+  // 서류 생성 버튼 활성화 조건
+  const canCreateDocument = 
+    reportingPeriodStart !== '' && 
+    reportingPeriodEnd !== '' && 
+    stampImageUrl !== null;
+
+  /** 서류 생성하기 */
+  const handleCreateDocument = () => {
+    if (!canCreateDocument) return;
+    alert('서류 생성 기능은 준비 중입니다.');
+  };
 
   return (
     <div className="p-4">
@@ -514,7 +526,7 @@ export default function VatDocumentCreatePage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col items-start p-0 gap-4 w-[200px]">
               {/* 도장 업로드 영역 */}
               {!stampImageUrl ? (
@@ -553,7 +565,7 @@ export default function VatDocumentCreatePage() {
                   </div>
                 </div>
               )}
-              
+
               {/* 도장 관리 버튼 */}
               <div className="flex flex-row justify-center items-center p-0 gap-2 w-full">
                 {!stampImageUrl ? (
@@ -600,6 +612,21 @@ export default function VatDocumentCreatePage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 서류 생성하기 버튼 */}
+        <div className="flex flex-row justify-end items-center p-0 gap-2 mt-4">
+          <button
+            onClick={handleCreateDocument}
+            disabled={!canCreateDocument || loading}
+            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 font-['Pretendard'] font-medium text-xs leading-[100%] ${
+              !canCreateDocument || loading
+                ? 'bg-[#E6E6E6] text-[#B3B3B3]'
+                : 'bg-[#F3F3F3] text-[#1E1E1E]'
+            }`}
+          >
+            서류 생성하기
+          </button>
         </div>
       </div>
 

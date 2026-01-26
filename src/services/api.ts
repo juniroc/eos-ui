@@ -1295,3 +1295,140 @@ export async function applyPeriodAccrual(data: {
     rows: data.rows,
   }, token);
 }
+
+// ===== 부가세 서류 생성 관련 API =====
+
+// VAT 회사정보 인터페이스
+export interface VatCompanyInfo {
+  name: string;
+  businessNumber: string;
+  businessCategory: string;
+  corporateNumber: string;
+  representativeName: string;
+  establishmentDate: string;
+  businessType: string[];
+  businessCategory2: string[];
+  address: string;
+  phone: string;
+  refundBankName: string;
+  refundBankBranch: string;
+  refundAccount: string;
+  mobilePhone: string;
+  email: string;
+}
+
+// VAT 회사정보 저장 요청 인터페이스 (수정 가능한 필드만)
+export interface VatCompanyInfoUpdate {
+  name?: string;
+  representativeName?: string;
+  establishmentDate?: string;
+  businessType?: string[];
+  businessCategory2?: string[];
+  address?: string;
+  phone?: string;
+  refundBankName?: string;
+  refundBankBranch?: string;
+  refundAccount?: string;
+  mobilePhone?: string;
+  email?: string;
+}
+
+// VAT 회사정보 조회 API
+export async function getVatCompanyInfo(token: string): Promise<VatCompanyInfo> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/company`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'VAT 회사정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 회사정보 저장 API
+export async function saveVatCompanyInfo(
+  data: VatCompanyInfoUpdate,
+  token: string
+): Promise<VatCompanyInfo> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/company`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'VAT 회사정보 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 도장 업로드 API
+export async function uploadStamp(file: File, token: string): Promise<{ success: boolean; message: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '도장 업로드에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 도장 조회 API (이미지 URL 반환)
+export async function getStamp(token: string): Promise<string | null> {
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '도장 조회에 실패했습니다.');
+  }
+
+  // 이미지 파일을 Blob으로 변환하여 URL 생성
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}
+
+// 도장 삭제 API
+export async function deleteStamp(token: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '도장 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}

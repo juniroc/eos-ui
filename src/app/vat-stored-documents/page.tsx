@@ -1,22 +1,22 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useAuth } from '@/contexts/AuthContext';
-import {
-  getVatReports,
-  deleteVatReport,
-  workOnVatReport,
-  deleteVatForm,
-  deleteVatDocument,
-  getVatDocumentDownloadUrl,
-  type VatReport,
-} from '@/services/vat';
-import type { VatForm, VatUploadedDocument } from '@/services/vat';
 import ToastMessage from '@/components/ToastMessage';
 import VatPreviewModal from '@/components/VatPreviewModal';
 import VatSimplePreviewModal from '@/components/VatSimplePreviewModal';
+import { useAuth } from '@/contexts/AuthContext';
+import type { VatForm } from '@/services/vat';
+import {
+  deleteVatDocument,
+  deleteVatForm,
+  deleteVatReport,
+  getVatDocumentDownloadUrl,
+  getVatReports,
+  workOnVatReport,
+  type VatReport,
+} from '@/services/vat';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function VatStoredDocumentsPage() {
   const router = useRouter();
@@ -67,10 +67,11 @@ export default function VatStoredDocumentsPage() {
 
   useEffect(() => {
     if (token && isAuthenticated) {
-      // 초기 로딩 완료 처리 (조회 전까지 데이터 불러오지 않음)
-      setLoading(false);
+      // 목 데이터를 바로 표시하기 위해 초기 로딩
+      fetchReports();
+      setHasSearched(true);
     }
-  }, [token, isAuthenticated]);
+  }, [token, isAuthenticated, fetchReports]);
 
   // 외부 클릭시 메뉴 닫기
   useEffect(() => {
@@ -265,16 +266,9 @@ export default function VatStoredDocumentsPage() {
               {/* Search Button */}
               <button
                 onClick={handleSearch}
-                disabled={!selectedDate}
-                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] ${
-                  selectedDate
-                    ? 'bg-[#2C2C2C] cursor-pointer hover:bg-[#1a1a1a]'
-                    : 'bg-[#E6E6E6] cursor-not-allowed'
-                }`}
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#2C2C2C] cursor-pointer hover:bg-[#1a1a1a]"
               >
-                <span className={`text-[11px] leading-[100%] ${
-                  selectedDate ? 'text-[#FFFFFF]' : 'text-[#B3B3B3]'
-                }`}>
+                <span className="text-[11px] leading-[100%] text-[#FFFFFF]">
                   조회하기
                 </span>
               </button>
@@ -336,52 +330,52 @@ export default function VatStoredDocumentsPage() {
             
             return (
               <div 
-                className="grid w-full"
+                className="grid w-full border border-[#D9D9D9]"
                 style={{
                   gridTemplateColumns: '80px minmax(280px, auto) 1fr 1fr',
                   gridAutoRows: `minmax(${rowHeight}px, auto)`,
                 }}
               >
                 {/* 헤더 행 */}
-                <div className={`flex flex-row items-center p-2 bg-white border-l border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 1 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-r border-b border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 1 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">작성일자</span>
                 </div>
-                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 2 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-r border-b border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 2 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">서류명</span>
                 </div>
-                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 3 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-r border-b border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 3 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">첨부서류명</span>
                 </div>
-                <div className={`flex flex-row items-center p-2 bg-white border-t border-r ${!hasSearched || filteredReports.length === 0 ? 'border-b' : ''} border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 4 }}>
+                <div className={`flex flex-row items-center p-2 bg-white border-b border-[#D9D9D9]`} style={{ gridRow: 1, gridColumn: 4 }}>
                   <span className="text-[10px] leading-[100%] text-[#B3B3B3]">업로드한 관련 파일</span>
                 </div>
 
 
                 {/* 데이터 행들 */}
-                {hasSearched && allTableRows.map(({ report, reportRowIndex, globalRowIndex }) => {
+                {hasSearched ? (
+                  allTableRows.length > 0 ? (
+                    allTableRows.map(({ report, reportRowIndex, globalRowIndex }) => {
                   const range = reportRowRanges.get(report.id)!;
                   const isFirstDataRow = globalRowIndex === 1;
                   
                   return (
                     <React.Fragment key={`${report.id}-${globalRowIndex}`}>
                       {/* 작성일자 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 ? (
+                      {reportRowIndex === 0 && (
                         <div 
-                          className={`flex flex-col justify-center items-start p-2 bg-white border-l border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
+                          className={`flex flex-col justify-center items-start p-2 bg-white border-r border-b border-[#D9D9D9]`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 1 }}
                         >
                           <span className="text-[10px] leading-[140%] text-[#757575]">
                             {formatDateForDisplay(report.lastModifiedAt)}
                           </span>
                         </div>
-                      ) : (
-                        <div className="bg-white border-l border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 1 }}></div>
                       )}
                       
                       {/* 서류명 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 ? (
+                      {reportRowIndex === 0 && (
                         <div
-                          className={`flex flex-col items-start justify-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9] p-2`}
+                          className={`flex flex-col items-start justify-center bg-white border-r border-b border-[#D9D9D9] p-2`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2, minWidth: '280px' }}
                         >
                           <span
@@ -431,14 +425,12 @@ export default function VatStoredDocumentsPage() {
                             )}
                           </div>
                         </div>
-                      ) : (
-                        <div className="bg-white border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 2 }}></div>
                       )}
                       
                       {/* 첨부서류명 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 ? (
+                      {reportRowIndex === 0 && (
                         <div
-                          className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
+                          className={`flex flex-col items-start bg-white border-r border-b border-[#D9D9D9]`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 3, minWidth: '240px' }}
                         >
                           {(() => {
@@ -473,14 +465,12 @@ export default function VatStoredDocumentsPage() {
                             );
                           })()}
                         </div>
-                      ) : (
-                        <div className="bg-white border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 3 }}></div>
                       )}
 
                       {/* 업로드한 관련 파일 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 ? (
+                      {reportRowIndex === 0 && (
                         <div
-                          className={`flex flex-col items-start bg-white border-r border-b ${isFirstDataRow ? 'border-t' : ''} border-[#D9D9D9]`}
+                          className={`flex flex-col items-start bg-white border-b border-[#D9D9D9]`}
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 4, minWidth: '240px' }}
                         >
                           {(() => {
@@ -531,14 +521,23 @@ export default function VatStoredDocumentsPage() {
                             );
                           })()}
                         </div>
-                      ) : (
-                        <div className="bg-white border-r border-b border-[#D9D9D9]" style={{ gridRow: globalRowIndex + 1, gridColumn: 4 }}></div>
                       )}
                       
                       
                     </React.Fragment>
                   );
-                })}
+                    })
+                  ) : (
+                    <div
+                      className="flex flex-col items-center justify-center bg-white border-b border-[#D9D9D9] py-8"
+                      style={{ gridRow: 2, gridColumn: '1 / 5' }}
+                    >
+                      <span className="text-[11px] leading-[140%] text-[#B3B3B3]">
+                        조회된 서류가 없습니다.
+                      </span>
+                    </div>
+                  )
+                ) : null}
               </div>
             );
           })()}

@@ -1527,3 +1527,52 @@ export async function getAvailableForms(
 
   return response.json();
 }
+
+// VAT 신고서에 서식 추가 API
+export interface AddFormsRequest {
+  formCodes: string[];
+}
+
+export interface VatFormData {
+  id: string;
+  reportId: string;
+  formCode: string;
+  name: string;
+  data: {
+    values: Record<string, unknown>;
+    states: Record<string, unknown>;
+  };
+}
+
+export interface AddFormsResponse {
+  id: string;
+  userId: string;
+  title: string;
+  filingDate: string;
+  filingType: string;
+  isCompleted: boolean;
+  lastModifiedAt: string;
+  forms: VatFormData[];
+}
+
+export async function addFormsToReport(
+  reportId: string,
+  data: AddFormsRequest,
+  token: string
+): Promise<AddFormsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}/add-forms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 추가에 실패했습니다.');
+  }
+
+  return response.json();
+}

@@ -10,8 +10,20 @@ interface VatDocumentCreateModalProps extends ModalProps {
   reportId?: string;
 }
 
+interface DocumentItem {
+  id: string;
+  name: string;
+  isAdded?: boolean; // 추가된 서식인지 여부
+}
+
 function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreateModalProps) {
-  const [selectedDocument, setSelectedDocument] = useState<string | null>('일반과세자 부가가치세 신고서');
+  const [documentList, setDocumentList] = useState<DocumentItem[]>([
+    { id: '1', name: '일반과세자 부가가치세 신고서' },
+    { id: '2', name: '매출처별 세금계산서 합계표' },
+    { id: '3', name: '매입처별 세금계산서 합계표' },
+    { id: '4', name: '신용카드 매출전표 등 수령 명세서' },
+  ]);
+  const [selectedDocument, setSelectedDocument] = useState<string | null>(documentList[0]?.id || null);
   const [isListOpen, setIsListOpen] = useState(true);
   const [showSidePanel, setShowSidePanel] = useState(false);
 
@@ -22,6 +34,23 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
       return;
     }
     setShowSidePanel(true);
+  };
+
+  // 서식 추가 완료 핸들러
+  const handleFormsAdded = (addedForms: Array<{ id: string; name: string }>) => {
+    // 추가된 서식을 서류 리스트에 추가 (isAdded 플래그 설정)
+    const newForms = addedForms.map(form => ({ ...form, isAdded: true }));
+    setDocumentList(prev => [...prev, ...newForms]);
+  };
+
+  // 추가된 서식 삭제 핸들러
+  const handleRemoveAddedForm = (formId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // 클릭 이벤트 전파 방지
+    setDocumentList(prev => prev.filter(doc => doc.id !== formId));
+    // 선택된 문서가 삭제된 경우 첫 번째 문서 선택
+    if (selectedDocument === formId) {
+      setSelectedDocument(documentList[0]?.id || null);
+    }
   };
 
   if (!isOpen) return null;
@@ -60,11 +89,11 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
             {/* 서류 목록 */}
             <div className="flex flex-col items-start w-full">
               {/* 타이틀 영역 */}
-              <div className="flex flex-row items-end gap-5 w-full h-7 flex-shrink-0">
+              <div className="flex flex-row items-center gap-5 w-full h-7 flex-shrink-0">
                 <div className="flex flex-col items-start flex-1">
                   <div className="flex flex-row items-center py-[6px] px-0 gap-1 rounded-lg">
                     <span className="text-sm leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
-                      생성된 서류 리스트
+                      생성된 서류 리스트 ({documentList.length})
                     </span>
                   </div>
                 </div>
@@ -74,115 +103,70 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                   className="w-5 h-5 flex items-center justify-center flex-shrink-0"
                 >
                   {isListOpen ? (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M4 12L8 8L12 12"
-                        stroke="#1E1E1E"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <Image src="/icons/arrow_down_black.svg" alt="arrow_down_black" width={16} height={16} />
                   ) : (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M4 4L8 8L12 4"
-                        stroke="#1E1E1E"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <Image src="/icons/arrow_up.svg" alt="arrow_up" width={16} height={16} />
                   )}
                 </button>
               </div>
 
               {/* 서류 항목들 */}
               {isListOpen && (
-                <div className="flex flex-col items-start w-full border border-[#D9D9D9]">
-                  <div
-                    className={`flex flex-row items-center p-2 w-full h-8 border-b-0 ${selectedDocument === '일반과세자 부가가치세 신고서'
-                      ? 'bg-[#F5F5F5]'
-                      : 'bg-white'
-                      }`}
-                    onClick={() => setSelectedDocument('일반과세자 부가가치세 신고서')}
-                  >
-                    <span
-                      className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === '일반과세자 부가가치세 신고서'
-                        ? 'text-[#1E1E1E] font-medium'
-                        : 'text-[#757575] font-medium'
-                        }`}
-                    >
-                      일반과세자 부가가치세 신고서
-                    </span>
+                <>
+                  {/* 기존 서식 항목들 */}
+                  <div className="flex flex-col items-start w-full border border-[#D9D9D9]">
+                    {documentList
+                      .filter((doc) => !doc.isAdded)
+                      .map((doc, index) => (
+                        <div
+                          key={doc.id}
+                          className={`flex flex-row items-center p-2 w-full h-8 ${index === 0 ? 'border-b-0' : 'border-t border-[#D9D9D9]'
+                            } ${selectedDocument === doc.id ? 'bg-[#F5F5F5]' : 'bg-white'} cursor-pointer`}
+                          onClick={() => setSelectedDocument(doc.id)}
+                        >
+                          <span
+                            className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === doc.id
+                              ? 'text-[#1E1E1E] font-medium'
+                              : 'text-[#757575] font-medium'
+                              }`}
+                          >
+                            {doc.name}
+                          </span>
+                        </div>
+                      ))}
                   </div>
-                  <div
-                    className={`flex flex-row items-center p-2 w-full h-8 border-t border-[#D9D9D9] ${selectedDocument === '일반과세자 부가가치세 신고서2'
-                      ? 'bg-[#F5F5F5]'
-                      : 'bg-white'
-                      }`}
-                    onClick={() => setSelectedDocument('일반과세자 부가가치세 신고서2')}
-                  >
-                    <span
-                      className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === '일반과세자 부가가치세 신고서2'
-                        ? 'text-[#1E1E1E] font-medium'
-                        : 'text-[#757575] font-medium'
-                        }`}
-                    >
-                      일반과세자 부가가치세 신고서
-                    </span>
-                  </div>
-                  <div
-                    className={`flex flex-row items-center p-2 w-full h-8 border-t border-[#D9D9D9] ${selectedDocument === '일반과세자 부가가치세 신고서3'
-                      ? 'bg-[#F5F5F5]'
-                      : 'bg-white'
-                      }`}
-                    onClick={() => setSelectedDocument('일반과세자 부가가치세 신고서3')}
-                  >
-                    <span
-                      className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === '일반과세자 부가가치세 신고서3'
-                        ? 'text-[#1E1E1E] font-medium'
-                        : 'text-[#757575] font-medium'
-                        }`}
-                    >
-                      일반과세자 부가가치세 신고서
-                    </span>
-                  </div>
-                  <div
-                    className={`flex flex-row items-center p-2 w-full h-8 border-t border-[#D9D9D9] ${selectedDocument === '일반과세자 부가가치세 신고서4'
-                      ? 'bg-[#F5F5F5]'
-                      : 'bg-white'
-                      }`}
-                    onClick={() => setSelectedDocument('일반과세자 부가가치세 신고서4')}
-                  >
-                    <span
-                      className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === '일반과세자 부가가치세 신고서4'
-                        ? 'text-[#1E1E1E] font-medium'
-                        : 'text-[#757575] font-medium'
-                        }`}
-                    >
-                      일반과세자 부가가치세 신고서
-                    </span>
-                  </div>
-                </div>
+
+                  {/* 추가된 서식 항목들 */}
+                  {documentList.filter((doc) => doc.isAdded).length > 0 && (
+                    <div className="flex flex-col items-start w-full gap-0 mt-2">
+                      {documentList
+                        .filter((doc) => doc.isAdded)
+                        .map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="flex flex-row items-center p-2 w-[180px] min-w-[60px] h-[32px] bg-[#F5F5F5] border border-[#D9D9D9] cursor-pointer"
+                            onClick={() => setSelectedDocument(doc.id)}
+                          >
+                            <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] flex-1">
+                              {doc.name}
+                            </span>
+                            <button
+                              onClick={(e) => handleRemoveAddedForm(doc.id, e)}
+                              className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative"
+                            >
+                              <Image src="/icons/close.svg" alt="close" width={16} height={16} />
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </>
               )}
 
               {/* 추가 서류 버튼 */}
               <button
                 onClick={handleOpenSidePanel}
-                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-full h-[27px] bg-[#2C2C2C]"
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-full h-[27px] bg-[#2C2C2C] mt-4"
               >
                 <span className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
                   서류 서식 추가하기
@@ -237,15 +221,12 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
           {/* 중앙 영역 (624px) */}
           <div className="flex flex-col items-start gap-4 flex-1 h-[100%] min-w-0">
             {/* 제목 영역 */}
-            <div className="flex flex-col items-start gap-4 w-full min-w-[520px] h-7 flex-shrink-0">
-              <div className="flex flex-row items-end gap-5 w-full h-7">
-                <div className="flex flex-col items-start flex-1">
-                  <div className="flex flex-row items-center py-[6px] px-0 gap-1 w-[278px] rounded-lg">
+            <div className="flex flex-col items-start gap-4 w-full h-7 flex-shrink-0">
+              <div className="flex flex-row items-end gap-5 w-full h-7 justify-between">
+                <div className="flex flex-col items-start">
+                  <div className="flex flex-row items-center py-[6px] px-0 gap-1 rounded-lg">
                     <span className="text-sm leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
                       서류 보기
-                    </span>
-                    <span className="text-[11px] leading-[100%] text-[#757575] font-medium font-['Pretendard']">
-                      (필요한 내용을 입력하고 정보를 저장하세요.)
                     </span>
                   </div>
                 </div>
@@ -296,6 +277,7 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
           isOpen={showSidePanel}
           onClose={() => setShowSidePanel(false)}
           reportId={reportId}
+          onFormsAdded={handleFormsAdded}
         />
       </div>
     </div>

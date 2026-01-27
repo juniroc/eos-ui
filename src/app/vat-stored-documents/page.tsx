@@ -444,16 +444,20 @@ export default function VatStoredDocumentsPage() {
                                   >
                                     {reportRow.row.form ? (
                                       <>
-                                        <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
+                                        <span 
+                                          onClick={() => handleReportClick(reportRow.report.id)}
+                                          className="text-[10px] leading-[140%] text-[#757575] flex-1 cursor-pointer hover:underline"
+                                        >
                                           {reportRow.row.form.name}
                                         </span>
                                         <button
-                                          onClick={() => handleDeleteForm(reportRow.row.form!.id)}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteForm(reportRow.row.form!.id);
+                                          }}
                                           className="ml-2 w-4 h-4 flex items-center justify-center hover:opacity-70 shrink-0"
                                         >
-                                          <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M2.5 2.5L7.5 7.5M2.5 7.5L7.5 2.5" stroke="#C00F0C" strokeWidth="1.2" strokeLinecap="round"/>
-                                          </svg>
+                                          <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
                                         </button>
                                       </>
                                     ) : (
@@ -496,18 +500,13 @@ export default function VatStoredDocumentsPage() {
                                               onClick={() => handleDownloadDocument(firstDoc.id)}
                                               className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                                             >
-                                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M5 0.5V7M5 7L2.5 4.5M5 7L7.5 4.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                <path d="M0.5 8.5H9.5" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round"/>
-                                              </svg>
+                                              <Image src="/icons/download.png" alt="다운로드" width={16} height={16} />
                                             </button>
                                             <button
                                               onClick={() => handleDeleteDocument(firstDoc.id)}
                                               className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                                             >
-                                              <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2.5 2.5L7.5 7.5M2.5 7.5L7.5 2.5" stroke="#C00F0C" strokeWidth="1.2" strokeLinecap="round"/>
-                                              </svg>
+                                              <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
                                             </button>
                                           </div>
                                         </>

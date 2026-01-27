@@ -1445,3 +1445,52 @@ export async function deleteStamp(token: string): Promise<{ success: boolean; me
 
   return response.json();
 }
+
+// VAT 신고서 생성 API
+export interface VatReportCreateRequest {
+  filingDate: string; // YYYY-MM-DD
+  filingType: 'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND';
+}
+
+export interface VatFormData {
+  id: string;
+  reportId: string;
+  formCode: string;
+  name: string;
+  data: {
+    values: Record<string, unknown>;
+    states: Record<string, unknown>;
+  };
+}
+
+export interface VatReportCreateResponse {
+  id: string;
+  userId: string;
+  title: string;
+  filingDate: string;
+  filingType: string;
+  isCompleted: boolean;
+  lastModifiedAt: string;
+  forms: VatFormData[];
+}
+
+export async function createVatReport(
+  data: VatReportCreateRequest,
+  token: string
+): Promise<VatReportCreateResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '신고서 생성에 실패했습니다.');
+  }
+
+  return response.json();
+}

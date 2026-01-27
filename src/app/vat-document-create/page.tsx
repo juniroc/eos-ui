@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getVatCompanyInfo, saveVatCompanyInfo, uploadStamp, getStamp, deleteStamp, type VatCompanyInfo } from '@/services/api';
+import { getVatCompanyInfo, saveVatCompanyInfo, uploadStamp, getStamp, deleteStamp, createVatReport, type VatCompanyInfo } from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
 import VatDocumentCreateModal from '@/components/documentCreate/VatDocumentCreateModal';
@@ -19,6 +19,7 @@ export default function VatDocumentCreatePage() {
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createdReportId, setCreatedReportId] = useState<string | null>(null);
 
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
@@ -161,12 +162,53 @@ export default function VatDocumentCreatePage() {
   // 서류 생성 버튼 활성화 조건
   const canCreateDocument =
     reportingPeriodStart !== '' &&
-    reportingType !== '' &&
-    stampImageUrl !== null;
+    reportingType !== ''
+  // &&stampImageUrl !== null;
 
   /** 서류 생성하기 */
-  const handleCreateDocument = () => {
-    setIsModalOpen(true);
+  const handleCreateDocument = async () => {
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    if (!canCreateDocument) {
+      alert('신고일정, 신고유형을 선택하고 도장을 등록해주세요.');
+      return;
+    }
+
+    // reportingType을 API의 filingType으로 매핑
+    const filingTypeMap: Record<string, 'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND'> = {
+      '예정': 'SCHEDULED',
+      '확정': 'CONFIRMED',
+      '기한후': 'AFTER_DEADLINE',
+      '조기환급': 'EARLY_REFUND',
+    };
+
+    const filingType = filingTypeMap[reportingType] || 'SCHEDULED';
+
+    try {
+      setLoading(true);
+      const response = await createVatReport(
+        {
+          filingDate: reportingPeriodStart,
+          filingType: filingType,
+        },
+        token
+      );
+
+      // 성공 시 모달 열기 및 토스트 메시지 표시
+      setCreatedReportId(response.id);
+      setToastMessage('서류가 생성됐어요!');
+      setShowToast(true);
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error('서류 생성 에러:', err);
+      const errorMessage = err instanceof Error ? err.message : '서류 생성에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -69,17 +69,8 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
     );
   }
 
-  if (!report) {
-    return (
-      <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
-        <div className="bg-white p-8">
-          <div className="text-center py-8">신고서를 찾을 수 없습니다.</div>
-        </div>
-      </div>
-    );
-  }
-
-  const selectedForm = report.forms?.find(f => f.id === selectedFormId);
+  // report가 없어도 임시로 미리보기 모달 UI 표시
+  const selectedForm = report?.forms?.find(f => f.id === selectedFormId);
 
   return (
     <>

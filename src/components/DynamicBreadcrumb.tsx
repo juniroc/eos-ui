@@ -33,6 +33,7 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/salary-structure': { mainMenu: '급여관리', subMenu: '급여 체계' },
     '/tax-deduction': { mainMenu: '급여관리', subMenu: '세금 공제' },
     '/account-management': { mainMenu: '계정관리', subMenu: '' },
+    '/vat-document-create': { mainMenu: '부가세', subMenu: '서류생성' },
   };
 
   return (

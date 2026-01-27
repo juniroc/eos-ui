@@ -75,7 +75,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
 // ID 중복 확인 API
 export async function checkLoginIdDuplicate(loginId: string): Promise<boolean> {
   const response = await fetch(`${API_BASE_URL}/api/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`);
-  
+
   if (!response.ok) {
     throw new Error('ID 중복 확인에 실패했습니다.');
   }
@@ -948,7 +948,7 @@ export async function getExtractRawTransactionsStream(jobId: string, token: stri
 // 2단계: 분개 처리 시작
 export async function startProcessJournalEntries(transactions: RawTransaction[], token: string): Promise<{ jobId: string }> {
   console.log('분개 처리 API 호출 - 전달할 데이터:', { transactions });
-  
+
   const response = await fetch(`${API_BASE_URL}/api/ai/process-journal-entries/start`, {
     method: 'POST',
     headers: {
@@ -1068,7 +1068,7 @@ export async function createTransactions(data: {
 export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean; voucherIds: string[] }> {
   try {
     console.log('전표 생성 중:', vouchers.length, '개');
-    
+
     // 1단계: 모든 전표를 한 번에 생성
     const voucherResult = await createVouchers({
       vouchers: vouchers.map(voucher => ({
@@ -1078,9 +1078,9 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
         documentId: voucher.documentId,
       }))
     }, token);
-    
+
     console.log('전표 생성 완료:', voucherResult.ids);
-    
+
     // 2단계: 각 전표의 거래에 voucherId를 매핑하여 모든 거래를 한 번에 생성
     const allTransactions = vouchers.flatMap((voucher, index) => {
       const voucherId = voucherResult.ids[index];
@@ -1093,13 +1093,13 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
         partnerId: transaction.partnerId,
       }));
     });
-    
+
     console.log('거래 생성 중:', allTransactions.length, '개');
-    
+
     await createTransactions({ transactions: allTransactions }, token);
-    
+
     console.log('거래 생성 완료');
-    
+
     return { success: true, voucherIds: voucherResult.ids };
   } catch (error) {
     console.error('저장 중 오류:', error);
@@ -1123,7 +1123,7 @@ export async function runClosingCheckItem(data: { closingDate: string; key: stri
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } else {
@@ -1135,10 +1135,10 @@ export async function runClosingCheckItem(data: { closingDate: string; key: stri
 }
 
 // 결산점검 결산반영 API
-export async function applyClosingCheck(data: { 
-  closingDate: string; 
-  key: string; 
-  description: string; 
+export async function applyClosingCheck(data: {
+  closingDate: string;
+  key: string;
+  description: string;
   rows?: unknown[];
   tangible?: unknown[];
   intangible?: unknown[];
@@ -1156,7 +1156,7 @@ export async function applyClosingCheck(data: {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('결산반영 중 서버 오류가 발생했습니다.');
     } else {
@@ -1267,7 +1267,7 @@ export async function applySuspense(data: {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } else {
@@ -1294,4 +1294,309 @@ export async function applyPeriodAccrual(data: {
     description: '기간귀속 결산 반영',
     rows: data.rows,
   }, token);
+}
+
+// ===== 부가세 서류 생성 관련 API =====
+
+// VAT 회사정보 인터페이스
+export interface VatCompanyInfo {
+  name: string;
+  businessNumber: string;
+  businessCategory: string;
+  corporateNumber: string;
+  representativeName: string;
+  establishmentDate: string;
+  businessType: string[];
+  businessCategory2: string[];
+  address: string;
+  phone: string;
+  refundBankName: string;
+  refundBankBranch: string;
+  refundAccount: string;
+  mobilePhone: string;
+  email: string;
+}
+
+// VAT 회사정보 저장 요청 인터페이스 (수정 가능한 필드만)
+export interface VatCompanyInfoUpdate {
+  name?: string;
+  representativeName?: string;
+  establishmentDate?: string;
+  businessType?: string[];
+  businessCategory2?: string[];
+  address?: string;
+  phone?: string;
+  refundBankName?: string;
+  refundBankBranch?: string;
+  refundAccount?: string;
+  mobilePhone?: string;
+  email?: string;
+}
+
+// VAT 회사정보 조회 API
+export async function getVatCompanyInfo(token: string): Promise<VatCompanyInfo> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/company`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'VAT 회사정보 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 회사정보 저장 API
+export async function saveVatCompanyInfo(
+  data: VatCompanyInfoUpdate,
+  token: string
+): Promise<VatCompanyInfo> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/company`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'VAT 회사정보 저장에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// 도장 업로드 API
+export async function uploadStamp(file: File, token: string): Promise<{ success: boolean; message: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorData;
+    try {
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = { error: errorText || `도장 업로드에 실패했습니다. (${response.status})` };
+    }
+    console.error('도장 업로드 API 에러:', {
+      status: response.status,
+      statusText: response.statusText,
+      errorData,
+      errorText,
+    });
+    throw new Error(errorData.error || errorData.message || `도장 업로드에 실패했습니다. (${response.status})`);
+  }
+
+  return response.json();
+}
+
+// 도장 조회 API (이미지 URL 반환)
+export async function getStamp(token: string): Promise<string | null> {
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '도장 조회에 실패했습니다.');
+  }
+
+  // 이미지 파일을 Blob으로 변환하여 URL 생성
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}
+
+// 도장 삭제 API
+export async function deleteStamp(token: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch(`${API_BASE_URL}/api/user-assets/stamp`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '도장 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 신고서 생성 API
+export interface VatReportCreateRequest {
+  filingDate: string; // YYYY-MM-DD
+  filingType: 'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND';
+}
+
+export interface VatFormData {
+  id: string;
+  reportId: string;
+  formCode: string;
+  name: string;
+  data: {
+    values: Record<string, unknown>;
+    states: Record<string, unknown>;
+  };
+}
+
+export interface VatReportCreateResponse {
+  id: string;
+  userId: string;
+  title: string;
+  filingDate: string;
+  filingType: string;
+  isCompleted: boolean;
+  lastModifiedAt: string;
+  forms: VatFormData[];
+}
+
+export async function createVatReport(
+  data: VatReportCreateRequest,
+  token: string
+): Promise<VatReportCreateResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '신고서 생성에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 신고서에 추가할 수 있는 서식 목록 조회 API
+export interface AvailableForm {
+  formCode: string;
+  formNumber: string;
+  name: string;
+  description: string;
+  requiredWhen: string;
+  isIncluded: boolean;
+}
+
+export interface AvailableFormsResponse {
+  forms: AvailableForm[];
+}
+
+export async function getAvailableForms(
+  reportId: string,
+  token: string
+): Promise<AvailableFormsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}/available-forms`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 목록 조회에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 신고서에 서식 추가 API
+export interface AddFormsRequest {
+  formCodes: string[];
+}
+
+export interface VatFormData {
+  id: string;
+  reportId: string;
+  formCode: string;
+  name: string;
+  data: {
+    values: Record<string, unknown>;
+    states: Record<string, unknown>;
+  };
+}
+
+export interface AddFormsResponse {
+  id: string;
+  userId: string;
+  title: string;
+  filingDate: string;
+  filingType: string;
+  isCompleted: boolean;
+  lastModifiedAt: string;
+  forms: VatFormData[];
+}
+
+export async function addFormsToReport(
+  reportId: string,
+  data: AddFormsRequest,
+  token: string
+): Promise<AddFormsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}/add-forms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 추가에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 서식 삭제 API
+export interface DeleteFormResponse {
+  message: string;
+}
+
+export async function deleteVatForm(
+  formId: string,
+  token: string
+): Promise<DeleteFormResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/forms/${formId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 삭제에 실패했습니다.');
+  }
+
+  return response.json();
 }

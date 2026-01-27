@@ -1576,3 +1576,27 @@ export async function addFormsToReport(
 
   return response.json();
 }
+
+// VAT 서식 삭제 API
+export interface DeleteFormResponse {
+  message: string;
+}
+
+export async function deleteVatForm(
+  formId: string,
+  token: string
+): Promise<DeleteFormResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/forms/${formId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+}

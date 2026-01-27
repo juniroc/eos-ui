@@ -5,6 +5,9 @@ import { ModalProps } from '@/types/props';
 import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
+import ToastMessage from '@/components/ToastMessage';
+import { deleteVatForm } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface VatDocumentCreateModalProps extends ModalProps {
   reportId?: string;
@@ -17,6 +20,7 @@ interface DocumentItem {
 }
 
 function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreateModalProps) {
+  const { token } = useAuth();
   const [documentList, setDocumentList] = useState<DocumentItem[]>([
     { id: '1', name: '일반과세자 부가가치세 신고서' },
     { id: '2', name: '매출처별 세금계산서 합계표' },
@@ -26,6 +30,9 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
   const [selectedDocument, setSelectedDocument] = useState<string | null>(documentList[0]?.id || null);
   const [isListOpen, setIsListOpen] = useState(true);
   const [showSidePanel, setShowSidePanel] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string>('');
+  const [showToast, setShowToast] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   // 사이드 패널 열기
   const handleOpenSidePanel = () => {
@@ -41,15 +48,41 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
     // 추가된 서식을 서류 리스트에 추가 (isAdded 플래그 설정)
     const newForms = addedForms.map(form => ({ ...form, isAdded: true }));
     setDocumentList(prev => [...prev, ...newForms]);
+    // 토스트 메시지 표시
+    setToastMessage('서류 서식이 추가됐어요!');
+    setShowToast(true);
   };
 
   // 추가된 서식 삭제 핸들러
-  const handleRemoveAddedForm = (formId: string, e: React.MouseEvent) => {
+  const handleRemoveAddedForm = async (formId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // 클릭 이벤트 전파 방지
-    setDocumentList(prev => prev.filter(doc => doc.id !== formId));
-    // 선택된 문서가 삭제된 경우 첫 번째 문서 선택
-    if (selectedDocument === formId) {
-      setSelectedDocument(documentList[0]?.id || null);
+
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      setIsDeleting(formId);
+      await deleteVatForm(formId, token);
+
+      // 성공 시 리스트에서 제거
+      setDocumentList(prev => prev.filter(doc => doc.id !== formId));
+
+      // 선택된 문서가 삭제된 경우 첫 번째 문서 선택
+      if (selectedDocument === formId) {
+        setSelectedDocument(documentList.find(doc => doc.id !== formId)?.id || null);
+      }
+
+      // 토스트 메시지 표시
+      setToastMessage('서류가 삭제됐어요!');
+      setShowToast(true);
+    } catch (error) {
+      console.error('서식 삭제 에러:', error);
+      const errorMessage = error instanceof Error ? error.message : '서식 삭제에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsDeleting(null);
     }
   };
 
@@ -138,13 +171,13 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
 
                   {/* 추가된 서식 항목들 */}
                   {documentList.filter((doc) => doc.isAdded).length > 0 && (
-                    <div className="flex flex-col items-start w-full gap-0 mt-2">
+                    <div className="flex flex-col items-start w-full gap-0">
                       {documentList
                         .filter((doc) => doc.isAdded)
                         .map((doc) => (
                           <div
                             key={doc.id}
-                            className="flex flex-row items-center p-2 w-[180px] min-w-[60px] h-[32px] bg-[#F5F5F5] border border-[#D9D9D9] cursor-pointer"
+                            className="flex flex-row gap-6 items-center max-w-[262px] p-2 h-[32px] bg-[#F5F5F5] border border-[#D9D9D9] cursor-pointer"
                             onClick={() => setSelectedDocument(doc.id)}
                           >
                             <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] flex-1">
@@ -152,9 +185,14 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                             </span>
                             <button
                               onClick={(e) => handleRemoveAddedForm(doc.id, e)}
-                              className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative"
+                              disabled={isDeleting === doc.id}
+                              className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Image src="/icons/close.svg" alt="close" width={16} height={16} />
+                              {isDeleting === doc.id ? (
+                                <div className="w-4 h-4 border-2 border-[#757575] border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Image src="/icons/close.svg" alt="close" width={16} height={16} />
+                              )}
                             </button>
                           </div>
                         ))}
@@ -258,7 +296,7 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
             </div>
 
             {/* 서류 미리보기 영역 */}
-            <div className="w-full h-[100%] bg-white border border-[#D9D9D9] flex-shrink-0">
+            <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0">
               {/* 서류 내용이 들어갈 영역 */}
               <div className="p-4">
                 <p className="text-sm text-[#1E1E1E]">서류 미리보기 영역</p>
@@ -278,6 +316,13 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
           onClose={() => setShowSidePanel(false)}
           reportId={reportId}
           onFormsAdded={handleFormsAdded}
+        />
+
+        {/* 토스트 메시지 */}
+        <ToastMessage
+          message={toastMessage}
+          isVisible={showToast}
+          onHide={() => setShowToast(false)}
         />
       </div>
     </div>

@@ -545,16 +545,16 @@ export default function VatStoredDocumentsPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+          <div className="bg-white p-6 max-w-md w-full mx-4">
             <h3 className="text-[14px] font-semibold text-[#1E1E1E] mb-2">삭제하시겠어요?</h3>
-            <p className="text-[11px] text-[#767676] mb-4">한 번 삭제하면 되돌릴 수 없어요.</p>
+            <p className="text-[11px] text-black mb-4">한 번 삭제하면 되돌릴 수 없어요.</p>
             <div className="flex flex-row gap-2 justify-end">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);
                   setReportToDelete(null);
                 }}
-                className="px-4 py-2 text-[11px] text-[#1E1E1E] bg-[#E6E6E6] hover:bg-[#D9D9D9]"
+                className="px-4 py-2 text-[11px] text-black"
               >
                 뒤로가기
               </button>
@@ -572,11 +572,11 @@ export default function VatStoredDocumentsPage() {
       {/* Work Confirmation Modal */}
       {showWorkModal && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-            <h3 className="text-[14px] font-semibold text-[#1E1E1E] mb-2">
+          <div className="bg-white p-6 max-w-md w-full mx-4">
+            <h3 className="text-[14px] font-semibold text-black mb-2">
               {workActionType === 'rework' ? '재작업을 진행하시겠어요?' : '수정신고를 진행하시겠어요?'}
             </h3>
-            <p className="text-[11px] text-[#767676] mb-4">
+            <p className="text-[11px] text-black mb-4">
               {workActionType === 'rework' 
                 ? '기존 신고서를 재작업합니다.'
                 : '기존 신고서는 유지되며, 새로운 신고서를 추가로 생성합니다.'}
@@ -588,7 +588,7 @@ export default function VatStoredDocumentsPage() {
                   setReportToWork(null);
                   setWorkActionType(null);
                 }}
-                className="px-4 py-2 text-[11px] text-[#1E1E1E] bg-[#E6E6E6] hover:bg-[#D9D9D9]"
+                className="px-4 py-2 text-[11px] text-black"
               >
                 뒤로가기
               </button>

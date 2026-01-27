@@ -75,7 +75,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
 // ID 중복 확인 API
 export async function checkLoginIdDuplicate(loginId: string): Promise<boolean> {
   const response = await fetch(`${API_BASE_URL}/api/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`);
-  
+
   if (!response.ok) {
     throw new Error('ID 중복 확인에 실패했습니다.');
   }
@@ -948,7 +948,7 @@ export async function getExtractRawTransactionsStream(jobId: string, token: stri
 // 2단계: 분개 처리 시작
 export async function startProcessJournalEntries(transactions: RawTransaction[], token: string): Promise<{ jobId: string }> {
   console.log('분개 처리 API 호출 - 전달할 데이터:', { transactions });
-  
+
   const response = await fetch(`${API_BASE_URL}/api/ai/process-journal-entries/start`, {
     method: 'POST',
     headers: {
@@ -1068,7 +1068,7 @@ export async function createTransactions(data: {
 export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string): Promise<{ success: boolean; voucherIds: string[] }> {
   try {
     console.log('전표 생성 중:', vouchers.length, '개');
-    
+
     // 1단계: 모든 전표를 한 번에 생성
     const voucherResult = await createVouchers({
       vouchers: vouchers.map(voucher => ({
@@ -1078,9 +1078,9 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
         documentId: voucher.documentId,
       }))
     }, token);
-    
+
     console.log('전표 생성 완료:', voucherResult.ids);
-    
+
     // 2단계: 각 전표의 거래에 voucherId를 매핑하여 모든 거래를 한 번에 생성
     const allTransactions = vouchers.flatMap((voucher, index) => {
       const voucherId = voucherResult.ids[index];
@@ -1093,13 +1093,13 @@ export async function saveAIJournal(vouchers: AIJournalVoucher[], token: string)
         partnerId: transaction.partnerId,
       }));
     });
-    
+
     console.log('거래 생성 중:', allTransactions.length, '개');
-    
+
     await createTransactions({ transactions: allTransactions }, token);
-    
+
     console.log('거래 생성 완료');
-    
+
     return { success: true, voucherIds: voucherResult.ids };
   } catch (error) {
     console.error('저장 중 오류:', error);
@@ -1123,7 +1123,7 @@ export async function runClosingCheckItem(data: { closingDate: string; key: stri
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } else {
@@ -1135,10 +1135,10 @@ export async function runClosingCheckItem(data: { closingDate: string; key: stri
 }
 
 // 결산점검 결산반영 API
-export async function applyClosingCheck(data: { 
-  closingDate: string; 
-  key: string; 
-  description: string; 
+export async function applyClosingCheck(data: {
+  closingDate: string;
+  key: string;
+  description: string;
   rows?: unknown[];
   tangible?: unknown[];
   intangible?: unknown[];
@@ -1156,7 +1156,7 @@ export async function applyClosingCheck(data: {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('결산반영 중 서버 오류가 발생했습니다.');
     } else {
@@ -1267,7 +1267,7 @@ export async function applySuspense(data: {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     console.error('API 에러 응답:', errorData);
-    
+
     if (response.status === 500) {
       throw new Error('서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     } else {
@@ -1490,6 +1490,39 @@ export async function createVatReport(
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || '신고서 생성에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+// VAT 신고서에 추가할 수 있는 서식 목록 조회 API
+export interface AvailableForm {
+  formCode: string;
+  formNumber: string;
+  name: string;
+  description: string;
+  requiredWhen: string;
+  isIncluded: boolean;
+}
+
+export interface AvailableFormsResponse {
+  forms: AvailableForm[];
+}
+
+export async function getAvailableForms(
+  reportId: string,
+  token: string
+): Promise<AvailableFormsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}/available-forms`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '서식 목록 조회에 실패했습니다.');
   }
 
   return response.json();

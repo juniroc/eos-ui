@@ -685,6 +685,7 @@ export default function VatDocumentCreatePage() {
       <VatDocumentCreateModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        reportId={createdReportId || undefined}
       />
     </div>
   );

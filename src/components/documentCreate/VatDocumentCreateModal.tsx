@@ -4,10 +4,25 @@ import React, { useState } from 'react';
 import { ModalProps } from '@/types/props';
 import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
+import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 
-function VatDocumentCreateModal({ isOpen, onClose }: ModalProps) {
+interface VatDocumentCreateModalProps extends ModalProps {
+  reportId?: string;
+}
+
+function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreateModalProps) {
   const [selectedDocument, setSelectedDocument] = useState<string | null>('일반과세자 부가가치세 신고서');
   const [isListOpen, setIsListOpen] = useState(true);
+  const [showSidePanel, setShowSidePanel] = useState(false);
+
+  // 사이드 패널 열기
+  const handleOpenSidePanel = () => {
+    if (!reportId) {
+      alert('서류 정보가 없습니다.');
+      return;
+    }
+    setShowSidePanel(true);
+  };
 
   if (!isOpen) return null;
 
@@ -165,7 +180,10 @@ function VatDocumentCreateModal({ isOpen, onClose }: ModalProps) {
               )}
 
               {/* 추가 서류 버튼 */}
-              <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-full h-[27px] bg-[#2C2C2C]">
+              <button
+                onClick={handleOpenSidePanel}
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-full h-[27px] bg-[#2C2C2C]"
+              >
                 <span className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
                   서류 서식 추가하기
                 </span>
@@ -272,6 +290,13 @@ function VatDocumentCreateModal({ isOpen, onClose }: ModalProps) {
             <ChatArea />
           </div>
         </div>
+
+        {/* 사이드 패널 - 추가할 서류 서식 */}
+        <AvailableFormsSidebar
+          isOpen={showSidePanel}
+          onClose={() => setShowSidePanel(false)}
+          reportId={reportId}
+        />
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/vat-stored-documents': { mainMenu: '부가세', subMenu: '보관서류' },
     '/vat-stored-documents/preview': { mainMenu: '부가세', subMenu: '서류생성', thirdMenu: '내용입력' },
     '/account-management': { mainMenu: '계정관리', subMenu: '' },
+    '/vat-document-create': { mainMenu: '부가세', subMenu: '서류생성' },
   };
 
   return (

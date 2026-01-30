@@ -78,9 +78,46 @@ export type Form16Data = {
 
   /* 3. 그 밖의 신용카드 등 수령금액 합계 명세 (⑨ ~ ⑪)
 
-         - '⑧ 그 밖의 신용카드 등'에 대한 상세 내역 리스트
+           - '⑧ 그 밖의 신용카드 등'에 대한 상세 내역 리스트
 
-         - 일련번호는 자동 생성이므로 제외 */
+           - 일련번호는 자동 생성이므로 제외 */
 
   otherCreditCardItems: Array<OtherCreditCardItem>;
 };
+
+export type Form16HeaderProps = Pick<
+  Form16Data,
+  | 'attributionYear'
+  | 'attributionTerm'
+  | 'taxPeriodStartMonth'
+  | 'taxPeriodStartDay'
+  | 'taxPeriodEndMonth'
+  | 'taxPeriodEndDay'
+>;
+
+export type Form16_1Props = Form16HeaderProps &
+  Pick<
+    Form16Data,
+    | 'companyName'
+    | 'bizNumber'
+    | 'repName'
+    | 'totalTransactionCount'
+    | 'totalSupplyPrice'
+    | 'totalTaxAmount'
+    | 'cashReceiptCount'
+    | 'cashReceiptSupply'
+    | 'cashReceiptTax'
+    | 'freightCardCount'
+    | 'freightCardSupply'
+    | 'freightCardTax'
+    | 'bizCreditCardCount'
+    | 'bizCreditCardSupply'
+    | 'bizCreditCardTax'
+    | 'otherCreditCardCount'
+    | 'otherCreditCardSupply'
+    | 'otherCreditCardTax'
+    | 'otherCreditCardItems'
+  >;
+
+export type Form16_2Props = Form16HeaderProps &
+  Pick<Form16Data, 'bizNumber' | 'otherCreditCardItems'>;

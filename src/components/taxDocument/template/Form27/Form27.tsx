@@ -1,8 +1,47 @@
 'use client';
 import './form27.css';
-import NumericInput from '@/components/documentCreate/template/Form27/NumericInput';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import { Form27Data } from '@/components/taxDocument/template/Form27/type';
 
-export default function Form27() {
+type Props = Form27Data & UpdaterProps<Form27Data>;
+
+export default function Form27({
+  updater,
+  attributionYear,
+  attributionTerm,
+  periodStartMonth,
+  periodStartDay,
+  periodEndMonth,
+  periodEndDay,
+  bizName,
+  bizNumber,
+  bizType,
+  bizItem,
+  totalStats,
+  buildingStructureStats,
+  machineryStats,
+  vehicleStats,
+  otherAssetStats,
+  writeYear,
+  writeMonth,
+  writeDay,
+  submitterName,
+}: Props) {
+  const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
+
+  const updateRow = <K extends keyof Form27Data, F extends keyof Form27Data[K]>(
+    key: K,
+    current: Form27Data[K],
+    field: F,
+    value: Form27Data[K][F]
+  ) => {
+    const updated = Object.assign({} as Form27Data[K], current, {
+      [field]: value,
+    });
+    updater(key, updated);
+  };
+
   return (
     <div className="form27">
       <ul id="l1">
@@ -52,6 +91,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={4}
+          value={attributionYear}
+          onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
         />
         년 제
         <input
@@ -69,6 +111,8 @@ export default function Form27() {
           }}
           type="text"
           maxLength={2}
+          value={attributionTerm}
+          onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
         />
         기 (
         <input
@@ -85,6 +129,11 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={periodStartMonth}
+          onChange={e =>
+            updater('periodStartMonth', digitsOnly(e.target.value))
+          }
         />
         월
         <input
@@ -101,6 +150,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={periodStartDay}
+          onChange={e => updater('periodStartDay', digitsOnly(e.target.value))}
         />
         일 ~
         <input
@@ -117,6 +169,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={periodEndMonth}
+          onChange={e => updater('periodEndMonth', digitsOnly(e.target.value))}
         />
         월
         <input
@@ -133,6 +188,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={periodEndDay}
+          onChange={e => updater('periodEndDay', digitsOnly(e.target.value))}
         />
         일)
       </h2>
@@ -261,6 +319,8 @@ export default function Form27() {
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
+                  value={bizName}
+                  onChange={e => updater('bizName', e.target.value)}
                 />
               </td>
               <td
@@ -301,6 +361,8 @@ export default function Form27() {
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
+                  value={bizNumber}
+                  onChange={e => updater('bizNumber', e.target.value)}
                 />
               </td>
             </tr>
@@ -343,6 +405,8 @@ export default function Form27() {
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
+                  value={bizType}
+                  onChange={e => updater('bizType', e.target.value)}
                 />
               </td>
               <td
@@ -383,6 +447,8 @@ export default function Form27() {
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
+                  value={bizItem}
+                  onChange={e => updater('bizItem', e.target.value)}
                 />
               </td>
             </tr>
@@ -616,6 +682,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.count}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'count', value)
+              }
             />
           </td>
           <td
@@ -639,6 +709,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.supplyAmount}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'supplyAmount', value)
+              }
             />
           </td>
           <td
@@ -662,6 +736,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.taxAmount}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'taxAmount', value)
+              }
             />
           </td>
           <td
@@ -684,6 +762,10 @@ export default function Form27() {
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
+              value={totalStats.note ?? ''}
+              onChange={e =>
+                updateRow('totalStats', totalStats, 'note', e.target.value)
+              }
             />
           </td>
         </tr>
@@ -735,6 +817,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.count}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'count',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -758,6 +849,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'supplyAmount',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -781,6 +881,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.taxAmount}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'taxAmount',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -803,6 +912,15 @@ export default function Form27() {
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
+              value={buildingStructureStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'note',
+                  e.target.value
+                )
+              }
             />
           </td>
         </tr>
@@ -854,6 +972,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.count}
+              onChange={value =>
+                updateRow('machineryStats', machineryStats, 'count', value)
+              }
             />
           </td>
           <td
@@ -877,6 +999,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'machineryStats',
+                  machineryStats,
+                  'supplyAmount',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -900,6 +1031,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.taxAmount}
+              onChange={value =>
+                updateRow('machineryStats', machineryStats, 'taxAmount', value)
+              }
             />
           </td>
           <td
@@ -922,6 +1057,15 @@ export default function Form27() {
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
+              value={machineryStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'machineryStats',
+                  machineryStats,
+                  'note',
+                  e.target.value
+                )
+              }
             />
           </td>
         </tr>
@@ -973,6 +1117,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.count}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'count', value)
+              }
             />
           </td>
           <td
@@ -996,6 +1144,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.supplyAmount}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'supplyAmount', value)
+              }
             />
           </td>
           <td
@@ -1019,6 +1171,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.taxAmount}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'taxAmount', value)
+              }
             />
           </td>
           <td
@@ -1041,6 +1197,10 @@ export default function Form27() {
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
+              value={vehicleStats.note ?? ''}
+              onChange={e =>
+                updateRow('vehicleStats', vehicleStats, 'note', e.target.value)
+              }
             />
           </td>
         </tr>
@@ -1090,6 +1250,10 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.count}
+              onChange={value =>
+                updateRow('otherAssetStats', otherAssetStats, 'count', value)
+              }
             />
           </td>
           <td
@@ -1112,6 +1276,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'supplyAmount',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -1134,6 +1307,15 @@ export default function Form27() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.taxAmount}
+              onChange={value =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'taxAmount',
+                  value
+                )
+              }
             />
           </td>
           <td
@@ -1155,6 +1337,15 @@ export default function Form27() {
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
+              value={otherAssetStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'note',
+                  e.target.value
+                )
+              }
             />
           </td>
         </tr>
@@ -1190,6 +1381,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={4}
+          value={writeYear}
+          onChange={e => updater('writeYear', digitsOnly(e.target.value))}
         />
         년
         <input
@@ -1206,6 +1400,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={writeMonth}
+          onChange={e => updater('writeMonth', digitsOnly(e.target.value))}
         />
         월
         <input
@@ -1222,6 +1419,9 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          maxLength={2}
+          value={writeDay}
+          onChange={e => updater('writeDay', digitsOnly(e.target.value))}
         />
         일
       </p>
@@ -1248,6 +1448,8 @@ export default function Form27() {
             textAlign: 'center',
           }}
           type="text"
+          value={submitterName}
+          onChange={e => updater('submitterName', e.target.value)}
         />
         <span className="s11">(서명 또는 인)</span>
       </p>

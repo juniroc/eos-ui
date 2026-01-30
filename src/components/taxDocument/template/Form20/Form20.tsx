@@ -1,8 +1,31 @@
 'use client';
 import './form20.css';
-import NumericInput from '@/components/documentCreate/template/Form20/NumericInput';
+import Input from '@/components/taxDocument/template/common/Input';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import YesNoSelector from '@/components/taxDocument/template/common/YesNoSelector';
+import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import { Form20Data } from '@/components/taxDocument/template/Form20/type';
 
-export default function Form20() {
+export type Props = Form20Data & UpdaterProps<Form20Data>;
+
+export default function Form20({
+  updater,
+  companyName,
+  bizNumber,
+  repName,
+  phoneNumber,
+  bizAddress,
+  isUnder300Million,
+  issuanceCount,
+  calculableTaxAmount,
+  finalDeductionAmount,
+  alreadyDeductedAmount,
+  periodDeductionLimit,
+  writeYear,
+  writeMonth,
+  writeDay,
+  submitterName,
+}: Props) {
   return (
     <div className="form20">
       <ul id="l1">
@@ -205,14 +228,14 @@ export default function Form20() {
                       verticalAlign: 'middle',
                     }}
                   >
-                    <input
-                      className="form-input form-input-text"
+                    <Input
                       style={{
                         width: 'calc(100% - 2pt)',
                         height: '20pt',
                         textAlign: 'left',
                       }}
-                      type="text"
+                      value={companyName}
+                      onChange={value => updater('companyName', value)}
                     />
                   </td>
                   <td
@@ -252,14 +275,14 @@ export default function Form20() {
                       verticalAlign: 'middle',
                     }}
                   >
-                    <input
-                      className="form-input form-input-text"
+                    <Input
                       style={{
                         width: 'calc(100% - 2pt)',
                         height: '20pt',
                         textAlign: 'left',
                       }}
-                      type="text"
+                      value={bizNumber}
+                      onChange={value => updater('bizNumber', value)}
                     />
                   </td>
                 </tr>
@@ -303,14 +326,14 @@ export default function Form20() {
                       verticalAlign: 'middle',
                     }}
                   >
-                    <input
-                      className="form-input form-input-text"
+                    <Input
                       style={{
                         width: 'calc(100% - 2pt)',
                         height: '20pt',
                         textAlign: 'left',
                       }}
-                      type="text"
+                      value={repName}
+                      onChange={value => updater('repName', value)}
                     />
                   </td>
                   <td
@@ -352,14 +375,14 @@ export default function Form20() {
                       verticalAlign: 'middle',
                     }}
                   >
-                    <input
-                      className="form-input form-input-text"
+                    <Input
                       style={{
                         width: 'calc(100% - 2pt)',
                         height: '20pt',
                         textAlign: 'left',
                       }}
-                      type="text"
+                      value={phoneNumber}
+                      onChange={value => updater('phoneNumber', value)}
                     />
                   </td>
                 </tr>
@@ -390,8 +413,7 @@ export default function Form20() {
                     >
                       ⑤ 사업장 소재지
                     </p>
-                    <input
-                      className="form-input form-input-text"
+                    <Input
                       style={{
                         width: '500pt',
                         height: '20pt',
@@ -400,7 +422,8 @@ export default function Form20() {
                         marginLeft: '5pt',
                         boxSizing: 'border-box',
                       }}
-                      type="text"
+                      value={bizAddress}
+                      onChange={value => updater('bizAddress', value)}
                     />
                   </td>
                 </tr>
@@ -440,31 +463,18 @@ export default function Form20() {
                         textAlign: 'right',
                       }}
                     >
-                      [
-                      <input
-                        className="form-input-checkbox"
-                        style={{
+                      <YesNoSelector
+                        value={isUnder300Million}
+                        onChange={value => updater('isUnder300Million', value)}
+                        trueLabel={'O'}
+                        falseLabel={'O'}
+                        inputStyle={{
                           width: '18pt',
                           height: '18pt',
                           display: 'inline-block',
                           verticalAlign: 'middle',
                         }}
-                        type="text"
-                        data-group="personal-business"
                       />
-                      ] 여, [
-                      <input
-                        className="form-input-checkbox"
-                        style={{
-                          width: '18pt',
-                          height: '18pt',
-                          display: 'inline-block',
-                          verticalAlign: 'middle',
-                        }}
-                        type="text"
-                        data-group="personal-business"
-                      />
-                      ] 부
                     </p>
                   </td>
                 </tr>
@@ -730,6 +740,8 @@ export default function Form20() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={issuanceCount}
+              onChange={value => updater('issuanceCount', value)}
             />
           </td>
           <td
@@ -781,6 +793,8 @@ export default function Form20() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={calculableTaxAmount}
+              onChange={value => updater('calculableTaxAmount', value)}
             />
           </td>
           <td
@@ -804,6 +818,8 @@ export default function Form20() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={finalDeductionAmount}
+              onChange={value => updater('finalDeductionAmount', value)}
             />
           </td>
         </tr>
@@ -1003,6 +1019,8 @@ export default function Form20() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={alreadyDeductedAmount}
+              onChange={value => updater('alreadyDeductedAmount', value)}
             />
           </td>
           <td
@@ -1026,6 +1044,8 @@ export default function Form20() {
           >
             <NumericInput
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={periodDeductionLimit}
+              onChange={value => updater('periodDeductionLimit', value)}
             />
           </td>
         </tr>
@@ -1059,8 +1079,7 @@ export default function Form20() {
           margin: '0',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '40pt',
             height: '20pt',
@@ -1072,11 +1091,11 @@ export default function Form20() {
             fontSize: '9pt',
             textAlign: 'center',
           }}
-          type="text"
+          value={writeYear}
+          onChange={value => updater('writeYear', value.replace(/[^0-9]/g, ''))}
         />
         년
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -1088,11 +1107,13 @@ export default function Form20() {
             fontSize: '9pt',
             textAlign: 'center',
           }}
-          type="text"
+          value={writeMonth}
+          onChange={value =>
+            updater('writeMonth', value.replace(/[^0-9]/g, ''))
+          }
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -1104,7 +1125,8 @@ export default function Form20() {
             fontSize: '9pt',
             textAlign: 'center',
           }}
-          type="text"
+          value={writeDay}
+          onChange={value => updater('writeDay', value.replace(/[^0-9]/g, ''))}
         />
         일
       </p>
@@ -1119,8 +1141,7 @@ export default function Form20() {
         }}
       >
         <span style={{ paddingRight: '30pt' }}>신고인</span>
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '100pt',
             height: '20pt',
@@ -1133,7 +1154,8 @@ export default function Form20() {
             textAlign: 'center',
             boxSizing: 'border-box',
           }}
-          type="text"
+          value={submitterName}
+          onChange={value => updater('submitterName', value)}
         />
         <span className="s7">(서명 또는 인)</span>
       </p>

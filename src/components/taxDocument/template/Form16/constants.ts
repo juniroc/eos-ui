@@ -1,5 +1,7 @@
-import { Form16Data } from '@/components/taxDocument/types/taxDocumentData';
-import { OtherCreditCardItem } from '@/components/taxDocument/template/Form16/type';
+import {
+  Form16Data,
+  OtherCreditCardItem,
+} from '@/components/taxDocument/template/Form16/type';
 
 export const baseOtherCreditCardItem: OtherCreditCardItem = {
   cardMemberNumber: '', // ⑨ 카드회원번호
@@ -82,9 +84,12 @@ export const baseForm16Data: Form16Data = {
 
   /* 3. 그 밖의 신용카드 등 수령금액 합계 명세 (⑨ ~ ⑪)
 
-             - '⑧ 그 밖의 신용카드 등'에 대한 상세 내역 리스트
+                     - '⑧ 그 밖의 신용카드 등'에 대한 상세 내역 리스트
 
-             - 일련번호는 자동 생성이므로 제외 */
+                     - 일련번호는 자동 생성이므로 제외 */
 
-  otherCreditCardItems: [baseOtherCreditCardItem],
+  otherCreditCardItems: [baseOtherCreditCardItem, baseOtherCreditCardItem],
 };
+
+export const FORM16_1_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH = 15;
+export const FORM16_2_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH = 26;

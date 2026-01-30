@@ -3,8 +3,8 @@ import {
   Form15Data,
   TaxFreePurchaseAmount,
 } from '@/components/taxDocument/template/Form15/types';
-import Input from '@/components/taxDocument/template/Form15/Input';
-import NumericInput from '@/components/taxDocument/template/Form15/NumericInput';
+import Input from '@/components/taxDocument/template/common/Input';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 
 type Props = TaxFreePurchaseAmount & {
   onChange: <K extends keyof Form15Data>(

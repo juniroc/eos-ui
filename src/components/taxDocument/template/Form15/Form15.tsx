@@ -3,13 +3,13 @@ import './form15.css';
 import BusinessInfoTable from '@/components/taxDocument/template/Form15/BusinessInfoTable';
 import { useState } from 'react';
 import { Form15Data } from '@/components/taxDocument/template/Form15/types';
-import NumericInput from '@/components/taxDocument/template/Form15/NumericInput';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import TaxFreePurchaseAmountTable from '@/components/taxDocument/template/Form15/TaxFreePurchaseAmountTable';
 import {
   baseFarmerPurchaseItem,
   mockForm15Constants,
 } from '@/components/taxDocument/template/Form15/constants';
-import Input from '@/components/taxDocument/template/Form15/Input';
+import Input from '@/components/taxDocument/template/common/Input';
 
 export default function Form15() {
   const [data, setData] = useState<Form15Data>(mockForm15Constants);

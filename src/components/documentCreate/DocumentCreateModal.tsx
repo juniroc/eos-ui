@@ -3,9 +3,11 @@ import { ModalProps } from '@/types/props';
 import ModalContainer from '@/components/modal/ModalContainer';
 import { printElement } from '@/utils/printUtils';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
-import Form15 from '@/components/taxDocument/template/Form15/Form15';
+import { baseForm25Data } from '@/components/taxDocument/template/Form25/constants';
+import Form25_1 from '@/components/taxDocument/template/Form25/pages/Form25_1/Form25_1';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
+  const [data, setData] = useState(baseForm25Data);
   const [scale, setScale] = useState(1);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [stampImage, setStampImage] = useState<string | null>(null);
@@ -31,7 +33,7 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
             <div className="w-[264px] h-[100%] flex justify-center items-center ml-4">
               왼쪽 영역
             </div>
-            <div className="w-[624px] h-[100%] flex flex-col justify-start">
+            <div className="w-[882px] h-[100%] flex flex-col justify-start">
               <div className="w-[100%] h-[28px] flex justify-center items-center mb-3 flex-none">
                 <button onClick={() => setScale(scale + 0.2)}>+</button>
                 <button onClick={() => setScale(scale - 0.2)}>-</button>
@@ -56,12 +58,16 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
                 </label>
               </div>
               <div
-                id={'print-document'}
-                className="border-box border border-gray-800 overflow-scroll flex flex-col gap-[12pt]
+                className="min-w-0 border-box border border-gray-800 overflow-scroll flex flex-col gap-[12pt]
                 print:border-none print:overflow-visible"
               >
-                <PreviewWrapper>
-                  <Form15 />
+                <PreviewWrapper orientation={'landscape'}>
+                  <Form25_1
+                    {...data}
+                    updater={(field, value) => {
+                      setData({ ...data, [field]: value });
+                    }}
+                  />
                 </PreviewWrapper>
               </div>
             </div>

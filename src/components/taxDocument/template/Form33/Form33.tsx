@@ -1,8 +1,10 @@
 'use client';
 import './form33.css';
-import NumericInput from '@/components/documentCreate/template/Form33/NumericInput';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import { Form33Data } from '@/components/taxDocument/template/Form33/type';
 
-export default function Form33() {
+export default function Form33({}: UpdaterProps<Form33Data>) {
   return (
     <div className="form33">
       <ul id="l1">

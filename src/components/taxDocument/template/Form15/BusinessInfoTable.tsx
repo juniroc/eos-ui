@@ -3,7 +3,7 @@ import {
   BusinessInfo,
   Form15Data,
 } from '@/components/taxDocument/template/Form15/types';
-import Input from '@/components/taxDocument/template/Form15/Input';
+import Input from '@/components/taxDocument/template/common/Input';
 
 export type Props = BusinessInfo & {
   onChange: <K extends keyof Form15Data>(

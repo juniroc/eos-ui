@@ -1,0 +1,3 @@
+export const FORM_41_1_MAX_DETAIL_LIST_MAX_LENGTH = 5;
+
+export const FORM_41_2_MAX_DETAIL_LIST_MAX_LENGTH = 23;

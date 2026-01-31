@@ -1577,6 +1577,47 @@ export async function addFormsToReport(
   return response.json();
 }
 
+// VAT 서식 파일 업로드 API
+export interface VatFormUploadResponse {
+  id: string;
+  reportId: string;
+  formCode: string;
+  data: Record<string, unknown>;
+  inputType: Record<string, unknown>;
+  uploadedDocumentIds: string[];
+}
+
+export async function uploadVatFormFile(
+  formId: string,
+  file: File,
+  token: string
+): Promise<VatFormUploadResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/api/vat/forms/${formId}/upload`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorData;
+    try {
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = { error: errorText || `파일 업로드에 실패했습니다. (${response.status})` };
+    }
+    throw new Error(errorData.error || errorData.message || `파일 업로드에 실패했습니다. (${response.status})`);
+  }
+
+  return response.json();
+}
+
 // VAT 서식 삭제 API
 export interface DeleteFormResponse {
   message: string;

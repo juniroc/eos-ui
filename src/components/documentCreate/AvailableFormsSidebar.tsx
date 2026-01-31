@@ -137,8 +137,8 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
             <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border border-[#D9D9D9] flex-shrink-0">
               <div
                 className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${isAllSelected
-                    ? 'border-[#2C2C2C] bg-[#2C2C2C]'
-                    : 'border-[#D9D9D9] bg-white'
+                  ? 'border-[#2C2C2C] bg-[#2C2C2C]'
+                  : 'border-[#D9D9D9] bg-white'
                   }`}
                 onClick={handleToggleAll}
               >
@@ -188,7 +188,7 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
             </div>
           ) : (
             availableForms.map((form) => (
-              <div key={form.formCode} className="flex flex-row items-stretch p-0 w-full">
+              <div key={form.formCode} className="flex flex-row items-stretch p-0 w-full min-h-[58px]">
                 {/* 체크박스 */}
                 <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border-b border-l border-r border-[#D9D9D9] flex-shrink-0">
                   <div
@@ -213,25 +213,25 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
                 </div>
                 {/* 서식번호 */}
                 <div className="flex flex-row items-center p-2 w-[140px] min-w-[140px] max-w-[160px] bg-white border-b border-r border-[#D9D9D9] flex-shrink-0">
-                  <span className="text-[10px] leading-[140%] text-[#757575] font-medium font-['Pretendard']">
+                  <span className="text-[10px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
                     {form.formNumber}
                   </span>
                 </div>
                 {/* 서식명 */}
                 <div className="flex flex-row items-center p-2 w-[220px] min-w-[200px] max-w-[220px] bg-white border-b border-r border-[#D9D9D9] flex-shrink-0">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard']">
+                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
                     {form.name}
                   </span>
                 </div>
                 {/* 서식내용 해설 */}
                 <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-b border-r border-[#D9D9D9] flex-1">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard']">
+                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
                     {form.description}
                   </span>
                 </div>
                 {/* 첨부해야 하는 경우 */}
                 <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-b border-r border-[#D9D9D9] flex-1">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard']">
+                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
                     {form.requiredWhen}
                   </span>
                 </div>
@@ -245,18 +245,16 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
           <button
             onClick={handleAddForms}
             disabled={selectedForms.size === 0 || isAdding}
-            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${
-              selectedForms.size > 0 && !isAdding
-                ? 'bg-[#2C2C2C] cursor-pointer'
-                : 'bg-[#E6E6E6] cursor-not-allowed'
-            }`}
+            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${selectedForms.size > 0 && !isAdding
+              ? 'bg-[#2C2C2C] cursor-pointer'
+              : 'bg-[#E6E6E6] cursor-not-allowed'
+              }`}
           >
             <span
-              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
-                selectedForms.size > 0 && !isAdding
-                  ? 'text-[#F5F5F5]'
-                  : 'text-[#B3B3B3]'
-              }`}
+              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${selectedForms.size > 0 && !isAdding
+                ? 'text-[#F5F5F5]'
+                : 'text-[#B3B3B3]'
+                }`}
             >
               {isAdding ? '추가중...' : '서식 추가하기'}
             </span>

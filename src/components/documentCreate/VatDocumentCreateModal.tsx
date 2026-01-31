@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ModalProps } from '@/types/props';
 import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 import ToastMessage from '@/components/ToastMessage';
-import { deleteVatForm } from '@/services/api';
+import { deleteVatForm, uploadVatFormFile } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface VatDocumentCreateModalProps extends ModalProps {
@@ -33,6 +33,10 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 사이드 패널 열기
   const handleOpenSidePanel = () => {
@@ -51,6 +55,71 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
     // 토스트 메시지 표시
     setToastMessage('서류 서식이 추가됐어요!');
     setShowToast(true);
+  };
+
+  // 파일 선택 핸들러
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+  };
+
+  // 파일 input 변경 핸들러
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  // 드래그 앤 드롭 핸들러
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  // 파일 업로드 핸들러
+  const handleUpload = async () => {
+    if (!selectedFile || !token) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
+
+    if (!selectedDocument) {
+      alert('서류를 선택해주세요.');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      await uploadVatFormFile(selectedDocument, selectedFile, token);
+
+      // 성공 시 파일 선택 초기화 및 토스트 메시지 표시
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setToastMessage('파일이 업로드되었습니다!');
+      setShowToast(true);
+    } catch (error) {
+      console.error('파일 업로드 에러:', error);
+      const errorMessage = error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // 추가된 서식 삭제 핸들러
@@ -149,40 +218,19 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                   {/* 기존 서식 항목들 */}
                   <div className="flex flex-col items-start w-full border border-[#D9D9D9]">
                     {documentList
-                      .filter((doc) => !doc.isAdded)
                       .map((doc, index) => (
                         <div
                           key={doc.id}
-                          className={`flex flex-row items-center p-2 w-full h-8 ${index === 0 ? 'border-b-0' : 'border-t border-[#D9D9D9]'
-                            } ${selectedDocument === doc.id ? 'bg-[#F5F5F5]' : 'bg-white'} cursor-pointer`}
+                          className={`flex flex-row justify-between items-center p-2 w-full h-8 ${index === 0 ? 'border-b-0' : 'border-t border-[#D9D9D9]'
+                            } ${doc.isAdded ? 'bg-[#F5F5F5]' : 'bg-white'} cursor-pointer`}
                           onClick={() => setSelectedDocument(doc.id)}
                         >
                           <span
-                            className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${selectedDocument === doc.id
-                              ? 'text-[#1E1E1E] font-medium'
-                              : 'text-[#757575] font-medium'
-                              }`}
+                            className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${doc.isAdded ? 'text-[#1E1E1E]' : 'text-[#757575]'} font-medium`}
                           >
                             {doc.name}
                           </span>
-                        </div>
-                      ))}
-                  </div>
-
-                  {/* 추가된 서식 항목들 */}
-                  {documentList.filter((doc) => doc.isAdded).length > 0 && (
-                    <div className="flex flex-col items-start w-full gap-0">
-                      {documentList
-                        .filter((doc) => doc.isAdded)
-                        .map((doc) => (
-                          <div
-                            key={doc.id}
-                            className="flex flex-row gap-6 items-center max-w-[262px] p-2 h-[32px] bg-[#F5F5F5] border border-[#D9D9D9] cursor-pointer"
-                            onClick={() => setSelectedDocument(doc.id)}
-                          >
-                            <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] flex-1">
-                              {doc.name}
-                            </span>
+                          {doc.isAdded && (
                             <button
                               onClick={(e) => handleRemoveAddedForm(doc.id, e)}
                               disabled={isDeleting === doc.id}
@@ -194,10 +242,10 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                                 <Image src="/icons/close.svg" alt="close" width={16} height={16} />
                               )}
                             </button>
-                          </div>
-                        ))}
-                    </div>
-                  )}
+                          )}
+                        </div>
+                      ))}
+                  </div>
                 </>
               )}
 
@@ -229,26 +277,60 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                 </div>
 
                 {/* 파일 업로드 영역 */}
-                <div className="flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[264px] h-[125px] bg-white border border-dashed border-[#D9D9D9]">
-                  <div className="w-5 h-5">
-                    {/* Upload 아이콘 */}
-                    <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5 w-[173px]">
-                    <span className="text-[11px] leading-[140%] text-center text-[#303030] font-['Pretendard']">
-                      파일을 선택하거나 여기로 드래그하세요.
-                    </span>
-                    <span className="text-[10px] leading-[140%] text-center text-[#767676] font-medium font-['Pretendard'] w-full">
-                      (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을 지원합니다)
-                    </span>
-                  </div>
+                <div
+                  className={`flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[264px] h-[125px] bg-white border border-dashed ${isDragging ? 'border-[#2C2C2C] bg-[#F5F5F5]' : 'border-[#D9D9D9]'
+                    } cursor-pointer`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.xls,.xlsx,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                    className="hidden"
+                    onChange={handleFileInputChange}
+                  />
+                  {selectedFile ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-5 h-5">
+                        <Image src="/icons/check_circle.svg" alt="check" width={24} height={24} />
+                      </div>
+                      <span className="text-[11px] leading-[140%] text-center text-[#303030] font-['Pretendard']">
+                        {selectedFile.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-5 h-5">
+                        {/* Upload 아이콘 */}
+                        <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+                      </div>
+                      <div className="flex flex-col items-center gap-0.5 w-[173px]">
+                        <span className="text-[11px] leading-[140%] text-center text-[#303030] font-['Pretendard']">
+                          파일을 선택하거나 여기로 드래그하세요.
+                        </span>
+                        <span className="text-[10px] leading-[140%] text-center text-[#767676] font-medium font-['Pretendard'] w-full">
+                          (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을 지원합니다)
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* 업로드 버튼 */}
                 <div className="flex flex-row justify-end items-center gap-2 w-full h-[27px]">
-                  <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#2C2C2C]">
-                    <span className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
-                      저장하기
+                  <button
+                    onClick={handleUpload}
+                    disabled={!selectedFile || isUploading}
+                    className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${selectedFile && !isUploading
+                      ? 'bg-[#2C2C2C] text-[#F5F5F5]'
+                      : 'bg-[#E6E6E6] text-[#B3B3B3]'
+                      }`}
+                  >
+                    <span>
+                      {isUploading ? '업로드중...' : '저장하기'}
                     </span>
                   </button>
                 </div>

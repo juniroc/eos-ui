@@ -11,8 +11,40 @@ import VatDocumentCreateModal from '@/components/documentCreate/VatDocumentCreat
 export default function VatDocumentCreatePage() {
   const router = useRouter();
   const { token, isAuthenticated, loading: authLoading } = useAuth();
-  const [reportingPeriodStart, setReportingPeriodStart] = useState<string>('');
-  const [reportingType, setReportingType] = useState<string>('');
+  // 오늘 날짜를 YYYY-MM-DD 형식으로 반환하는 함수
+  const getTodayDateString = (): string => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // 날짜에 따른 기본 신고유형 계산 함수
+  const getDefaultReportingType = (): string => {
+    const today = new Date();
+    const month = today.getMonth() + 1; // 1-12
+    const day = today.getDate(); // 1-31
+
+    // 1.26~4.25, 7.26~10.25 → 예정
+    // 4.26~7.25, 10.26~1.25 → 확정
+
+    if (
+      (month === 1 && day >= 26) ||
+      (month >= 2 && month <= 3) ||
+      (month === 4 && day <= 25) ||
+      (month === 7 && day >= 26) ||
+      (month >= 8 && month <= 9) ||
+      (month === 10 && day <= 25)
+    ) {
+      return '예정';
+    } else {
+      return '확정';
+    }
+  };
+
+  const [reportingPeriodStart, setReportingPeriodStart] = useState<string>(getTodayDateString());
+  const [reportingType, setReportingType] = useState<string>(getDefaultReportingType());
   const [vatCompanyInfo, setVatCompanyInfo] = useState<VatCompanyInfo | null>(null);
   const [stampImageUrl, setStampImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -162,8 +194,8 @@ export default function VatDocumentCreatePage() {
   // 서류 생성 버튼 활성화 조건
   const canCreateDocument =
     reportingPeriodStart !== '' &&
-    reportingType !== ''
-  // &&stampImageUrl !== null;
+    reportingType !== '' &&
+    stampImageUrl !== null;
 
   /** 서류 생성하기 */
   const handleCreateDocument = async () => {
@@ -181,8 +213,8 @@ export default function VatDocumentCreatePage() {
     const filingTypeMap: Record<string, 'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND'> = {
       '예정': 'SCHEDULED',
       '확정': 'CONFIRMED',
-      '기한후': 'AFTER_DEADLINE',
-      '조기환급': 'EARLY_REFUND',
+      '기한 후 환급': 'AFTER_DEADLINE',
+      '조기 환급': 'EARLY_REFUND',
     };
 
     const filingType = filingTypeMap[reportingType] || 'SCHEDULED';
@@ -258,8 +290,10 @@ export default function VatDocumentCreatePage() {
                         value={reportingType}
                         onChange={(e) => setReportingType(e.target.value)}
                       >
-                        <option value="">선택하기</option>
                         <option value="예정">예정</option>
+                        <option value="확정">확정</option>
+                        <option value="기한 후 환급">기한 후 환급</option>
+                        <option value="조기 환급">조기 환급</option>
                       </select>
                     </div>
                   </div>
@@ -625,19 +659,15 @@ export default function VatDocumentCreatePage() {
                   ) : (
                     <button
                       onClick={handleStampDelete}
-                      disabled={loading}
-                      className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#E6E6E6] text-xs leading-[100%] text-[#B3B3B3] disabled:opacity-50"
+                      disabled={!stampImageUrl || loading}
+                      className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${stampImageUrl && !loading
+                        ? 'bg-[#F3F3F3] text-[#1E1E1E]'
+                        : 'bg-[#E6E6E6] text-[#B3B3B3]'
+                        }`}
                     >
                       도장삭제
                     </button>
                   )}
-                  <button
-                    onClick={handleSaveCompanyInfo}
-                    disabled={loading || !vatCompanyInfo}
-                    className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
-                  >
-                    저장하기
-                  </button>
                 </div>
               </div>
             </div>
@@ -662,7 +692,7 @@ export default function VatDocumentCreatePage() {
               <div className="flex flex-row justify-end items-center p-0 gap-2">
                 <button
                   onClick={handleCreateDocument}
-                  // disabled={!canCreateDocument || loading}
+                  disabled={!canCreateDocument || loading}
                   className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${!canCreateDocument || loading
                     ? 'bg-[#E6E6E6] text-[#B3B3B3]'
                     : 'bg-[#F3F3F3] text-[#1E1E1E]'

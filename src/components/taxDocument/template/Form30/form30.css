@@ -1,0 +1,75 @@
+/* form30 Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .form30 {
+    width: 624pt;
+    margin: 0 auto;
+    padding-bottom: 20pt;
+  }
+
+  .form30 * {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+  }}
+}
+
+@layer components {
+  .form30 .s1 {
+    color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form30 .s2 {
+    color: #00F; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form30 .s3 {
+    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
+  }
+  .form30 h1 {
+    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
+  }
+  .form30 .s4 {
+    color: black; font-family:돋움체; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
+  }
+  .form30 .s5 {
+    color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
+  }
+  .form30 .s6 {
+    color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
+  }
+  .form30 h2 {
+    color: black; font-family:돋움체; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
+  }
+  .form30 p {
+    color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; margin:0pt;
+  }
+  .form30 li {
+    display: block;
+  }
+  .form30 #l1 {
+    padding-left: 0pt;
+  }
+  .form30 #l1> li>*:first-child:before {
+    content: "■ "; color: black; font-family:돋움체; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
+  }
+  .form30 table, .form30 tbody {
+    vertical-align: top; overflow: visible;
+  }
+  .form30 td {
+    vertical-align: middle;
+  }
+  .form30 input.form-input {
+    width: calc(100% - 2pt); height: 20pt; border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial, monospace; font-size: 10pt; box-sizing: border-box;
+  }
+  .form30 input.form-input:focus {
+    border: 0.5pt solid #999;
+  }
+  .form30 input.form-input-numeric {
+    text-align: right; font-family: Arial, monospace; font-size: 10pt;
+  }
+  .form30 input.form-input-text {
+    text-align: left; font-family: Arial, monospace; font-size: 10pt;
+  }
+}

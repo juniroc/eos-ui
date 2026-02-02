@@ -4,7 +4,9 @@ import ModalContainer from '@/components/modal/ModalContainer';
 import { printElement } from '@/utils/printUtils';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
 import { baseForm25Data } from '@/components/taxDocument/template/Form25/constants';
-import Form25_1 from '@/components/taxDocument/template/Form25/pages/Form25_1/Form25_1';
+import Form15 from '@/components/taxDocument/template/Form15/Form15';
+import Form16 from '@/components/taxDocument/template/Form16/Form16';
+import { baseForm16Data } from '@/components/taxDocument/template/Form16/constants';
 
 function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
   const [data, setData] = useState(baseForm25Data);
@@ -62,11 +64,10 @@ function DocumentCreateModal({ isOpen, onClose }: ModalProps) {
                 print:border-none print:overflow-visible"
               >
                 <PreviewWrapper orientation={'landscape'}>
-                  <Form25_1
-                    {...data}
-                    updater={(field, value) => {
-                      setData({ ...data, [field]: value });
-                    }}
+                  <Form15 />
+                  <Form16
+                    {...baseForm16Data}
+                    updater={(field, value) => console.log(field, value)}
                   />
                 </PreviewWrapper>
               </div>

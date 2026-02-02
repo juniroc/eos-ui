@@ -3,22 +3,14 @@ import '@/components/taxDocument/template/Form16/pages/Form16_2/form16_2.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import {
-  Form16_2Props,
-  Form16HeaderProps,
+  Form16Data,
   OtherCreditCardItem,
 } from '@/components/taxDocument/template/Form16/type';
-import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { FORM16_2_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH } from '@/components/taxDocument/template/Form16/constants';
 
-type Props = Form16HeaderProps &
-  Form16_2Props &
-  UpdaterProps<Form16HeaderProps & Form16_2Props> & {
-    index: number;
-    onAddPage: () => void;
-  };
-
 export default function Form16_2({
-  index,
+  pageIndex: index,
   updater,
   onAddPage,
   attributionYear,
@@ -29,18 +21,18 @@ export default function Form16_2({
   taxPeriodEndDay,
   bizNumber,
   otherCreditCardItems,
-}: Props) {
+}: FormPageProps<Form16Data>) {
   const mappedOtherCreditCardItems: (OtherCreditCardItem | null)[] = Array.from(
     { length: FORM16_2_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH },
     (_, i) => otherCreditCardItems[15 + index * 26 + i] ?? null
   );
 
   const otherItemUpdater = <
-    K extends keyof Props['otherCreditCardItems'][number],
+    K extends keyof Form16Data['otherCreditCardItems'][number],
   >(
     i: number,
     field: K,
-    value: Props['otherCreditCardItems'][number][K]
+    value: Form16Data['otherCreditCardItems'][number][K]
   ) => {
     const targetIndex =
       15 + (index - 1) * FORM16_2_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH + i;

@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 import sys
 
 # Source and Destination Directories
-SOURCE_DIR = "/Users/nu-j/Downloads/dev/apps/eos-ui/src/components/htmlSamples"
-DEST_BASE_DIR = "/Users/nu-j/Downloads/dev/apps/eos-ui/src/components/documentCreate/template"
+SOURCE_DIR = "/Users/kakao/Desktop/Projects/eos-ui/scripts"
+DEST_BASE_DIR = "/Users/kakao/Desktop/Projects/eos-ui/src/components/documentCreate/template"
 
 # Reference Component for NumericInput
 NUMERIC_INPUT_CONTENT = """'use client';
@@ -62,35 +62,15 @@ def get_component_name(filename):
     filename = unicodedata.normalize('NFC', filename)
 
     name_map = {
-        "부가세15호-도장.html": "Form15",
-        "부가세16호(갑)-을표추가.html": "Form16",
-        "부가세16호(을)-페이지추가.html": "Form16_2",
-        "부가세19호(갑)-도장+을표.html": "Form19",
-        "부가세19호(을)-페이지추가.html": "Form19_2",
-        "부가세19호(병)-버튼포함.html": "Form19_3",
-        "부가세20호-도장.html": "Form20",
-        "부가세21호(1)-도장.html": "Form21_1",
-        "부가세21호(2)-도장.html": "Form21_2",
-        "부가세25호-페이지추가.html": "Form25_1",
-        "부가세27호-도장.html": "Form27",
-        "부가세28호-페이지추가.html": "Form28_1",
-        "부가세32호-페이지추가.html": "Form32_1",
-        "부가세33호-도장.html": "Form33",
-        "부가세38호(갑)-을표추가.html": "Form38_1",
-        "부가세38호(을)-페이지추가.html": "Form38_2",
-        "부가세39호(갑)-을표추가.html": "Form39_1",
-        "부가세39호(을)-페이지추가.html": "Form39_2",
-        "부가세40호(갑)-을표추가.html": "Form40_1",
-        "부가세40호(을)-페이지추가.html": "Form40_2",
-        "부가세41호(갑)-도장+을표.html": "Form41_1",
-        "부가세41호(을)-페이지추가.html": "Form41_2",
-        "부가세42호-페이지추가.html": "Form42_1",
-        "부가세47(갑)-을표추가.html": "Form47_1",
-        "부가세47(을)-페이지추가.html": "Form47_2",
-        "조특법69(갑)-도장+을표.html": "Form69_1_1",
-        "조특법69(을)-페이지추가.html": "Form69_1_2",
-        "조특법69호의2(갑)-도장+을표.html": "FormJoteuk69_2_1",
-        "조특법69호의2(을)-페이지추가.html": "Form69_2_2",
+    "부가세14호의4.html": "Form14",
+    "부가세22호.html": "Form22",
+    "부가세23호.html": "Form23",
+    "부가세24호.html": "Form24",
+    "부가세26호.html": "Form26",
+    "부가세29호.html": "Form29",
+    "부가세30호.html": "Form30",
+    "부가세34호.html": "Form34",
+    "VAT21-3.html": "Form21_3",
     }
 
     if filename in name_map:

@@ -10,11 +10,9 @@ import {
 import Form16_2 from '@/components/taxDocument/template/Form16/pages/Form16_2/Form16_2';
 import { getFormCount } from '@/components/taxDocument/utils/pageUtil';
 
-type Props = UpdaterProps<Form16Data> & {
-  data: Form16Data;
-};
+type Props = UpdaterProps<Form16Data>;
 
-function Form16({ data, updater }: Props) {
+function Form16({ updater, ...data }: Props) {
   const [page2Count, setPage2Count] = useState(
     getFormCount(
       data.otherCreditCardItems.length,
@@ -32,7 +30,7 @@ function Form16({ data, updater }: Props) {
       {Array.from({ length: page2Count }).map((_, index) => (
         <Form16_2
           key={index}
-          index={index}
+          pageIndex={index}
           updater={updater}
           onAddPage={onAddPage}
           {...data}

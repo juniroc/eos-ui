@@ -3,16 +3,13 @@ import '@/components/taxDocument/template/Form16/pages/Form16_1/form16_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import {
-  Form16_1Props,
-  Form16HeaderProps,
+  Form16Data,
   OtherCreditCardItem,
 } from '@/components/taxDocument/template/Form16/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import { FORM16_1_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH } from '@/components/taxDocument/template/Form16/constants';
 
-type Props = Form16HeaderProps &
-  Form16_1Props &
-  UpdaterProps<Form16_1Props & Form16HeaderProps> & { onAddPage: () => void };
+type Props = UpdaterProps<Form16Data> & { onAddPage: () => void };
 
 export default function Form16_1({
   updater,

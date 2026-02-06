@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +14,7 @@ import {
 import FileUploadBox from '@/components/FileUploadBox';
 import ToastMessage from '@/components/ToastMessage';
 
-export default function VatStoredDocumentsPreviewPage() {
+function VatStoredDocumentsPreviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reportId = searchParams.get('id');
@@ -355,5 +355,13 @@ export default function VatStoredDocumentsPreviewPage() {
         onHide={() => setShowToast(false)}
       />
     </>
+  );
+}
+
+export default function VatStoredDocumentsPreviewPage() {
+  return (
+    <Suspense fallback={<div className="p-8"><div className="max-w-6xl mx-auto"><div className="text-center py-8">로딩 중...</div></div></div>}>
+      <VatStoredDocumentsPreviewContent />
+    </Suspense>
   );
 }

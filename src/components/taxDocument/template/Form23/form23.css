@@ -1,96 +1,201 @@
 /* form23 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
-  .form23 {
-    width: 624pt;
-    margin: 0 auto;
-    padding-bottom: 20pt;
-  }
+    .form23 {
+        width: 624pt;
+        margin: 0 auto;
+        padding-bottom: 20pt;
+    }
 
-  .form23 * {
-    margin: 0;
-    padding: 0;
-    text-indent: 0;
-  }}
+    .form23 * {
+        margin: 0;
+        padding: 0;
+        text-indent: 0;
+    }
 }
 
 @layer components {
-  .form23 .s1 {
-    color: black; font-family:Arial; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form23 .s2 {
-    color: #00F; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form23 .s3 {
-    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
-  }
-  .form23 h1 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
-  }
-  .form23 .s4 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
-  }
-  .form23 .s5 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form23 .s6 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form23 .s7 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form23 h2 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
-  }
-  .form23 p {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt;
-  }
-  .form23 li {
-    display: block;
-  }
-  .form23 #l1 {
-    padding-left: 0pt;
-  }
-  .form23 #l1> li>*:first-child:before {
-    content: "■ "; color: black; font-family:Arial; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form23 li {
-    display: block;
-  }
-  .form23 #l2 {
-    padding-left: 0pt;counter-reset: d1 1;
-  }
-  .form23 #l2> li>*:first-child:before {
-    counter-increment: d1; content: counter(d1, decimal)". "; color: black; font-style: normal; font-weight: bold; text-decoration: none;
-  }
-  .form23 #l2> li:first-child>*:first-child:before {
-    counter-increment: d1 0;
-  }
-  .form23 #l3 {
-    padding-left: 0pt;counter-reset: d2 1;
-  }
-  .form23 #l3> li>*:first-child:before {
-    counter-increment: d2; content: counter(d2, decimal)". "; color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form23 #l3> li:first-child>*:first-child:before {
-    counter-increment: d2 0;
-  }
-  .form23 table, .form23 tbody {
-    vertical-align: top; overflow: visible;
-  }
-  .form23 input.form-input {
-    width: calc(100% - 2pt); height: 20pt; border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
-  }
-  .form23 input.form-input:focus {
-    border: 0.5pt solid #999;
-  }
-  .form23 input.form-input-numeric {
-    text-align: right; font-family: Arial; font-size: 10pt;
-  }
-  .form23 input.form-input-text {
-    text-align: left; font-family: Arial; font-size: 10pt;
-  }
+    .form23 .s1 {
+        color: black;
+        font-family: Arial;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form23 .s2 {
+        color: #00F;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 9pt;
+    }
+
+    .form23 .s3 {
+        color: black;
+        font-family: HY견고딕, serif;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 16.5pt;
+    }
+
+    .form23 h1 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 11pt;
+    }
+
+    .form23 .s4 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 11pt;
+    }
+
+    .form23 .s5 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form23 .s6 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 9pt;
+    }
+
+    .form23 .s7 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form23 h2 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form23 p {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+        margin: 0pt;
+    }
+
+    .form23 li {
+        display: block;
+    }
+
+    .form23 #l1 {
+        padding-left: 0pt;
+    }
+
+    .form23 #l1 > li > *:first-child:before {
+        content: "■ ";
+        color: black;
+        font-family: Arial;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form23 li {
+        display: block;
+    }
+
+    .form23 #l2 {
+        padding-left: 0pt;
+        counter-reset: d1 1;
+    }
+
+    .form23 #l2 > li > *:first-child:before {
+        counter-increment: d1;
+        content: counter(d1, decimal) ". ";
+        color: black;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .form23 #l2 > li:first-child > *:first-child:before {
+        counter-increment: d1 0;
+    }
+
+    .form23 #l3 {
+        padding-left: 0pt;
+        counter-reset: d2 1;
+    }
+
+    .form23 #l3 > li > *:first-child:before {
+        counter-increment: d2;
+        content: counter(d2, decimal) ". ";
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form23 #l3 > li:first-child > *:first-child:before {
+        counter-increment: d2 0;
+    }
+
+    .form23 table, .form23 tbody {
+        vertical-align: top;
+        overflow: visible;
+    }
+
+    .form23 input.form-input {
+        width: calc(100% - 2pt);
+        height: 20pt;
+        border: none;
+        outline: none;
+        background: #ffffff;
+        padding: 1pt;
+        font-family: Arial;
+        font-size: 10pt;
+        box-sizing: border-box;
+    }
+
+    .form23 input.form-input:focus {
+        border: 0.5pt solid #999;
+    }
+
+    .form23 input.form-input-numeric {
+        text-align: right;
+        font-family: Arial;
+        font-size: 10pt;
+    }
+
+    .form23 input.form-input-text {
+        text-align: left;
+        font-family: Arial;
+        font-size: 10pt;
+    }
 }

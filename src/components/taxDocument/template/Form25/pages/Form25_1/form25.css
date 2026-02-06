@@ -1,7 +1,4 @@
 /* form25 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
     /* ✅ 원본 HTML body 스펙(가로형): width 882pt, height 624pt 그대로 사용 */
@@ -17,9 +14,8 @@
         /* 화면(미리보기)에서는 왼쪽 정렬로 두고, 스케일은 바깥 wrapper가 담당 */
         margin: 0;
         padding: 0 0 20pt 0;
-
         position: relative;
-    }
+  }
 
     .form25 * {
         margin: 0;
@@ -213,3 +209,12 @@
         line-height: 120% !important;
     }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form25 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form25 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

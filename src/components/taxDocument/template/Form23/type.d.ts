@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type PaymentMethodColumns = {
   totalAmount: number; // ⑤ 합계
 
@@ -53,3 +55,5 @@ export type Form23Data = {
 
   invoiceIssuedAmount: number; // ⑩ 계산서 발급금액
 };
+
+export type Form23InputData = FormInputData<Form23Data>;

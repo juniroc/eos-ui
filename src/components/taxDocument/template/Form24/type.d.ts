@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type PaymentItem = {
   issuerName: string; // ⑧ 전자화폐 발행회사
 
@@ -57,3 +59,5 @@ export type Form24Data = {
 
   paymentItems: Array<PaymentItem>;
 };
+
+export type Form24InputData = FormInputData<Form24Data>;

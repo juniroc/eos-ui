@@ -1,13 +1,11 @@
 /* form16 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form16 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form16 * {
@@ -94,3 +92,12 @@
     text-align: left; font-family: Arial; font-size: 10pt;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form16 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form16 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

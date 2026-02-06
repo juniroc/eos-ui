@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form32Data = {
   /* [헤더] 귀속 연도 및 과세기간
 
@@ -59,3 +61,5 @@ export type Form32Data = {
     managementFee: number; // ⑬ 관리비(원)
   }>;
 };
+
+export type Form32InputData = FormInputData<Form32Data>;

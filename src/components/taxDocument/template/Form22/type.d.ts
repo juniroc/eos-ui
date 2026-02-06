@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form22MissingDetails = {
   count: number;
   supplyAmount: number;
@@ -122,3 +124,5 @@ export type Form22Data = {
 
   taxRecalculationTotal: TaxRecalculationItem;
 };
+
+export type Form22InputData = FormInputData<Form22Data>;

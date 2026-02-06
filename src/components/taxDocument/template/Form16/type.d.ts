@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type OtherCreditCardItem = {
   cardMemberNumber: string; // ⑨ 카드회원번호
 
@@ -121,3 +123,5 @@ export type Form16_1Props = Form16HeaderProps &
 
 export type Form16_2Props = Form16HeaderProps &
   Pick<Form16Data, 'bizNumber' | 'otherCreditCardItems'>;
+
+export type Form16InputData = FormInputData<Form16Data>;

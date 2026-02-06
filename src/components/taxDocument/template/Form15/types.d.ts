@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type BusinessInfo = {
   companyName: string; // ① 상호(법인명)
   bizNumber: string; // ② 사업자등록번호
@@ -209,3 +211,5 @@ export type Form15Data = {
 
   submitterName: string; // 신고인 (서명 또는 인) 옆 이름
 };
+
+export type Form15InputData = FormInputData<Form15Data>;

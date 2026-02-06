@@ -1,13 +1,11 @@
 /* form19 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form19 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form19 * {
@@ -70,3 +68,12 @@
     text-align: left; font-family: Arial; font-size: 10pt; resize: none;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form19 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form19 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

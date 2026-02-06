@@ -1,33 +1,18 @@
 'use client';
 import './form15.css';
 import BusinessInfoTable from '@/components/taxDocument/template/Form15/BusinessInfoTable';
-import { useState } from 'react';
 import { Form15Data } from '@/components/taxDocument/template/Form15/types';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import TaxFreePurchaseAmountTable from '@/components/taxDocument/template/Form15/TaxFreePurchaseAmountTable';
-import {
-  baseFarmerPurchaseItem,
-  mockForm15Constants,
-} from '@/components/taxDocument/template/Form15/constants';
+import { baseFarmerPurchaseItem } from '@/components/taxDocument/template/Form15/constants';
 import Input from '@/components/taxDocument/template/common/Input';
+import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 
-export default function Form15() {
-  const [data, setData] = useState<Form15Data>(mockForm15Constants);
-
+export default function Form15({ updater, ...data }: UpdaterProps<Form15Data>) {
   const farmerItems = Array.from(
     { length: 3 },
-    (_, i) => data.farmerPurchaseItems[i] ?? baseFarmerPurchaseItem
+    (_, i) => data.farmerPurchaseItems[i] ?? {}
   );
-
-  const updater = <K extends keyof Form15Data>(
-    field: K,
-    value: Form15Data[K]
-  ) => {
-    setData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   const farmerItemUpdater = <
     K extends keyof Form15Data['farmerPurchaseItems'][number],

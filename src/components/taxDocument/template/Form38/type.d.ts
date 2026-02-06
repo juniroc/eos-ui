@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 /**
 
  * [공통] 합계 행 구조 (매출처수, 매수, 공급가액, 세액)
@@ -109,3 +111,5 @@ export type Form38Data = {
     remarks?: string; // 비고
   }>;
 };
+
+export type Form38InputData = FormInputData<Form38Data>;

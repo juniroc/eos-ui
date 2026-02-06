@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type SalesItem = {
   supplyDate: string; // ⑥ 공급일자 (YYYY-MM-DD)
 
@@ -53,3 +55,5 @@ export type Form47Data = {
 
   salesItems: Array<SalesItem>;
 };
+
+export type Form47InputData = FormInputData<Form47Data>;

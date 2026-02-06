@@ -1,13 +1,11 @@
 /* form40 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form40 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form40 * {
@@ -76,3 +74,12 @@
     vertical-align: top; overflow: visible;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form40 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form40 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

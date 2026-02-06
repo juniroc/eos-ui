@@ -1,13 +1,11 @@
 /* form47 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form47 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form47 * {
@@ -67,3 +65,12 @@
     text-align:center;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form47 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form47 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

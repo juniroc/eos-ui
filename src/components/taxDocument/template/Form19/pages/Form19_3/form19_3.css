@@ -1,13 +1,11 @@
 /* form19_3 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form19_3 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form19_3 * {
@@ -107,3 +105,12 @@ table:nth-of-type(2) tr td:nth-child(8) input.form-input {
     text-align: center; vertical-align: middle; padding: 0; margin: 0;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form19_3 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form19_3 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

@@ -1,33 +1,41 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ModalProps } from '@/types/props';
 import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 import ToastMessage from '@/components/ToastMessage';
-import { deleteVatForm, uploadVatFormFile } from '@/services/api';
+import { deleteVatForm, uploadVatFormFile, VatFormData } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { getOrientation } from '@/components/taxDocument/template/common/utils/formUitls';
+import { FormCode } from '@/components/taxDocument/template/common/type';
+import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
+import TaxDocument from '@/components/taxDocument/TaxDocument';
 
 interface VatDocumentCreateModalProps extends ModalProps {
+  reportForms: VatFormData[];
   reportId?: string;
 }
 
 interface DocumentItem {
   id: string;
   name: string;
+  formCode: string;
   isAdded?: boolean; // 추가된 서식인지 여부
 }
 
-function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreateModalProps) {
+function VatDocumentCreateModal({
+  isOpen,
+  onClose,
+  reportForms,
+  reportId,
+}: VatDocumentCreateModalProps) {
   const { token } = useAuth();
-  const [documentList, setDocumentList] = useState<DocumentItem[]>([
-    { id: '1', name: '일반과세자 부가가치세 신고서' },
-    { id: '2', name: '매출처별 세금계산서 합계표' },
-    { id: '3', name: '매입처별 세금계산서 합계표' },
-    { id: '4', name: '신용카드 매출전표 등 수령 명세서' },
-  ]);
-  const [selectedDocument, setSelectedDocument] = useState<string | null>(documentList[0]?.id || null);
+  const [documentList, setDocumentList] = useState<VatFormData[]>(reportForms);
+  const [selectedDocument, setSelectedDocument] = useState<VatFormData | null>(
+    null
+  );
   const [isListOpen, setIsListOpen] = useState(true);
   const [showSidePanel, setShowSidePanel] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
@@ -38,6 +46,29 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const previewOrientation = getOrientation(
+    selectedDocument?.formCode as FormCode
+  );
+
+  const handleDocumentUpdate = (field: string, value: unknown) => {
+    if (!selectedDocument) return;
+
+    const nextDocument = {
+      ...selectedDocument,
+      data: {
+        ...selectedDocument.data,
+        data: {
+          ...selectedDocument.data.data,
+          [field]: value,
+        },
+      },
+    } as VatFormData;
+
+    setSelectedDocument(nextDocument);
+    setDocumentList(prev =>
+      prev.map(doc => (doc.id === nextDocument.id ? nextDocument : doc))
+    );
+  };
   // 사이드 패널 열기
   const handleOpenSidePanel = () => {
     if (!reportId) {
@@ -48,7 +79,7 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
   };
 
   // 서식 추가 완료 핸들러
-  const handleFormsAdded = (addedForms: Array<{ id: string; name: string }>) => {
+  const handleFormsAdded = (addedForms: Array<VatFormData>) => {
     // 추가된 서식을 서류 리스트에 추가 (isAdded 플래그 설정)
     const newForms = addedForms.map(form => ({ ...form, isAdded: true }));
     setDocumentList(prev => [...prev, ...newForms]);
@@ -104,7 +135,7 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
 
     try {
       setIsUploading(true);
-      await uploadVatFormFile(selectedDocument, selectedFile, token);
+      await uploadVatFormFile(selectedDocument.id, selectedFile, token);
 
       // 성공 시 파일 선택 초기화 및 토스트 메시지 표시
       setSelectedFile(null);
@@ -115,7 +146,8 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
       setShowToast(true);
     } catch (error) {
       console.error('파일 업로드 에러:', error);
-      const errorMessage = error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
+      const errorMessage =
+        error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setIsUploading(false);
@@ -139,8 +171,8 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
       setDocumentList(prev => prev.filter(doc => doc.id !== formId));
 
       // 선택된 문서가 삭제된 경우 첫 번째 문서 선택
-      if (selectedDocument === formId) {
-        setSelectedDocument(documentList.find(doc => doc.id !== formId)?.id || null);
+      if (selectedDocument?.id === formId) {
+        setSelectedDocument(documentList[0] || null);
       }
 
       // 토스트 메시지 표시
@@ -148,31 +180,57 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
       setShowToast(true);
     } catch (error) {
       console.error('서식 삭제 에러:', error);
-      const errorMessage = error instanceof Error ? error.message : '서식 삭제에 실패했습니다.';
+      const errorMessage =
+        error instanceof Error ? error.message : '서식 삭제에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setIsDeleting(null);
     }
   };
 
+  useEffect(() => {
+    setDocumentList(reportForms);
+  }, [reportForms]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50 p-5">
-      <div className="flex flex-col items-center bg-white w-full h-full relative">
+      <div
+        className={[
+          'flex flex-col items-center bg-white h-full relative',
+          previewOrientation === 'landscape' ? 'w-[1482px]' : 'w-[1240px]',
+        ].join(' ')}
+      >
         {/* Top 영역 */}
         <div className="flex flex-row justify-between items-center p-3 w-full h-10 flex-shrink-0">
           {/* Breadcrumb */}
           <div className="flex flex-row items-center gap-0.5 flex-1 h-4">
-            <span className="text-[11px] leading-[140%] text-[#B3B3B3] font-['Pretendard']">부가세</span>
+            <span className="text-[11px] leading-[140%] text-[#B3B3B3] font-['Pretendard']">
+              부가세
+            </span>
             <div className="w-4 h-4 flex items-center justify-center">
-              <Image src="/icons/arrow_right.svg" alt="arrow_right" width={16} height={16} />
+              <Image
+                src="/icons/arrow_right.svg"
+                alt="arrow_right"
+                width={16}
+                height={16}
+              />
             </div>
-            <span className="text-[11px] leading-[140%] text-[#B3B3B3] font-['Pretendard']">서류정보</span>
+            <span className="text-[11px] leading-[140%] text-[#B3B3B3] font-['Pretendard']">
+              서류정보
+            </span>
             <div className="w-4 h-4 flex items-center justify-center">
-              <Image src="/icons/arrow_right.svg" alt="arrow_right" width={16} height={16} />
+              <Image
+                src="/icons/arrow_right.svg"
+                alt="arrow_right"
+                width={16}
+                height={16}
+              />
             </div>
-            <span className="text-[11px] leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">내용입력</span>
+            <span className="text-[11px] leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
+              내용입력
+            </span>
           </div>
 
           {/* X 버튼 */}
@@ -185,7 +243,7 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
         </div>
 
         {/* 메인 컨텐츠 영역 */}
-        <div className="flex flex-row justify-center items-start w-full flex-shrink-0 flex-grow gap-4 px-4 pb-4">
+        <div className="flex flex-row justify-center items-start w-full h-[760px] flex-shrink-0 flex-grow gap-4 px-4 pb-4">
           {/* 왼쪽 영역 (264px) */}
           <div className="flex flex-col items-start gap-4 w-[264px] h-full flex-shrink-0">
             {/* 서류 목록 */}
@@ -205,9 +263,19 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                   className="w-5 h-5 flex items-center justify-center flex-shrink-0"
                 >
                   {isListOpen ? (
-                    <Image src="/icons/arrow_down_black.svg" alt="arrow_down_black" width={16} height={16} />
+                    <Image
+                      src="/icons/arrow_down_black.svg"
+                      alt="arrow_down_black"
+                      width={16}
+                      height={16}
+                    />
                   ) : (
-                    <Image src="/icons/arrow_up.svg" alt="arrow_up" width={16} height={16} />
+                    <Image
+                      src="/icons/arrow_up.svg"
+                      alt="arrow_up"
+                      width={16}
+                      height={16}
+                    />
                   )}
                 </button>
               </div>
@@ -217,34 +285,41 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                 <>
                   {/* 기존 서식 항목들 */}
                   <div className="flex flex-col items-start w-full border border-[#D9D9D9]">
-                    {documentList
-                      .map((doc, index) => (
-                        <div
-                          key={doc.id}
-                          className={`flex flex-row justify-between items-center p-2 w-full h-8 ${index === 0 ? 'border-b-0' : 'border-t border-[#D9D9D9]'
-                            } ${doc.isAdded ? 'bg-[#F5F5F5]' : 'bg-white'} cursor-pointer`}
-                          onClick={() => setSelectedDocument(doc.id)}
+                    {documentList.map((doc, index) => (
+                      <div
+                        key={doc.id}
+                        className={`flex flex-row justify-between items-center p-2 w-full h-8 ${
+                          index === 0
+                            ? 'border-b-0'
+                            : 'border-t border-[#D9D9D9]'
+                        } ${doc.isAdded ? 'bg-[#F5F5F5]' : 'bg-white'} cursor-pointer`}
+                        onClick={() => setSelectedDocument(doc)}
+                      >
+                        <span
+                          className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${doc.isAdded ? 'text-[#1E1E1E]' : 'text-[#757575]'} font-medium`}
                         >
-                          <span
-                            className={`text-[11px] leading-[100%] font-['Pretendard'] flex-1 ${doc.isAdded ? 'text-[#1E1E1E]' : 'text-[#757575]'} font-medium`}
+                          {doc.name}
+                        </span>
+                        {doc.isAdded && (
+                          <button
+                            onClick={e => handleRemoveAddedForm(doc.id, e)}
+                            disabled={isDeleting === doc.id}
+                            className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {doc.name}
-                          </span>
-                          {doc.isAdded && (
-                            <button
-                              onClick={(e) => handleRemoveAddedForm(doc.id, e)}
-                              disabled={isDeleting === doc.id}
-                              className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {isDeleting === doc.id ? (
-                                <div className="w-4 h-4 border-2 border-[#757575] border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <Image src="/icons/close.svg" alt="close" width={16} height={16} />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                            {isDeleting === doc.id ? (
+                              <div className="w-4 h-4 border-2 border-[#757575] border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Image
+                                src="/icons/close.svg"
+                                alt="close"
+                                width={16}
+                                height={16}
+                              />
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
@@ -271,15 +346,19 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                       </span>
                     </div>
                     <span className="text-[11px] leading-[140%] text-[#767676] font-['Pretendard'] w-[248px]">
-                      해당 서류와 관련된 내용이 있는 자료를 업로드하세요. Eos가 읽고 기록해 줍니다.
+                      해당 서류와 관련된 내용이 있는 자료를 업로드하세요. Eos가
+                      읽고 기록해 줍니다.
                     </span>
                   </div>
                 </div>
 
                 {/* 파일 업로드 영역 */}
                 <div
-                  className={`flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[264px] h-[125px] bg-white border border-dashed ${isDragging ? 'border-[#2C2C2C] bg-[#F5F5F5]' : 'border-[#D9D9D9]'
-                    } cursor-pointer`}
+                  className={`flex flex-col justify-center items-center p-6 gap-3 w-full min-w-[264px] h-[125px] bg-white border border-dashed ${
+                    isDragging
+                      ? 'border-[#2C2C2C] bg-[#F5F5F5]'
+                      : 'border-[#D9D9D9]'
+                  } cursor-pointer`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
@@ -295,7 +374,12 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                   {selectedFile ? (
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-5 h-5">
-                        <Image src="/icons/check_circle.svg" alt="check" width={24} height={24} />
+                        <Image
+                          src="/icons/check_circle.svg"
+                          alt="check"
+                          width={24}
+                          height={24}
+                        />
                       </div>
                       <span className="text-[11px] leading-[140%] text-center text-[#303030] font-['Pretendard']">
                         {selectedFile.name}
@@ -305,14 +389,20 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                     <>
                       <div className="w-5 h-5">
                         {/* Upload 아이콘 */}
-                        <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+                        <Image
+                          src="/icons/upload.svg"
+                          alt="upload"
+                          width={24}
+                          height={24}
+                        />
                       </div>
                       <div className="flex flex-col items-center gap-0.5 w-[173px]">
                         <span className="text-[11px] leading-[140%] text-center text-[#303030] font-['Pretendard']">
                           파일을 선택하거나 여기로 드래그하세요.
                         </span>
                         <span className="text-[10px] leading-[140%] text-center text-[#767676] font-medium font-['Pretendard'] w-full">
-                          (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을 지원합니다)
+                          (PDF, XLS, XLSX, DOC, DOCX, JPG, PNG, GIF 파일을
+                          지원합니다)
                         </span>
                       </div>
                     </>
@@ -324,14 +414,13 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
                   <button
                     onClick={handleUpload}
                     disabled={!selectedFile || isUploading}
-                    className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${selectedFile && !isUploading
-                      ? 'bg-[#2C2C2C] text-[#F5F5F5]'
-                      : 'bg-[#E6E6E6] text-[#B3B3B3]'
-                      }`}
+                    className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${
+                      selectedFile && !isUploading
+                        ? 'bg-[#2C2C2C] text-[#F5F5F5]'
+                        : 'bg-[#E6E6E6] text-[#B3B3B3]'
+                    }`}
                   >
-                    <span>
-                      {isUploading ? '업로드중...' : '저장하기'}
-                    </span>
+                    <span>{isUploading ? '업로드중...' : '저장하기'}</span>
                   </button>
                 </div>
               </div>
@@ -339,7 +428,14 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
           </div>
 
           {/* 중앙 영역 (624px) */}
-          <div className="flex flex-col items-start gap-4 flex-1 h-[100%] min-w-0">
+          <div
+            className={[
+              'flex flex-col items-start gap-4 h-[100%] min-w-0',
+              previewOrientation === 'landscape'
+                ? 'min-w-[882px] flex-1'
+                : 'flex-1',
+            ].join(' ')}
+          >
             {/* 제목 영역 */}
             <div className="flex flex-col items-start gap-4 w-full h-7 flex-shrink-0">
               <div className="flex flex-row items-end gap-5 w-full h-7 justify-between">
@@ -378,11 +474,16 @@ function VatDocumentCreateModal({ isOpen, onClose, reportId }: VatDocumentCreate
             </div>
 
             {/* 서류 미리보기 영역 */}
-            <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0">
-              {/* 서류 내용이 들어갈 영역 */}
-              <div className="p-4">
-                <p className="text-sm text-[#1E1E1E]">서류 미리보기 영역</p>
-              </div>
+            <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0 overflow-y-scroll">
+              {selectedDocument && (
+                <PreviewWrapper orientation={previewOrientation} maxWidth={624}>
+                  <TaxDocument
+                    formCode={selectedDocument.formCode}
+                    data={selectedDocument.data.data}
+                    updater={handleDocumentUpdate}
+                  />
+                </PreviewWrapper>
+              )}
             </div>
           </div>
 

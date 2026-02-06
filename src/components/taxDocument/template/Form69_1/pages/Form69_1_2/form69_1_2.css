@@ -1,13 +1,11 @@
 /* form-joteuk69_2 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form-joteuk69_2 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form-joteuk69_2 * {
@@ -88,3 +86,12 @@
     color: #C0C0C0; font-size: 8pt;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form-joteuk69_2 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form-joteuk69_2 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

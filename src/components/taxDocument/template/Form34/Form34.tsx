@@ -1,5 +1,5 @@
 'use client';
-import 'src/components/taxDocument/template/Form34/form34.css';
+import './form34.css';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import { Form34Data } from '@/components/taxDocument/template/Form34/type';
 import NumericTextArea from '@/components/taxDocument/template/common/NumericTextArea';

@@ -1,5 +1,5 @@
 'use client';
-import 'src/components/taxDocument/template/Form19/pages/Form19_2/form19_2.css';
+import './form19_2.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';

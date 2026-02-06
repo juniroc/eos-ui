@@ -1,13 +1,11 @@
 /* form40_2 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form40_2 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form40_2 * {
@@ -79,3 +77,12 @@
     position:relative;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form40_2 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form40_2 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

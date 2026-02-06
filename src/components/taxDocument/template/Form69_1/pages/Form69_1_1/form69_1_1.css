@@ -1,13 +1,11 @@
 /* form-joteuk69 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form-joteuk69 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form-joteuk69 * {
@@ -121,3 +119,12 @@
     vertical-align: top; overflow: visible;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form-joteuk69 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form-joteuk69 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form29Data = {
   /* [헤더] 귀속 연도 및 과세기간 */
 
@@ -111,3 +113,5 @@ export type Form29Data = {
 
   grandTotalSupplyPrice: number;
 };
+
+export type Form29InputData = FormInputData<Form29Data>;

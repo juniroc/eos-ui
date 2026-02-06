@@ -1,5 +1,5 @@
 'use client';
-import './Form69_2_2.css';
+import './form69_2_2.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
@@ -40,9 +40,7 @@ export default function Form69_2_2({
     (_, i) => receiptPurchaseItems[startIndex + i] ?? baseReceiptPurchaseItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form6902Data['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form6902Data['submitterInfo']>(
     field: K,
     value: Form6902Data['submitterInfo'][K]
   ) => {
@@ -524,7 +522,10 @@ export default function Form69_2_2({
           const rowBorderTopColor = index === 0 ? '#4B4B4B' : '#787878';
 
           return (
-            <tr key={`receipt-purchase-item-${startIndex + index}`} style={{ height: '20pt' }}>
+            <tr
+              key={`receipt-purchase-item-${startIndex + index}`}
+              style={{ height: '20pt' }}
+            >
               <td
                 style={{
                   width: '31pt',
@@ -651,7 +652,11 @@ export default function Form69_2_2({
                   }}
                   value={item.count}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(startIndex + index, 'count', value)
+                    receiptPurchaseItemUpdater(
+                      startIndex + index,
+                      'count',
+                      value
+                    )
                   }
                 />
               </td>
@@ -682,7 +687,11 @@ export default function Form69_2_2({
                   }}
                   value={item.itemName}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(startIndex + index, 'itemName', value)
+                    receiptPurchaseItemUpdater(
+                      startIndex + index,
+                      'itemName',
+                      value
+                    )
                   }
                 />
               </td>
@@ -713,7 +722,11 @@ export default function Form69_2_2({
                   }}
                   value={item.quantity}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(startIndex + index, 'quantity', value)
+                    receiptPurchaseItemUpdater(
+                      startIndex + index,
+                      'quantity',
+                      value
+                    )
                   }
                 />
               </td>
@@ -787,7 +800,6 @@ export default function Form69_2_2({
             </tr>
           );
         })}
-
       </table>
       <button
         style={{

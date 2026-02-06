@@ -1,93 +1,193 @@
 /* form24 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
-  .form24 {
-    width: 624pt;
-    margin: 0 auto;
-    padding-bottom: 20pt;
-  }
+    .form24 {
+        width: 624pt;
+        margin: 0 auto;
+        padding-bottom: 20pt;
+    }
 
-  .form24 * {
-    margin: 0;
-    padding: 0;
-    text-indent: 0;
-  }}
+    .form24 * {
+        margin: 0;
+        padding: 0;
+        text-indent: 0;
+    }
 }
 
 @layer components {
-  .form24 .s1 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form24 .s2 {
-    color: black; font-family:HY견고딕, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
-  }
-  .form24 h1 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
-  }
-  .form24 .s3 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt;
-  }
-  .form24 .s4 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form24 .s5 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form24 .s6 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form24 h2 {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;
-  }
-  .form24 p {
-    color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt;
-  }
-  .form24 li {
-    display: block;
-  }
-  .form24 #l1 {
-    padding-left: 0pt;
-  }
-  .form24 #l1> li>*:first-child:before {
-    content: "■ "; color: black; font-family:Arial; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form24 li {
-    display: block;
-  }
-  .form24 #l2 {
-    padding-left: 0pt;counter-reset: d1 1;
-  }
-  .form24 #l2> li>*:first-child:before {
-    counter-increment: d1; content: counter(d1, decimal)". "; color: black; font-style: normal; font-weight: bold; text-decoration: none;
-  }
-  .form24 #l2> li:first-child>*:first-child:before {
-    counter-increment: d1 0;
-  }
-  .form24 table, .form24 tbody {
-    vertical-align: top; overflow: visible;
-  }
-  .form24 input.form-input {
-    width: calc(100% - 2pt); height: 20pt; border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial; font-size: 10pt; box-sizing: border-box;
-  }
-  .form24 input.form-input:focus {
-    border: 0.5pt solid #999;
-  }
-  .form24 input.form-input-numeric {
-    text-align: right; font-family: Arial; font-size: 10pt;
-  }
-  .form24 input.form-input-text {
-    text-align: left; font-family: Arial; font-size: 10pt;
-  }
-  .form24 textarea.form-input {
-    width: calc(100% - 2pt); border: none; outline: none; background: #ffffff; padding: 1pt; font-family: Arial; font-size: 8pt; box-sizing: border-box;
-  }
-  .form24 textarea.form-input:focus {
-    border: 0.5pt solid #999;
-  }
-  .form24 textarea.form-input-text {
-    text-align: left; font-family: Arial; font-size: 8pt;
-  }
+    .form24 .s1 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form24 .s2 {
+        color: black;
+        font-family: HY견고딕, serif;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 16.5pt;
+    }
+
+    .form24 h1 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 11pt;
+    }
+
+    .form24 .s3 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 11pt;
+    }
+
+    .form24 .s4 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form24 .s5 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form24 .s6 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 9pt;
+    }
+
+    .form24 h2 {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form24 p {
+        color: black;
+        font-family: 돋움, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+        margin: 0pt;
+    }
+
+    .form24 li {
+        display: block;
+    }
+
+    .form24 #l1 {
+        padding-left: 0pt;
+    }
+
+    .form24 #l1 > li > *:first-child:before {
+        content: "■ ";
+        color: black;
+        font-family: Arial;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form24 li {
+        display: block;
+    }
+
+    .form24 #l2 {
+        padding-left: 0pt;
+        counter-reset: d1 1;
+    }
+
+    .form24 #l2 > li > *:first-child:before {
+        counter-increment: d1;
+        content: counter(d1, decimal) ". ";
+        color: black;
+        font-style: normal;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .form24 #l2 > li:first-child > *:first-child:before {
+        counter-increment: d1 0;
+    }
+
+    .form24 table, .form24 tbody {
+        vertical-align: top;
+        overflow: visible;
+    }
+
+    .form24 input.form-input {
+        width: calc(100% - 2pt);
+        height: 20pt;
+        border: none;
+        outline: none;
+        background: #ffffff;
+        padding: 1pt;
+        font-family: Arial;
+        font-size: 10pt;
+        box-sizing: border-box;
+    }
+
+    .form24 input.form-input:focus {
+        border: 0.5pt solid #999;
+    }
+
+    .form24 input.form-input-numeric {
+        text-align: right;
+        font-family: Arial;
+        font-size: 10pt;
+    }
+
+    .form24 input.form-input-text {
+        text-align: left;
+        font-family: Arial;
+        font-size: 10pt;
+    }
+
+    .form24 textarea.form-input {
+        width: calc(100% - 2pt);
+        border: none;
+        outline: none;
+        background: #ffffff;
+        padding: 1pt;
+        font-family: Arial;
+        font-size: 8pt;
+        box-sizing: border-box;
+    }
+
+    .form24 textarea.form-input:focus {
+        border: 0.5pt solid #999;
+    }
+
+    .form24 textarea.form-input-text {
+        text-align: left;
+        font-family: Arial;
+        font-size: 8pt;
+    }
 }

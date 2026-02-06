@@ -1,5 +1,5 @@
 'use client';
-import 'src/components/taxDocument/template/Form69_2/pages/Form69_2_1/form69_1_1.css';
+import './form69_2_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
@@ -37,9 +37,7 @@ export default function Form69_2_1({
     (_, i) => receiptPurchaseItems[i] ?? baseReceiptPurchaseItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form6902Data['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form6902Data['submitterInfo']>(
     field: K,
     value: Form6902Data['submitterInfo'][K]
   ) => {
@@ -325,9 +323,7 @@ export default function Form69_2_1({
                     float: 'right',
                   }}
                   value={submitterInfo.companyName}
-                  onChange={value =>
-                    submitterInfoUpdater('companyName', value)
-                  }
+                  onChange={value => submitterInfoUpdater('companyName', value)}
                 />
               </td>
               <td
@@ -829,11 +825,7 @@ export default function Form69_2_1({
                   }}
                   value={purchaseSummary.total.acquisitionAmount}
                   onChange={value =>
-                    purchaseSummaryUpdater(
-                      'total',
-                      'acquisitionAmount',
-                      value
-                    )
+                    purchaseSummaryUpdater('total', 'acquisitionAmount', value)
                   }
                 />
               </td>
@@ -922,7 +914,11 @@ export default function Form69_2_1({
                   }}
                   value={purchaseSummary.receiptReceived.sellerCount}
                   onChange={value =>
-                    purchaseSummaryUpdater('receiptReceived', 'sellerCount', value)
+                    purchaseSummaryUpdater(
+                      'receiptReceived',
+                      'sellerCount',
+                      value
+                    )
                   }
                 />
               </td>
@@ -1110,7 +1106,11 @@ export default function Form69_2_1({
                   }}
                   value={purchaseSummary.invoiceReceived.sellerCount}
                   onChange={value =>
-                    purchaseSummaryUpdater('invoiceReceived', 'sellerCount', value)
+                    purchaseSummaryUpdater(
+                      'invoiceReceived',
+                      'sellerCount',
+                      value
+                    )
                   }
                 />
               </td>
@@ -1712,7 +1712,9 @@ export default function Form69_2_1({
                     padding: '1.5pt',
                   }}
                   value={item.count}
-                  onChange={value => receiptPurchaseItemUpdater(index, 'count', value)}
+                  onChange={value =>
+                    receiptPurchaseItemUpdater(index, 'count', value)
+                  }
                 />
               </td>
               <td
@@ -1741,7 +1743,9 @@ export default function Form69_2_1({
                     padding: '1.5pt',
                   }}
                   value={item.itemName}
-                  onChange={value => receiptPurchaseItemUpdater(index, 'itemName', value)}
+                  onChange={value =>
+                    receiptPurchaseItemUpdater(index, 'itemName', value)
+                  }
                 />
               </td>
               <td
@@ -1770,7 +1774,9 @@ export default function Form69_2_1({
                     padding: '1.5pt',
                   }}
                   value={item.quantity}
-                  onChange={value => receiptPurchaseItemUpdater(index, 'quantity', value)}
+                  onChange={value =>
+                    receiptPurchaseItemUpdater(index, 'quantity', value)
+                  }
                 />
               </td>
               <td
@@ -1800,7 +1806,11 @@ export default function Form69_2_1({
                   }}
                   value={item.acquisitionAmount}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(index, 'acquisitionAmount', value)
+                    receiptPurchaseItemUpdater(
+                      index,
+                      'acquisitionAmount',
+                      value
+                    )
                   }
                 />
               </td>
@@ -1828,14 +1838,17 @@ export default function Form69_2_1({
                   }}
                   value={item.deemedPurchaseTax}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(index, 'deemedPurchaseTax', value)
+                    receiptPurchaseItemUpdater(
+                      index,
+                      'deemedPurchaseTax',
+                      value
+                    )
                   }
                 />
               </td>
             </tr>
           );
         })}
-
       </table>
       <p
         style={{

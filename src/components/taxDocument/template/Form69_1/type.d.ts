@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type receiptPurchaseItem = {
   // ㉔ 공급자
 
@@ -169,3 +171,5 @@ export type Form6901Data = {
 
   applicantName: string; // 신고인 (서명 또는 인)
 };
+
+export type Form6901InputData = FormInputData<Form6901Data>;

@@ -1,423 +1,766 @@
-/* form21_1 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  .form21_1 {
-    width: 624pt;
-    margin: 0 auto;
-    padding-bottom: 20pt;
-  }
-
-  .form21_1 * {
+.form21_1 * {
     margin: 0;
     padding: 0;
     text-indent: 0;
-  }
 }
 
-@layer components {
-  .form21_1 p {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; margin:0pt;
-  }
-  .form21_1 .s2 {
-    color: black; font-family:HY견고딕, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt;
-  }
-  .form21_1 input[type="checkbox"] {
-    width:15pt; height:15pt; margin:0; padding:0; vertical-align:middle; border:none; background:transparent; appearance:none; -webkit-appearance:none; -moz-appearance:none; cursor:pointer;
-  }
-  .form21_1 input[type="checkbox"]:checked {
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'%3E%3Cpath d='M2 7 L6 11 L13 2' stroke='black' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-size:contain; background-repeat:no-repeat; background-position:center;
-  }
-  .form21_1 input[type="radio"] {
-    width:7pt; height:7pt; margin:0; padding:0; vertical-align:middle; border:none; background:transparent; appearance:none; -webkit-appearance:none; -moz-appearance:none; cursor:pointer; position:relative;
-  }
-  .form21_1 input[type="radio"]:checked::after {
-    content:''; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:6pt; height:6pt; border-radius:50%; border:1pt solid #000; background:transparent;
-  }
-  .form21_1 .s3 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form21_1 .s4 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 7pt;
-  }
-  .form21_1 .s5 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form21_1 .s6 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form21_1 .s7 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt;
-  }
-  .form21_1 .s8 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form21_1 .s9 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 6pt;
-  }
-  .form21_1 .s11 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 8pt;
-  }
-  .form21_1 .s12 {
-    color: black; font-family:"Times New Roman", serif; font-style: normal; font-weight: normal; text-decoration: underline; font-size: 10pt;
-  }
-  .form21_1 .s13 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: underline; font-size: 10pt;
-  }
-  .form21_1 .s14 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: underline; font-size: 8pt;
-  }
-  .form21_1 .s15 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt;
-  }
-  .form21_1 li {
-    display: block;
-  }
-  .form21_1 #l1 {
-    padding-left: 0pt;
-  }
-  .form21_1 #l1> li>*:first-child:before {
-    content: "■ "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form21_1 table, .form21_1 tbody {
-    vertical-align: top; overflow: visible;
-  }
-  .form21_1 .report-period-input {
-    height: 15pt !important;
-  line-height: 15pt !important;
-  }
-  .form21_1 .report-period-input:hover {
-    border: 1pt solid #808080 !important;
-  }
-  .form21_1 .report-period-input:focus {
-    border: 1pt solid #808080 !important; outline: none;
-  }
-  .form21_1 .business-info-table td {
-    vertical-align: middle !important;
-  text-align: center !important;
-  position: relative !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  }
-  .form21_1 .business-info-table td p {
-    text-align: center !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  }
-  .form21_1 .business-info-table .cell-input {
-    position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: 1pt solid transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  font-family: Arial, sans-serif;
-  font-size: 9pt;
-  line-height: 1em !important;
-  background: transparent;
-  box-sizing: border-box !important;
-  }
-  .form21_1 /* 모든 테이블의 폭과 정렬 통일 */
-table {
-     box-sizing: border-box !important; border: none !important;
-  }
-  .form21_1 table[style*="width:624pt"] {
-    box-sizing: border-box !important; border: none !important;
-  }
-  .form21_1 .business-info-table .cell-input:hover {
-    border: 1pt solid #808080 !important;
-  margin: 0 !important;
-  line-height: 1em !important;
-  }
-  .form21_1 .business-info-table .cell-input:focus {
-    border: 1pt solid #808080 !important;
-  margin: 0 !important;
-  line-height: 1em !important;
-  outline: none;
-  }
-  .form21_1 td[style*="width:30pt"][style*="세율"] {
-    max-width: 30pt !important; width: 30pt !important; min-width: 30pt !important;
-  }
-  .form21_1 /* 테이블 3을 제외한 모든 테이블에만 table-layout: fixed 적용 */
-table:not(:nth-of-type(3)) {
-    table-layout: fixed !important;
-  }
-  .form21_1 table:not(:nth-of-type(3)) table {
-    table-layout: fixed !important;
-  }
-  .form21_1 /* 테이블 4를 독립적으로 제어 */
-table:nth-of-type(4) {
-    isolation: isolate;
-  }
-  .form21_1 /* 테이블 3은 HTML에서 직접 width 지정 */
-/* 테이블 3의 입력박스 높이를 12pt로 설정 */
-table:nth-of-type(3) .cell-input, .form21_1 table:nth-of-type(3) input[type="text"], .form21_1 table:nth-of-type(3) input[type="number"], .form21_1 table:nth-of-type(3) textarea {
-    height: 12pt !important;
-  }
-  .form21_1 /* 첫 번째 신고내용 테이블의 마지막 열(7열) 오른쪽 테두리 제거 */
-table[style*="width:624pt"][style*="table-layout:fixed"] {
-    border: none !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:171pt"], .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:134pt"] {
-    border-right: none !important; border-right-width: 0 !important; border-right-style: none !important; border-right-color: transparent !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:171pt"] + td, .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:134pt"] + td {
-    border-left: none !important;
-  }
-  .form21_1 /* 매입세액 테이블의 우측 border 제거 및 폭 조정 */
-table.new-purchase-tax-table {
-    border-right: none !important; margin-top: 0 !important; margin-bottom: 2pt !important;
-  }
-  .form21_1 table.new-purchase-tax-table tr td:last-child {
-    border-right: none !important; border-right-width: 0 !important; border-right-style: none !important; border-right-color: transparent !important;
-  }
-  .form21_1 /* 매입세액 테이블 아래 테이블 스타일 */
-table.below-purchase-tax-table {
-    border-right: none !important; border-left: none !important; margin-top: 0 !important; margin-bottom: 2pt !important; width: 624pt !important;
-  }
-  .form21_1 table.below-purchase-tax-table tr:first-child td:first-child {
-    padding-left: 3pt !important; padding-right: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
-  }
-  .form21_1 table.below-purchase-tax-table tr td:first-child {
-    border-left: none !important;
-  }
-  .form21_1 table.below-purchase-tax-table tr td:last-child {
-    border-right: none !important;
-  }
-  .form21_1 table.below-purchase-tax-table td {
-    position: relative; padding: 0 !important; margin: 0 !important;
-  }
-  .form21_1 table.below-purchase-tax-table .text-input:hover, .form21_1 table.below-purchase-tax-table .text-input:focus {
-    border: 1pt solid #808080 !important; margin: 0 !important; outline: none !important;
-  }
-  .form21_1 /* ② 국세환급금 계좌신고 테이블 아래 테이블 스타일 */
-table.below-account-report-table {
-    border-right: none !important; border-left: none !important; margin-top: 0 !important; width: 624pt !important;
-  }
-  .form21_1 table.below-account-report-table tr td:first-child {
-    border-left: none !important;
-  }
-  .form21_1 table.below-account-report-table tr td:last-child {
-    border-right: none !important;
-  }
-  .form21_1 table.below-account-report-table td {
-    position: relative; padding: 0 !important; margin: 0 !important;
-  }
-  .form21_1 table.below-account-report-table .text-input:hover, .form21_1 table.below-account-report-table .text-input:focus {
-    border: 1pt solid #808080 !important; margin: 0 !important; outline: none !important;
-  }
-  .form21_1 /* 신고내용 테이블 입력박스 스타일 */
-table[style*="width:624pt"][style*="table-layout:fixed"] td {
-    position: relative; padding: 0 !important; margin: 0 !important; line-height: 0 !important; font-size: 0; vertical-align: middle;
-  }
-  .form21_1 /* 신고내용 테이블 첫 번째 열 병합 셀(rowspan=9) 바닥 테두리 */
-table[style*="width:624pt"][style*="table-layout:fixed"] tr:nth-child(2) td[rowspan="9"], .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr:nth-child(2) td[rowspan='9'] {
-    border-bottom: 1pt solid #7E7E7E !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] td input {
-    font-size: 8pt; line-height: 1em !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] td .text-input {
+.form21_1 p {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
     font-size: 9pt;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input, .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input, .form21_1 table.new-purchase-tax-table .number-input, .form21_1 table.new-purchase-tax-table .text-input {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; border: none; padding: 0 !important; margin: 0 !important; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1em !important; background: transparent; box-sizing: border-box;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input, .form21_1 table.new-purchase-tax-table .number-input {
-    text-align: right; padding-right: 10pt !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input, .form21_1 table.new-purchase-tax-table .text-input {
-    text-align: center; font-size: 9pt; color: #000;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:hover, .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:hover, .form21_1 table.new-purchase-tax-table .number-input:hover, .form21_1 table.new-purchase-tax-table .text-input:hover {
-    border: 1pt solid #808080; margin: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; line-height: 1em !important;
-  }
-  .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:focus, .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:focus, .form21_1 table.new-purchase-tax-table .number-input:focus, .form21_1 table.new-purchase-tax-table .text-input:focus {
-    border: 1pt solid #808080; margin: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; line-height: 1em !important; outline: none;
-  }
-  .form21_1 /* 새로 만든 테이블(inserted-between-tables)의 입력박스 스타일 */
-table.inserted-between-tables td {
-    position: relative; padding: 0 !important; margin: 0 !important;
-  }
-  .form21_1 table.inserted-between-tables input {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; border: none; padding: 0 !important; margin: 0 !important; font-family: Arial, sans-serif; font-size: 8pt; line-height: 1em !important; background: transparent; box-sizing: border-box; outline: none;
-  }
-  .form21_1 table.inserted-between-tables input {
-    text-align: center !important;
-  }
-  .form21_1 table.inserted-between-tables input:hover {
-    border: 1pt solid #808080 !important;
-  }
-  .form21_1 table.inserted-between-tables input:focus {
-    border: 1pt solid #808080 !important;
-  }
-  .form21_1 /* 폐업신고 아래 테이블(closure-report-detail-table)의 입력박스 스타일 */
-table.closure-report-detail-table td {
-    position: relative; padding: 0 !important; margin: 0 !important;
-  }
-  .form21_1 table.closure-report-detail-table .text-input {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; border: none; padding: 0 !important; margin: 0 !important; font-family: Arial, sans-serif; font-size: 9pt; line-height: 1em !important; background: transparent; box-sizing: border-box; outline: none;
-  }
-  .form21_1 table.closure-report-detail-table .text-input:hover {
-    border: 1pt solid #808080 !important;
-  }
-  .form21_1 table.closure-report-detail-table .text-input:focus {
-    border: 1pt solid #808080 !important;
-  }
-  .form21_1 table.closure-report-detail-table input[type="checkbox"] {
-    width: 15pt; height: 15pt; margin: 0; padding: 0; vertical-align: middle; border: none; background: transparent; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer;
-  }
-  .form21_1 table.closure-report-detail-table input[type="checkbox"]:checked {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'%3E%3Cpath d='M2 7 L6 11 L13 2' stroke='black' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; background-position: center;
-  }
-  .form21_1 /* 폐업신고 테이블과 새 테이블 간 간격 유지 및 정렬 */
-table.inserted-between-tables {
-    margin-bottom: 2pt !important; border: none !important; box-sizing: border-box !important; width: 624pt !important;
-  }
-  .form21_1 table.closure-report-detail-table {
-    margin-top: 2pt !important; border: none !important; box-sizing: border-box !important; width: 624pt !important;
-  }
-  .form21_1 table.below-zero-rate-table {
-    margin-top: 2pt !important; 
-  margin-bottom: 2pt !important; 
-  border: none !important; 
-  box-sizing: border-box !important; 
-  width: 624pt !important; 
-  display: table !important; 
-  visibility: visible !important; 
-  opacity: 1 !important; 
-  position: relative !important;
-  }
-  .form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] {
-    display: table !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  }
-  .form21_1 table.below-zero-rate-table input.cell-input:focus {
-    border: 0.5pt solid #C0C0C0 !important;
-  outline: none !important;
-  }
-  .form21_1 table.below-zero-rate-table input.cell-input:hover {
-    border: 0.5pt solid #C0C0C0 !important;
-  }
-  .form21_1 /* 숫자 입력박스 스피너 제거 */
-table.below-zero-rate-table input[type="number"]::-webkit-inner-spin-button, .form21_1 table.below-zero-rate-table input[type="number"]::-webkit-outer-spin-button {
+    margin: 0;
+}
+
+.form21_1 .s2 {
+    color: black;
+    font-family: HY견고딕, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 16.5pt;
+}
+
+.form21_1 input[type="checkbox"] {
+    width: 15pt;
+    height: 15pt;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    border: none;
+    background: transparent;
+    appearance: none;
     -webkit-appearance: none;
-  margin: 0;
-  }
-  .form21_1 table.below-zero-rate-table input[type="number"] {
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.form21_1 input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'%3E%3Cpath d='M2 7 L6 11 L13 2' stroke='black' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.form21_1 input[type="radio"] {
+    width: 7pt;
+    height: 7pt;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    border: none;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.form21_1 input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6pt;
+    height: 6pt;
+    border-radius: 50%;
+    border: 1pt solid #000;
+    background: transparent;
+}
+
+.form21_1 .s3 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 9pt;
+}
+
+.form21_1 .s4 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 7pt;
+}
+
+.form21_1 .s5 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 8pt;
+}
+
+.form21_1 .s6 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 10pt;
+}
+
+.form21_1 .s7 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 11pt;
+}
+
+.form21_1 .s8 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 10pt;
+}
+
+.form21_1 .s9 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 6pt;
+}
+
+.form21_1 .s11 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 8pt;
+}
+
+.form21_1 .s12 {
+    color: black;
+    font-family: "Times New Roman", serif;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: underline;
+    font-size: 10pt;
+}
+
+.form21_1 .s13 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: underline;
+    font-size: 10pt;
+}
+
+.form21_1 .s14 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: underline;
+    font-size: 8pt;
+}
+
+.form21_1 .s15 {
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 13pt;
+}
+
+.form21_1 li {
+    display: block;
+}
+
+.form21_1 #l1 {
+    padding-left: 0pt;
+}
+
+.form21_1 #l1 > li > *:first-child:before {
+    content: "■ ";
+    color: black;
+    font-family: 돋움체, monospace;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: 9pt;
+}
+
+.form21_1 table, .form21_1 tbody {
+    vertical-align: top;
+    overflow: visible;
+}
+
+.form21_1 {
+    width: 624pt;
+    min-height: 882pt;
+    padding-top: 10pt;
+    padding-bottom: 20pt;
+    margin: 0 auto;
+}
+
+.form21_1 .report-period-input {
+    height: 15pt !important;
+    line-height: 15pt !important;
+}
+
+.form21_1 .report-period-input:hover {
+    border: 1pt solid #808080 !important;
+}
+
+.form21_1 .report-period-input:focus {
+    border: 1pt solid #808080 !important;
+    outline: none;
+}
+
+.form21_1 .business-info-table td {
+    vertical-align: middle !important;
+    text-align: center !important;
+    position: relative !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.form21_1 .business-info-table td p {
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.form21_1 .business-info-table .cell-input {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: 1pt solid transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1em !important;
+    background: transparent;
+    box-sizing: border-box !important;
+    text-align: center;
+    color: #000;
+    display: block;
+}
+
+/* 모든 테이블의 폭과 정렬 통일 */
+.form21_1 table {
+    box-sizing: border-box !important;
+    border: none !important;
+}
+
+.form21_1 table[style*="width:624pt"] {
+    box-sizing: border-box !important;
+    border: none !important;
+}
+
+.form21_1 .business-info-table .cell-input:hover {
+    border: 1pt solid #808080 !important;
+    margin: 0 !important;
+    line-height: 1em !important;
+}
+
+.form21_1 .business-info-table .cell-input:focus {
+    border: 1pt solid #808080 !important;
+    margin: 0 !important;
+    line-height: 1em !important;
+    outline: none;
+}
+
+.form21_1 td.tax-rate-cell {
+    max-width: 30pt !important;
+    width: 30pt !important;
+    min-width: 30pt !important;
+}
+
+/* 테이블 3을 제외한 모든 테이블에만 table-layout: fixed 적용 */
+.form21_1 table:not(:nth-of-type(3)) {
+    table-layout: fixed !important;
+}
+
+.form21_1 table:not(:nth-of-type(3)) table {
+    table-layout: fixed !important;
+}
+
+/* 테이블 4를 독립적으로 제어 */
+.form21_1 table:nth-of-type(4) {
+    isolation: isolate;
+}
+
+/* 테이블 3은 HTML에서 직접 width 지정 */
+/* 테이블 3의 입력박스 높이를 12pt로 설정 */
+.form21_1 table:nth-of-type(3) .cell-input,
+.form21_1 table:nth-of-type(3) input[type="text"],
+.form21_1 table:nth-of-type(3) input[type="number"],
+.form21_1 table:nth-of-type(3) textarea {
+    height: 12pt !important;
+}
+
+/* 첫 번째 신고내용 테이블의 마지막 열(7열) 오른쪽 테두리 제거 */
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] {
+    border: none !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:171pt"],
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:134pt"] {
+    border-right: none !important;
+    border-right-width: 0 !important;
+    border-right-style: none !important;
+    border-right-color: transparent !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:171pt"] + td,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr td[style*="width:134pt"] + td {
+    border-left: none !important;
+}
+
+/* 매입세액 테이블의 우측 border 제거 및 폭 조정 */
+.form21_1 table.new-purchase-tax-table {
+    border-right: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 2pt !important;
+}
+
+.form21_1 table.new-purchase-tax-table tr td:last-child {
+    border-right: none !important;
+    border-right-width: 0 !important;
+    border-right-style: none !important;
+    border-right-color: transparent !important;
+}
+
+/* 매입세액 테이블 아래 테이블 스타일 */
+.form21_1 table.below-purchase-tax-table {
+    border-right: none !important;
+    border-left: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 2pt !important;
+    width: 624pt !important;
+}
+
+.form21_1 table.below-purchase-tax-table tr:first-child td:first-child {
+    padding-left: 3pt !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.form21_1 table.below-purchase-tax-table tr td:first-child {
+    border-left: none !important;
+}
+
+.form21_1 table.below-purchase-tax-table tr td:last-child {
+    border-right: none !important;
+}
+
+.form21_1 table.below-purchase-tax-table td {
+    position: relative;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.form21_1 table.below-purchase-tax-table .text-input:hover,
+.form21_1 table.below-purchase-tax-table .text-input:focus {
+    border: 1pt solid #808080 !important;
+    margin: 0 !important;
+    outline: none !important;
+}
+
+/* ② 국세환급금 계좌신고 테이블 아래 테이블 스타일 */
+.form21_1 table.below-account-report-table {
+    border-right: none !important;
+    border-left: none !important;
+    margin-top: 0 !important;
+    width: 624pt !important;
+}
+
+.form21_1 table.below-account-report-table tr td:first-child {
+    border-left: none !important;
+}
+
+.form21_1 table.below-account-report-table tr td:last-child {
+    border-right: none !important;
+}
+
+.form21_1 table.below-account-report-table td {
+    position: relative;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.form21_1 table.below-account-report-table .text-input:hover,
+.form21_1 table.below-account-report-table .text-input:focus {
+    border: 1pt solid #808080 !important;
+    margin: 0 !important;
+    outline: none !important;
+}
+
+/* 신고내용 테이블 입력박스 스타일 */
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] td {
+    position: relative;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+    font-size: 0;
+    vertical-align: middle;
+}
+
+/* 신고내용 테이블 첫 번째 열 병합 셀(rowspan=9) 바닥 테두리 */
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr:nth-child(2) td[rowspan="9"],
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] tr:nth-child(2) td[rowspan='9'] {
+    border-bottom: 1pt solid #7E7E7E !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] td input {
+    font-size: 8pt;
+    line-height: 1em !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] td .text-input {
+    font-size: 9pt;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input,
+.form21_1 table.new-purchase-tax-table .number-input,
+.form21_1 table.new-purchase-tax-table .text-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1em !important;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input,
+.form21_1 table.new-purchase-tax-table .number-input {
+    text-align: right;
+    padding-right: 10pt !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input,
+.form21_1 table.new-purchase-tax-table .text-input {
+    text-align: center;
+    font-size: 9pt;
+    color: #000;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:hover,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:hover,
+.form21_1 table.new-purchase-tax-table .number-input:hover,
+.form21_1 table.new-purchase-tax-table .text-input:hover {
+    border: 1pt solid #808080;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1em !important;
+}
+
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:focus,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:focus,
+.form21_1 table.new-purchase-tax-table .number-input:focus,
+.form21_1 table.new-purchase-tax-table .text-input:focus {
+    border: 1pt solid #808080;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1em !important;
+    outline: none;
+}
+
+/* 새로 만든 테이블(inserted-between-tables)의 입력박스 스타일 */
+.form21_1 table.inserted-between-tables td {
+    position: relative;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.form21_1 table.inserted-between-tables input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1em !important;
+    background: transparent;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form21_1 table.inserted-between-tables input {
+    text-align: center !important;
+}
+
+.form21_1 table.inserted-between-tables input:hover {
+    border: 1pt solid #808080 !important;
+}
+
+.form21_1 table.inserted-between-tables input:focus {
+    border: 1pt solid #808080 !important;
+}
+
+/* 폐업신고 아래 테이블(closure-report-detail-table)의 입력박스 스타일 */
+.form21_1 table.closure-report-detail-table td {
+    position: relative;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.form21_1 table.closure-report-detail-table .text-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1em !important;
+    background: transparent;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form21_1 table.closure-report-detail-table .text-input:hover {
+    border: 1pt solid #808080 !important;
+}
+
+.form21_1 table.closure-report-detail-table .text-input:focus {
+    border: 1pt solid #808080 !important;
+}
+
+.form21_1 table.closure-report-detail-table input[type="checkbox"] {
+    width: 15pt;
+    height: 15pt;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+    border: none;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.form21_1 table.closure-report-detail-table input[type="checkbox"]:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'%3E%3Cpath d='M2 7 L6 11 L13 2' stroke='black' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 폐업신고 테이블과 새 테이블 간 간격 유지 및 정렬 */
+.form21_1 table.inserted-between-tables {
+    margin-bottom: 2pt !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    width: 624pt !important;
+}
+
+.form21_1 table.closure-report-detail-table {
+    margin-top: 2pt !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    width: 624pt !important;
+}
+
+.form21_1 table.below-zero-rate-table {
+    margin-top: 2pt !important;
+    margin-bottom: 2pt !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    width: 624pt !important;
+    display: table !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+}
+
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] {
+    display: table !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.form21_1 table.below-zero-rate-table input.cell-input:focus {
+    border: 0.5pt solid #C0C0C0 !important;
+    outline: none !important;
+}
+
+.form21_1 table.below-zero-rate-table input.cell-input:hover {
+    border: 0.5pt solid #C0C0C0 !important;
+}
+
+/* 숫자 입력박스 스피너 제거 */
+.form21_1 table.below-zero-rate-table input[type="number"]::-webkit-inner-spin-button,
+.form21_1 table.below-zero-rate-table input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form21_1 table.below-zero-rate-table input[type="number"] {
     -moz-appearance: textfield;
-  }
-  .form21_1 /* 6열 7행 분할된 셀의 너비 강제 설정 */
-table.below-zero-rate-table td[data-col-split="left"] {
+}
+
+/* 6열 7행 분할된 셀의 너비 강제 설정 */
+.form21_1 table.below-zero-rate-table td[data-col-split="left"] {
     width: 90pt !important;
-  min-width: 90pt !important;
-  max-width: 90pt !important;
-  }
-  .form21_1 table.below-zero-rate-table td[data-col-split="right"] {
+    min-width: 90pt !important;
+    max-width: 90pt !important;
+}
+
+.form21_1 table.below-zero-rate-table td[data-col-split="right"] {
     width: 233pt !important;
-  min-width: 233pt !important;
-  max-width: 233pt !important;
-  }
-  .form21_1 /* 폐업신고 테이블과 새 테이블의 좌측 정렬을 맞추기 위해 margin-left는 JavaScript로 동적으로 설정 */
+    min-width: 233pt !important;
+    max-width: 233pt !important;
+}
+
+/* 폐업신고 테이블과 새 테이블의 좌측 정렬을 맞추기 위해 margin-left는 JavaScript로 동적으로 설정 */
 /* 세무대리인 테이블 스타일 - 깜빡임 방지 */
 /* 마지막 테이블의 첫 번째 행 첫 번째 셀 (세무대리인 텍스트가 있는 셀) */
-table:last-of-type:not(.new-purchase-tax-table) tr:first-child td:first-child {
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) tr:first-child td:first-child {
     vertical-align: middle !important;
-  text-align: center !important;
-  padding: 0 !important;
-  }
-  .form21_1 table:last-of-type:not(.new-purchase-tax-table) tr:first-child td:first-child p {
+    text-align: center !important;
     padding: 0 !important;
-  margin: 0 !important;
-  text-align: center !important;
-  }
-  .form21_1 /* 세무대리인 테이블의 모든 셀에 대한 기본 스타일 */
-table:last-of-type:not(.new-purchase-tax-table) {
-    width: 624pt !important;
-  margin-left: 0 !important;
-  margin-right: auto !important;
-  margin-top: 0 !important;
-  }
-  .form21_1 /* 새로 생성한 테이블의 margin-bottom을 2pt로 강제 설정 */
-table.below-zero-rate-table[data-below-zero-rate="true"] {
-    margin-bottom: 2pt !important;
-  margin-top: 2pt !important;
-  }
-  .form21_1 /* 새로 생성한 테이블 다음에 오는 세무대리인 테이블의 margin-top 제거 */
-table.below-zero-rate-table[data-below-zero-rate="true"] + table:last-of-type:not(.new-purchase-tax-table), .form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] ~ table:last-of-type:not(.new-purchase-tax-table), .form21_1 table.after-below-zero-rate-table, .form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] + table, .form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] ~ table {
-    margin-top: 0 !important;
-  padding-top: 0 !important;
-  line-height: 0 !important;
-  font-size: 0 !important;
-  }
-  .form21_1 /* 테이블 사이의 모든 요소 제거 */
-table.below-zero-rate-table[data-below-zero-rate="true"] + *:not(table) {
-    display: none !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 0 !important;
-  font-size: 0 !important;
-  }
-  .form21_1 /* 사업자 테이블과 가로선(hr) 사이 간격 2pt */
-table.business-info-table {
-    margin-bottom: 2pt !important;
-  }
-  .form21_1 table.business-info-table + p + p + hr, .form21_1 table.business-info-table ~ hr {
-    margin-top: 0 !important;
-  padding-top: 0 !important;
-  line-height: 0 !important;
-  font-size: 0 !important;
-  }
-  .form21_1 /* 사업자 테이블과 hr 사이의 p 태그 제거 */
-table.business-info-table + p {
+}
+
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) tr:first-child td:first-child p {
+    padding: 0 !important;
     margin: 0 !important;
-  padding: 0 !important;
-  height: 0 !important;
-  line-height: 0 !important;
-  font-size: 0 !important;
-  display: none !important;
-  }
-  .form21_1 /* 세무대리인 테이블의 입력박스 스타일 (매입세액 테이블과 동일) */
-table:last-of-type:not(.new-purchase-tax-table) td {
+    text-align: center !important;
+}
+
+/* 세무대리인 테이블의 모든 셀에 대한 기본 스타일 */
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) {
+    width: 624pt !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    margin-top: 0 !important;
+}
+
+/* 새로 생성한 테이블의 margin-bottom을 2pt로 강제 설정 */
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] {
+    margin-bottom: 2pt !important;
+    margin-top: 2pt !important;
+}
+
+/* 새로 생성한 테이블 다음에 오는 세무대리인 테이블의 margin-top 제거 */
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] + table:last-of-type:not(.new-purchase-tax-table),
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] ~ table:last-of-type:not(.new-purchase-tax-table),
+.form21_1 table.after-below-zero-rate-table,
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] + table,
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] ~ table {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+/* 테이블 사이의 모든 요소 제거 */
+.form21_1 table.below-zero-rate-table[data-below-zero-rate="true"] + *:not(table) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+/* 사업자 테이블과 가로선(hr) 사이 간격 2pt */
+.form21_1 table.business-info-table {
+    margin-bottom: 2pt !important;
+}
+
+.form21_1 table.business-info-table + p + p + hr,
+.form21_1 table.business-info-table ~ hr {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+/* 사업자 테이블과 hr 사이의 p 태그 제거 */
+.form21_1 table.business-info-table + p {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    display: none !important;
+}
+
+/* 세무대리인 테이블의 입력박스 스타일 (매입세액 테이블과 동일) */
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) td {
     position: relative;
-  padding: 0 !important;
-  }
-  .form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input {
+    padding: 0 !important;
+}
+
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input {
     position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  padding: 0 !important;
-  margin: 0 !important;
-  font-family: Arial, sans-serif;
-  font-size: 9pt;
-  line-height: 1em !important;
-  background: transparent;
-  box-sizing: border-box;
-  text-align: center;
-  color: #000;
-  }
-  .form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input:hover {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1em !important;
+    background: transparent;
+    box-sizing: border-box;
+    text-align: center;
+    color: #000;
+}
+
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input:hover {
     border: 1pt solid #808080;
-  margin: 0 !important;
-  line-height: 1em !important;
-  }
-  .form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input:focus {
+    margin: 0 !important;
+    line-height: 1em !important;
+}
+
+.form21_1 table:last-of-type:not(.new-purchase-tax-table) .text-input:focus {
     border: 1pt solid #808080;
-  margin: 0 !important;
-  line-height: 1em !important;
-  outline: none;
-  }
+    margin: 0 !important;
+    line-height: 1em !important;
+    outline: none;
 }

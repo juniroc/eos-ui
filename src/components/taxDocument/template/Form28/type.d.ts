@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 interface TaxAmountPair {
   taxBase: number; // 과세표준
 
@@ -133,3 +135,5 @@ export type Form28Data = {
 
   totalStats: TotalTaxStats; // 합계
 };
+
+export type Form28InputData = FormInputData<Form28Data>;

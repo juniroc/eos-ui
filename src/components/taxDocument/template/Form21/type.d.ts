@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form21Data = {
   isScheduled: boolean;
 
@@ -149,3 +151,5 @@ export type Form21Data = {
 
   taxAgentResidentNumber: string;
 };
+
+export type Form21InputData = FormInputData<Form21Data>;

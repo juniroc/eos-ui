@@ -1,13 +1,11 @@
 /* form38 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form38 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form38 * {
@@ -109,3 +107,12 @@
     vertical-align: middle;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form38 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form38 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

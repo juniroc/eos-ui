@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type rentalItem = {
   // 임대사항
 
@@ -89,3 +91,5 @@ export type Form25Data = {
 
   rentalItems: Array<rentalItem>;
 };
+
+export type Form25InputData = FormInputData<Form25Data>;

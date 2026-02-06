@@ -14,9 +14,9 @@ import {
   FORM19_3_REPAYMENT_ITEM_LENGTH,
 } from '@/components/taxDocument/template/Form19/constants';
 
-type Props = UpdaterProps<Form19Data> & { data: Form19Data };
+type Props = UpdaterProps<Form19Data>;
 
-const Form19 = ({ data, updater }: Props) => {
+const Form19 = ({ updater, ...data }: Props) => {
   const [badDebtPageCount, setBadDebtPageCount] = useState(
     getFormCount(
       data.badDebtDeductionItems.length,

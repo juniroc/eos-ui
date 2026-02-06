@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form33Data = {
   /* [헤더] 귀속 연도 및 과세기간 */
 
@@ -101,3 +103,5 @@ export type Form33Data = {
 
   applicantName: string; // 신고인 (서명 또는 인)
 };
+
+export type Form33InputData = FormInputData<Form33Data>;

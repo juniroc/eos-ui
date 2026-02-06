@@ -1,13 +1,11 @@
 /* form28 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form28 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 
   .form28 * {
@@ -79,3 +77,12 @@
     text-align: left; font-family: Arial, monospace; font-size: 8pt;
   }
 }
+
+/* add-page button positioning (exclude bottom padding) */
+.form28 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form28 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

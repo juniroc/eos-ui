@@ -1,10 +1,10 @@
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form42ata } from '@/components/taxDocument/template/Form42/type';
+import { Form42Data } from '@/components/taxDocument/template/Form42/type';
 import { useState } from 'react';
 import Form42_1 from '@/components/taxDocument/template/Form42/pages/Form42_1/Form42_1';
 import { getFormCount } from '@/components/taxDocument/utils/pageUtil';
 
-function Form42({ updater, ...data }: UpdaterProps<Form42ata>) {
+function Form42({ updater, ...data }: UpdaterProps<Form42Data>) {
   const [pageCount, setPageCount] = useState(
     getFormCount(
       data.attachmentItems.length,

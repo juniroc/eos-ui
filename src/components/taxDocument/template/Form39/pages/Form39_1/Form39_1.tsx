@@ -3,9 +3,7 @@ import './form39_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { Form39Data } from '@/components/taxDocument/template/Form39/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
-import {
-  Form39_1_MAX_DETAIL_LIST_MAX_LENGTH,
-} from '@/components/taxDocument/template/Form39/constants';
+import { FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form39/constants';
 
 export default function Form39_1({
   pageIndex,
@@ -23,13 +21,14 @@ export default function Form39_1({
 }: FormPageProps<Form39Data>) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
-  const createEmptySplit = (): Form39Data['summary']['grandTotal']['supplyPrice'] => ({
-    trillion: 0,
-    billion: 0,
-    million: 0,
-    thousand: 0,
-    one: 0,
-  });
+  const createEmptySplit =
+    (): Form39Data['summary']['grandTotal']['supplyPrice'] => ({
+      trillion: 0,
+      billion: 0,
+      million: 0,
+      thousand: 0,
+      one: 0,
+    });
 
   const createEmptyDetail = (): Form39Data['detailList'][number] => ({
     bizRegNumber: '',
@@ -40,9 +39,9 @@ export default function Form39_1({
     remarks: '',
   });
 
-  const startIndex = pageIndex * Form39_1_MAX_DETAIL_LIST_MAX_LENGTH;
+  const startIndex = pageIndex * FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH;
   const detailItems = Array.from(
-    { length: Form39_1_MAX_DETAIL_LIST_MAX_LENGTH },
+    { length: FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH },
     (_, i) => detailList[startIndex + i] ?? createEmptyDetail()
   );
 
@@ -78,7 +77,9 @@ export default function Form39_1({
 
   const updateSummaryRow = (
     rowKey: SummaryRowKey,
-    updaterFn: (row: Form39Data['summary']['grandTotal']) => Form39Data['summary']['grandTotal']
+    updaterFn: (
+      row: Form39Data['summary']['grandTotal']
+    ) => Form39Data['summary']['grandTotal']
   ) => {
     const next = { ...summary };
     switch (rowKey) {
@@ -88,7 +89,9 @@ export default function Form39_1({
       case 'electronicReceivedBiz':
         next.electronicTaxInvoice = {
           ...summary.electronicTaxInvoice,
-          receivedFromBizReg: updaterFn(summary.electronicTaxInvoice.receivedFromBizReg),
+          receivedFromBizReg: updaterFn(
+            summary.electronicTaxInvoice.receivedFromBizReg
+          ),
         };
         break;
       case 'electronicReceivedResident':
@@ -108,7 +111,9 @@ export default function Form39_1({
       case 'nonElectronicReceivedBiz':
         next.nonElectronicTaxInvoice = {
           ...summary.nonElectronicTaxInvoice,
-          receivedFromBizReg: updaterFn(summary.nonElectronicTaxInvoice.receivedFromBizReg),
+          receivedFromBizReg: updaterFn(
+            summary.nonElectronicTaxInvoice.receivedFromBizReg
+          ),
         };
         break;
       case 'nonElectronicReceivedResident':
@@ -167,7 +172,9 @@ export default function Form39_1({
 
   const updateDetailItem = (
     absIndex: number,
-    updaterFn: (item: Form39Data['detailList'][number]) => Form39Data['detailList'][number]
+    updaterFn: (
+      item: Form39Data['detailList'][number]
+    ) => Form39Data['detailList'][number]
   ) => {
     const next = [...detailList];
     const current = next[absIndex] ?? createEmptyDetail();
@@ -259,7 +266,9 @@ export default function Form39_1({
           }}
           type="text"
           value={detail.bizRegNumber}
-          onChange={e => updateDetailField(absIndex, 'bizRegNumber', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'bizRegNumber', e.target.value)
+          }
         />
       </td>
       <td
@@ -291,7 +300,9 @@ export default function Form39_1({
           }}
           type="text"
           value={detail.companyName}
-          onChange={e => updateDetailField(absIndex, 'companyName', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'companyName', e.target.value)
+          }
         />
       </td>
       <td
@@ -351,7 +362,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.supplyPrice.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -381,7 +394,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.supplyPrice.billion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
+          }
         />
       </td>
       <td
@@ -411,7 +426,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.supplyPrice.million}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
+          }
         />
       </td>
       <td
@@ -441,7 +458,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.supplyPrice.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -471,7 +490,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.supplyPrice.one}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'one', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
+          }
         />
       </td>
       <td
@@ -501,7 +522,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.tax.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -531,7 +554,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.tax.billion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'billion', value)
+          }
         />
       </td>
       <td
@@ -561,7 +586,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.tax.million}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'million', value)
+          }
         />
       </td>
       <td
@@ -591,7 +618,9 @@ export default function Form39_1({
             fontFamily: 'Arial',
           }}
           value={detail.tax.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -788,9 +817,7 @@ export default function Form39_1({
           type="text"
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={e =>
-            updater('taxPeriodEndDay', digitsOnly(e.target.value))
-          }
+          onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
         />
         일)
       </p>
@@ -868,7 +895,9 @@ export default function Form39_1({
                   }}
                   type="text"
                   value={submitterInfo.bizRegNumber}
-                  onChange={e => updateSubmitterInfo('bizRegNumber', e.target.value)}
+                  onChange={e =>
+                    updateSubmitterInfo('bizRegNumber', e.target.value)
+                  }
                 />
               </td>
               <td
@@ -913,7 +942,9 @@ export default function Form39_1({
                   }}
                   type="text"
                   value={submitterInfo.companyName}
-                  onChange={e => updateSubmitterInfo('companyName', e.target.value)}
+                  onChange={e =>
+                    updateSubmitterInfo('companyName', e.target.value)
+                  }
                 />
               </td>
             </tr>
@@ -1304,7 +1335,10 @@ export default function Form39_1({
                   maxLength={4}
                   value={submitterInfo.writingYear}
                   onChange={e =>
-                    updateSubmitterInfo('writingYear', digitsOnly(e.target.value))
+                    updateSubmitterInfo(
+                      'writingYear',
+                      digitsOnly(e.target.value)
+                    )
                   }
                 />
                 <p
@@ -1334,7 +1368,10 @@ export default function Form39_1({
                   maxLength={2}
                   value={submitterInfo.writingMonth}
                   onChange={e =>
-                    updateSubmitterInfo('writingMonth', digitsOnly(e.target.value))
+                    updateSubmitterInfo(
+                      'writingMonth',
+                      digitsOnly(e.target.value)
+                    )
                   }
                 />
                 <p
@@ -1364,7 +1401,10 @@ export default function Form39_1({
                   maxLength={2}
                   value={submitterInfo.writingDay}
                   onChange={e =>
-                    updateSubmitterInfo('writingDay', digitsOnly(e.target.value))
+                    updateSubmitterInfo(
+                      'writingDay',
+                      digitsOnly(e.target.value)
+                    )
                   }
                 />
                 <p
@@ -1636,7 +1676,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').sellerCount} onChange={value => updateSummaryField('grandTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('grandTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField('grandTotal', 'sellerCount', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1664,7 +1708,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').invoiceCount} onChange={value => updateSummaryField('grandTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('grandTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField('grandTotal', 'invoiceCount', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1692,7 +1740,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1720,7 +1777,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.billion} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'billion', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1748,7 +1814,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.million} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'million', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1776,7 +1851,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1804,7 +1888,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.one} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1832,7 +1925,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.trillion} onChange={value => updateSummarySplit('grandTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('grandTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'trillion', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1860,7 +1957,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.billion} onChange={value => updateSummarySplit('grandTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('grandTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'billion', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1888,7 +1989,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.million} onChange={value => updateSummarySplit('grandTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('grandTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'million', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1916,7 +2021,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.thousand} onChange={value => updateSummarySplit('grandTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('grandTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'thousand', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1941,7 +2050,11 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.one} onChange={value => updateSummarySplit('grandTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('grandTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'one', value)
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2028,7 +2141,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').sellerCount} onChange={value => updateSummaryField('electronicReceivedBiz', 'sellerCount', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicReceivedBiz',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2057,7 +2178,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').invoiceCount} onChange={value => updateSummaryField('electronicReceivedBiz', 'invoiceCount', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicReceivedBiz',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2086,7 +2215,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicReceivedBiz', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedBiz').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2115,7 +2255,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').supplyPrice.billion} onChange={value => updateSummarySplit('electronicReceivedBiz', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedBiz').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2144,7 +2295,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').supplyPrice.million} onChange={value => updateSummarySplit('electronicReceivedBiz', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedBiz').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2173,7 +2335,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicReceivedBiz', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedBiz').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2202,7 +2375,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').supplyPrice.one} onChange={value => updateSummarySplit('electronicReceivedBiz', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2231,7 +2413,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').tax.trillion} onChange={value => updateSummarySplit('electronicReceivedBiz', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2260,7 +2451,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').tax.billion} onChange={value => updateSummarySplit('electronicReceivedBiz', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2289,7 +2489,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').tax.million} onChange={value => updateSummarySplit('electronicReceivedBiz', 'tax', 'million', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2318,7 +2527,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').tax.thousand} onChange={value => updateSummarySplit('electronicReceivedBiz', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2344,7 +2562,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedBiz').tax.one} onChange={value => updateSummarySplit('electronicReceivedBiz', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicReceivedBiz').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedBiz',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2406,7 +2633,17 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').sellerCount} onChange={value => updateSummaryField('electronicReceivedResident', 'sellerCount', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').sellerCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicReceivedResident',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2435,7 +2672,17 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').invoiceCount} onChange={value => updateSummaryField('electronicReceivedResident', 'invoiceCount', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').invoiceCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicReceivedResident',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2464,7 +2711,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicReceivedResident', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').supplyPrice
+                      .trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2493,7 +2752,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').supplyPrice.billion} onChange={value => updateSummarySplit('electronicReceivedResident', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').supplyPrice
+                      .billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2522,7 +2793,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').supplyPrice.million} onChange={value => updateSummarySplit('electronicReceivedResident', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').supplyPrice
+                      .million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2551,7 +2834,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicReceivedResident', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').supplyPrice
+                      .thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2580,7 +2875,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').supplyPrice.one} onChange={value => updateSummarySplit('electronicReceivedResident', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').supplyPrice.one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2609,7 +2915,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').tax.trillion} onChange={value => updateSummarySplit('electronicReceivedResident', 'tax', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').tax.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2638,7 +2955,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').tax.billion} onChange={value => updateSummarySplit('electronicReceivedResident', 'tax', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').tax.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2667,7 +2995,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').tax.million} onChange={value => updateSummarySplit('electronicReceivedResident', 'tax', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').tax.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2696,7 +3035,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').tax.thousand} onChange={value => updateSummarySplit('electronicReceivedResident', 'tax', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicReceivedResident').tax.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2722,7 +3072,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicReceivedResident').tax.one} onChange={value => updateSummarySplit('electronicReceivedResident', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicReceivedResident').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicReceivedResident',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2781,7 +3140,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').sellerCount} onChange={value => updateSummaryField('electronicSubTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('electronicSubTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicSubTotal',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2810,7 +3177,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').invoiceCount} onChange={value => updateSummaryField('electronicSubTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('electronicSubTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicSubTotal',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2839,7 +3214,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2868,7 +3254,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.billion} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2897,7 +3294,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.million} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2926,7 +3334,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2955,7 +3374,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.one} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('electronicSubTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2984,7 +3412,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.trillion} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3013,7 +3450,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.billion} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3042,7 +3488,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.million} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3071,7 +3526,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.thousand} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3097,7 +3561,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.one} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3184,7 +3657,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').sellerCount} onChange={value => updateSummaryField('nonElectronicReceivedBiz', 'sellerCount', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicReceivedBiz',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3213,7 +3694,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').invoiceCount} onChange={value => updateSummaryField('nonElectronicReceivedBiz', 'invoiceCount', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicReceivedBiz',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3242,7 +3731,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedBiz').supplyPrice
+                      .trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3271,7 +3772,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedBiz').supplyPrice
+                      .billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3300,7 +3813,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedBiz').supplyPrice
+                      .million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3329,7 +3854,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedBiz').supplyPrice
+                      .thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3358,7 +3895,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedBiz').supplyPrice.one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3387,7 +3935,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').tax.trillion} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3416,7 +3973,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').tax.billion} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3445,7 +4011,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').tax.million} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'tax', 'million', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3474,7 +4049,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').tax.thousand} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3500,7 +4084,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedBiz').tax.one} onChange={value => updateSummarySplit('nonElectronicReceivedBiz', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedBiz').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedBiz',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3562,7 +4155,17 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').sellerCount} onChange={value => updateSummaryField('nonElectronicReceivedResident', 'sellerCount', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').sellerCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicReceivedResident',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3591,7 +4194,17 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').invoiceCount} onChange={value => updateSummaryField('nonElectronicReceivedResident', 'invoiceCount', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').invoiceCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicReceivedResident',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3620,7 +4233,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').supplyPrice
+                      .trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3649,7 +4274,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').supplyPrice
+                      .billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3678,7 +4315,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').supplyPrice
+                      .million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3707,7 +4356,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').supplyPrice
+                      .thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3736,7 +4397,19 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').supplyPrice
+                      .one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3765,7 +4438,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').tax.trillion} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'tax', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').tax.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3794,7 +4478,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').tax.billion} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'tax', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').tax.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3823,7 +4518,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').tax.million} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'tax', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').tax.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3852,7 +4558,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').tax.thousand} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'tax', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicReceivedResident').tax.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3878,7 +4595,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicReceivedResident').tax.one} onChange={value => updateSummarySplit('nonElectronicReceivedResident', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicReceivedResident').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicReceivedResident',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3935,7 +4661,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').sellerCount} onChange={value => updateSummaryField('nonElectronicSubTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicSubTotal',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3963,7 +4697,15 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').invoiceCount} onChange={value => updateSummaryField('nonElectronicSubTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicSubTotal',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3991,7 +4733,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4019,7 +4772,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4047,7 +4811,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4075,7 +4850,18 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4103,7 +4889,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4131,7 +4926,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.trillion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4159,7 +4963,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.billion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4187,7 +5000,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.million} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4215,7 +5037,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.thousand} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4240,7 +5071,16 @@ export default function Form39_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.one} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
           </table>

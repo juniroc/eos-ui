@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type badDebtDeductionItem = {
   originalSupplyDate: string; // ⑤ 당초 공급 연월일 (YYYY-MM-DD)
 
@@ -93,3 +95,5 @@ export type Form19_2Props = Form19ApplicantProps &
 
 export type Form19_3Props = Form19ApplicantProps &
   Pick<Form19Data, 'repaymentTaxItems'>;
+
+export type Form19InputData = FormInputData<Form19Data>;

@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type ExportItem = {
   exportDeclarationNumber: string; // ⑬ 수출신고번호
 
@@ -119,3 +121,5 @@ export type Form40Data = {
 
   exportItems: Array<ExportItem>;
 };
+
+export type Form40InputData = FormInputData<Form40Data>;

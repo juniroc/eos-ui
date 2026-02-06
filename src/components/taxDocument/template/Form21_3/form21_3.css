@@ -1,45 +1,86 @@
 /* form21_3 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
-  .form21_3 {
-    width: 624pt;
-    margin: 0 auto;
-    padding-bottom: 20pt;
-  }
+    .form21_3 {
+        width: 624pt;
+        margin: 0 auto;
+        padding-bottom: 20pt;
+    }
 
-  .form21_3 * {
-    margin: 0;
-    padding: 0;
-    text-indent: 0;
-  }}
+    .form21_3 * {
+        margin: 0;
+        padding: 0;
+        text-indent: 0;
+    }
 }
 
 @layer components {
-  .form21_3 p {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 7pt; margin:0pt;
-  }
-  .form21_3 .s1 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form21_3 .s2 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;
-  }
-  .form21_3 .s3 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt;
-  }
-  .form21_3 .s4 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form21_3 .s5 {
-    color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 6pt;
-  }
-  .form21_3 .s6 {
-    color: black; font-family:"Microsoft JhengHei", sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt;
-  }
-  .form21_3 table, .form21_3 tbody {
-    vertical-align: top; overflow: visible;
-  }
+    .form21_3 p {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 7pt;
+        margin: 0pt;
+    }
+
+    .form21_3 .s1 {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form21_3 .s2 {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 10pt;
+    }
+
+    .form21_3 .s3 {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 9pt;
+    }
+
+    .form21_3 .s4 {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form21_3 .s5 {
+        color: black;
+        font-family: 돋움체, monospace;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 6pt;
+    }
+
+    .form21_3 .s6 {
+        color: black;
+        font-family: "Microsoft JhengHei", sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: none;
+        font-size: 8pt;
+    }
+
+    .form21_3 table, .form21_3 tbody {
+        vertical-align: top;
+        overflow: visible;
+    }
 }

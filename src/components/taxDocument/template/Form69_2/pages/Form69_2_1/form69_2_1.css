@@ -1,40 +1,47 @@
 /* form69 Styles */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   .form69 {
     width: 624pt;
     margin: 0 auto;
     padding-bottom: 20pt;
+    position: relative;
   }
 }
 
 /* Original HTML Styles */
- * {margin:0; padding:0; text-indent:0; }
- .s1 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
- .s3 { color: #282828; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt; }
- .s4 { color: #282828; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12.5pt; }
- .s5 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
- .s6 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; }
- .s7 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
- .s8 { color: #282828; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; }
- .s9 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
- .s10 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
- .s11 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
- p { color: #282828; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; margin:0pt; }
- .s12 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
- .s13 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 3pt; }
- .s14 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
- h1 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt; }
- .s15 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 1pt; }
- .s16 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
- li {display: block; }
- #l1 {padding-left: 0pt; }
- #l1> li>*:first-child:before {content: "■ "; color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
- li {display: block; }
- #l2 {padding-left: 0pt;counter-reset: d1 1; }
- #l2> li>*:first-child:before {counter-increment: d1; content: counter(d1, decimal)". "; color: black; font-style: normal; font-weight: bold; text-decoration: none; }
- #l2> li:first-child>*:first-child:before {counter-increment: d1 0;  }
- table, tbody {vertical-align: top; overflow: visible; }
+ .form69 * {margin:0; padding:0; text-indent:0; }
+ .form69 .s1 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ .form69 .s3 { color: #282828; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 16.5pt; }
+ .form69 .s4 { color: #282828; font-family:HY얕은샘물M, serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12.5pt; }
+ .form69 .s5 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .form69 .s6 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; }
+ .form69 .s7 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .form69 .s8 { color: #282828; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; }
+ .form69 .s9 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .form69 .s10 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .form69 .s11 { color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ .form69 p { color: #282828; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; margin:0pt; }
+ .form69 .s12 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .form69 .s13 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 3pt; }
+ .form69 .s14 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .form69 h1 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: bold; text-decoration: none; font-size: 13pt; }
+ .form69 .s15 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; vertical-align: 1pt; }
+ .form69 .s16 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ .form69 li {display: block; }
+ .form69 #l1 {padding-left: 0pt; }
+ .form69 #l1> li>*:first-child:before {content: "■ "; color: black; font-family:돋움, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ .form69 li {display: block; }
+ .form69 #l2 {padding-left: 0pt;counter-reset: d1 1; }
+ .form69 #l2> li>*:first-child:before {counter-increment: d1; content: counter(d1, decimal)". "; color: black; font-style: normal; font-weight: bold; text-decoration: none; }
+ .form69 #l2> li:first-child>*:first-child:before {counter-increment: d1 0;  }
+ .form69 table, .form69 tbody {vertical-align: top; overflow: visible; }
+
+/* add-page button positioning (exclude bottom padding) */
+.form69 #addTableBtn {
+  bottom: 20pt !important;
+}
+.form69 #addThirdTableBtn {
+  bottom: 20pt !important;
+}
+

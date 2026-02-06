@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type AttachmentItem = {
   documentName: string; // ⑩ 서류명
 
@@ -30,7 +32,7 @@ export type AttachmentItem = {
   remarks?: string; // ⑳ 비고
 };
 
-export type Form42ata = {
+export type Form42Data = {
   /* [헤더] 귀속 연도 및 과세기간 */
 
   attributionYear: string; // 년
@@ -79,3 +81,5 @@ export type Form42ata = {
 
   attachmentItems: Array<AttachmentItem>;
 };
+
+export type Form42InputData = FormInputData<Form42Data>;

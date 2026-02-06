@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form20Data = {
   /* 1. 신고인 인적사항 (① ~ ⑥) */
 
@@ -47,3 +49,5 @@ export type Form20Data = {
 
   submitterName: string; // 신고인 (서명 또는 인) 옆 이름
 };
+
+export type Form20InputData = FormInputData<Form20Data>;

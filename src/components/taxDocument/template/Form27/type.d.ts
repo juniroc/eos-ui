@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type AssetAcquisitionRow = {
   count: number; // 건수
 
@@ -57,3 +59,5 @@ export type Form27Data = {
 
   submitterName: string; // 제출자 (서명 또는 인)
 };
+
+export type Form27InputData = FormInputData<Form27Data>;

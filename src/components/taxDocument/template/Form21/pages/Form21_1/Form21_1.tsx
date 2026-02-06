@@ -1371,6 +1371,7 @@ export default function Form21_1({
             </p>
           </td>
           <td
+            className="tax-rate-cell"
             style={{
               verticalAlign: 'middle',
               width: '40pt',

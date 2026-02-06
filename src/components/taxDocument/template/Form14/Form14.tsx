@@ -1,7 +1,11 @@
 'use client';
-import 'src/components/taxDocument/template/Form14/form14.css';
+import './form14.css';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form14Data, Item, MoneyGrid, } from '@/components/taxDocument/template/Form14/type';
+import {
+  Form14Data,
+  Item,
+  MoneyGrid,
+} from '@/components/taxDocument/template/Form14/type';
 
 const ITEM_ROW_COUNT = 9;
 

@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type Form41DetailItem = {
   type: string; // ⑬ 구분 (예: "내국신용장" 또는 "구매확인서")
 
@@ -103,3 +105,5 @@ export type Form41Data = {
 
   detailList: Array<Form41DetailItem>;
 };
+
+export type Form41InputData = FormInputData<Form41Data>;

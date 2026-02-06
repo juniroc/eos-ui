@@ -1,9 +1,6 @@
 /* =========================
    Tailwind 선언
 ========================= */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* =========================
    Reset
@@ -21,22 +18,22 @@
         text-indent: 0;
     }
 
-    table,
-    tbody {
+    .form-15 table,
+    .form-15 tbody {
         vertical-align: top;
         overflow: visible;
     }
 
-    table p {
+    .form-15 table p {
         font-size: 9pt !important;
         line-height: 120% !important;
     }
 
-    li {
+    .form-15 li {
         display: block;
     }
 
-    p {
+    .form-15 p {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -46,7 +43,7 @@
         margin: 0pt;
     }
 
-    h1 {
+    .form-15 h1 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -55,7 +52,7 @@
         font-size: 13pt;
     }
 
-    h2 {
+    .form-15 h2 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -69,7 +66,7 @@
    서식 클래스 (s1 ~ s15)
 ========================= */
 @layer components {
-    .s1 {
+    .form-15 .s1 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -78,7 +75,7 @@
         font-size: 8pt;
     }
 
-    .s2 {
+    .form-15 .s2 {
         color: #00F;
         font-family: 돋움체, monospace;
         font-style: normal;
@@ -87,7 +84,7 @@
         font-size: 9pt;
     }
 
-    .s3 {
+    .form-15 .s3 {
         color: black;
         font-family: HY견고딕, serif;
         font-style: normal;
@@ -96,7 +93,7 @@
         font-size: 16.5pt;
     }
 
-    .s4 {
+    .form-15 .s4 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -105,7 +102,7 @@
         font-size: 9pt;
     }
 
-    .s5 {
+    .form-15 .s5 {
         color: black;
         font-family: 돋움체, monospace;
         font-style: normal;
@@ -114,7 +111,7 @@
         font-size: 11pt;
     }
 
-    .s6 {
+    .form-15 .s6 {
         color: black;
         font-family: 돋움체, monospace;
         font-style: normal;
@@ -123,7 +120,7 @@
         font-size: 10pt;
     }
 
-    .s7 {
+    .form-15 .s7 {
         color: black;
         font-family: 돋움체, monospace;
         font-style: normal;
@@ -132,7 +129,7 @@
         font-size: 9pt;
     }
 
-    .s8 {
+    .form-15 .s8 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -141,7 +138,7 @@
         font-size: 10pt;
     }
 
-    .s9 {
+    .form-15 .s9 {
         color: black;
         font-family: 바탕, serif;
         font-style: normal;
@@ -150,7 +147,7 @@
         font-size: 9pt;
     }
 
-    .s10 {
+    .form-15 .s10 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -159,7 +156,7 @@
         font-size: 10pt;
     }
 
-    .s11 {
+    .form-15 .s11 {
         color: black;
         font-family: 바탕, serif;
         font-style: normal;
@@ -168,7 +165,7 @@
         font-size: 10pt;
     }
 
-    .s12 {
+    .form-15 .s12 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -177,7 +174,7 @@
         font-size: 9pt;
     }
 
-    .s13 {
+    .form-15 .s13 {
         color: #7E7E7E;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -186,7 +183,7 @@
         font-size: 8pt;
     }
 
-    .s14 {
+    .form-15 .s14 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -196,7 +193,7 @@
         vertical-align: 1pt;
     }
 
-    .s15 {
+    .form-15 .s15 {
         color: black;
         font-family: 돋움, monospace;
         font-style: normal;
@@ -210,12 +207,12 @@
    List Counter (원본 유지)
 ========================= */
 @layer components {
-    #l1 {
+    .form-15 #l1 {
         padding-left: 0pt;
         counter-reset: c1 1;
     }
 
-    #l1 > li > *:first-child:before {
+    .form-15 #l1 > li > *:first-child:before {
         counter-increment: c1;
         content: counter(c1, decimal) ". ";
         color: black;
@@ -224,16 +221,16 @@
         text-decoration: none;
     }
 
-    #l1 > li:first-child > *:first-child:before {
+    .form-15 #l1 > li:first-child > *:first-child:before {
         counter-increment: c1 0;
     }
 
-    #l2 {
+    .form-15 #l2 {
         padding-left: 0pt;
         counter-reset: d1 1;
     }
 
-    #l2 > li > *:first-child:before {
+    .form-15 #l2 > li > *:first-child:before {
         counter-increment: d1;
         content: counter(d1, decimal) ". ";
         color: black;
@@ -244,7 +241,7 @@
         font-size: 8pt;
     }
 
-    #l2 > li:first-child > *:first-child:before {
+    .form-15 #l2 > li:first-child > *:first-child:before {
         counter-increment: d1 0;
     }
 }
@@ -253,7 +250,7 @@
    Input (원본 그대로)
 ========================= */
 @layer components {
-    input.form-input {
+    .form-15 input.form-input {
         width: 100%;
         height: 100%;
         border: none;
@@ -265,17 +262,17 @@
         box-sizing: border-box;
     }
 
-    input.form-input:focus {
+    .form-15 input.form-input:focus {
         border: 0.5pt solid #999;
     }
 
-    input.form-input-numeric {
+    .form-15 input.form-input-numeric {
         text-align: right;
         font-family: Arial;
         font-size: 9pt;
     }
 
-    input.form-input-text {
+    .form-15 input.form-input-text {
         text-align: left;
         font-family: Arial;
         font-size: 9pt;

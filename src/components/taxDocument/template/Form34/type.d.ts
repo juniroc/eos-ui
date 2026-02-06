@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type WorkplaceItem = {
   // 1. 기본 정보
 
@@ -151,3 +153,5 @@ export type Form34Data = {
     remarks?: string;
   };
 };
+
+export type Form34InputData = FormInputData<Form34Data>;

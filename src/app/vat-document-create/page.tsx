@@ -1,9 +1,18 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getVatCompanyInfo, saveVatCompanyInfo, uploadStamp, getStamp, deleteStamp, createVatReport, type VatCompanyInfo } from '@/services/api';
+import {
+  createVatReport,
+  deleteStamp,
+  getStamp,
+  getVatCompanyInfo,
+  saveVatCompanyInfo,
+  uploadStamp,
+  type VatCompanyInfo,
+  VatFormData,
+} from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
 import VatDocumentCreateModal from '@/components/documentCreate/VatDocumentCreateModal';
@@ -43,15 +52,21 @@ export default function VatDocumentCreatePage() {
     }
   };
 
-  const [reportingPeriodStart, setReportingPeriodStart] = useState<string>(getTodayDateString());
-  const [reportingType, setReportingType] = useState<string>(getDefaultReportingType());
-  const [vatCompanyInfo, setVatCompanyInfo] = useState<VatCompanyInfo | null>(null);
+  const [reportingPeriodStart, setReportingPeriodStart] =
+    useState<string>(getTodayDateString());
+  const [reportingType, setReportingType] = useState<string>(
+    getDefaultReportingType()
+  );
+  const [vatCompanyInfo, setVatCompanyInfo] = useState<VatCompanyInfo | null>(
+    null
+  );
   const [stampImageUrl, setStampImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [createdReportId, setCreatedReportId] = useState<string | null>(null);
+  const [reportForms, setReportForms] = useState<VatFormData[]>([]);
 
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
@@ -109,7 +124,8 @@ export default function VatDocumentCreatePage() {
       setShowToast(true);
     } catch (err) {
       console.error('도장 업로드 에러:', err);
-      const errorMessage = err instanceof Error ? err.message : '도장 업로드에 실패했습니다.';
+      const errorMessage =
+        err instanceof Error ? err.message : '도장 업로드에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setLoading(false);
@@ -210,9 +226,12 @@ export default function VatDocumentCreatePage() {
     }
 
     // reportingType을 API의 filingType으로 매핑
-    const filingTypeMap: Record<string, 'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND'> = {
-      '예정': 'SCHEDULED',
-      '확정': 'CONFIRMED',
+    const filingTypeMap: Record<
+      string,
+      'SCHEDULED' | 'CONFIRMED' | 'AFTER_DEADLINE' | 'EARLY_REFUND'
+    > = {
+      예정: 'SCHEDULED',
+      확정: 'CONFIRMED',
       '기한 후 환급': 'AFTER_DEADLINE',
       '조기 환급': 'EARLY_REFUND',
     };
@@ -231,12 +250,14 @@ export default function VatDocumentCreatePage() {
 
       // 성공 시 모달 열기 및 토스트 메시지 표시
       setCreatedReportId(response.id);
+      setReportForms(response.forms);
       setToastMessage('서류가 생성됐어요!');
       setShowToast(true);
       setIsModalOpen(true);
     } catch (err) {
       console.error('서류 생성 에러:', err);
-      const errorMessage = err instanceof Error ? err.message : '서류 생성에 실패했습니다.';
+      const errorMessage =
+        err instanceof Error ? err.message : '서류 생성에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setLoading(false);
@@ -255,7 +276,9 @@ export default function VatDocumentCreatePage() {
               <div className="flex flex-row items-end p-0 gap-5 w-full">
                 <div className="flex flex-col items-start p-0">
                   <div className="flex flex-row items-center p-0 gap-4 w-full">
-                    <h3 className="text-sm leading-[140%] text-[#1E1E1E]">신고기간</h3>
+                    <h3 className="text-sm leading-[140%] text-[#1E1E1E]">
+                      신고기간
+                    </h3>
                   </div>
                 </div>
               </div>
@@ -264,7 +287,9 @@ export default function VatDocumentCreatePage() {
                 {/* 신고일정 */}
                 <div className="flex flex-row items-center p-0 w-1/2">
                   <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
-                    <span className="text-xs leading-[100%] text-[#757575]">신고일정</span>
+                    <span className="text-xs leading-[100%] text-[#757575]">
+                      신고일정
+                    </span>
                   </div>
                   <div className="flex flex-col items-start p-0 gap-2 flex-1">
                     <div className="flex flex-row items-center p-2 gap-2 w-full h-8 bg-white border border-[#D9D9D9]">
@@ -273,7 +298,7 @@ export default function VatDocumentCreatePage() {
                         className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                         placeholder="선택하기"
                         value={reportingPeriodStart}
-                        onChange={(e) => setReportingPeriodStart(e.target.value)}
+                        onChange={e => setReportingPeriodStart(e.target.value)}
                       />
                     </div>
                   </div>
@@ -281,14 +306,16 @@ export default function VatDocumentCreatePage() {
                 {/* 신고유형 */}
                 <div className="flex flex-row items-center p-0 w-1/2">
                   <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-l-0 border-r-0">
-                    <span className="text-xs leading-[100%] text-[#757575]">신고유형</span>
+                    <span className="text-xs leading-[100%] text-[#757575]">
+                      신고유형
+                    </span>
                   </div>
                   <div className="flex flex-col items-start p-0 gap-2 flex-1">
                     <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-l-0">
                       <select
                         className="w-full text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                         value={reportingType}
-                        onChange={(e) => setReportingType(e.target.value)}
+                        onChange={e => setReportingType(e.target.value)}
                       >
                         <option value="예정">예정</option>
                         <option value="확정">확정</option>
@@ -307,7 +334,9 @@ export default function VatDocumentCreatePage() {
                 <div className="flex flex-row items-end p-0 gap-5 w-full">
                   <div className="flex flex-col items-start p-0">
                     <div className="flex flex-row items-center p-0 gap-4 w-full">
-                      <h3 className="text-sm leading-[140%] text-[#1E1E1E]">회사정보</h3>
+                      <h3 className="text-sm leading-[140%] text-[#1E1E1E]">
+                        회사정보
+                      </h3>
                     </div>
                   </div>
                 </div>
@@ -318,7 +347,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">회사명</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          회사명
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9]">
@@ -326,14 +357,20 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.name || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, name: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev ? { ...prev, name: e.target.value } : null
+                              )
+                            }
                           />
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">대표자명</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          대표자명
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-l-0">
@@ -341,7 +378,16 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.representativeName || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, representativeName: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      representativeName: e.target.value,
+                                    }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -352,7 +398,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">사업자등록번호</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          사업자등록번호
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-[#E6E6E6] border border-[#D9D9D9] border-t-0">
@@ -366,7 +414,9 @@ export default function VatDocumentCreatePage() {
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">법인/개인 구분</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          법인/개인 구분
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-[#E6E6E6] border border-[#D9D9D9] border-t-0 border-l-0">
@@ -384,7 +434,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">법인등록번호</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          법인등록번호
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-[#E6E6E6] border border-[#D9D9D9] border-t-0">
@@ -398,7 +450,9 @@ export default function VatDocumentCreatePage() {
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">개업일자</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          개업일자
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
@@ -406,7 +460,16 @@ export default function VatDocumentCreatePage() {
                             type="date"
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             value={vatCompanyInfo.establishmentDate || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, establishmentDate: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      establishmentDate: e.target.value,
+                                    }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -417,30 +480,66 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">업태</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          업태
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0">
                           <input
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
-                            value={Array.isArray(vatCompanyInfo.businessType) ? vatCompanyInfo.businessType.join(', ') : (vatCompanyInfo.businessType || '')}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, businessType: e.target.value.split(',').map(s => s.trim()).filter(s => s) } : null)}
+                            value={
+                              Array.isArray(vatCompanyInfo.businessType)
+                                ? vatCompanyInfo.businessType.join(', ')
+                                : vatCompanyInfo.businessType || ''
+                            }
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      businessType: e.target.value
+                                        .split(',')
+                                        .map(s => s.trim())
+                                        .filter(s => s),
+                                    }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">종목</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          종목
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
                           <input
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
-                            value={Array.isArray(vatCompanyInfo.businessCategory2) ? vatCompanyInfo.businessCategory2.join(', ') : (vatCompanyInfo.businessCategory2 || '')}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, businessCategory2: e.target.value.split(',').map(s => s.trim()).filter(s => s) } : null)}
+                            value={
+                              Array.isArray(vatCompanyInfo.businessCategory2)
+                                ? vatCompanyInfo.businessCategory2.join(', ')
+                                : vatCompanyInfo.businessCategory2 || ''
+                            }
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      businessCategory2: e.target.value
+                                        .split(',')
+                                        .map(s => s.trim())
+                                        .filter(s => s),
+                                    }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -451,7 +550,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">사업장주소</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          사업장주소
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0">
@@ -459,14 +560,22 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.address || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, address: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? { ...prev, address: e.target.value }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">사업장 전화번호</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          사업장 전화번호
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
@@ -474,7 +583,11 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.phone || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, phone: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev ? { ...prev, phone: e.target.value } : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -485,7 +598,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">환급계좌은행</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          환급계좌은행
+                        </span>
                       </div>
                       <div className="flex flex-row items-center p-0 flex-1 min-w-0">
                         {/* 왼쪽 1/2: 은행 */}
@@ -495,7 +610,16 @@ export default function VatDocumentCreatePage() {
                               className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                               placeholder="입력하기"
                               value={vatCompanyInfo.refundBankName || ''}
-                              onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, refundBankName: e.target.value } : null)}
+                              onChange={e =>
+                                setVatCompanyInfo(prev =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        refundBankName: e.target.value,
+                                      }
+                                    : null
+                                )
+                              }
                             />
                           </div>
                         </div>
@@ -506,7 +630,16 @@ export default function VatDocumentCreatePage() {
                               className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none min-w-0"
                               placeholder="입력하기"
                               value={vatCompanyInfo.refundBankBranch || ''}
-                              onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, refundBankBranch: e.target.value } : null)}
+                              onChange={e =>
+                                setVatCompanyInfo(prev =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        refundBankBranch: e.target.value,
+                                      }
+                                    : null
+                                )
+                              }
                             />
                           </div>
                         </div>
@@ -514,7 +647,9 @@ export default function VatDocumentCreatePage() {
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">계좌번호</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          계좌번호
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
@@ -522,7 +657,13 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.refundAccount || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, refundAccount: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? { ...prev, refundAccount: e.target.value }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -533,7 +674,9 @@ export default function VatDocumentCreatePage() {
                   <div className="flex flex-row items-start p-0 w-full h-8">
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">휴대전화</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          휴대전화
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0">
@@ -541,14 +684,22 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.mobilePhone || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, mobilePhone: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev
+                                  ? { ...prev, mobilePhone: e.target.value }
+                                  : null
+                              )
+                            }
                           />
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-row items-center p-0 w-1/2">
                       <div className="flex flex-row items-center p-2 w-[100px] h-8 bg-[#F5F5F5] border border-[#D9D9D9] border-t-0 border-l-0 border-r-0">
-                        <span className="text-xs leading-[100%] text-[#757575]">전자우편주소</span>
+                        <span className="text-xs leading-[100%] text-[#757575]">
+                          전자우편주소
+                        </span>
                       </div>
                       <div className="flex flex-col items-start p-0 gap-2 flex-1">
                         <div className="flex flex-row items-center p-2 w-full h-8 bg-white border border-[#D9D9D9] border-t-0 border-l-0">
@@ -556,7 +707,11 @@ export default function VatDocumentCreatePage() {
                             className="flex-1 text-xs leading-[100%] text-[#B3B3B3] bg-transparent border-none outline-none"
                             placeholder="입력하기"
                             value={vatCompanyInfo.email || ''}
-                            onChange={(e) => setVatCompanyInfo(prev => prev ? { ...prev, email: e.target.value } : null)}
+                            onChange={e =>
+                              setVatCompanyInfo(prev =>
+                                prev ? { ...prev, email: e.target.value } : null
+                              )
+                            }
                           />
                         </div>
                       </div>
@@ -586,7 +741,9 @@ export default function VatDocumentCreatePage() {
               <div className="flex flex-row items-end p-0 gap-5">
                 <div className="flex flex-col items-start p-0">
                   <div className="flex flex-row items-center p-0 gap-4">
-                    <h3 className="text-sm leading-[140%] text-[#1E1E1E]">회사인감 혹은 서명 등록</h3>
+                    <h3 className="text-sm leading-[140%] text-[#1E1E1E]">
+                      회사인감 혹은 서명 등록
+                    </h3>
                   </div>
                 </div>
               </div>
@@ -596,7 +753,12 @@ export default function VatDocumentCreatePage() {
                 {!stampImageUrl ? (
                   <div className="relative flex flex-col justify-center items-center p-6 gap-3 w-[200px] bg-white border border-dashed border-[#D9D9D9]">
                     <div className="flex items-center justify-center">
-                      <Image src="/icons/upload.svg" alt="upload" width={24} height={24} />
+                      <Image
+                        src="/icons/upload.svg"
+                        alt="upload"
+                        width={24}
+                        height={24}
+                      />
                     </div>
                     <div className="flex flex-col items-center p-0 gap-0.5">
                       <span className="text-xs leading-[140%] text-center text-[#303030]">
@@ -610,7 +772,7 @@ export default function VatDocumentCreatePage() {
                       type="file"
                       accept="image/png,image/jpeg,image/jpg"
                       className="absolute inset-0 opacity-0 cursor-pointer"
-                      onChange={(e) => {
+                      onChange={e => {
                         const file = e.target.files?.[0];
                         if (file) handleStampUpload(file);
                       }}
@@ -633,7 +795,12 @@ export default function VatDocumentCreatePage() {
                 {/* 설명 영역 - 도장 하단 4px 간격 */}
                 <div className="flex flex-row justify-center items-center p-0 gap-0.5 w-[200px]">
                   <div className="relative w-4 h-4 flex items-center justify-center">
-                    <Image src="/icons/alert.svg" alt="alert" width={16} height={16} />
+                    <Image
+                      src="/icons/alert.svg"
+                      alt="alert"
+                      width={16}
+                      height={16}
+                    />
                   </div>
                   <span className="text-xs leading-[140%] text-center text-[#767676]">
                     도장선택 기능은 준비중입니다.
@@ -643,13 +810,13 @@ export default function VatDocumentCreatePage() {
                 {/* 버튼 영역 */}
                 <div className="flex flex-row justify-end items-center p-0 gap-2 w-[200px]">
                   {!stampImageUrl ? (
-                    <label className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E] cursor-pointer" >
+                    <label className="flex flex-row justify-center items-center px-3 py-2 gap-2 bg-[#F3F3F3] text-xs leading-[100%] text-[#1E1E1E] cursor-pointer">
                       도장선택
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/jpg"
                         className="hidden"
-                        onChange={(e) => {
+                        onChange={e => {
                           const file = e.target.files?.[0];
                           if (file) handleStampUpload(file);
                         }}
@@ -660,10 +827,11 @@ export default function VatDocumentCreatePage() {
                     <button
                       onClick={handleStampDelete}
                       disabled={!stampImageUrl || loading}
-                      className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${stampImageUrl && !loading
-                        ? 'bg-[#F3F3F3] text-[#1E1E1E]'
-                        : 'bg-[#E6E6E6] text-[#B3B3B3]'
-                        }`}
+                      className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${
+                        stampImageUrl && !loading
+                          ? 'bg-[#F3F3F3] text-[#1E1E1E]'
+                          : 'bg-[#E6E6E6] text-[#B3B3B3]'
+                      }`}
                     >
                       도장삭제
                     </button>
@@ -693,10 +861,11 @@ export default function VatDocumentCreatePage() {
                 <button
                   onClick={handleCreateDocument}
                   disabled={!canCreateDocument || loading}
-                  className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${!canCreateDocument || loading
-                    ? 'bg-[#E6E6E6] text-[#B3B3B3]'
-                    : 'bg-[#F3F3F3] text-[#1E1E1E]'
-                    }`}
+                  className={`flex flex-row justify-center items-center px-3 py-2 gap-2 h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${
+                    !canCreateDocument || loading
+                      ? 'bg-[#E6E6E6] text-[#B3B3B3]'
+                      : 'bg-[#F3F3F3] text-[#1E1E1E]'
+                  }`}
                 >
                   서류 생성하기
                 </button>
@@ -715,6 +884,7 @@ export default function VatDocumentCreatePage() {
       <VatDocumentCreateModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        reportForms={reportForms}
         reportId={createdReportId || undefined}
       />
     </div>

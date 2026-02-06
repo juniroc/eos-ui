@@ -1,18 +1,28 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAvailableForms, addFormsToReport, type AvailableForm } from '@/services/api';
+import {
+  addFormsToReport,
+  type AvailableForm,
+  getAvailableForms,
+  VatFormData,
+} from '@/services/api';
 
 interface AvailableFormsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   reportId?: string;
-  onFormsAdded?: (forms: Array<{ id: string; name: string }>) => void;
+  onFormsAdded?: (forms: Array<VatFormData>) => void;
 }
 
-function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: AvailableFormsSidebarProps) {
+function AvailableFormsSidebar({
+  isOpen,
+  onClose,
+  reportId,
+  onFormsAdded,
+}: AvailableFormsSidebarProps) {
   const { token } = useAuth();
   const [availableForms, setAvailableForms] = useState<AvailableForm[]>([]);
   const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set());
@@ -30,12 +40,17 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
 
           // 이미 포함된 서식 체크
           const includedForms = new Set<string>(
-            response.forms.filter((form: AvailableForm) => form.isIncluded).map((form: AvailableForm) => form.formCode)
+            response.forms
+              .filter((form: AvailableForm) => form.isIncluded)
+              .map((form: AvailableForm) => form.formCode)
           );
           setSelectedForms(includedForms);
         } catch (error) {
           console.error('서식 목록 조회 에러:', error);
-          const errorMessage = error instanceof Error ? error.message : '서식 목록 조회에 실패했습니다.';
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : '서식 목록 조회에 실패했습니다.';
           alert(errorMessage);
         } finally {
           setLoadingForms(false);
@@ -60,7 +75,9 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
   };
 
   // 전체 선택 여부 확인
-  const isAllSelected = availableForms.length > 0 && availableForms.every(form => selectedForms.has(form.formCode));
+  const isAllSelected =
+    availableForms.length > 0 &&
+    availableForms.every(form => selectedForms.has(form.formCode));
 
   // 전체 선택/해제 토글
   const handleToggleAll = () => {
@@ -83,17 +100,13 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
     try {
       setIsAdding(true);
       const formCodes = Array.from(selectedForms);
-      const response = await addFormsToReport(
-        reportId,
-        { formCodes },
-        token
-      );
+      const response = await addFormsToReport(reportId, { formCodes }, token);
 
       // 성공 시 콜백 호출하여 추가된 서식 정보 전달
       if (onFormsAdded && response.forms) {
-        const addedForms = response.forms
-          .filter((form: { formCode: string }) => formCodes.includes(form.formCode))
-          .map((form: { id: string; name: string }) => ({ id: form.id, name: form.name }));
+        const addedForms = response.forms.filter((form: { formCode: string }) =>
+          formCodes.includes(form.formCode)
+        );
         onFormsAdded(addedForms);
       }
 
@@ -101,7 +114,8 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
       onClose();
     } catch (error) {
       console.error('서식 추가 에러:', error);
-      const errorMessage = error instanceof Error ? error.message : '서식 추가에 실패했습니다.';
+      const errorMessage =
+        error instanceof Error ? error.message : '서식 추가에 실패했습니다.';
       alert(errorMessage);
     } finally {
       setIsAdding(false);
@@ -136,10 +150,11 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
             {/* 체크박스 헤더 */}
             <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border border-[#D9D9D9] flex-shrink-0">
               <div
-                className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${isAllSelected
-                  ? 'border-[#2C2C2C] bg-[#2C2C2C]'
-                  : 'border-[#D9D9D9] bg-white'
-                  }`}
+                className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${
+                  isAllSelected
+                    ? 'border-[#2C2C2C] bg-[#2C2C2C]'
+                    : 'border-[#D9D9D9] bg-white'
+                }`}
                 onClick={handleToggleAll}
               >
                 {isAllSelected && (
@@ -187,15 +202,19 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
               <span className="text-sm text-[#757575]">로딩 중...</span>
             </div>
           ) : (
-            availableForms.map((form) => (
-              <div key={form.formCode} className="flex flex-row items-stretch p-0 w-full min-h-[58px]">
+            availableForms.map(form => (
+              <div
+                key={form.formCode}
+                className="flex flex-row items-stretch p-0 w-full min-h-[58px]"
+              >
                 {/* 체크박스 */}
                 <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border-b border-l border-r border-[#D9D9D9] flex-shrink-0">
                   <div
-                    className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${selectedForms.has(form.formCode)
-                      ? 'border-[#2C2C2C] bg-[#2C2C2C]'
-                      : 'border-[#D9D9D9] bg-white'
-                      }`}
+                    className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${
+                      selectedForms.has(form.formCode)
+                        ? 'border-[#2C2C2C] bg-[#2C2C2C]'
+                        : 'border-[#D9D9D9] bg-white'
+                    }`}
                     onClick={() => handleToggleForm(form.formCode)}
                   >
                     {selectedForms.has(form.formCode) && (
@@ -245,16 +264,18 @@ function AvailableFormsSidebar({ isOpen, onClose, reportId, onFormsAdded }: Avai
           <button
             onClick={handleAddForms}
             disabled={selectedForms.size === 0 || isAdding}
-            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${selectedForms.size > 0 && !isAdding
-              ? 'bg-[#2C2C2C] cursor-pointer'
-              : 'bg-[#E6E6E6] cursor-not-allowed'
-              }`}
+            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${
+              selectedForms.size > 0 && !isAdding
+                ? 'bg-[#2C2C2C] cursor-pointer'
+                : 'bg-[#E6E6E6] cursor-not-allowed'
+            }`}
           >
             <span
-              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${selectedForms.size > 0 && !isAdding
-                ? 'text-[#F5F5F5]'
-                : 'text-[#B3B3B3]'
-                }`}
+              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
+                selectedForms.size > 0 && !isAdding
+                  ? 'text-[#F5F5F5]'
+                  : 'text-[#B3B3B3]'
+              }`}
             >
               {isAdding ? '추가중...' : '서식 추가하기'}
             </span>

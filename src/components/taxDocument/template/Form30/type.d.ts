@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type SalesDetail = {
   supplyCount: number; // ⑥ 공급 건수
 
@@ -79,3 +81,5 @@ export type Form30Data = {
     remarks?: string; // 비고
   };
 };
+
+export type Form30InputData = FormInputData<Form30Data>;

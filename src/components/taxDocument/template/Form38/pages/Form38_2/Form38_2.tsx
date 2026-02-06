@@ -1,5 +1,5 @@
 'use client';
-import 'src/components/taxDocument/template/Form38/pages/Form38_2/form38_2.css';
+import './form38_2.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { Form38Data } from '@/components/taxDocument/template/Form38/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
@@ -23,13 +23,14 @@ export default function Form38_2({
 }: FormPageProps<Form38Data>) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
-  const createEmptySplit = (): Form38Data['summary']['grandTotal']['supplyPrice'] => ({
-    trillion: 0,
-    billion: 0,
-    million: 0,
-    thousand: 0,
-    one: 0,
-  });
+  const createEmptySplit =
+    (): Form38Data['summary']['grandTotal']['supplyPrice'] => ({
+      trillion: 0,
+      billion: 0,
+      million: 0,
+      thousand: 0,
+      one: 0,
+    });
 
   const createEmptyDetail = (): Form38Data['detailList'][number] => ({
     bizRegNumber: '',
@@ -50,7 +51,9 @@ export default function Form38_2({
 
   const updateDetailItem = (
     absIndex: number,
-    updaterFn: (item: Form38Data['detailList'][number]) => Form38Data['detailList'][number]
+    updaterFn: (
+      item: Form38Data['detailList'][number]
+    ) => Form38Data['detailList'][number]
   ) => {
     const next = [...detailList];
     const current = next[absIndex] ?? createEmptyDetail();
@@ -143,7 +146,9 @@ export default function Form38_2({
           }}
           type="text"
           value={detail.bizRegNumber}
-          onChange={e => updateDetailField(absIndex, 'bizRegNumber', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'bizRegNumber', e.target.value)
+          }
         />
       </td>
       <td
@@ -172,7 +177,9 @@ export default function Form38_2({
           }}
           type="text"
           value={detail.companyName}
-          onChange={e => updateDetailField(absIndex, 'companyName', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'companyName', e.target.value)
+          }
         />
       </td>
       <td
@@ -226,7 +233,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -253,7 +262,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.billion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
+          }
         />
       </td>
       <td
@@ -280,7 +291,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.million}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
+          }
         />
       </td>
       <td
@@ -307,7 +320,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -334,7 +349,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.one}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'one', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
+          }
         />
       </td>
       <td
@@ -361,7 +378,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -388,7 +407,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.billion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'billion', value)
+          }
         />
       </td>
       <td
@@ -415,7 +436,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.million}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'million', value)
+          }
         />
       </td>
       <td
@@ -442,7 +465,9 @@ export default function Form38_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -641,9 +666,7 @@ export default function Form38_2({
           type="text"
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={e =>
-            updater('taxPeriodEndDay', digitsOnly(e.target.value))
-          }
+          onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
         />
         일)
       </h1>
@@ -720,7 +743,12 @@ export default function Form38_2({
               }}
               type="text"
               value={submitterInfo.bizRegNumber}
-              onChange={e => updater('submitterInfo', { ...submitterInfo, bizRegNumber: e.target.value })}
+              onChange={e =>
+                updater('submitterInfo', {
+                  ...submitterInfo,
+                  bizRegNumber: e.target.value,
+                })
+              }
             />
           </td>
         </tr>

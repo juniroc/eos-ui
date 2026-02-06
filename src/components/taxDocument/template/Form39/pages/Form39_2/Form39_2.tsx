@@ -1,11 +1,11 @@
 'use client';
-import 'src/components/taxDocument/template/Form39/pages/Form39_2/form39_2.css';
-import NumericInput from '@/components/documentCreate/template/common/NumericInput';
+import './form39_2.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { Form39Data } from '@/components/taxDocument/template/Form39/type';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import {
-  Form39_1_MAX_DETAIL_LIST_MAX_LENGTH,
-  Form39_2_MAX_DETAIL_LIST_MAX_LENGTH,
+  FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH,
+  FORM_39_2_MAX_DETAIL_LIST_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form39/constants';
 
 export default function Form39_2({
@@ -23,13 +23,14 @@ export default function Form39_2({
 }: FormPageProps<Form39Data>) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
-  const createEmptySplit = (): Form39Data['summary']['grandTotal']['supplyPrice'] => ({
-    trillion: 0,
-    billion: 0,
-    million: 0,
-    thousand: 0,
-    one: 0,
-  });
+  const createEmptySplit =
+    (): Form39Data['summary']['grandTotal']['supplyPrice'] => ({
+      trillion: 0,
+      billion: 0,
+      million: 0,
+      thousand: 0,
+      one: 0,
+    });
 
   const createEmptyDetail = (): Form39Data['detailList'][number] => ({
     bizRegNumber: '',
@@ -41,16 +42,18 @@ export default function Form39_2({
   });
 
   const startIndex =
-    Form39_1_MAX_DETAIL_LIST_MAX_LENGTH +
-    pageIndex * Form39_2_MAX_DETAIL_LIST_MAX_LENGTH;
+    FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH +
+    pageIndex * FORM_39_2_MAX_DETAIL_LIST_MAX_LENGTH;
   const detailItems = Array.from(
-    { length: Form39_2_MAX_DETAIL_LIST_MAX_LENGTH },
+    { length: FORM_39_2_MAX_DETAIL_LIST_MAX_LENGTH },
     (_, i) => detailList[startIndex + i] ?? createEmptyDetail()
   );
 
   const updateDetailItem = (
     absIndex: number,
-    updaterFn: (item: Form39Data['detailList'][number]) => Form39Data['detailList'][number]
+    updaterFn: (
+      item: Form39Data['detailList'][number]
+    ) => Form39Data['detailList'][number]
   ) => {
     const next = [...detailList];
     const current = next[absIndex] ?? createEmptyDetail();
@@ -143,7 +146,9 @@ export default function Form39_2({
           }}
           type="text"
           value={detail.bizRegNumber}
-          onChange={e => updateDetailField(absIndex, 'bizRegNumber', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'bizRegNumber', e.target.value)
+          }
         />
       </td>
       <td
@@ -172,7 +177,9 @@ export default function Form39_2({
           }}
           type="text"
           value={detail.companyName}
-          onChange={e => updateDetailField(absIndex, 'companyName', e.target.value)}
+          onChange={e =>
+            updateDetailField(absIndex, 'companyName', e.target.value)
+          }
         />
       </td>
       <td
@@ -226,7 +233,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -253,7 +262,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.billion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
+          }
         />
       </td>
       <td
@@ -280,7 +291,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.million}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
+          }
         />
       </td>
       <td
@@ -307,7 +320,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -334,7 +349,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.supplyPrice.one}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'one', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
+          }
         />
       </td>
       <td
@@ -361,7 +378,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'trillion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'trillion', value)
+          }
         />
       </td>
       <td
@@ -388,7 +407,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.billion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'billion', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'billion', value)
+          }
         />
       </td>
       <td
@@ -415,7 +436,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.million}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'million', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'million', value)
+          }
         />
       </td>
       <td
@@ -442,7 +465,9 @@ export default function Form39_2({
             verticalAlign: 'middle',
           }}
           value={detail.tax.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'thousand', value)}
+          onChange={value =>
+            updateDetailSplit(absIndex, 'tax', 'thousand', value)
+          }
         />
       </td>
       <td
@@ -641,9 +666,7 @@ export default function Form39_2({
           type="text"
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={e =>
-            updater('taxPeriodEndDay', digitsOnly(e.target.value))
-          }
+          onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
         />
         일)
       </h1>
@@ -721,7 +744,10 @@ export default function Form39_2({
               type="text"
               value={submitterInfo.bizRegNumber}
               onChange={e =>
-                updater('submitterInfo', { ...submitterInfo, bizRegNumber: e.target.value })
+                updater('submitterInfo', {
+                  ...submitterInfo,
+                  bizRegNumber: e.target.value,
+                })
               }
             />
           </td>

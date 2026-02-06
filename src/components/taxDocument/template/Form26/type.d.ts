@@ -1,3 +1,5 @@
+import { FormInputData } from '@/components/taxDocument/template/common/type';
+
 export type CashSalesDetailItem = {
   // ⑧ 의뢰인
 
@@ -69,3 +71,5 @@ export type Form26Data = {
 
   cashSalesDetailItems: Array<CashSalesDetailItem>;
 };
+
+export type Form26InputData = FormInputData<Form26Data>;

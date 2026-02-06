@@ -5,7 +5,7 @@ import NumericInput from '@/components/taxDocument/template/common/NumericInput'
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import {
   AttachmentItem,
-  Form42ata,
+  Form42Data,
 } from '@/components/taxDocument/template/Form42/type';
 
 export default function Form42_1({
@@ -21,7 +21,7 @@ export default function Form42_1({
   writingDate,
   submissionReason,
   attachmentItems,
-}: FormPageProps<Form42ata>) {
+}: FormPageProps<Form42Data>) {
   const baseAttachmentItem: AttachmentItem = {
     documentName: '',
     issuerName: '',
@@ -45,11 +45,9 @@ export default function Form42_1({
     (_, i) => attachmentItems[i] ?? baseAttachmentItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form42ata['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form42Data['submitterInfo']>(
     field: K,
-    value: Form42ata['submitterInfo'][K]
+    value: Form42Data['submitterInfo'][K]
   ) => {
     updater('submitterInfo', {
       ...submitterInfo,
@@ -516,9 +514,7 @@ export default function Form42_1({
                 fontSize: '10pt',
               }}
               value={submitterInfo.bizTypeAndItem}
-              onChange={value =>
-                submitterInfoUpdater('bizTypeAndItem', value)
-              }
+              onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
             />
           </td>
           <td
@@ -1158,7 +1154,7 @@ export default function Form42_1({
             </p>
           </td>
         </tr>
-        
+
         {mappedAttachmentItems.map((item, index) => (
           <tr style={{ height: '20pt' }} key={`attachment-${index}`}>
             <td
@@ -1573,7 +1569,9 @@ export default function Form42_1({
                   fontSize: '8pt',
                 }}
                 value={item.remarks ?? ''}
-                onChange={value => attachmentItemUpdater(index, 'remarks', value)}
+                onChange={value =>
+                  attachmentItemUpdater(index, 'remarks', value)
+                }
               />
             </td>
           </tr>

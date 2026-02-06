@@ -78,6 +78,9 @@ const navigationItems = [
     label: '부가세',
     icon: '/icons/feather_black.png',
     iconGrey: '/icons/feather_grey.png',
+    subItems: [
+      { id: 'vat-stored-documents', label: '보관서류' },
+    ],
   },
   {
     id: 'corporate-tax',
@@ -251,7 +254,7 @@ export default function Sidebar({
                 </span>
               </button>
               <button
-                onClick={() => handleMenuClick('vat', false)}
+                onClick={() => handleMenuClick('vat', true)}
                 onMouseEnter={() => setHoveredMenu('vat')}
                 className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
                   getCurrentActiveMenu() === 'vat'

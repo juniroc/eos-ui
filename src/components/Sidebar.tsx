@@ -79,6 +79,7 @@ const navigationItems = [
     icon: '/icons/feather_black.png',
     iconGrey: '/icons/feather_grey.png',
     subItems: [
+      { id: 'vat-document-create', label: '서류생성' },
       { id: 'vat-stored-documents', label: '보관서류' },
     ],
   },

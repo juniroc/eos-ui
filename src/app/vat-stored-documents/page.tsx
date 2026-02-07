@@ -329,11 +329,13 @@ export default function VatStoredDocumentsPage() {
             });
             
             return (
-              <div 
-                className="grid w-full border border-[#D9D9D9]"
+              <div className="w-full overflow-x-auto">
+              <div
+                className="grid border border-[#D9D9D9]"
                 style={{
                   gridTemplateColumns: '80px minmax(280px, auto) 1fr 1fr',
                   gridAutoRows: `minmax(${rowHeight}px, auto)`,
+                  minWidth: '840px',
                 }}
               >
                 {/* 헤더 행 */}
@@ -537,6 +539,7 @@ export default function VatStoredDocumentsPage() {
                     </div>
                   )
                 ) : null}
+              </div>
               </div>
             );
           })()}

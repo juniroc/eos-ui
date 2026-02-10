@@ -1,5 +1,5 @@
 // API 서버 호스트
-const API_BASE_URL = 'https://api.eosxai.com';
+const API_BASE_URL = 'http://dev-api.eosxai.com:3001'; // TODO: 환경 변수로 설정
 
 export interface LoginRequest {
   loginId: string;

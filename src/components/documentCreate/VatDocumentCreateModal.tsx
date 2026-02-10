@@ -97,8 +97,42 @@ function VatDocumentCreateModal({
   };
 
   // 파일 선택 핸들러
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
+  const handleFileSelect = async (file: File) => {
+    if (!token) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
+
+    if (!selectedDocument) {
+      alert('서류를 선택해주세요.');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const { data, inputType } = await uploadVatFormFile(
+        selectedDocument.id,
+        file,
+        token
+      );
+
+      // @ts-ignore
+      setSelectedDocument(prev => (prev.data = { data, inputType }));
+
+      // 성공 시 파일 선택 초기화 및 토스트 메시지 표시
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setToastMessage('파일이 업로드되었습니다!');
+      setShowToast(true);
+    } catch (error) {
+      console.error('파일 업로드 에러:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
+      alert(errorMessage);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // 파일 input 변경 핸들러
@@ -126,39 +160,6 @@ function VatDocumentCreateModal({
     const file = e.dataTransfer.files?.[0];
     if (file) {
       handleFileSelect(file);
-    }
-  };
-
-  // 파일 업로드 핸들러
-  const handleUpload = async () => {
-    if (!selectedFile || !token) {
-      alert('파일을 선택해주세요.');
-      return;
-    }
-
-    if (!selectedDocument) {
-      alert('서류를 선택해주세요.');
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      await uploadVatFormFile(selectedDocument.id, selectedFile, token);
-
-      // 성공 시 파일 선택 초기화 및 토스트 메시지 표시
-      setSelectedFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-      setToastMessage('파일이 업로드되었습니다!');
-      setShowToast(true);
-    } catch (error) {
-      console.error('파일 업로드 에러:', error);
-      const errorMessage =
-        error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
-      alert(errorMessage);
-    } finally {
-      setIsUploading(false);
     }
   };
 

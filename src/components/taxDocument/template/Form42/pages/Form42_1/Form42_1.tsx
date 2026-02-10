@@ -3,13 +3,17 @@ import './form42_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import {
   AttachmentItem,
   Form42Data,
+  Form42InputData,
 } from '@/components/taxDocument/template/Form42/type';
+type Props = FormPageProps<Form42Data> & { inputType?: Form42InputData };
 
 export default function Form42_1({
   updater,
+  inputType,
   attributionYear,
   attributionTerm,
   taxPeriodStartMonth,
@@ -21,7 +25,7 @@ export default function Form42_1({
   writingDate,
   submissionReason,
   attachmentItems,
-}: FormPageProps<Form42Data>) {
+}: Props) {
   const baseAttachmentItem: AttachmentItem = {
     documentName: '',
     issuerName: '',
@@ -147,6 +151,7 @@ export default function Form42_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -168,6 +173,7 @@ export default function Form42_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -188,6 +194,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodStartMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <Input
@@ -208,6 +215,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodStartDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <Input
@@ -228,6 +236,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodEndMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <Input
@@ -248,6 +257,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodEndDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </p>
@@ -347,6 +357,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
+            inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
           <td
@@ -387,6 +398,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.companyName}
               onChange={value => submitterInfoUpdater('companyName', value)}
+            inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
         </tr>
@@ -434,6 +446,7 @@ export default function Form42_1({
               onChange={value =>
                 submitterInfoUpdater('representativeName', value)
               }
+            inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -473,6 +486,7 @@ export default function Form42_1({
               onChange={value =>
                 submitterInfoUpdater('addressAndContact', value)
               }
+            inputType={inputType?.submitterInfo?.addressAndContact}
             />
           </td>
         </tr>
@@ -515,6 +529,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.bizTypeAndItem}
               onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
+            inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />
           </td>
           <td
@@ -528,13 +543,14 @@ export default function Form42_1({
               borderBottomWidth: '1pt',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={submitterInfo.bizTypeAndItem}
               onChange={e =>
                 submitterInfoUpdater('bizTypeAndItem', e.target.value)
               }
+            inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />
           </td>
         </tr>
@@ -575,6 +591,7 @@ export default function Form42_1({
               }}
               value={transactionPeriod}
               onChange={value => updater('transactionPeriod', value)}
+            inputType={inputType?.transactionPeriod}
             />
           </td>
           <td
@@ -612,6 +629,7 @@ export default function Form42_1({
               }}
               value={writingDate}
               onChange={value => updater('writingDate', value)}
+            inputType={inputType?.writingDate}
             />
           </td>
         </tr>
@@ -638,6 +656,7 @@ export default function Form42_1({
         }}
         value={submissionReason}
         onChange={value => updater('submissionReason', value)}
+      inputType={inputType?.submissionReason}
       />
       <p
         style={{
@@ -1173,7 +1192,7 @@ export default function Form42_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 3pt)',
@@ -1220,6 +1239,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'documentName', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.documentName}
               />
             </td>
             <td
@@ -1254,6 +1274,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'issuerName', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.issuerName}
               />
             </td>
             <td
@@ -1288,6 +1309,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'issueDate', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.issueDate}
               />
             </td>
             <td
@@ -1322,6 +1344,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'shippingDate', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.shippingDate}
               />
             </td>
             <td
@@ -1356,6 +1379,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'currencyCode', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.currencyCode}
               />
             </td>
             <td
@@ -1390,6 +1414,7 @@ export default function Form42_1({
                 onChange={value =>
                   attachmentItemUpdater(index, 'exchangeRate', value)
                 }
+              inputType={inputType?.attachmentItems?.[index]?.exchangeRate}
               />
             </td>
             <td
@@ -1428,6 +1453,7 @@ export default function Form42_1({
                     value
                   )
                 }
+              inputType={inputType?.attachmentItems?.[index]?.currentSubmissionAmount?.foreign}
               />
             </td>
             <td
@@ -1466,6 +1492,7 @@ export default function Form42_1({
                     value
                   )
                 }
+              inputType={inputType?.attachmentItems?.[index]?.currentSubmissionAmount?.won}
               />
             </td>
             <td
@@ -1504,6 +1531,7 @@ export default function Form42_1({
                     value
                   )
                 }
+              inputType={inputType?.attachmentItems?.[index]?.currentReportPortion?.foreign}
               />
             </td>
             <td
@@ -1542,6 +1570,7 @@ export default function Form42_1({
                     value
                   )
                 }
+              inputType={inputType?.attachmentItems?.[index]?.currentReportPortion?.won}
               />
             </td>
             <td
@@ -1597,6 +1626,7 @@ export default function Form42_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addPageBtn"
       >
         페이지추가

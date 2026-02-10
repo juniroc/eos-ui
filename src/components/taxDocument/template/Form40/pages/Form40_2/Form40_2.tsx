@@ -1,10 +1,12 @@
 'use client';
 import './form40_2.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form40Data } from '@/components/taxDocument/template/Form40/type';
+import { Form40Data, Form40InputData } from '@/components/taxDocument/template/Form40/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
+type Props = FormPageProps<Form40Data> & { inputType?: Form40InputData };
 
-export default function Form40_2({}: FormPageProps<Form40Data>) {
+export default function Form40_2({}: Props) {
   return (
     <div className="form40_2">
       <ul id="l1">
@@ -40,7 +42,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -59,7 +61,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -77,7 +79,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           maxLength={2}
         />
         기 (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -95,7 +97,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           maxLength={2}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -113,7 +115,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           maxLength={2}
         />
         일 ~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -131,7 +133,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           maxLength={2}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -214,7 +216,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -536,7 +538,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -566,7 +568,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -595,7 +597,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -625,7 +627,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -640,34 +642,6 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           <td
             style={{
               width: '57pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#5D5D5D',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#5D5D5D',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#5D5D5D',
-              padding: '1pt',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 2pt)',
-                height: '20pt',
-                padding: '1pt',
-                verticalAlign: 'middle',
-                textAlign: 'center',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '55pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
               borderTopColor: '#939393',
@@ -689,6 +663,34 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
                 height: '20pt',
                 padding: '1pt',
                 verticalAlign: 'middle',
+                textAlign: 'center',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '55pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#5D5D5D',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#5D5D5D',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#5D5D5D',
+              padding: '1pt',
+            }}
+          >
+            <NumericInput
+              style={{
+                width: 'calc(100% - 2pt)',
+                height: '20pt',
+                padding: '1pt',
+                verticalAlign: 'middle',
               }}
             />
           </td>
@@ -732,7 +734,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -751,7 +753,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -770,7 +772,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -789,7 +791,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -808,7 +810,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -827,7 +829,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -843,7 +845,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -861,7 +863,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -880,7 +882,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -899,7 +901,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -918,7 +920,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -937,7 +939,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -956,7 +958,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -972,7 +974,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -990,7 +992,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1009,7 +1011,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1028,7 +1030,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1047,7 +1049,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1066,7 +1068,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1085,7 +1087,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1101,7 +1103,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1119,7 +1121,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1138,7 +1140,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1157,7 +1159,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1176,7 +1178,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1195,7 +1197,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1214,7 +1216,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1230,7 +1232,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1248,7 +1250,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1267,7 +1269,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1286,7 +1288,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1305,7 +1307,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1324,7 +1326,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1343,7 +1345,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1359,7 +1361,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1377,7 +1379,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1396,7 +1398,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1415,7 +1417,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1434,7 +1436,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1453,7 +1455,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1472,7 +1474,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1488,7 +1490,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1506,7 +1508,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1525,7 +1527,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1544,7 +1546,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1563,7 +1565,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1582,7 +1584,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1601,7 +1603,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1617,7 +1619,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1635,7 +1637,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1654,7 +1656,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1673,7 +1675,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1692,7 +1694,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1711,7 +1713,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1730,7 +1732,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1746,7 +1748,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1764,7 +1766,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1783,7 +1785,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1802,7 +1804,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1821,7 +1823,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1840,7 +1842,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1859,7 +1861,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1875,7 +1877,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -1893,7 +1895,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1912,7 +1914,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1931,7 +1933,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1950,7 +1952,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1969,7 +1971,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1988,7 +1990,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2004,7 +2006,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2022,7 +2024,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2041,7 +2043,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2060,7 +2062,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2079,7 +2081,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2098,7 +2100,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2117,7 +2119,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2133,7 +2135,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2151,7 +2153,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2170,7 +2172,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2189,7 +2191,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2208,7 +2210,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2227,7 +2229,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2246,7 +2248,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2262,7 +2264,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2280,7 +2282,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2299,7 +2301,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2318,7 +2320,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2337,7 +2339,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2356,7 +2358,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2375,7 +2377,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2391,7 +2393,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2409,7 +2411,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2428,7 +2430,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2447,7 +2449,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2466,7 +2468,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2485,7 +2487,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2504,7 +2506,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2520,7 +2522,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2538,7 +2540,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2557,7 +2559,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2576,7 +2578,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2595,7 +2597,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2614,7 +2616,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2633,7 +2635,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2649,7 +2651,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2667,7 +2669,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2686,7 +2688,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2705,7 +2707,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2724,7 +2726,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2743,7 +2745,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2762,7 +2764,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2778,7 +2780,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2796,7 +2798,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2815,7 +2817,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2834,7 +2836,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2853,7 +2855,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2872,7 +2874,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2891,7 +2893,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderRightColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -2907,7 +2909,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               borderBottomColor: '#5D5D5D',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
         </tr>
         <tr style={{ height: '24pt' }}>
@@ -2925,7 +2927,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -2954,7 +2956,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -2982,7 +2984,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3011,7 +3013,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
               padding: '1pt',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3141,7 +3143,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
         }}
       >
         (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '15pt',
@@ -3188,6 +3190,7 @@ export default function Form40_2({}: FormPageProps<Form40Data>) {
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
       >
         페이지추가

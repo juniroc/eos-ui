@@ -2,13 +2,11 @@ import React, { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 import { InputType } from '@/components/taxDocument/template/common/type';
 import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
-type Props = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
-  value?: string;
-  onChange: (value: string) => void;
+type Props = ComponentPropsWithoutRef<'input'> & {
   inputType?: InputType;
 };
 
-function Input({ value, onChange, style, inputType, ...rest }: Props) {
+function InputField({ inputType, ...rest }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -23,17 +21,7 @@ function Input({ value, onChange, style, inputType, ...rest }: Props) {
     };
   }, [inputType]);
 
-  return (
-    <input
-      ref={inputRef}
-      className="form-input form-input-text"
-      style={style}
-      type="text"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      {...rest}
-    />
-  );
+  return <input ref={inputRef} {...rest} />;
 }
 
-export default Input;
+export default InputField;

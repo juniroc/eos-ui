@@ -2,12 +2,21 @@
 import './form27.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form27Data } from '@/components/taxDocument/template/Form27/type';
+import {
+  Form27Data,
+  Form27InputData,
+} from '@/components/taxDocument/template/Form27/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
 
-type Props = Form27Data & UpdaterProps<Form27Data>;
+type Form27Props = UpdaterProps<Form27Data> & { inputType?: Form27InputData };
+
+type Props = Form27Data & Form27Props & { inputType?: Form27InputData };
 
 export default function Form27({
   updater,
+  inputType,
   attributionYear,
   attributionTerm,
   periodStartMonth,
@@ -43,7 +52,8 @@ export default function Form27({
   };
 
   return (
-    <div className="form27">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form27">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -77,7 +87,7 @@ export default function Form27({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -94,9 +104,10 @@ export default function Form27({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -113,9 +124,10 @@ export default function Form27({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionTerm}
         />
         기 (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -134,9 +146,10 @@ export default function Form27({
           onChange={e =>
             updater('periodStartMonth', digitsOnly(e.target.value))
           }
+          inputType={inputType?.periodStartMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -153,9 +166,10 @@ export default function Form27({
           maxLength={2}
           value={periodStartDay}
           onChange={e => updater('periodStartDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodStartDay}
         />
         일 ~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -172,9 +186,10 @@ export default function Form27({
           maxLength={2}
           value={periodEndMonth}
           onChange={e => updater('periodEndMonth', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -191,6 +206,7 @@ export default function Form27({
           maxLength={2}
           value={periodEndDay}
           onChange={e => updater('periodEndDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndDay}
         />
         일)
       </h2>
@@ -315,12 +331,13 @@ export default function Form27({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizName}
                   onChange={e => updater('bizName', e.target.value)}
+                  inputType={inputType?.bizName}
                 />
               </td>
               <td
@@ -357,12 +374,13 @@ export default function Form27({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizNumber}
                   onChange={e => updater('bizNumber', e.target.value)}
+                  inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -401,12 +419,13 @@ export default function Form27({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizType}
                   onChange={e => updater('bizType', e.target.value)}
+                  inputType={inputType?.bizType}
                 />
               </td>
               <td
@@ -443,12 +462,13 @@ export default function Form27({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizItem}
                   onChange={e => updater('bizItem', e.target.value)}
+                  inputType={inputType?.bizItem}
                 />
               </td>
             </tr>
@@ -686,6 +706,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('totalStats', totalStats, 'count', value)
               }
+              inputType={inputType?.totalStats?.count}
             />
           </td>
           <td
@@ -713,6 +734,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('totalStats', totalStats, 'supplyAmount', value)
               }
+              inputType={inputType?.totalStats?.supplyAmount}
             />
           </td>
           <td
@@ -740,6 +762,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('totalStats', totalStats, 'taxAmount', value)
               }
+              inputType={inputType?.totalStats?.taxAmount}
             />
           </td>
           <td
@@ -758,7 +781,7 @@ export default function Form27({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -826,6 +849,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.buildingStructureStats?.count}
             />
           </td>
           <td
@@ -858,6 +882,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.buildingStructureStats?.supplyAmount}
             />
           </td>
           <td
@@ -890,6 +915,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.buildingStructureStats?.taxAmount}
             />
           </td>
           <td
@@ -908,7 +934,7 @@ export default function Form27({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -976,6 +1002,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('machineryStats', machineryStats, 'count', value)
               }
+              inputType={inputType?.machineryStats?.count}
             />
           </td>
           <td
@@ -1008,6 +1035,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.machineryStats?.supplyAmount}
             />
           </td>
           <td
@@ -1035,6 +1063,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('machineryStats', machineryStats, 'taxAmount', value)
               }
+              inputType={inputType?.machineryStats?.taxAmount}
             />
           </td>
           <td
@@ -1053,7 +1082,7 @@ export default function Form27({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1121,6 +1150,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('vehicleStats', vehicleStats, 'count', value)
               }
+              inputType={inputType?.vehicleStats?.count}
             />
           </td>
           <td
@@ -1148,6 +1178,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('vehicleStats', vehicleStats, 'supplyAmount', value)
               }
+              inputType={inputType?.vehicleStats?.supplyAmount}
             />
           </td>
           <td
@@ -1175,6 +1206,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('vehicleStats', vehicleStats, 'taxAmount', value)
               }
+              inputType={inputType?.vehicleStats?.taxAmount}
             />
           </td>
           <td
@@ -1193,7 +1225,7 @@ export default function Form27({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1254,6 +1286,7 @@ export default function Form27({
               onChange={value =>
                 updateRow('otherAssetStats', otherAssetStats, 'count', value)
               }
+              inputType={inputType?.otherAssetStats?.count}
             />
           </td>
           <td
@@ -1285,6 +1318,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.otherAssetStats?.supplyAmount}
             />
           </td>
           <td
@@ -1316,6 +1350,7 @@ export default function Form27({
                   value
                 )
               }
+              inputType={inputType?.otherAssetStats?.taxAmount}
             />
           </td>
           <td
@@ -1333,7 +1368,7 @@ export default function Form27({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1367,7 +1402,7 @@ export default function Form27({
         className="s5"
         style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -1384,9 +1419,10 @@ export default function Form27({
           maxLength={4}
           value={writeYear}
           onChange={e => updater('writeYear', digitsOnly(e.target.value))}
+          inputType={inputType?.writeYear}
         />
         년
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1403,9 +1439,10 @@ export default function Form27({
           maxLength={2}
           value={writeMonth}
           onChange={e => updater('writeMonth', digitsOnly(e.target.value))}
+          inputType={inputType?.writeMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1422,6 +1459,7 @@ export default function Form27({
           maxLength={2}
           value={writeDay}
           onChange={e => updater('writeDay', digitsOnly(e.target.value))}
+          inputType={inputType?.writeDay}
         />
         일
       </p>
@@ -1436,7 +1474,7 @@ export default function Form27({
         }}
       >
         <span style={{ paddingLeft: '30pt' }}>제출자</span>
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '100pt',
@@ -1450,8 +1488,9 @@ export default function Form27({
           type="text"
           value={submitterName}
           onChange={e => updater('submitterName', e.target.value)}
+          inputType={inputType?.submitterName}
         />
-        <span className="s11">(서명 또는 인)</span>
+        <Stamp className="s11">(서명 또는 인)</Stamp>
       </p>
       <h1
         style={{
@@ -1596,6 +1635,7 @@ export default function Form27({
           }}
         />
       </p>
-    </div>
+      </div>
+    </PageSlot>
   );
 }

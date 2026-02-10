@@ -83,7 +83,7 @@ export type FormType = {
   [K in FormCode]: { formCode: K; data: FormDataMap[K] };
 }[FormCode];
 
-export type InputType = 'A' | 'B' | 'C' | 'D' | 'E';
+export type InputType = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 export type FormInputData<T> = T extends (infer U)[]
   ? FormInputData<U>[]

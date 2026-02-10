@@ -1,12 +1,70 @@
 'use client';
 import './form33.css';
+import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form33Data } from '@/components/taxDocument/template/Form33/type';
+import {
+  Form33Data,
+  Form33InputData,
+} from '@/components/taxDocument/template/Form33/type';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
 
-export default function Form33({}: UpdaterProps<Form33Data>) {
+type Form33Props = UpdaterProps<Form33Data> & { inputType?: Form33InputData };
+
+export default function Form33({
+  updater,
+  attributionYear,
+  attributionTerm,
+  taxPeriodStartMonth,
+  taxPeriodStartDay,
+  taxPeriodEndMonth,
+  taxPeriodEndDay,
+  submitterInfo,
+  basicStatus,
+  basicExpenses,
+  submissionYear,
+  submissionMonth,
+  submissionDay,
+  applicantName,
+  inputType,
+}: Form33Props) {
+  const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
+  const updateSubmitterInfo = <K extends keyof Form33Data['submitterInfo']>(
+    field: K,
+    value: Form33Data['submitterInfo'][K]
+  ) => {
+    updater('submitterInfo', {
+      ...submitterInfo,
+      [field]: value,
+    });
+  };
+  const updateBasicStatus = (next: Form33Data['basicStatus']) => {
+    updater('basicStatus', next);
+  };
+  const updateWorkplace = (next: Form33Data['basicStatus']['workplace']) => {
+    updateBasicStatus({ ...basicStatus, workplace: next });
+  };
+  const updateBuilding = (
+    next: Form33Data['basicStatus']['workplace']['building']
+  ) => {
+    updateWorkplace({ ...basicStatus.workplace, building: next });
+  };
+  const updateFacilities = (next: Form33Data['basicStatus']['facilities']) => {
+    updateBasicStatus({ ...basicStatus, facilities: next });
+  };
+  const updateVehicles = (next: Form33Data['basicStatus']['vehicles']) => {
+    updateBasicStatus({ ...basicStatus, vehicles: next });
+  };
+  const updateBasicExpenses = (next: Form33Data['basicExpenses']) => {
+    updater('basicExpenses', next);
+  };
+  const updateRent = (next: Form33Data['basicExpenses']['rent']) => {
+    updateBasicExpenses({ ...basicExpenses, rent: next });
+  };
   return (
-    <div className="form33">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form33">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -32,8 +90,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
         사업장현황명세서
       </p>
       <h2 style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'center' }}>
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '40pt',
             height: '20pt',
@@ -43,12 +100,13 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={attributionYear}
+          onChange={value => updater('attributionYear', digitsOnly(value))}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -58,11 +116,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={attributionTerm}
+          onChange={value => updater('attributionTerm', digitsOnly(value))}
+          inputType={inputType?.attributionTerm}
         />
         기(
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -72,11 +131,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={taxPeriodStartMonth}
+          onChange={value => updater('taxPeriodStartMonth', digitsOnly(value))}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -86,11 +146,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={taxPeriodStartDay}
+          onChange={value => updater('taxPeriodStartDay', digitsOnly(value))}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일~
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -100,11 +161,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={taxPeriodEndMonth}
+          onChange={value => updater('taxPeriodEndMonth', digitsOnly(value))}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -114,7 +176,9 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={taxPeriodEndDay}
+          onChange={value => updater('taxPeriodEndDay', digitsOnly(value))}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h2>
@@ -206,8 +270,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                   상호
                   <span className="s6">(법인명)</span>
                 </p>
-                <input
-                  className="form-input form-input-text"
+                <Input
                   style={{
                     width: 'calc(100% - 100pt)',
                     height: '20pt',
@@ -216,7 +279,9 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     display: 'inline-block',
                     fontFamily: 'Arial',
                   }}
-                  type="text"
+                  value={submitterInfo.companyName}
+                  onChange={value => updateSubmitterInfo('companyName', value)}
+                  inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
               <td
@@ -253,8 +318,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                   성명
                   <span className="s6">(대표자명)</span>
                 </p>
-                <input
-                  className="form-input form-input-text"
+                <Input
                   style={{
                     width: 'calc(100% - 100pt)',
                     height: '20pt',
@@ -263,7 +327,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     display: 'inline-block',
                     fontFamily: 'Arial',
                   }}
-                  type="text"
+                  value={submitterInfo.representativeName}
+                  onChange={value =>
+                    updateSubmitterInfo('representativeName', value)
+                  }
+                  inputType={inputType?.submitterInfo?.representativeName}
                 />
               </td>
               <td
@@ -296,8 +364,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 >
                   사업자등록번호
                 </p>
-                <input
-                  className="form-input form-input-text"
+                <Input
                   style={{
                     width: 'calc(100% - 100pt)',
                     height: '20pt',
@@ -306,7 +373,9 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     display: 'inline-block',
                     fontFamily: 'Arial',
                   }}
-                  type="text"
+                  value={submitterInfo.bizRegNumber}
+                  onChange={value => updateSubmitterInfo('bizRegNumber', value)}
+                  inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
             </tr>
@@ -706,6 +775,17 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                       verticalAlign: 'middle',
                       fontFamily: 'Arial',
                     }}
+                    value={basicStatus.workplace.building.basementFloors}
+                    onChange={value =>
+                      updateBuilding({
+                        ...basicStatus.workplace.building,
+                        basementFloors: value,
+                      })
+                    }
+                    inputType={
+                      inputType?.basicStatus?.workplace?.building
+                        ?.basementFloors
+                    }
                   />
                   층,
                 </p>
@@ -731,6 +811,16 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                       verticalAlign: 'middle',
                       fontFamily: 'Arial',
                     }}
+                    value={basicStatus.workplace.building.groundFloors}
+                    onChange={value =>
+                      updateBuilding({
+                        ...basicStatus.workplace.building,
+                        groundFloors: value,
+                      })
+                    }
+                    inputType={
+                      inputType?.basicStatus?.workplace?.building?.groundFloors
+                    }
                   />
                   층)
                 </p>
@@ -892,6 +982,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.workplace.landArea}
+                  onChange={value =>
+                    updateWorkplace({
+                      ...basicStatus.workplace,
+                      landArea: value,
+                    })
+                  }
+                  inputType={inputType?.basicStatus?.workplace?.landArea}
                 />
                 <p
                   className="s10"
@@ -934,6 +1032,16 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.workplace.building.floorArea}
+                  onChange={value =>
+                    updateBuilding({
+                      ...basicStatus.workplace.building,
+                      floorArea: value,
+                    })
+                  }
+                  inputType={
+                    inputType?.basicStatus?.workplace?.building?.floorArea
+                  }
                 />
                 <p
                   className="s10"
@@ -976,6 +1084,16 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.workplace.building.totalFloorArea}
+                  onChange={value =>
+                    updateBuilding({
+                      ...basicStatus.workplace.building,
+                      totalFloorArea: value,
+                    })
+                  }
+                  inputType={
+                    inputType?.basicStatus?.workplace?.building?.totalFloorArea
+                  }
                 />
                 <p
                   className="s10"
@@ -1018,6 +1136,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.facilities.roomCount}
+                  onChange={value =>
+                    updateFacilities({
+                      ...basicStatus.facilities,
+                      roomCount: value,
+                    })
+                  }
+                  inputType={inputType?.basicStatus?.facilities?.roomCount}
                 />
                 <p
                   className="s10"
@@ -1060,6 +1186,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.facilities.tableCount}
+                  onChange={value =>
+                    updateFacilities({
+                      ...basicStatus.facilities,
+                      tableCount: value,
+                    })
+                  }
+                  inputType={inputType?.basicStatus?.facilities?.tableCount}
                 />
                 <p
                   className="s10"
@@ -1102,6 +1236,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.facilities.chairCount}
+                  onChange={value =>
+                    updateFacilities({
+                      ...basicStatus.facilities,
+                      chairCount: value,
+                    })
+                  }
+                  inputType={inputType?.basicStatus?.facilities?.chairCount}
                 />
                 <p
                   className="s10"
@@ -1157,6 +1299,13 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                       marginRight: '5pt',
                     }}
                     data-value="yes"
+                    data-active={basicStatus.facilities.parkingLotStatus}
+                    onClick={() =>
+                      updateFacilities({
+                        ...basicStatus.facilities,
+                        parkingLotStatus: true,
+                      })
+                    }
                   >
                     유
                   </span>
@@ -1169,6 +1318,13 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                       padding: '0 5pt',
                     }}
                     data-value="no"
+                    data-active={!basicStatus.facilities.parkingLotStatus}
+                    onClick={() =>
+                      updateFacilities({
+                        ...basicStatus.facilities,
+                        parkingLotStatus: false,
+                      })
+                    }
                   >
                     무
                   </span>
@@ -1201,6 +1357,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.employeeCount}
+                  onChange={value =>
+                    updateBasicStatus({ ...basicStatus, employeeCount: value })
+                  }
+                  inputType={inputType?.basicStatus?.employeeCount}
                 />
                 <p
                   className="s10"
@@ -1243,6 +1404,16 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.vehicles.passengerCarCount}
+                  onChange={value =>
+                    updateVehicles({
+                      ...basicStatus.vehicles,
+                      passengerCarCount: value,
+                    })
+                  }
+                  inputType={
+                    inputType?.basicStatus?.vehicles?.passengerCarCount
+                  }
                 />
                 <p
                   className="s10"
@@ -1282,6 +1453,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                     fontFamily: 'Arial',
                     fontSize: '9pt',
                   }}
+                  value={basicStatus.vehicles.cargoCarCount}
+                  onChange={value =>
+                    updateVehicles({
+                      ...basicStatus.vehicles,
+                      cargoCarCount: value,
+                    })
+                  }
+                  inputType={inputType?.basicStatus?.vehicles?.cargoCarCount}
                 />
                 <p
                   className="s10"
@@ -1669,6 +1848,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.rent.deposit}
+              onChange={value =>
+                updateRent({ ...basicExpenses.rent, deposit: value })
+              }
+              inputType={inputType?.basicExpenses?.rent?.deposit}
             />
           </td>
           <td
@@ -1698,6 +1882,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.rent.monthlyRent}
+              onChange={value =>
+                updateRent({ ...basicExpenses.rent, monthlyRent: value })
+              }
+              inputType={inputType?.basicExpenses?.rent?.monthlyRent}
             />
           </td>
           <td
@@ -1727,6 +1916,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.electricityGasFee}
+              onChange={value =>
+                updateBasicExpenses({
+                  ...basicExpenses,
+                  electricityGasFee: value,
+                })
+              }
+              inputType={inputType?.basicExpenses?.electricityGasFee}
             />
           </td>
           <td
@@ -1756,6 +1953,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.waterFee}
+              onChange={value =>
+                updateBasicExpenses({ ...basicExpenses, waterFee: value })
+              }
+              inputType={inputType?.basicExpenses?.waterFee}
             />
           </td>
           <td
@@ -1785,6 +1987,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.laborCost}
+              onChange={value =>
+                updateBasicExpenses({ ...basicExpenses, laborCost: value })
+              }
+              inputType={inputType?.basicExpenses?.laborCost}
             />
           </td>
           <td
@@ -1814,6 +2021,11 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.otherExpenses}
+              onChange={value =>
+                updateBasicExpenses({ ...basicExpenses, otherExpenses: value })
+              }
+              inputType={inputType?.basicExpenses?.otherExpenses}
             />
           </td>
           <td
@@ -1840,6 +2052,14 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
                 fontFamily: 'Arial',
                 fontSize: '9pt',
               }}
+              value={basicExpenses.totalMonthlyExpenses}
+              onChange={value =>
+                updateBasicExpenses({
+                  ...basicExpenses,
+                  totalMonthlyExpenses: value,
+                })
+              }
+              inputType={inputType?.basicExpenses?.totalMonthlyExpenses}
             />
           </td>
         </tr>
@@ -1860,8 +2080,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
         className="s11"
         style={{ paddingTop: '6pt', textIndent: '0pt', textAlign: 'right' }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '40pt',
             height: '20pt',
@@ -1871,11 +2090,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={submissionYear}
+          onChange={value => updater('submissionYear', digitsOnly(value))}
+          inputType={inputType?.submissionYear}
         />
         년
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -1885,11 +2105,12 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={submissionMonth}
+          onChange={value => updater('submissionMonth', digitsOnly(value))}
+          inputType={inputType?.submissionMonth}
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -1899,7 +2120,9 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={submissionDay}
+          onChange={value => updater('submissionDay', digitsOnly(value))}
+          inputType={inputType?.submissionDay}
         />
         일
       </p>
@@ -1914,8 +2137,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
       >
         신고인
         <span style={{ display: 'inline-block', width: '30pt' }}></span>
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '100pt',
             height: '20pt',
@@ -1925,11 +2147,13 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
             textAlign: 'center',
             fontFamily: 'Arial',
           }}
-          type="text"
+          value={applicantName}
+          onChange={value => updater('applicantName', value)}
+          inputType={inputType?.applicantName}
         />
-        <span className="s13" style={{ textAlign: 'right' }}>
+        <Stamp className="s13" style={{ textAlign: 'right' }}>
           (서명 또는 인)
-        </span>
+        </Stamp>
       </p>
       <h1
         style={{
@@ -2019,6 +2243,7 @@ export default function Form33({}: UpdaterProps<Form33Data>) {
           margin: '0 auto',
         }}
       />
-    </div>
+      </div>
+    </PageSlot>
   );
 }

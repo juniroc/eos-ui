@@ -1,11 +1,16 @@
 'use client';
 import './form24.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   Form24Data,
+  Form24InputData,
   PaymentItem,
 } from '@/components/taxDocument/template/Form24/type';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form24Props = UpdaterProps<Form24Data> & { inputType?: Form24InputData };
 
 const PAYMENT_ITEM_ROW_COUNT = 15;
 
@@ -25,7 +30,8 @@ export default function Form24({
   merchantNumber,
   totalPaymentAmount,
   paymentItems,
-}: UpdaterProps<Form24Data>) {
+  inputType,
+}: Form24Props) {
   const toNumberValue = (value: string) => {
     const digits = value.replace(/[^0-9]/g, '');
     return digits ? Number(digits) : undefined;
@@ -63,7 +69,8 @@ export default function Form24({
   };
 
   return (
-    <div className="form24">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form24">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -102,7 +109,7 @@ export default function Form24({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -118,9 +125,10 @@ export default function Form24({
           type="text"
           value={attributionYear}
           onChange={e => updater('attributionYear', e.target.value)}
+        inputType={inputType?.attributionYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -137,6 +145,7 @@ export default function Form24({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', e.target.value)}
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <NumericInput
@@ -282,12 +291,13 @@ export default function Form24({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizName}
                   onChange={e => updater('bizName', e.target.value)}
+                inputType={inputType?.bizName}
                 />
               </td>
               <td
@@ -331,12 +341,13 @@ export default function Form24({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={repName}
                   onChange={e => updater('repName', e.target.value)}
+                inputType={inputType?.repName}
                 />
               </td>
               <td
@@ -377,12 +388,13 @@ export default function Form24({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizNumber}
                   onChange={e => updater('bizNumber', e.target.value)}
+                inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -480,12 +492,13 @@ export default function Form24({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizType}
                   onChange={e => updater('bizType', e.target.value)}
+                inputType={inputType?.bizType}
                 />
               </td>
               <td
@@ -526,12 +539,13 @@ export default function Form24({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={merchantNumber}
                   onChange={e => updater('merchantNumber', e.target.value)}
+                inputType={inputType?.merchantNumber}
                 />
               </td>
             </tr>
@@ -880,6 +894,7 @@ export default function Form24({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={totalPaymentAmount}
               onChange={value => updater('totalPaymentAmount', value)}
+            inputType={inputType?.totalPaymentAmount}
             />
           </td>
           <td
@@ -940,7 +955,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -962,7 +977,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -970,6 +985,7 @@ export default function Form24({
                 onChange={e =>
                   updatePaymentItem(index, 'issuerName', e.target.value)
                 }
+                inputType={inputType?.paymentItems?.[index]?.issuerName}
               />
             </td>
             <td
@@ -988,7 +1004,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -996,6 +1012,7 @@ export default function Form24({
                 onChange={e =>
                   updatePaymentItem(index, 'buyerName', e.target.value)
                 }
+                inputType={inputType?.paymentItems?.[index]?.buyerName}
               />
             </td>
             <td
@@ -1014,7 +1031,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1022,6 +1039,7 @@ export default function Form24({
                 onChange={e =>
                   updatePaymentItem(index, 'paymentDate', e.target.value)
                 }
+                inputType={inputType?.paymentItems?.[index]?.paymentDate}
               />
             </td>
             <td
@@ -1049,6 +1067,7 @@ export default function Form24({
                 onChange={value =>
                   updatePaymentItem(index, 'paymentAmount', value)
                 }
+                inputType={inputType?.paymentItems?.[index]?.paymentAmount}
               />
             </td>
             <td
@@ -1067,7 +1086,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1075,6 +1094,7 @@ export default function Form24({
                 onChange={e =>
                   updatePaymentItem(index, 'processingNumber', e.target.value)
                 }
+                inputType={inputType?.paymentItems?.[index]?.processingNumber}
               />
             </td>
             <td
@@ -1093,7 +1113,7 @@ export default function Form24({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1200,6 +1220,7 @@ export default function Form24({
           padding: '0',
         }}
       />
-    </div>
+      </div>
+    </PageSlot>
   );
 }

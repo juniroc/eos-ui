@@ -2,7 +2,10 @@
 import './form29.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form29Data } from '@/components/taxDocument/template/Form29/type';
+import {Form29Data, Form29InputData} from '@/components/taxDocument/template/Form29/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+type Form29Props = UpdaterProps<Form29Data> & { inputType?: Form29InputData };
 
 export default function Form29({
   updater,
@@ -18,7 +21,7 @@ export default function Form29({
   specialTaxLawPerformance,
   subTotalSpecialLaw,
   grandTotalSupplyPrice,
-}: UpdaterProps<Form29Data>) {
+  inputType}: Form29Props) {
   const updateSubmitterInfo = <K extends keyof Form29Data['submitterInfo']>(
     field: K,
     value: Form29Data['submitterInfo'][K]
@@ -54,7 +57,8 @@ export default function Form29({
   };
 
   return (
-    <div className="form29">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form29">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -91,7 +95,7 @@ export default function Form29({
               fontWeight: 'bold',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '40pt',
@@ -104,10 +108,11 @@ export default function Form29({
               type="text"
               value={attributionYear}
               onChange={e => updater('attributionYear', e.target.value)}
+            inputType={inputType?.attributionYear}
             />
             년<span style={{ paddingLeft: '10pt' }}></span>
             제
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '20pt',
@@ -120,9 +125,10 @@ export default function Form29({
               type="text"
               value={attributionTerm}
               onChange={e => updater('attributionTerm', e.target.value)}
+            inputType={inputType?.attributionTerm}
             />
             기(
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '20pt',
@@ -135,9 +141,10 @@ export default function Form29({
               type="text"
               value={taxPeriodStartMonth}
               onChange={e => updater('taxPeriodStartMonth', e.target.value)}
+            inputType={inputType?.taxPeriodStartMonth}
             />
             월
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '20pt',
@@ -150,9 +157,10 @@ export default function Form29({
               type="text"
               value={taxPeriodStartDay}
               onChange={e => updater('taxPeriodStartDay', e.target.value)}
+            inputType={inputType?.taxPeriodStartDay}
             />
             일~
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '20pt',
@@ -165,9 +173,10 @@ export default function Form29({
               type="text"
               value={taxPeriodEndMonth}
               onChange={e => updater('taxPeriodEndMonth', e.target.value)}
+            inputType={inputType?.taxPeriodEndMonth}
             />
             월
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: '20pt',
@@ -180,6 +189,7 @@ export default function Form29({
               type="text"
               value={taxPeriodEndDay}
               onChange={e => updater('taxPeriodEndDay', e.target.value)}
+            inputType={inputType?.taxPeriodEndDay}
             />
             일)
           </h1>
@@ -251,7 +261,7 @@ export default function Form29({
                     >
                       ① 상호(법인명)
                     </span>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -266,6 +276,7 @@ export default function Form29({
                       onChange={e =>
                         updateSubmitterInfo('companyName', e.target.value)
                       }
+                    inputType={inputType?.submitterInfo?.companyName}
                     />
                   </td>
                   <td
@@ -297,7 +308,7 @@ export default function Form29({
                     >
                       ② 사업자등록번호
                     </p>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -312,6 +323,7 @@ export default function Form29({
                       onChange={e =>
                         updateSubmitterInfo('bizRegNumber', e.target.value)
                       }
+                    inputType={inputType?.submitterInfo?.bizRegNumber}
                     />
                   </td>
                 </tr>
@@ -347,7 +359,7 @@ export default function Form29({
                     >
                       ③ 성명(대표자)
                     </span>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -365,6 +377,7 @@ export default function Form29({
                           e.target.value
                         )
                       }
+                    inputType={inputType?.submitterInfo?.representativeName}
                     />
                   </td>
                   <td
@@ -397,7 +410,7 @@ export default function Form29({
                     >
                       ④ 사업장 소재지
                     </p>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -414,6 +427,7 @@ export default function Form29({
                       onChange={e =>
                         updateSubmitterInfo('address', e.target.value)
                       }
+                    inputType={inputType?.submitterInfo?.address}
                     />
                   </td>
                 </tr>
@@ -448,7 +462,7 @@ export default function Form29({
                     >
                       ⑤ 업태
                     </span>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -463,6 +477,7 @@ export default function Form29({
                       onChange={e =>
                         updateSubmitterInfo('bizType', e.target.value)
                       }
+                    inputType={inputType?.submitterInfo?.bizType}
                     />
                   </td>
                   <td
@@ -494,7 +509,7 @@ export default function Form29({
                     >
                       ⑥ 종목
                     </p>
-                    <input
+                    <InputField
                       className="form-input form-input-text"
                       style={{
                         width: 'calc(100% - 100pt)',
@@ -509,6 +524,7 @@ export default function Form29({
                       onChange={e =>
                         updateSubmitterInfo('bizItem', e.target.value)
                       }
+                    inputType={inputType?.submitterInfo?.bizItem}
                     />
                   </td>
                 </tr>
@@ -767,6 +783,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art21_directExport', value)
               }
+            inputType={inputType?.vatLawPerformance?.art21_directExport}
             />
           </td>
         </tr>
@@ -828,6 +845,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art21_intermediaryTrade', value)
               }
+            inputType={inputType?.vatLawPerformance?.art21_intermediaryTrade}
             />
           </td>
         </tr>
@@ -889,6 +907,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art21_localLC', value)
               }
+            inputType={inputType?.vatLawPerformance?.art21_localLC}
             />
           </td>
         </tr>
@@ -951,6 +970,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art21_koicaRedCross', value)
               }
+            inputType={inputType?.vatLawPerformance?.art21_koicaRedCross}
             />
           </td>
         </tr>
@@ -1012,6 +1032,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art21_processingTrade', value)
               }
+            inputType={inputType?.vatLawPerformance?.art21_processingTrade}
             />
           </td>
         </tr>
@@ -1101,6 +1122,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art22_abroadService', value)
               }
+            inputType={inputType?.vatLawPerformance?.art22_abroadService}
             />
           </td>
         </tr>
@@ -1191,6 +1213,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art23_foreignNavigation', value)
               }
+            inputType={inputType?.vatLawPerformance?.art23_foreignNavigation}
             />
           </td>
         </tr>
@@ -1252,6 +1275,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art23_intMultimodalTransport', value)
               }
+            inputType={inputType?.vatLawPerformance?.art23_intMultimodalTransport}
             />
           </td>
         </tr>
@@ -1340,6 +1364,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_nonResidentSupply', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_nonResidentSupply}
             />
           </td>
         </tr>
@@ -1401,6 +1426,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_exportGoodsProcessing', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_exportGoodsProcessing}
             />
           </td>
         </tr>
@@ -1465,6 +1491,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.vatLawPerformance?.art24_foreignNavigationSupplies}
             />
           </td>
         </tr>
@@ -1527,6 +1554,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_diplomaticMission', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_diplomaticMission}
             />
           </td>
         </tr>
@@ -1589,6 +1617,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_touristAgency', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_touristAgency}
             />
           </td>
         </tr>
@@ -1651,6 +1680,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_foreignerShop', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_foreignerShop}
             />
           </td>
         </tr>
@@ -1712,6 +1742,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_diplomatSupply', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_diplomatSupply}
             />
           </td>
         </tr>
@@ -1771,6 +1802,7 @@ export default function Form29({
               onChange={value =>
                 updateVatLawPerformance('art24_foreignPatient', value)
               }
+            inputType={inputType?.vatLawPerformance?.art24_foreignPatient}
             />
           </td>
         </tr>
@@ -1824,6 +1856,7 @@ export default function Form29({
               }}
               value={subTotalVatLaw}
               onChange={value => updater('subTotalVatLaw', value)}
+            inputType={inputType?.subTotalVatLaw}
             />
           </td>
         </tr>
@@ -1946,6 +1979,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_1_DefenseMaterials}
             />
           </td>
         </tr>
@@ -2037,6 +2071,7 @@ export default function Form29({
               onChange={value =>
                 updateSpecialTaxLawPerformance('art105_1_2_MilitaryOil', value)
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_2_MilitaryOil}
             />
           </td>
         </tr>
@@ -2128,6 +2163,7 @@ export default function Form29({
               onChange={value =>
                 updateSpecialTaxLawPerformance('art105_1_3_UrbanRail', value)
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_3_UrbanRail}
             />
           </td>
         </tr>
@@ -2222,6 +2258,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_3_2_SocialInfra}
             />
           </td>
         </tr>
@@ -2316,6 +2353,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_4_DisabledEquipment}
             />
           </td>
         </tr>
@@ -2412,6 +2450,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_5_FarmersEquipment}
             />
           </td>
         </tr>
@@ -2506,6 +2545,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art105_1_6_FisheryEquipment}
             />
           </td>
         </tr>
@@ -2598,6 +2638,7 @@ export default function Form29({
                   value
                 )
               }
+            inputType={inputType?.specialTaxLawPerformance?.art107_ForeignTouristGoods}
             />
           </td>
         </tr>
@@ -2685,6 +2726,7 @@ export default function Form29({
               onChange={value =>
                 updateSpecialTaxLawPerformance('art121_13_JejuDutyFree', value)
               }
+            inputType={inputType?.specialTaxLawPerformance?.art121_13_JejuDutyFree}
             />
           </td>
         </tr>
@@ -2739,6 +2781,7 @@ export default function Form29({
               }}
               value={subTotalSpecialLaw}
               onChange={value => updater('subTotalSpecialLaw', value)}
+            inputType={inputType?.subTotalSpecialLaw}
             />
           </td>
         </tr>
@@ -2792,10 +2835,12 @@ export default function Form29({
               }}
               value={grandTotalSupplyPrice}
               onChange={value => updater('grandTotalSupplyPrice', value)}
+            inputType={inputType?.grandTotalSupplyPrice}
             />
           </td>
         </tr>
       </table>
-    </div>
+      </div>
+    </PageSlot>
   );
 }

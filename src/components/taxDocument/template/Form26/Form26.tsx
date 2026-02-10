@@ -1,11 +1,16 @@
 'use client';
 import './form26.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   CashSalesDetailItem,
   Form26Data,
+  Form26InputData,
 } from '@/components/taxDocument/template/Form26/type';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form26Props = UpdaterProps<Form26Data> & { inputType?: Form26InputData };
 
 const CASH_SALES_DETAIL_ROW_COUNT = 11;
 
@@ -25,7 +30,8 @@ export default function Form26({
   taxInvoiceStats,
   cashSalesDetailsTotal,
   cashSalesDetailItems,
-}: UpdaterProps<Form26Data>) {
+  inputType,
+}: Form26Props) {
   const toNumberValue = (value: string) => {
     const digits = value.replace(/[^0-9]/g, '');
     return digits ? Number(digits) : undefined;
@@ -63,7 +69,8 @@ export default function Form26({
   };
 
   return (
-    <div className="form26">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form26">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -97,7 +104,7 @@ export default function Form26({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -113,9 +120,10 @@ export default function Form26({
           type="text"
           value={attributionYear}
           onChange={e => updater('attributionYear', e.target.value)}
+        inputType={inputType?.attributionYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -132,6 +140,7 @@ export default function Form26({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', e.target.value)}
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <NumericInput
@@ -249,12 +258,13 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
               value={bizName}
               onChange={e => updater('bizName', e.target.value)}
+            inputType={inputType?.bizName}
             />
           </td>
           <td
@@ -296,12 +306,13 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
               value={repName}
               onChange={e => updater('repName', e.target.value)}
+            inputType={inputType?.repName}
             />
           </td>
           <td
@@ -340,12 +351,13 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
               value={bizNumber}
               onChange={e => updater('bizNumber', e.target.value)}
+            inputType={inputType?.bizNumber}
             />
           </td>
         </tr>
@@ -638,6 +650,7 @@ export default function Form26({
               onChange={value =>
                 updater('totalStats', { ...totalStats, count: value })
               }
+            inputType={inputType?.totalStats?.count}
             />
           </td>
           <td
@@ -664,6 +677,7 @@ export default function Form26({
               onChange={value =>
                 updater('totalStats', { ...totalStats, amount: value })
               }
+            inputType={inputType?.totalStats?.amount}
             />
           </td>
           <td
@@ -690,6 +704,7 @@ export default function Form26({
               onChange={value =>
                 updater('cashSalesStats', { ...cashSalesStats, count: value })
               }
+            inputType={inputType?.cashSalesStats?.count}
             />
           </td>
           <td
@@ -716,6 +731,7 @@ export default function Form26({
               onChange={value =>
                 updater('cashSalesStats', { ...cashSalesStats, amount: value })
               }
+            inputType={inputType?.cashSalesStats?.amount}
             />
           </td>
           <td
@@ -742,6 +758,7 @@ export default function Form26({
               onChange={value =>
                 updater('taxInvoiceStats', { ...taxInvoiceStats, count: value })
               }
+            inputType={inputType?.taxInvoiceStats?.count}
             />
           </td>
           <td
@@ -768,6 +785,7 @@ export default function Form26({
                   amount: value,
                 })
               }
+            inputType={inputType?.taxInvoiceStats?.amount}
             />
           </td>
         </tr>
@@ -1101,7 +1119,7 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1126,7 +1144,7 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1151,7 +1169,7 @@ export default function Form26({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               type="text"
@@ -1185,6 +1203,7 @@ export default function Form26({
                   totalAmount: value,
                 })
               }
+            inputType={inputType?.cashSalesDetailsTotal?.totalAmount}
             />
           </td>
           <td
@@ -1215,6 +1234,7 @@ export default function Form26({
                   supplyValue: value,
                 })
               }
+            inputType={inputType?.cashSalesDetailsTotal?.supplyValue}
             />
           </td>
           <td
@@ -1242,6 +1262,7 @@ export default function Form26({
                   taxAmount: value,
                 })
               }
+            inputType={inputType?.cashSalesDetailsTotal?.taxAmount}
             />
           </td>
         </tr>
@@ -1264,7 +1285,7 @@ export default function Form26({
                 textAlign: 'center',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -1293,7 +1314,7 @@ export default function Form26({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1305,6 +1326,7 @@ export default function Form26({
                     e.target.value
                   )
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.clientResOrBizNumber}
               />
             </td>
             <td
@@ -1326,7 +1348,7 @@ export default function Form26({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1334,6 +1356,7 @@ export default function Form26({
                 onChange={e =>
                   updateCashSalesDetailItem(index, 'clientName', e.target.value)
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.clientName}
               />
             </td>
             <td
@@ -1355,7 +1378,7 @@ export default function Form26({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                 type="text"
@@ -1367,6 +1390,7 @@ export default function Form26({
                     e.target.value
                   )
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.transactionDate}
               />
             </td>
             <td
@@ -1394,6 +1418,7 @@ export default function Form26({
                 onChange={value =>
                   updateCashSalesDetailItem(index, 'totalAmount', value)
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.totalAmount}
               />
             </td>
             <td
@@ -1421,6 +1446,7 @@ export default function Form26({
                 onChange={value =>
                   updateCashSalesDetailItem(index, 'supplyValue', value)
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.supplyValue}
               />
             </td>
             <td
@@ -1445,6 +1471,7 @@ export default function Form26({
                 onChange={value =>
                   updateCashSalesDetailItem(index, 'taxAmount', value)
                 }
+              inputType={inputType?.cashSalesDetailItems?.[index]?.taxAmount}
               />
             </td>
           </tr>
@@ -1518,6 +1545,7 @@ export default function Form26({
           padding: '0',
         }}
       />
-    </div>
+      </div>
+    </PageSlot>
   );
 }

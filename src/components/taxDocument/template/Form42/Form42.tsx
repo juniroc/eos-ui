@@ -1,10 +1,13 @@
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form42Data } from '@/components/taxDocument/template/Form42/type';
+import {Form42Data, Form42InputData} from '@/components/taxDocument/template/Form42/type';
 import { useState } from 'react';
 import Form42_1 from '@/components/taxDocument/template/Form42/pages/Form42_1/Form42_1';
 import { getFormCount } from '@/components/taxDocument/utils/pageUtil';
+import { MAX_ATTACHMENT_ITEM_LENGTH } from '@/components/taxDocument/template/Form42/constants';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+type Form42Props = UpdaterProps<Form42Data> & { inputType?: Form42InputData };
 
-function Form42({ updater, ...data }: UpdaterProps<Form42Data>) {
+function Form42({ updater, inputType, ...data }: Form42Props) {
   const [pageCount, setPageCount] = useState(
     getFormCount(
       data.attachmentItems.length,
@@ -14,12 +17,15 @@ function Form42({ updater, ...data }: UpdaterProps<Form42Data>) {
   );
 
   return Array.from({ length: pageCount + 1 }).map((_, index) => (
-    <Form42_1
-      pageIndex={index}
-      updater={updater}
-      onAddPage={() => setPageCount(prev => prev + 1)}
-      {...data}
-    />
+    <PageSlot key={index} slotWidth={624} slotHeight={882}>
+      <Form42_1
+        pageIndex={index}
+        updater={updater}
+        inputType={inputType}
+        onAddPage={() => setPageCount(prev => prev + 1)}
+        {...data}
+      />
+    </PageSlot>
   ));
 }
 

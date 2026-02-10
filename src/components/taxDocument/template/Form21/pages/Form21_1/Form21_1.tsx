@@ -1,13 +1,18 @@
 'use client';
-
 import './form21_1.css';
-import { Form21Data } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
 
-type Props = Form21Data & UpdaterProps<Form21Data>;
+type Props = Form21Data &
+  UpdaterProps<Form21Data> & { inputType?: Form21InputData };
 
 export default function Form21_1({
   updater,
+  inputType,
   isScheduled,
   isFinal,
   isAfterDeadline,
@@ -174,7 +179,7 @@ export default function Form21_1({
                 }}
               >
                 [
-                <input
+                <InputField
                   type="checkbox"
                   name="reportType"
                   id="check1"
@@ -182,7 +187,7 @@ export default function Form21_1({
                   onChange={e => updater('isScheduled', e.target.checked)}
                 />
                 ] 예정 [
-                <input
+                <InputField
                   type="checkbox"
                   name="reportType"
                   id="check2"
@@ -202,7 +207,7 @@ export default function Form21_1({
                 }}
               >
                 [
-                <input
+                <InputField
                   type="checkbox"
                   name="reportType"
                   id="check3"
@@ -223,7 +228,7 @@ export default function Form21_1({
                 }}
               >
                 [
-                <input
+                <InputField
                   type="checkbox"
                   name="reportType"
                   id="check4"
@@ -335,7 +340,7 @@ export default function Form21_1({
         }}
       >
         신고기간
-        <input
+        <InputField
           className="report-period-input"
           style={{
             width: '40pt',
@@ -347,6 +352,7 @@ export default function Form21_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionYear}
         />
       </p>
       <table
@@ -456,11 +462,12 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={bizName}
               onChange={e => updater('bizName', e.target.value)}
+              inputType={inputType?.bizName}
             />
           </td>
           <td
@@ -520,11 +527,12 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={repName}
               onChange={e => updater('repName', e.target.value)}
+              inputType={inputType?.repName}
             />
           </td>
           <td
@@ -573,7 +581,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               maxLength={1}
@@ -598,7 +606,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               maxLength={1}
@@ -623,7 +631,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               maxLength={1}
@@ -677,7 +685,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -702,7 +710,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -756,7 +764,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -781,7 +789,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -806,7 +814,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -831,7 +839,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -853,7 +861,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               maxLength={1}
@@ -914,13 +922,14 @@ export default function Form21_1({
             colSpan={2}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={residentNumber}
               onChange={e =>
                 updater('residentNumber', digitsOnly(e.target.value))
               }
+              inputType={inputType?.residentNumber}
             />
           </td>
           <td
@@ -1061,11 +1070,12 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={phoneNumber}
               onChange={e => updater('phoneNumber', e.target.value)}
+              inputType={inputType?.phoneNumber}
             />
           </td>
           <td
@@ -1089,11 +1099,12 @@ export default function Form21_1({
             }}
             colSpan={1}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={bizAddress}
               onChange={e => updater('bizAddress', e.target.value)}
+              inputType={inputType?.bizAddress}
             />
           </td>
           <td
@@ -1117,11 +1128,12 @@ export default function Form21_1({
             }}
             colSpan={7}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={homeAddress}
               onChange={e => updater('homeAddress', e.target.value)}
+              inputType={inputType?.homeAddress}
             />
           </td>
           <td
@@ -1140,11 +1152,12 @@ export default function Form21_1({
             }}
             colSpan={5}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={mobileNumber}
               onChange={e => updater('mobileNumber', e.target.value)}
+              inputType={inputType?.mobileNumber}
             />
           </td>
         </tr>
@@ -1196,11 +1209,12 @@ export default function Form21_1({
             }}
             colSpan={3}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={bizAddress}
               onChange={e => updater('bizAddress', e.target.value)}
+              inputType={inputType?.bizAddress}
             />
           </td>
           <td
@@ -1258,7 +1272,7 @@ export default function Form21_1({
             }}
             colSpan={12}
           >
-            <input
+            <InputField
               className="cell-input"
               type="text"
               value={email ?? ''}
@@ -1569,7 +1583,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesTaxInvoice.amount ?? ''}
@@ -1629,7 +1643,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesTaxInvoice.tax ?? ''}
@@ -1724,7 +1738,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesPurchaserIssued.amount ?? ''}
@@ -1786,7 +1800,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesPurchaserIssued.tax ?? ''}
@@ -1881,7 +1895,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesCreditCard.amount ?? ''}
@@ -1943,7 +1957,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesCreditCard.tax ?? ''}
@@ -2037,7 +2051,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesOther.amount ?? ''}
@@ -2099,7 +2113,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesOther.tax ?? ''}
@@ -2221,7 +2235,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesZeroTaxInvoice.amount ?? ''}
@@ -2283,7 +2297,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesZeroTaxInvoice.tax ?? ''}
@@ -2378,7 +2392,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesZeroOther.amount ?? ''}
@@ -2439,7 +2453,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesZeroOther.tax ?? ''}
@@ -2536,7 +2550,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesOmission.amount ?? ''}
@@ -2569,7 +2583,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesOmission.taxRate ?? ''}
@@ -2598,7 +2612,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesOmission.tax ?? ''}
@@ -2695,7 +2709,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesBadDebt.amount ?? ''}
@@ -2728,7 +2742,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesBadDebt.taxRate ?? ''}
@@ -2755,7 +2769,7 @@ export default function Form21_1({
               borderRightColor: 'transparent',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesBadDebt.tax ?? ''}
@@ -2848,7 +2862,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesTotal.amount ?? ''}
@@ -2902,7 +2916,7 @@ export default function Form21_1({
               borderRight: 'none',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={salesTotal.tax ?? ''}
@@ -3066,7 +3080,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseGeneral.amount ?? ''}
@@ -3097,7 +3111,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseGeneral.taxRate ?? ''}
@@ -3125,7 +3139,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseGeneral.tax ?? ''}
@@ -3220,7 +3234,7 @@ export default function Form21_1({
               backgroundColor: '#D5D5D5',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseImportDeferral.amount ?? ''}
@@ -3253,7 +3267,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseImportDeferral.taxRate ?? ''}
@@ -3282,7 +3296,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseImportDeferral.tax ?? ''}
@@ -3376,7 +3390,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseFixedAsset.amount ?? ''}
@@ -3409,7 +3423,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseFixedAsset.taxRate ?? ''}
@@ -3438,7 +3452,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseFixedAsset.tax ?? ''}
@@ -3534,7 +3548,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOmission.amount ?? ''}
@@ -3567,7 +3581,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOmission.taxRate ?? ''}
@@ -3596,7 +3610,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOmission.tax ?? ''}
@@ -3691,7 +3705,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchasePurchaserIssued.amount ?? ''}
@@ -3724,7 +3738,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchasePurchaserIssued.taxRate ?? ''}
@@ -3753,7 +3767,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchasePurchaserIssued.tax ?? ''}
@@ -3848,7 +3862,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOtherDeduction.amount ?? ''}
@@ -3881,7 +3895,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOtherDeduction.taxRate ?? ''}
@@ -3910,7 +3924,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseOtherDeduction.tax ?? ''}
@@ -4005,7 +4019,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseTotalInput.amount ?? ''}
@@ -4038,7 +4052,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseTotalInput.taxRate ?? ''}
@@ -4067,7 +4081,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseTotalInput.tax ?? ''}
@@ -4162,7 +4176,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseNonDeductible.amount ?? ''}
@@ -4195,7 +4209,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseNonDeductible.taxRate ?? ''}
@@ -4224,7 +4238,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseNonDeductible.tax ?? ''}
@@ -4315,7 +4329,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseNetResult.amount ?? ''}
@@ -4371,7 +4385,7 @@ export default function Form21_1({
               borderBottomWidth: '1pt',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={purchaseNetResult.tax ?? ''}
@@ -4453,7 +4467,7 @@ export default function Form21_1({
               borderBottomWidth: '1pt',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPayableOrRefundable.tax ?? ''}
@@ -4570,7 +4584,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionOther.amount ?? ''}
@@ -4602,7 +4616,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionOther.taxRate ?? ''}
@@ -4631,7 +4645,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionOther.tax ?? ''}
@@ -4752,7 +4766,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionCreditCardIssuance.amount ?? ''}
@@ -4786,7 +4800,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionCreditCardIssuance.taxRate ?? ''}
@@ -4816,7 +4830,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionCreditCardIssuance.tax ?? ''}
@@ -4940,7 +4954,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionTotal.amount ?? ''}
@@ -5001,7 +5015,7 @@ export default function Form21_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={deductionTotal.tax ?? ''}
@@ -5117,7 +5131,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={smallBizExemption.amount ?? ''}
@@ -5175,7 +5189,7 @@ export default function Form21_1({
               borderBottomColor: '#999999',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={smallBizExemption.tax ?? ''}
@@ -5266,7 +5280,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={prepaidUnrefunded.amount ?? ''}
@@ -5324,7 +5338,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={prepaidUnrefunded.tax ?? ''}
@@ -5416,7 +5430,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={prepaidNotified.amount ?? ''}
@@ -5475,7 +5489,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={prepaidNotified.tax ?? ''}
@@ -5568,7 +5582,7 @@ export default function Form21_1({
               backgroundColor: '#D5D5D5',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidByProxy.amount ?? ''}
@@ -5627,7 +5641,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidByProxy.tax ?? ''}
@@ -5720,7 +5734,7 @@ export default function Form21_1({
               backgroundColor: '#D5D5D5',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidBySpecialPurchase.amount ?? ''}
@@ -5779,7 +5793,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidBySpecialPurchase.tax ?? ''}
@@ -5872,7 +5886,7 @@ export default function Form21_1({
               backgroundColor: '#D5D5D5',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidByCardCompany.amount ?? ''}
@@ -5931,7 +5945,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxPaidByCardCompany.tax ?? ''}
@@ -6023,7 +6037,7 @@ export default function Form21_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={penaltyTotal.amount ?? ''}
@@ -6082,7 +6096,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={penaltyTotal.tax ?? ''}
@@ -6172,7 +6186,7 @@ export default function Form21_1({
               borderBottomColor: '#7E7E7E',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={finalTaxToPay.tax ?? ''}
@@ -6228,7 +6242,7 @@ export default function Form21_1({
               borderBottomWidth: '1pt',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={consolidatedPaymentTax.tax ?? ''}
@@ -6328,11 +6342,12 @@ export default function Form21_1({
             }}
             colSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxAgentName}
               onChange={e => updater('taxAgentName', e.target.value)}
+              inputType={inputType?.taxAgentName}
             />
           </td>
           <td
@@ -6381,11 +6396,12 @@ export default function Form21_1({
             }}
             colSpan={2}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxAgentBizNumber}
               onChange={e => updater('taxAgentBizNumber', e.target.value)}
+              inputType={inputType?.taxAgentBizNumber}
             />
           </td>
         </tr>
@@ -6437,11 +6453,12 @@ export default function Form21_1({
               borderRightColor: '#808080',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxAgentMgmtNumber}
               onChange={e => updater('taxAgentMgmtNumber', e.target.value)}
+              inputType={inputType?.taxAgentMgmtNumber}
             />
           </td>
           <td
@@ -6492,13 +6509,14 @@ export default function Form21_1({
               borderRightColor: '#808080',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxAgentResidentNumber}
               onChange={e =>
                 updater('taxAgentResidentNumber', digitsOnly(e.target.value))
               }
+              inputType={inputType?.taxAgentResidentNumber}
             />
           </td>
           <td
@@ -6546,11 +6564,12 @@ export default function Form21_1({
               borderBottomColor: '#808080',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               type="text"
               value={taxAgentPhone}
               onChange={e => updater('taxAgentPhone', e.target.value)}
+              inputType={inputType?.taxAgentPhone}
             />
           </td>
         </tr>

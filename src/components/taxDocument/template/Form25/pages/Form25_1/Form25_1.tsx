@@ -4,16 +4,21 @@ import React from 'react';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form25Data } from '@/components/taxDocument/template/Form25/type';
+import {Form25Data, Form25InputData} from '@/components/taxDocument/template/Form25/type';
 import { RENTAL_ITEM_MAX_LENGTH } from '@/components/taxDocument/template/Form25/constants';
-
+import InputField from '@/components/taxDocument/template/common/InputField';
 type Props = Form25Data &
-  UpdaterProps<Form25Data> & { index: number; onAddPage: () => void };
+  UpdaterProps<Form25Data> & {
+    index: number;
+    onAddPage: () => void;
+    inputType?: Form25InputData;
+  };
 
 export default function Form25_1({
   index,
   onAddPage,
   updater,
+  inputType,
   attributionYear,
   attributionTerm,
   periodStartMonth,
@@ -109,6 +114,7 @@ export default function Form25_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionYear}
         />
         년 제
         <Input
@@ -124,6 +130,7 @@ export default function Form25_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -139,6 +146,7 @@ export default function Form25_1({
           onChange={value =>
             updater('periodStartMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.periodStartMonth}
         />
         월
         <Input
@@ -154,6 +162,7 @@ export default function Form25_1({
           onChange={value =>
             updater('periodStartDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.periodStartDay}
         />
         일 ~
         <Input
@@ -169,6 +178,7 @@ export default function Form25_1({
           onChange={value =>
             updater('periodEndMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.periodEndMonth}
         />
         월
         <Input
@@ -184,6 +194,7 @@ export default function Form25_1({
           onChange={value =>
             updater('periodEndDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.periodEndDay}
         />
         일)
       </h1>
@@ -242,6 +253,7 @@ export default function Form25_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={propertyAddress}
               onChange={value => updater('propertyAddress', value)}
+            inputType={inputType?.propertyAddress}
             />
           </td>
           <td
@@ -288,6 +300,7 @@ export default function Form25_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={ownerName}
               onChange={value => updater('ownerName', value)}
+            inputType={inputType?.ownerName}
             />
           </td>
         </tr>
@@ -335,6 +348,7 @@ export default function Form25_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={bizNumber}
               onChange={value => updater('bizNumber', value)}
+            inputType={inputType?.bizNumber}
             />
           </td>
           <td
@@ -431,6 +445,7 @@ export default function Form25_1({
               onChange={value =>
                 updater('incomePeriodStartMonth', value.replace(/[^0-9]/g, ''))
               }
+            inputType={inputType?.incomePeriodStartMonth}
             />
             월 ~
             <Input
@@ -446,6 +461,7 @@ export default function Form25_1({
               onChange={value =>
                 updater('incomePeriodEndMonth', value.replace(/[^0-9]/g, ''))
               }
+            inputType={inputType?.incomePeriodEndMonth}
             />
             월)
           </span>
@@ -1129,6 +1145,7 @@ export default function Form25_1({
               value={totalStats.totalArea}
               onChange={value => totalStatsUpdater('totalArea', value)}
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.totalArea}
             />
           </td>
           <td
@@ -1149,7 +1166,7 @@ export default function Form25_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1169,7 +1186,7 @@ export default function Form25_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1189,7 +1206,7 @@ export default function Form25_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1209,7 +1226,7 @@ export default function Form25_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1229,7 +1246,7 @@ export default function Form25_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1253,6 +1270,7 @@ export default function Form25_1({
               value={totalStats.totalDeposit}
               onChange={value => totalStatsUpdater('totalDeposit', value)}
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.totalDeposit}
             />
           </td>
           <td
@@ -1277,6 +1295,7 @@ export default function Form25_1({
               value={totalStats.totalMonthlyRent}
               onChange={value => totalStatsUpdater('totalMonthlyRent', value)}
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.totalMonthlyRent}
             />
           </td>
           <td
@@ -1304,6 +1323,7 @@ export default function Form25_1({
                 totalStatsUpdater('grandTotalSupplyValue', value)
               }
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.grandTotalSupplyValue}
             />
           </td>
           <td
@@ -1331,6 +1351,7 @@ export default function Form25_1({
                 totalStatsUpdater('totalDepositInterest', value)
               }
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.totalDepositInterest}
             />
           </td>
           <td
@@ -1355,6 +1376,7 @@ export default function Form25_1({
                 totalStatsUpdater('totalMonthlyRentSum', value)
               }
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+            inputType={inputType?.totalStats?.totalMonthlyRentSum}
             />
           </td>
         </tr>
@@ -1746,6 +1768,7 @@ export default function Form25_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addPageBtn"
         onClick={onAddPage}
       >

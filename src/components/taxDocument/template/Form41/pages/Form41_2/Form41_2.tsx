@@ -1,18 +1,20 @@
 'use client';
-
 import './form41_2.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form41Data } from '@/components/taxDocument/template/Form41/type';
+import { Form41Data, Form41InputData } from '@/components/taxDocument/template/Form41/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import Input from '@/components/taxDocument/template/common/Input';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import {
   FORM_41_1_MAX_DETAIL_LIST_MAX_LENGTH,
   FORM_41_2_MAX_DETAIL_LIST_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form41/constants';
+type Props = FormPageProps<Form41Data> & { inputType?: Form41InputData };
 
 export default function Form41_2({
   pageIndex,
   updater,
+  inputType,
   onAddPage,
   attributionYear,
   attributionTerm,
@@ -22,7 +24,7 @@ export default function Form41_2({
   taxPeriodEndDay,
   submitterInfo,
   detailList,
-}: FormPageProps<Form41Data>) {
+}: Props) {
   const baseDetailItem = {
     type: '',
     documentNumber: '',
@@ -126,6 +128,7 @@ export default function Form41_2({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '10pt' }}></span>
         제
@@ -147,6 +150,7 @@ export default function Form41_2({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -167,6 +171,7 @@ export default function Form41_2({
           onChange={value =>
             updater('taxPeriodStartMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <Input
@@ -187,6 +192,7 @@ export default function Form41_2({
           onChange={value =>
             updater('taxPeriodStartDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <Input
@@ -207,6 +213,7 @@ export default function Form41_2({
           onChange={value =>
             updater('taxPeriodEndMonth', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <Input
@@ -227,6 +234,7 @@ export default function Form41_2({
           onChange={value =>
             updater('taxPeriodEndDay', value.replace(/[^0-9]/g, ''))
           }
+        inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h2>
@@ -281,6 +289,7 @@ export default function Form41_2({
               style={{ width: '100%', height: '20pt' }}
               value={submitterInfo.companyName}
               onChange={value => submitterInfoUpdater('companyName', value)}
+            inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
           <td
@@ -322,6 +331,7 @@ export default function Form41_2({
               style={{ width: '100%', height: '20pt' }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
+            inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -637,7 +647,7 @@ export default function Form41_2({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ textAlign: 'center' }}
                   type="text"
@@ -668,6 +678,7 @@ export default function Form41_2({
                   style={{ textAlign: 'center' }}
                   value={detail.type}
                   onChange={value => detailItemUpdater(absIndex, 'type', value)}
+                inputType={inputType?.detailList?.[absIndex]?.type}
                 />
               </td>
               <td
@@ -694,6 +705,7 @@ export default function Form41_2({
                   onChange={value =>
                     detailItemUpdater(absIndex, 'documentNumber', value)
                   }
+                inputType={inputType?.detailList?.[absIndex]?.documentNumber}
                 />
               </td>
               <td
@@ -718,6 +730,7 @@ export default function Form41_2({
                 <Input
                   value={detail.issueDate}
                   onChange={value => detailItemUpdater(absIndex, 'issueDate', value)}
+                inputType={inputType?.detailList?.[absIndex]?.issueDate}
                 />
               </td>
               <td
@@ -744,6 +757,7 @@ export default function Form41_2({
                   onChange={value =>
                     detailItemUpdater(absIndex, 'buyerBizRegNumber', value)
                   }
+                inputType={inputType?.detailList?.[absIndex]?.buyerBizRegNumber}
                 />
               </td>
               <td
@@ -768,6 +782,7 @@ export default function Form41_2({
                 <NumericInput
                   value={detail.amount}
                   onChange={value => detailItemUpdater(absIndex, 'amount', value)}
+                inputType={inputType?.detailList?.[absIndex]?.amount}
                 />
               </td>
               <td
@@ -841,7 +856,7 @@ export default function Form41_2({
         }}
       >
         (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -901,6 +916,7 @@ export default function Form41_2({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
       >
         페이지추가

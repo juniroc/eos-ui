@@ -2,13 +2,22 @@
 import './form69_1_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
-import {FormPageProps} from '@/components/taxDocument/template/common/type';
-import {Form6901Data, receiptPurchaseItem,} from '@/components/taxDocument/template/Form69_1/type';
-import {FORM_69_1_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH} from '@/components/taxDocument/template/Form69_1/constants';
+import { FormPageProps } from '@/components/taxDocument/template/common/type';
+import {
+  Form6901Data,
+  Form6901InputData,
+  receiptPurchaseItem,
+} from '@/components/taxDocument/template/Form69_1/type';
+import { FORM_69_1_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH } from '@/components/taxDocument/template/Form69_1/constants';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
+
+type Props = FormPageProps<Form6901Data> & { inputType?: Form6901InputData };
 
 export default function Form69_1_1({
   pageIndex,
   updater,
+  inputType,
   onAddPage,
   attributionYear,
   attributionTerm,
@@ -22,7 +31,7 @@ export default function Form69_1_1({
   submissionMonth,
   submissionDay,
   applicantName,
-}: FormPageProps<Form6901Data>) {
+}: Props) {
   const baseReceiptPurchaseItem: receiptPurchaseItem = {
     supplierName: '',
     supplierIdNumber: '',
@@ -171,6 +180,7 @@ export default function Form69_1_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.attributionYear}
         />
         년
         <Input
@@ -187,6 +197,7 @@ export default function Form69_1_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.attributionTerm}
         />
         기)
       </p>
@@ -216,7 +227,7 @@ export default function Form69_1_1({
               borderRightColor: '#7E7E7E',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -323,6 +334,7 @@ export default function Form69_1_1({
                   }}
                   value={submitterInfo.companyName}
                   onChange={value => submitterInfoUpdater('companyName', value)}
+                  inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
               <td
@@ -376,6 +388,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     submitterInfoUpdater('bizRegNumber', value)
                   }
+                  inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
             </tr>
@@ -427,6 +440,7 @@ export default function Form69_1_1({
                   }}
                   value={submitterInfo.bizType}
                   onChange={value => submitterInfoUpdater('bizType', value)}
+                  inputType={inputType?.submitterInfo?.bizType}
                 />
               </td>
               <td
@@ -476,6 +490,7 @@ export default function Form69_1_1({
                   }}
                   value={submitterInfo.bizItem}
                   onChange={value => submitterInfoUpdater('bizItem', value)}
+                  inputType={inputType?.submitterInfo?.bizItem}
                 />
               </td>
             </tr>
@@ -719,6 +734,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('total', 'sellerCount', value)
                   }
+                  inputType={inputType?.purchaseSummary?.total?.sellerCount}
                 />
               </td>
               <td
@@ -751,6 +767,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('total', 'count', value)
                   }
+                  inputType={inputType?.purchaseSummary?.total?.count}
                 />
               </td>
               <td
@@ -783,6 +800,9 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('total', 'acquisitionAmount', value)
                   }
+                  inputType={
+                    inputType?.purchaseSummary?.total?.acquisitionAmount
+                  }
                 />
               </td>
               <td
@@ -812,6 +832,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('total', 'deductionAmount', value)
                   }
+                  inputType={inputType?.purchaseSummary?.total?.deductionAmount}
                 />
               </td>
             </tr>
@@ -877,6 +898,9 @@ export default function Form69_1_1({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.purchaseSummary?.receiptReceived?.sellerCount
+                  }
                 />
               </td>
               <td
@@ -909,6 +933,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('receiptReceived', 'count', value)
                   }
+                  inputType={inputType?.purchaseSummary?.receiptReceived?.count}
                 />
               </td>
               <td
@@ -945,6 +970,10 @@ export default function Form69_1_1({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.purchaseSummary?.receiptReceived
+                      ?.acquisitionAmount
+                  }
                 />
               </td>
               <td
@@ -977,6 +1006,9 @@ export default function Form69_1_1({
                       'deductionAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.purchaseSummary?.receiptReceived?.deductionAmount
                   }
                 />
               </td>
@@ -1041,6 +1073,9 @@ export default function Form69_1_1({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.purchaseSummary?.invoiceReceived?.sellerCount
+                  }
                 />
               </td>
               <td
@@ -1072,6 +1107,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     purchaseSummaryUpdater('invoiceReceived', 'count', value)
                   }
+                  inputType={inputType?.purchaseSummary?.invoiceReceived?.count}
                 />
               </td>
               <td
@@ -1107,6 +1143,10 @@ export default function Form69_1_1({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.purchaseSummary?.invoiceReceived
+                      ?.acquisitionAmount
+                  }
                 />
               </td>
               <td
@@ -1138,6 +1178,9 @@ export default function Form69_1_1({
                       'deductionAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.purchaseSummary?.invoiceReceived?.deductionAmount
                   }
                 />
               </td>
@@ -1623,6 +1666,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.salesTotal}
                   onChange={value => taxBaseUpdater('salesTotal', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.salesTotal}
                 />
               </td>
               <td
@@ -1653,6 +1697,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.salesScheduled}
                   onChange={value => taxBaseUpdater('salesScheduled', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.salesScheduled}
                 />
               </td>
               <td
@@ -1683,6 +1728,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.salesConfirmed}
                   onChange={value => taxBaseUpdater('salesConfirmed', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.salesConfirmed}
                 />
               </td>
               <td
@@ -1714,6 +1760,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.limitRate}
                   onChange={value => taxBaseUpdater('limitRate', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.limitRate}
                 />
               </td>
               <td
@@ -1744,6 +1791,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.limitAmount}
                   onChange={value => taxBaseUpdater('limitAmount', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.limitAmount}
                 />
               </td>
               <td
@@ -1774,6 +1822,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.purchaseTotal}
                   onChange={value => taxBaseUpdater('purchaseTotal', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.purchaseTotal}
                 />
               </td>
               <td
@@ -1806,6 +1855,9 @@ export default function Form69_1_1({
                   onChange={value =>
                     taxBaseUpdater('purchaseTaxInvoice', value)
                   }
+                  inputType={
+                    inputType?.taxBaseAndDeductible?.purchaseTaxInvoice
+                  }
                 />
               </td>
               <td
@@ -1836,6 +1888,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.purchaseReceipts}
                   onChange={value => taxBaseUpdater('purchaseReceipts', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.purchaseReceipts}
                 />
               </td>
               <td
@@ -1863,6 +1916,7 @@ export default function Form69_1_1({
                   }}
                   value={taxBaseAndDeductible.deductibleAmount}
                   onChange={value => taxBaseUpdater('deductibleAmount', value)}
+                  inputType={inputType?.taxBaseAndDeductible?.deductibleAmount}
                 />
               </td>
             </tr>
@@ -2254,6 +2308,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('deductibleTargetAmount', value)
                   }
+                  inputType={inputType?.deductibleTax?.deductibleTargetAmount}
                 />
               </td>
               <td
@@ -2286,6 +2341,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('deductionRate', value)
                   }
+                  inputType={inputType?.deductibleTax?.deductionRate}
                 />
               </td>
               <td
@@ -2317,6 +2373,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('deductionTaxAmount', value)
                   }
+                  inputType={inputType?.deductibleTax?.deductionTaxAmount}
                 />
               </td>
               <td
@@ -2348,6 +2405,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('alreadyDeductedTotal', value)
                   }
+                  inputType={inputType?.deductibleTax?.alreadyDeductedTotal}
                 />
               </td>
               <td
@@ -2379,6 +2437,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('alreadyDeductedScheduled', value)
                   }
+                  inputType={inputType?.deductibleTax?.alreadyDeductedScheduled}
                 />
               </td>
               <td
@@ -2410,6 +2469,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('alreadyDeductedEarly', value)
                   }
+                  inputType={inputType?.deductibleTax?.alreadyDeductedEarly}
                 />
               </td>
               <td
@@ -2438,6 +2498,7 @@ export default function Form69_1_1({
                   onChange={value =>
                     deductibleTaxUpdater('finalDeductibleTax', value)
                   }
+                  inputType={inputType?.deductibleTax?.finalDeductibleTax}
                 />
               </td>
             </tr>
@@ -2982,6 +3043,7 @@ export default function Form69_1_1({
               onChange={value =>
                 receiptPurchaseItemsTotalUpdater('count', value)
               }
+              inputType={inputType?.receiptPurchaseItemsTotal?.count}
             />
           </td>
           <td
@@ -3003,7 +3065,7 @@ export default function Form69_1_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3035,7 +3097,7 @@ export default function Form69_1_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3078,6 +3140,7 @@ export default function Form69_1_1({
               onChange={value =>
                 receiptPurchaseItemsTotalUpdater('quantity', value)
               }
+              inputType={inputType?.receiptPurchaseItemsTotal?.quantity}
             />
           </td>
           <td
@@ -3100,7 +3163,7 @@ export default function Form69_1_1({
               backgroundColor: '#DEF2FE',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3134,7 +3197,7 @@ export default function Form69_1_1({
               backgroundColor: '#DEF2FE',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -3174,6 +3237,9 @@ export default function Form69_1_1({
               value={receiptPurchaseItemsTotal.acquisitionAmount}
               onChange={value =>
                 receiptPurchaseItemsTotalUpdater('acquisitionAmount', value)
+              }
+              inputType={
+                inputType?.receiptPurchaseItemsTotal?.acquisitionAmount
               }
             />
           </td>
@@ -3237,6 +3303,9 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'supplierName', value)
                 }
+                inputType={
+                  inputType?.receiptPurchaseItems?.[index]?.supplierName
+                }
               />
             </td>
             <td
@@ -3268,6 +3337,9 @@ export default function Form69_1_1({
                 value={item.supplierIdNumber}
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'supplierIdNumber', value)
+                }
+                inputType={
+                  inputType?.receiptPurchaseItems?.[index]?.supplierIdNumber
                 }
               />
             </td>
@@ -3301,6 +3373,9 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'classificationCode', value)
                 }
+                inputType={
+                  inputType?.receiptPurchaseItems?.[index]?.classificationCode
+                }
               />
             </td>
             <td
@@ -3333,6 +3408,7 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'count', value)
                 }
+                inputType={inputType?.receiptPurchaseItems?.[index]?.count}
               />
             </td>
             <td
@@ -3365,6 +3441,7 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'itemName', value)
                 }
+                inputType={inputType?.receiptPurchaseItems?.[index]?.itemName}
               />
             </td>
             <td
@@ -3397,6 +3474,7 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'quantity', value)
                 }
+                inputType={inputType?.receiptPurchaseItems?.[index]?.quantity}
               />
             </td>
             <td
@@ -3494,6 +3572,9 @@ export default function Form69_1_1({
                 onChange={value =>
                   receiptPurchaseItemUpdater(index, 'acquisitionAmount', value)
                 }
+                inputType={
+                  inputType?.receiptPurchaseItems?.[index]?.acquisitionAmount
+                }
               />
             </td>
           </tr>
@@ -3546,6 +3627,7 @@ export default function Form69_1_1({
           onChange={value =>
             updater('submissionYear', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.submissionYear}
         />
         년
         <Input
@@ -3562,6 +3644,7 @@ export default function Form69_1_1({
           onChange={value =>
             updater('submissionMonth', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.submissionMonth}
         />
         월
         <Input
@@ -3578,6 +3661,7 @@ export default function Form69_1_1({
           onChange={value =>
             updater('submissionDay', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.submissionDay}
         />
         일
       </p>
@@ -3602,8 +3686,9 @@ export default function Form69_1_1({
           }}
           value={applicantName}
           onChange={value => updater('applicantName', value)}
+          inputType={inputType?.applicantName}
         />
-        <span className="signature-text">(서명 또는 인)</span>
+        <Stamp className="signature-text">(서명 또는 인)</Stamp>
       </p>
       <p
         className="s21"
@@ -3758,6 +3843,7 @@ export default function Form69_1_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
         onClick={onAddPage}
       >

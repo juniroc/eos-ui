@@ -6,12 +6,23 @@ import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 import ToastMessage from '@/components/ToastMessage';
-import { deleteVatForm, uploadVatFormFile, VatFormData } from '@/services/api';
+import {
+  completeVatForm,
+  completeVatReport,
+  deleteVatForm,
+  uploadVatFormFile,
+  VatFormData,
+} from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { getOrientation } from '@/components/taxDocument/template/common/utils/formUitls';
+import {
+  convertToApiData,
+  getOrientation,
+  removeEmptyFromArrays,
+} from '@/components/taxDocument/template/common/utils/formUitls';
 import { FormCode } from '@/components/taxDocument/template/common/type';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
+import { printElement } from '@/utils/printUtils';
 
 interface VatDocumentCreateModalProps extends ModalProps {
   reportForms: VatFormData[];
@@ -65,9 +76,6 @@ function VatDocumentCreateModal({
     } as VatFormData;
 
     setSelectedDocument(nextDocument);
-    setDocumentList(prev =>
-      prev.map(doc => (doc.id === nextDocument.id ? nextDocument : doc))
-    );
   };
   // 사이드 패널 열기
   const handleOpenSidePanel = () => {
@@ -188,9 +196,84 @@ function VatDocumentCreateModal({
     }
   };
 
+  const handleCompleteForm = async () => {
+    try {
+      if (!selectedDocument) return;
+      const { id, data } = convertToApiData(selectedDocument);
+      const { data: responseData } = await completeVatForm(id, data, token!);
+      const normalizedResponseData = removeEmptyFromArrays(responseData);
+      // @ts-ignore
+      setDocumentList(prev =>
+        prev.map(doc => {
+          if (doc.id === selectedDocument.id) {
+            return {
+              ...doc,
+              data: {
+                ...doc.data,
+                data: normalizedResponseData,
+              },
+            };
+          }
+
+          return doc;
+        })
+      );
+      // @ts-ignore
+      setSelectedDocument(prev => ({
+        ...prev,
+        data: { ...prev!.data, data: normalizedResponseData },
+      }));
+    } catch (error) {
+      console.error('서식 저장 에러:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : '서식 저장에 실패했습니다.';
+      alert(errorMessage);
+    }
+  };
+
+  const handleCompleteReport = async () => {
+    try {
+      if (!reportId) return;
+      // 완료 API 호출
+      await completeVatReport(reportId, token!);
+      // 토스트 메시지 표시
+      setToastMessage('서류 작성이 완료되었습니다!');
+      setShowToast(true);
+      // 모달 닫기
+      onClose();
+    } catch (error) {
+      console.error('서류 작성 완료 에러:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '서류 작성 완료에 실패했습니다.';
+      alert(errorMessage);
+    }
+  };
+
+  const handlePrint = () => {
+    printElement({
+      selector: '#preview-section',
+    });
+  };
   useEffect(() => {
     setDocumentList(reportForms);
   }, [reportForms]);
+
+  useEffect(() => {
+    return () => {
+      setDocumentList([]);
+      setSelectedDocument(null);
+      setIsListOpen(true);
+      setShowSidePanel(false);
+      setToastMessage('');
+      setShowToast(false);
+      setIsDeleting(null);
+      setSelectedFile(null);
+      setIsUploading(false);
+      setIsDragging(false);
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -412,15 +495,10 @@ function VatDocumentCreateModal({
                 {/* 업로드 버튼 */}
                 <div className="flex flex-row justify-end items-center gap-2 w-full h-[27px]">
                   <button
-                    onClick={handleUpload}
-                    disabled={!selectedFile || isUploading}
-                    className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] ${
-                      selectedFile && !isUploading
-                        ? 'bg-[#2C2C2C] text-[#F5F5F5]'
-                        : 'bg-[#E6E6E6] text-[#B3B3B3]'
-                    }`}
+                    onClick={handleCompleteReport}
+                    className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] font-['Pretendard'] font-medium text-[11px] leading-[100%] 'bg-[#E6E6E6] text-[#B3B3B3]`}
                   >
-                    <span>{isUploading ? '업로드중...' : '저장하기'}</span>
+                    <span> 저장하기</span>
                   </button>
                 </div>
               </div>
@@ -450,7 +528,10 @@ function VatDocumentCreateModal({
                 {/* 버튼들 */}
                 <div className="flex flex-row justify-end items-center gap-2 h-[27px]">
                   <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#F26522]">
-                    <span className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
+                    <span
+                      className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']"
+                      onClick={handleCompleteForm}
+                    >
                       작업완료
                     </span>
                   </button>
@@ -459,7 +540,10 @@ function VatDocumentCreateModal({
                       다운로드
                     </span>
                   </button>
-                  <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#F3F3F3]">
+                  <button
+                    className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#F3F3F3]"
+                    onClick={handlePrint}
+                  >
                     <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">
                       인쇄하기
                     </span>
@@ -476,10 +560,14 @@ function VatDocumentCreateModal({
             {/* 서류 미리보기 영역 */}
             <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0 overflow-y-scroll">
               {selectedDocument && (
-                <PreviewWrapper orientation={previewOrientation} maxWidth={624}>
+                <PreviewWrapper
+                  orientation={previewOrientation}
+                  maxWidth={previewOrientation === 'portrait' ? 624 : 882}
+                >
                   <TaxDocument
                     formCode={selectedDocument.formCode}
                     data={selectedDocument.data.data}
+                    inputType={selectedDocument.data.inputType}
                     updater={handleDocumentUpdate}
                   />
                 </PreviewWrapper>

@@ -1,5 +1,4 @@
 import React from 'react';
-import PageSlot from '@/components/documentCreate/PageSlot';
 
 type Orientation = 'portrait' | 'landscape';
 type Fit = 'content' | 'width';
@@ -26,20 +25,14 @@ export default function PreviewWrapper({
   fit: _fit = 'content',
   disableScaleOnPrint = true,
 }: Props) {
-  const pageNodes = React.Children.toArray(children).filter(Boolean);
-
   return (
     <div className="w-full" style={{ maxWidth }}>
-      <div className="flex flex-col items-start" style={{ gap: 8 }}>
-        {pageNodes.map((page, index) => (
-          <PageSlot
-            key={index}
-            orientation={orientation}
-            disableScaleOnPrint={disableScaleOnPrint}
-          >
-            {page}
-          </PageSlot>
-        ))}
+      <div
+        id={'preview-section'}
+        className="flex flex-col items-start overflow-x-hidden [scrollbar-gutter:stable]"
+        style={{ gap: 8 }}
+      >
+        {children}
       </div>
     </div>
   );

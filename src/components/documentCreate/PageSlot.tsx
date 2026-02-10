@@ -1,91 +1,154 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  Fragment,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-type Orientation = 'portrait' | 'landscape';
+type Fit = 'contain' | 'cover' | 'width' | 'height';
+type Crop = Partial<{
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}>;
 
-type Props = {
+type PageSlotProps = {
   children: React.ReactNode;
-  orientation?: Orientation;
-  disableScaleOnPrint?: boolean;
+
+  // 기본값: A4 비율(624×882)
+  slotWidth?: number;
+  slotHeight?: number;
+
+  fit?: Fit;
+  crop?: Crop;
+  zoom?: number;
+  className?: string;
 };
 
-export default function PageSlot({
+export function PageSlot({
   children,
-  orientation = 'portrait',
-  disableScaleOnPrint = true,
-}: Props) {
-  const hostRef = useRef<HTMLDivElement>(null);
+  slotWidth = 624,
+  slotHeight = 882,
+  fit = 'contain',
+  crop,
+  zoom = 1,
+}: PageSlotProps) {
   const measureRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [contentSize, setContentSize] = useState<{ w: number; h: number } | null>(null);
+  const [childSize, setChildSize] = useState<{ w: number; h: number } | null>(
+    null
+  );
 
-  const base = useMemo(() => {
-    const portraitA4 = { w: 794, h: 1123 };
-    const landscapeA4 = { w: 1123, h: 794 };
-    return orientation === 'landscape' ? landscapeA4 : portraitA4;
-  }, [orientation]);
+  const c = {
+    top: crop?.top ?? 0,
+    right: crop?.right ?? 0,
+    bottom: crop?.bottom ?? 0,
+    left: crop?.left ?? 0,
+  };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = measureRef.current;
     if (!el) return;
 
-    const ro = new ResizeObserver(() => {
-      const w = Math.max(el.offsetWidth, el.scrollWidth, base.w);
-      const h = Math.max(el.offsetHeight, el.scrollHeight, base.h);
-      setContentSize({ w, h });
-    });
+    const measure = () => {
+      // ✅ transform 영향을 받지 않는 “레이아웃 크기”
+      const w = Math.max(1, el.offsetWidth);
+      const h = Math.max(1, el.offsetHeight);
+      setChildSize(prev => (prev?.w === w && prev?.h === h ? prev : { w, h }));
+    };
 
+    measure();
+
+    const ro = new ResizeObserver(() => measure());
     ro.observe(el);
+
     return () => ro.disconnect();
-  }, [base.h, base.w, children]);
+  }, []);
 
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
+  const scale = useMemo(() => {
+    if (!childSize) return 1;
 
-    const ro = new ResizeObserver(() => {
-      const available = host.clientWidth;
-      const baseW = contentSize?.w ?? base.w;
-      const next = Math.min(available / baseW, 1);
-      setScale(next);
-    });
+    const visibleW = Math.max(1, childSize.w - c.left - c.right);
+    const visibleH = Math.max(1, childSize.h - c.top - c.bottom);
 
-    ro.observe(host);
-    return () => ro.disconnect();
-  }, [base.w, contentSize?.w]);
+    const sx = slotWidth / visibleW;
+    const sy = slotHeight / visibleH;
 
-  const baseW = contentSize?.w ?? base.w;
-  const baseH = contentSize?.h ?? base.h;
-  const layoutW = Math.floor(baseW * scale);
-  const layoutH = Math.floor(baseH * scale);
+    switch (fit) {
+      case 'cover':
+        return Math.max(sx, sy) * zoom;
+      case 'width':
+        return sx * zoom;
+      case 'height':
+        return sy * zoom;
+      case 'contain':
+      default:
+        return Math.min(sx, sy) * zoom;
+    }
+  }, [
+    childSize,
+    slotWidth,
+    slotHeight,
+    fit,
+    zoom,
+    c.left,
+    c.right,
+    c.top,
+    c.bottom,
+  ]);
 
   return (
-    <div ref={hostRef} className="w-full">
+    <Fragment>
       <div
+        data-pageslot
+        className={'print:hidden'}
         style={{
-          width: '100%',
-          height: layoutH,
+          width: `${slotWidth}px`,
+          height: `${slotHeight}px`,
           position: 'relative',
+          overflow: 'hidden',
+          background: 'white',
+          boxSizing: 'border-box',
+          tableLayout: 'fixed',
+          breakAfter: 'page',
+          breakInside: 'avoid',
+          pageBreakAfter: 'always',
+          pageBreakInside: 'avoid',
         }}
       >
         <div
+          data-pagecanvas
           style={{
-            width: baseW,
-            height: baseH,
-            transform: `scale(${scale})`,
+            position: 'absolute',
+            top: 0,
+            left: 0,
             transformOrigin: 'top left',
+            transform: `translate(${-c.left}px, ${-c.top}px) scale(${scale})`,
+            width: `${slotWidth / scale}px`,
           }}
-          className={disableScaleOnPrint ? 'print:transform-none' : undefined}
         >
           <div
             ref={measureRef}
-            style={{ display: 'inline-block', width: 'auto', height: 'auto' }}
+            style={{
+              display: 'block', // ✅ margin auto 먹게
+              width: 'fit-content', // 내용 크기만큼
+              margin: '0 auto',
+            }}
           >
             {children}
           </div>
         </div>
       </div>
-    </div>
+      <div
+        className={
+          'hidden print:block print:break-before-page print:break-inside-avoid'
+        }
+      >
+        {children}
+      </div>
+    </Fragment>
   );
 }

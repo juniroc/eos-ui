@@ -3,11 +3,19 @@ import './form41_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form41Data } from '@/components/taxDocument/template/Form41/type';
+import {
+  Form41Data,
+  Form41InputData,
+} from '@/components/taxDocument/template/Form41/type';
 import { FORM_41_1_MAX_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form41/constants';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
+
+type Props = FormPageProps<Form41Data> & { inputType?: Form41InputData };
 
 export default function Form41_1({
   updater,
+  inputType,
   attributionYear,
   attributionTerm,
   taxPeriodStartMonth,
@@ -19,7 +27,7 @@ export default function Form41_1({
   writingDate,
   summary,
   detailList,
-}: FormPageProps<Form41Data>) {
+}: Props) {
   const baseDetailItem = {
     type: '',
     documentNumber: '',
@@ -34,9 +42,7 @@ export default function Form41_1({
     (_, i) => detailList[i] ?? baseDetailItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form41Data['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form41Data['submitterInfo']>(
     field: K,
     value: Form41Data['submitterInfo'][K]
   ) => {
@@ -145,6 +151,7 @@ export default function Form41_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -166,6 +173,7 @@ export default function Form41_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -186,6 +194,7 @@ export default function Form41_1({
           onChange={value =>
             updater('taxPeriodStartMonth', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <Input
@@ -206,6 +215,7 @@ export default function Form41_1({
           onChange={value =>
             updater('taxPeriodStartDay', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <Input
@@ -226,6 +236,7 @@ export default function Form41_1({
           onChange={value =>
             updater('taxPeriodEndMonth', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <Input
@@ -246,6 +257,7 @@ export default function Form41_1({
           onChange={value =>
             updater('taxPeriodEndDay', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h3>
@@ -458,9 +470,8 @@ export default function Form41_1({
                     textAlign: 'center',
                   }}
                   value={submitterInfo.companyName}
-                  onChange={value =>
-                    submitterInfoUpdater('companyName', value)
-                  }
+                  onChange={value => submitterInfoUpdater('companyName', value)}
+                  inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
               <td
@@ -536,6 +547,7 @@ export default function Form41_1({
                   onChange={value =>
                     submitterInfoUpdater('bizRegNumber', value)
                   }
+                  inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
             </tr>
@@ -616,6 +628,7 @@ export default function Form41_1({
                   onChange={value =>
                     submitterInfoUpdater('representativeName', value)
                   }
+                  inputType={inputType?.submitterInfo?.representativeName}
                 />
               </td>
               <td
@@ -692,6 +705,7 @@ export default function Form41_1({
                   }}
                   value={submitterInfo.address}
                   onChange={value => submitterInfoUpdater('address', value)}
+                  inputType={inputType?.submitterInfo?.address}
                 />
               </td>
             </tr>
@@ -769,6 +783,7 @@ export default function Form41_1({
                   }}
                   value={submitterInfo.bizType}
                   onChange={value => submitterInfoUpdater('bizType', value)}
+                  inputType={inputType?.submitterInfo?.bizType}
                 />
               </td>
               <td
@@ -845,6 +860,7 @@ export default function Form41_1({
                   }}
                   value={submitterInfo.bizItem}
                   onChange={value => submitterInfoUpdater('bizItem', value)}
+                  inputType={inputType?.submitterInfo?.bizItem}
                 />
               </td>
             </tr>
@@ -923,6 +939,7 @@ export default function Form41_1({
                       value.replace(/[^0-9]/g, '')
                     )
                   }
+                  inputType={inputType?.transactionPeriod?.year}
                 />
                 <span className="s5" style={{ verticalAlign: 'middle' }}>
                   년
@@ -958,6 +975,7 @@ export default function Form41_1({
                       value.replace(/[^0-9]/g, '')
                     )
                   }
+                  inputType={inputType?.transactionPeriod?.startMonth}
                 />
                 <span className="s5" style={{ verticalAlign: 'middle' }}>
                   월
@@ -994,6 +1012,7 @@ export default function Form41_1({
                       value.replace(/[^0-9]/g, '')
                     )
                   }
+                  inputType={inputType?.transactionPeriod?.startDay}
                 />
                 <span
                   className="s5"
@@ -1038,6 +1057,7 @@ export default function Form41_1({
                       value.replace(/[^0-9]/g, '')
                     )
                   }
+                  inputType={inputType?.transactionPeriod?.endMonth}
                 />
                 <span className="s5" style={{ verticalAlign: 'middle' }}>
                   월
@@ -1076,6 +1096,7 @@ export default function Form41_1({
                       value.replace(/[^0-9]/g, '')
                     )
                   }
+                  inputType={inputType?.transactionPeriod?.endDay}
                 />
                 <span
                   className="s5"
@@ -1153,6 +1174,7 @@ export default function Form41_1({
                   }}
                   value={writingDate}
                   onChange={value => updater('writingDate', value)}
+                  inputType={inputType?.writingDate}
                 />
               </td>
             </tr>
@@ -1350,6 +1372,7 @@ export default function Form41_1({
                   onChange={value =>
                     summaryUpdater('grandTotal', 'count', value)
                   }
+                  inputType={inputType?.summary?.grandTotal?.count}
                 />
               </td>
               <td
@@ -1381,6 +1404,7 @@ export default function Form41_1({
                   onChange={value =>
                     summaryUpdater('grandTotal', 'amount', value)
                   }
+                  inputType={inputType?.summary?.grandTotal?.amount}
                 />
               </td>
               <td
@@ -1466,6 +1490,7 @@ export default function Form41_1({
                   }}
                   value={summary.localLC.count}
                   onChange={value => summaryUpdater('localLC', 'count', value)}
+                  inputType={inputType?.summary?.localLC?.count}
                 />
               </td>
               <td
@@ -1494,9 +1519,8 @@ export default function Form41_1({
                     verticalAlign: 'middle',
                   }}
                   value={summary.localLC.amount}
-                  onChange={value =>
-                    summaryUpdater('localLC', 'amount', value)
-                  }
+                  onChange={value => summaryUpdater('localLC', 'amount', value)}
+                  inputType={inputType?.summary?.localLC?.amount}
                 />
               </td>
               <td
@@ -1582,6 +1606,7 @@ export default function Form41_1({
                   onChange={value =>
                     summaryUpdater('purchaseConfirmation', 'count', value)
                   }
+                  inputType={inputType?.summary?.purchaseConfirmation?.count}
                 />
               </td>
               <td
@@ -1612,6 +1637,7 @@ export default function Form41_1({
                   onChange={value =>
                     summaryUpdater('purchaseConfirmation', 'amount', value)
                   }
+                  inputType={inputType?.summary?.purchaseConfirmation?.amount}
                 />
               </td>
               <td
@@ -1929,7 +1955,7 @@ export default function Form41_1({
             </p>
           </td>
         </tr>
-        
+
         {mappedDetailList.map((detail, index) => (
           <tr style={{ height: '16pt' }} key={`detail-${index}`}>
             <td
@@ -1947,7 +1973,7 @@ export default function Form41_1({
                 padding: '1.5pt',
               }}
             >
-              <input
+              <InputField
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 3pt)',
@@ -1989,6 +2015,7 @@ export default function Form41_1({
                 }}
                 value={detail.type}
                 onChange={value => detailItemUpdater(index, 'type', value)}
+                inputType={inputType?.detailList?.[index]?.type}
               />
             </td>
             <td
@@ -2020,6 +2047,7 @@ export default function Form41_1({
                 onChange={value =>
                   detailItemUpdater(index, 'documentNumber', value)
                 }
+                inputType={inputType?.detailList?.[index]?.documentNumber}
               />
             </td>
             <td
@@ -2049,6 +2077,7 @@ export default function Form41_1({
                 }}
                 value={detail.issueDate}
                 onChange={value => detailItemUpdater(index, 'issueDate', value)}
+                inputType={inputType?.detailList?.[index]?.issueDate}
               />
             </td>
             <td
@@ -2080,6 +2109,7 @@ export default function Form41_1({
                 onChange={value =>
                   detailItemUpdater(index, 'buyerBizRegNumber', value)
                 }
+                inputType={inputType?.detailList?.[index]?.buyerBizRegNumber}
               />
             </td>
             <td
@@ -2109,6 +2139,7 @@ export default function Form41_1({
                 }}
                 value={detail.amount}
                 onChange={value => detailItemUpdater(index, 'amount', value)}
+                inputType={inputType?.detailList?.[index]?.amount}
               />
             </td>
             <td
@@ -2158,7 +2189,7 @@ export default function Form41_1({
         className="s3"
         style={{ paddingTop: '15pt', textIndent: '0pt', textAlign: 'right' }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -2176,7 +2207,7 @@ export default function Form41_1({
           maxLength={4}
         />
         년
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -2194,7 +2225,7 @@ export default function Form41_1({
           maxLength={2}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -2224,7 +2255,7 @@ export default function Form41_1({
       >
         제출자
         <span style={{ paddingLeft: '30pt' }}></span>
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '100pt',
@@ -2238,9 +2269,9 @@ export default function Form41_1({
           }}
           type="text"
         />
-        <span className="s11" style={{ color: '#C0C0C0', fontSize: '8pt' }}>
+        <Stamp className="s11" style={{ color: '#C0C0C0', fontSize: '8pt' }}>
           (서명 또는 인)
-        </span>
+        </Stamp>
       </p>
       <h2
         style={{
@@ -2292,6 +2323,7 @@ export default function Form41_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
       >
         (을)표추가

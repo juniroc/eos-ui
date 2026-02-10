@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Form15Data,
+  Form15InputData,
   TaxFreePurchaseAmount,
 } from '@/components/taxDocument/template/Form15/types';
 import Input from '@/components/taxDocument/template/common/Input';
@@ -11,10 +12,12 @@ type Props = TaxFreePurchaseAmount & {
     field: K,
     value: Form15Data[K]
   ) => void;
+  inputType?: Form15InputData;
 };
 
 function TaxFreePurchaseAmountTable({
   summaryTotalSellerCount,
+  inputType,
   summaryTotalCount,
   summaryTotalAmt,
   summaryTotalDedRate,
@@ -308,6 +311,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.summaryTotalSellerCount}
             />
           </td>
           <td
@@ -336,6 +340,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.summaryTotalCount}
             />
           </td>
           <td
@@ -364,6 +369,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.summaryTotalAmt}
             />
           </td>
           <td
@@ -393,6 +399,7 @@ function TaxFreePurchaseAmountTable({
                 height: 'calc(100% - 2pt)',
                 textAlign: 'center',
               }}
+            inputType={inputType?.summaryTotalDedRate}
             />
           </td>
           <td
@@ -418,6 +425,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.summaryTotalTaxAmt}
             />
           </td>
         </tr>
@@ -509,6 +517,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.invoiceSellerCount}
             />
           </td>
           <td
@@ -537,6 +546,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.invoiceCount}
             />
           </td>
           <td
@@ -565,6 +575,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.invoiceAmt}
             />
           </td>
           <td
@@ -594,6 +605,7 @@ function TaxFreePurchaseAmountTable({
                 height: 'calc(100% - 2pt)',
                 textAlign: 'center',
               }}
+            inputType={inputType?.invoiceDedRate}
             />
           </td>
           <td
@@ -619,6 +631,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.invoiceTaxAmt}
             />
           </td>
         </tr>
@@ -678,6 +691,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.cardSellerCount}
             />
           </td>
           <td
@@ -706,6 +720,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.cardCount}
             />
           </td>
           <td
@@ -734,6 +749,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.cardAmt}
             />
           </td>
           <td
@@ -763,6 +779,7 @@ function TaxFreePurchaseAmountTable({
                 height: 'calc(100% - 2pt)',
                 textAlign: 'center',
               }}
+            inputType={inputType?.cardDedRate}
             />
           </td>
           <td
@@ -788,6 +805,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.cardTaxAmt}
             />
           </td>
         </tr>
@@ -846,6 +864,7 @@ function TaxFreePurchaseAmountTable({
                 width: ' ',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.farmerSellerCount}
             />
           </td>
           <td
@@ -873,6 +892,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.farmerCount}
             />
           </td>
           <td
@@ -900,6 +920,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.farmerAmt}
             />
           </td>
           <td
@@ -928,6 +949,7 @@ function TaxFreePurchaseAmountTable({
                 height: 'calc(100% - 2pt)',
                 textAlign: 'center',
               }}
+            inputType={inputType?.farmerDedRate}
             />
           </td>
           <td
@@ -952,6 +974,7 @@ function TaxFreePurchaseAmountTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.farmerTaxAmt}
             />
           </td>
         </tr>

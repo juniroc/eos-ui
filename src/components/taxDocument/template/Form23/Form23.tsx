@@ -1,11 +1,16 @@
 'use client';
 import './form23.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   Form23Data,
+  Form23InputData,
   PaymentMethodColumns,
 } from '@/components/taxDocument/template/Form23/type';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form23Props = UpdaterProps<Form23Data> & { inputType?: Form23InputData };
 
 export default function Form23({
   updater,
@@ -25,7 +30,7 @@ export default function Form23({
   serviceChargeStats,
   taxInvoiceIssuedAmount,
   invoiceIssuedAmount,
-}: UpdaterProps<Form23Data>) {
+  inputType}: Form23Props) {
   const toNumberValue = (value: string) => {
     const digits = value.replace(/[^0-9]/g, '');
     return digits ? Number(digits) : undefined;
@@ -57,7 +62,8 @@ export default function Form23({
   };
 
   return (
-    <div className="form23">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form23">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -91,7 +97,7 @@ export default function Form23({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -107,9 +113,10 @@ export default function Form23({
           type="text"
           value={attributionYear}
           onChange={e => updater('attributionYear', e.target.value)}
+        inputType={inputType?.attributionYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -126,6 +133,7 @@ export default function Form23({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', e.target.value)}
+        inputType={inputType?.attributionTerm}
         />
         기 (
         <NumericInput
@@ -278,12 +286,13 @@ export default function Form23({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizName}
                   onChange={e => updater('bizName', e.target.value)}
+                inputType={inputType?.bizName}
                 />
               </td>
               <td
@@ -332,12 +341,13 @@ export default function Form23({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={repName}
                   onChange={e => updater('repName', e.target.value)}
+                inputType={inputType?.repName}
                 />
               </td>
             </tr>
@@ -385,12 +395,13 @@ export default function Form23({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizAddress}
                   onChange={e => updater('bizAddress', e.target.value)}
+                inputType={inputType?.bizAddress}
                 />
               </td>
               <td
@@ -436,12 +447,13 @@ export default function Form23({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   type="text"
                   value={bizNumber}
                   onChange={e => updater('bizNumber', e.target.value)}
+                inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -683,6 +695,7 @@ export default function Form23({
                   onChange={value =>
                     updatePaymentStats('grandTotalStats', 'totalAmount', value)
                   }
+                inputType={inputType?.grandTotalStats?.totalAmount}
                 />
               </td>
               <td
@@ -714,6 +727,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.grandTotalStats?.creditCardAmount}
                 />
               </td>
               <td
@@ -745,6 +759,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.grandTotalStats?.cashReceiptAmount}
                 />
               </td>
               <td
@@ -773,6 +788,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.grandTotalStats?.electronicPaymentAmount}
                 />
               </td>
             </tr>
@@ -828,6 +844,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxableSalesStats?.totalAmount}
                 />
               </td>
               <td
@@ -859,6 +876,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxableSalesStats?.creditCardAmount}
                 />
               </td>
               <td
@@ -890,6 +908,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxableSalesStats?.cashReceiptAmount}
                 />
               </td>
               <td
@@ -918,6 +937,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxableSalesStats?.electronicPaymentAmount}
                 />
               </td>
             </tr>
@@ -973,6 +993,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxFreeSalesStats?.totalAmount}
                 />
               </td>
               <td
@@ -1004,6 +1025,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxFreeSalesStats?.creditCardAmount}
                 />
               </td>
               <td
@@ -1035,6 +1057,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxFreeSalesStats?.cashReceiptAmount}
                 />
               </td>
               <td
@@ -1063,6 +1086,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.taxFreeSalesStats?.electronicPaymentAmount}
                 />
               </td>
             </tr>
@@ -1116,6 +1140,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.serviceChargeStats?.totalAmount}
                 />
               </td>
               <td
@@ -1146,6 +1171,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.serviceChargeStats?.creditCardAmount}
                 />
               </td>
               <td
@@ -1176,6 +1202,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.serviceChargeStats?.cashReceiptAmount}
                 />
               </td>
               <td
@@ -1203,6 +1230,7 @@ export default function Form23({
                       value
                     )
                   }
+                inputType={inputType?.serviceChargeStats?.electronicPaymentAmount}
                 />
               </td>
             </tr>
@@ -1288,6 +1316,7 @@ export default function Form23({
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   value={taxInvoiceIssuedAmount}
                   onChange={value => updater('taxInvoiceIssuedAmount', value)}
+                inputType={inputType?.taxInvoiceIssuedAmount}
                 />
               </td>
               <td
@@ -1333,6 +1362,7 @@ export default function Form23({
                   style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
                   value={invoiceIssuedAmount}
                   onChange={value => updater('invoiceIssuedAmount', value)}
+                inputType={inputType?.invoiceIssuedAmount}
                 />
               </td>
             </tr>
@@ -1404,6 +1434,7 @@ export default function Form23({
           padding: '0',
         }}
       />
-    </div>
+      </div>
+    </PageSlot>
   );
 }

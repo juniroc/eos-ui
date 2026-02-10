@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form25Data } from '@/components/taxDocument/template/Form25/type';
+import {
+  Form25Data,
+  Form25InputData,
+} from '@/components/taxDocument/template/Form25/type';
 import { getFormCount } from '@/components/taxDocument/utils/pageUtil';
 import { RENTAL_ITEM_MAX_LENGTH } from '@/components/taxDocument/template/Form25/constants';
 import Form25_1 from '@/components/taxDocument/template/Form25/pages/Form25_1/Form25_1';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
 
-type Props = Form25Data & UpdaterProps<Form25Data>;
+type Form25Props = UpdaterProps<Form25Data> & { inputType?: Form25InputData };
 
-function Form25({ updater, ...data }: Props) {
+type Props = Form25Data & Form25Props;
+
+function Form25({ updater, inputType, ...data }: Props) {
   const [pageCount, setPageCount] = useState(
     getFormCount(
       data.rentalItems.length,
@@ -17,13 +23,15 @@ function Form25({ updater, ...data }: Props) {
   );
 
   return Array.from({ length: pageCount + 1 }).map((_, index) => (
-    <Form25_1
-      key={index}
-      index={index}
-      updater={updater}
-      onAddPage={() => setPageCount(prev => prev + 1)}
-      {...data}
-    />
+    <PageSlot key={index} slotWidth={882} slotHeight={624}>
+      <Form25_1
+        index={index}
+        updater={updater}
+        inputType={inputType}
+        onAddPage={() => setPageCount(prev => prev + 1)}
+        {...data}
+      />
+    </PageSlot>
   ));
 }
 

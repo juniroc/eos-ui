@@ -1,13 +1,17 @@
 'use client';
 import './form21_2.css';
-
-import { Form21Data } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import Input from '@/components/taxDocument/template/common/Input';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
 
-type Props = Form21Data & UpdaterProps<Form21Data>;
+type Props = Form21Data &
+  UpdaterProps<Form21Data> & { inputType?: Form21InputData };
 
-export default function Form21_2({ submitterName, updater }: Props) {
+export default function Form21_2({ submitterName, updater, inputType }: Props) {
   return (
     <div className="form21_2">
       <table
@@ -444,10 +448,11 @@ export default function Form21_2({ submitterName, updater }: Props) {
             boxSizing: 'border-box',
             margin: '0 20pt 0 0',
           }}
+          inputType={inputType?.submitterName}
         />
-        <span className="s4 signature-text" style={{ fontSize: '9pt' }}>
+        <Stamp className="s4 signature-text" style={{ fontSize: '9pt' }}>
           (서명 또는 인)
-        </span>
+        </Stamp>
       </p>
       <div
         style={{

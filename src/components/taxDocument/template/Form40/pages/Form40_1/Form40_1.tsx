@@ -2,14 +2,17 @@
 import './form40_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
-import { Form40Data } from '@/components/taxDocument/template/Form40/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import { Form40Data, Form40InputData } from '@/components/taxDocument/template/Form40/type';
 import {
   FORM_40_1_MAX_EXPORT_DETAIL_LIST_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form40/constants';
+type Props = FormPageProps<Form40Data> & { inputType?: Form40InputData };
 
 export default function Form40_1({
   pageIndex,
   updater,
+  inputType,
   onAddPage,
   attributionYear,
   attributionTerm,
@@ -23,7 +26,7 @@ export default function Form40_1({
   summary,
   exportItemsTotal,
   exportItems,
-}: FormPageProps<Form40Data>) {
+}: Props) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
   const createEmptyExportItem = (): Form40Data['exportItems'][number] => ({
@@ -171,7 +174,7 @@ export default function Form40_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="text-input"
           style={{
             width: 'calc(100% - 4pt)',
@@ -189,6 +192,7 @@ export default function Form40_1({
           onChange={e =>
             updateExportItemField(absIndex, 'exportDeclarationNumber', e.target.value)
           }
+        inputType={inputType?.exportItems?.[absIndex]?.exportDeclarationNumber}
         />
       </td>
       <td
@@ -209,7 +213,7 @@ export default function Form40_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="text-input"
           style={{
             width: 'calc(100% - 4pt)',
@@ -225,6 +229,7 @@ export default function Form40_1({
           }}
           value={item.shippingDate}
           onChange={e => updateExportItemField(absIndex, 'shippingDate', e.target.value)}
+        inputType={inputType?.exportItems?.[absIndex]?.shippingDate}
         />
       </td>
       <td
@@ -245,7 +250,7 @@ export default function Form40_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="text-input"
           style={{
             width: 'calc(100% - 4pt)',
@@ -261,6 +266,7 @@ export default function Form40_1({
           }}
           value={item.currencyCode}
           onChange={e => updateExportItemField(absIndex, 'currencyCode', e.target.value)}
+        inputType={inputType?.exportItems?.[absIndex]?.currencyCode}
         />
       </td>
       <td
@@ -296,6 +302,7 @@ export default function Form40_1({
           }}
           value={Number(item.exchangeRate || 0)}
           onChange={value => updateExportItemField(absIndex, 'exchangeRate', String(value))}
+          inputType={inputType?.exportItems?.[absIndex]?.exchangeRate}
         />
       </td>
       <td
@@ -331,6 +338,7 @@ export default function Form40_1({
           }}
           value={item.foreignAmount}
           onChange={value => updateExportItemField(absIndex, 'foreignAmount', value)}
+        inputType={inputType?.exportItems?.[absIndex]?.foreignAmount}
         />
       </td>
       <td
@@ -363,6 +371,7 @@ export default function Form40_1({
           }}
           value={item.wonAmount}
           onChange={value => updateExportItemField(absIndex, 'wonAmount', value)}
+        inputType={inputType?.exportItems?.[absIndex]?.wonAmount}
         />
       </td>
     </tr>
@@ -399,7 +408,7 @@ export default function Form40_1({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '4ch',
@@ -415,9 +424,10 @@ export default function Form40_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+        inputType={inputType?.attributionYear}
         />
         년<span style={{ marginLeft: '15pt' }}></span>
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '2ch',
@@ -433,9 +443,10 @@ export default function Form40_1({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+        inputType={inputType?.attributionTerm}
         />
         기 (
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '2ch',
@@ -453,9 +464,10 @@ export default function Form40_1({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
+        inputType={inputType?.taxPeriodStartMonth}
         />
         월
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '2ch',
@@ -473,9 +485,10 @@ export default function Form40_1({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
+        inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '2ch',
@@ -491,9 +504,10 @@ export default function Form40_1({
           maxLength={2}
           value={taxPeriodEndMonth}
           onChange={e => updater('taxPeriodEndMonth', digitsOnly(e.target.value))}
+        inputType={inputType?.taxPeriodEndMonth}
         />
         월
-        <input
+        <InputField
           className="text-input"
           style={{
             width: '2ch',
@@ -509,6 +523,7 @@ export default function Form40_1({
           maxLength={2}
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
+        inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -582,7 +597,7 @@ export default function Form40_1({
             >
               ① 사업자등록번호
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -600,6 +615,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.bizRegNumber}
               onChange={e => updateSubmitterInfo('bizRegNumber', e.target.value)}
+            inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
           <td
@@ -631,7 +647,7 @@ export default function Form40_1({
               ② 상호
               <span className="s6">(법인명)</span>
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -649,6 +665,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.companyName}
               onChange={e => updateSubmitterInfo('companyName', e.target.value)}
+            inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
         </tr>
@@ -686,7 +703,7 @@ export default function Form40_1({
               ③ 성명
               <span className="s6">(대표자)</span>
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -706,6 +723,7 @@ export default function Form40_1({
               onChange={e =>
                 updateSubmitterInfo('representativeName', e.target.value)
               }
+            inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -737,7 +755,7 @@ export default function Form40_1({
             >
               ④ 사업장 소재지
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -755,6 +773,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.address}
               onChange={e => updateSubmitterInfo('address', e.target.value)}
+            inputType={inputType?.submitterInfo?.address}
             />
           </td>
         </tr>
@@ -790,7 +809,7 @@ export default function Form40_1({
             >
               ⑤ 업태
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -808,6 +827,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.bizType}
               onChange={e => updateSubmitterInfo('bizType', e.target.value)}
+            inputType={inputType?.submitterInfo?.bizType}
             />
           </td>
           <td
@@ -838,7 +858,7 @@ export default function Form40_1({
             >
               ⑥ 종목
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -856,6 +876,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.bizItem}
               onChange={e => updateSubmitterInfo('bizItem', e.target.value)}
+            inputType={inputType?.submitterInfo?.bizItem}
             />
           </td>
         </tr>
@@ -915,7 +936,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="text-input"
                 style={{
                   width: '4ch',
@@ -935,6 +956,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('year', digitsOnly(e.target.value))
                 }
+              inputType={inputType?.transactionPeriod?.year}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 년
@@ -963,7 +985,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="text-input"
                 style={{
                   width: '2ch',
@@ -983,6 +1005,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('startMonth', digitsOnly(e.target.value))
                 }
+              inputType={inputType?.transactionPeriod?.startMonth}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 월
@@ -1012,7 +1035,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="text-input"
                 style={{
                   width: '2ch',
@@ -1032,6 +1055,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('startDay', digitsOnly(e.target.value))
                 }
+              inputType={inputType?.transactionPeriod?.startDay}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 일 ~
@@ -1060,7 +1084,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="text-input"
                 style={{
                   width: '2ch',
@@ -1080,6 +1104,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('endMonth', digitsOnly(e.target.value))
                 }
+              inputType={inputType?.transactionPeriod?.endMonth}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 월
@@ -1111,7 +1136,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
               }}
             >
-              <input
+              <InputField
                 className="text-input"
                 style={{
                   width: '2ch',
@@ -1131,6 +1156,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('endDay', digitsOnly(e.target.value))
                 }
+              inputType={inputType?.transactionPeriod?.endDay}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 일
@@ -1164,7 +1190,7 @@ export default function Form40_1({
             >
               ⑧ 작성일자
             </p>
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 110pt)',
@@ -1182,6 +1208,7 @@ export default function Form40_1({
               }}
               value={writingDate}
               onChange={e => updater('writingDate', e.target.value)}
+            inputType={inputType?.writingDate}
             />
           </td>
         </tr>
@@ -1458,7 +1485,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -1616,7 +1643,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -1769,7 +1796,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2088,7 +2115,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" />
+            <InputField className="text-input" />
           </td>
           <td
             style={{
@@ -2108,7 +2135,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" />
+            <InputField className="text-input" />
           </td>
           <td
             style={{
@@ -2128,7 +2155,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" />
+            <InputField className="text-input" />
           </td>
           <td
             style={{
@@ -2243,7 +2270,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2277,7 +2304,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2311,237 +2338,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
-              className="text-input"
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'center',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '45pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'center',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '89pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'right',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '86pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'right',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '18pt' }}>
-          <td
-            style={{
-              width: '54pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'center',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '90pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="text-input"
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'left',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '65pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
-              className="text-input"
-              style={{
-                width: 'calc(100% - 4pt)',
-                height: 'calc(100% - 4pt)',
-                border: 'none',
-                outline: 'none',
-                background: '#ffffff',
-                padding: '1pt',
-                fontSize: '9pt',
-                fontFamily: 'Arial',
-                textAlign: 'center',
-                margin: '1pt 2pt 1pt 1pt',
-              }}
-            />
-          </td>
-          <td
-            style={{
-              width: '51pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderTopColor: '#939393',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#939393',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderBottomColor: '#939393',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#939393',
-              verticalAlign: 'middle',
-            }}
-          >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2703,7 +2500,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2737,7 +2534,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2771,7 +2568,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2933,7 +2730,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -2967,7 +2764,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3001,7 +2798,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3163,7 +2960,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3197,7 +2994,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3231,7 +3028,237 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
+              className="text-input"
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'center',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '45pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'center',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '89pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'right',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '86pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'right',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '18pt' }}>
+          <td
+            style={{
+              width: '54pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'center',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '90pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="text-input"
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'left',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '65pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="text-input"
+              style={{
+                width: 'calc(100% - 4pt)',
+                height: 'calc(100% - 4pt)',
+                border: 'none',
+                outline: 'none',
+                background: '#ffffff',
+                padding: '1pt',
+                fontSize: '9pt',
+                fontFamily: 'Arial',
+                textAlign: 'center',
+                margin: '1pt 2pt 1pt 1pt',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              width: '51pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#939393',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#939393',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#939393',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#939393',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3393,7 +3420,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3427,7 +3454,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3461,7 +3488,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3623,7 +3650,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3657,7 +3684,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3691,7 +3718,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3853,7 +3880,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3887,7 +3914,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -3921,7 +3948,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -4081,7 +4108,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -4114,7 +4141,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -4147,7 +4174,7 @@ export default function Form40_1({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="text-input"
               style={{
                 width: 'calc(100% - 4pt)',
@@ -4522,6 +4549,7 @@ export default function Form40_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
       >
         (을)표추가

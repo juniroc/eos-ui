@@ -145,7 +145,6 @@ export const printElement = (options: PrintOptions) => {
     .map(link => link.outerHTML)
     .join('\n');
 
-
   const clonedElement = element.cloneNode(true) as HTMLElement;
   syncFormValues(element as HTMLElement, clonedElement);
 
@@ -160,11 +159,30 @@ export const printElement = (options: PrintOptions) => {
         <style>
           ${styles}
           
+          @page {
+              size: A4;
+              margin: 0;
+          }
+          
+          @media print {
+              input[type="checkbox"] {
+                  display: inline-block;
+                  -webkit-print-color-adjust: exact;
+                  print-color-adjust: exact;
+              }
+}
           /* 인쇄 전용 스타일 */
           @media print {
             body {
               margin: 0;
             }
+            
+             [data-pageslot] {
+                width: 210mm !important;
+                height: 297mm !important;
+                page-break-after: always;
+            }
+
             
             /* 불필요한 요소 숨기기 */
             .no-print {

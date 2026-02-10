@@ -2,6 +2,7 @@ import React from 'react';
 import {
   BusinessInfo,
   Form15Data,
+  Form15InputData,
 } from '@/components/taxDocument/template/Form15/types';
 import Input from '@/components/taxDocument/template/common/Input';
 
@@ -10,10 +11,12 @@ export type Props = BusinessInfo & {
     field: K,
     value: Form15Data[K]
   ) => void;
+  inputType?: Form15InputData;
 };
 
 function BusinessInfoTable({
   companyName,
+  inputType,
   bizNumber,
   bizType,
   bizItem,
@@ -88,6 +91,7 @@ function BusinessInfoTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.companyName}
             />
           </td>
           <td
@@ -136,6 +140,7 @@ function BusinessInfoTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.bizNumber}
             />
           </td>
         </tr>
@@ -184,6 +189,7 @@ function BusinessInfoTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.bizType}
             />
           </td>
           <td
@@ -230,6 +236,7 @@ function BusinessInfoTable({
                 width: 'calc(100% - 2pt)',
                 height: 'calc(100% - 2pt)',
               }}
+            inputType={inputType?.bizItem}
             />
           </td>
         </tr>

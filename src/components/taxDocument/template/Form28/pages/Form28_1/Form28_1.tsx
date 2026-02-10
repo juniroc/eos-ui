@@ -2,16 +2,18 @@
 import './form28_1.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form28Data } from '@/components/taxDocument/template/Form28/type';
+import {Form28Data, Form28InputData} from '@/components/taxDocument/template/Form28/type';
 import { MAX_BUSINESS_PLACE_LENGTH } from '@/components/taxDocument/template/Form28/constants';
-
+import InputField from '@/components/taxDocument/template/common/InputField';
 type Props = UpdaterProps<Form28Data> & {
   onAddPage: () => void;
+  inputType?: Form28InputData;
   pageIndex: number;
 };
 
 export default function Form28_1({
   updater,
+  inputType,
   onAddPage,
   pageIndex,
   reportingYear,
@@ -215,6 +217,7 @@ export default function Form28_1({
     place: Form28Data['businessPlaces'][number],
     absIndex: number
   ) => {
+    const localIndex = absIndex - startIndex;
     const serial = String(absIndex).padStart(4, '0');
     const isHeadOffice = absIndex === 0;
     return (
@@ -432,6 +435,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.taxable?.invoice?.taxBase}
             />
           </td>
           <td
@@ -468,6 +472,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.taxable?.invoice?.taxAmount}
             />
           </td>
           <td
@@ -531,6 +536,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlacePurchase(absIndex, 'taxable', 'taxBase', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.purchase?.taxable?.taxBase}
             />
           </td>
           <td
@@ -563,6 +569,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlacePurchase(absIndex, 'taxable', 'taxAmount', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.purchase?.taxable?.taxAmount}
             />
           </td>
           <td
@@ -594,6 +601,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row1', 'penaltyTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row1?.penaltyTax}
             />
           </td>
           <td
@@ -625,6 +633,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row1', 'deductionTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row1?.deductionTax}
             />
           </td>
           <td
@@ -656,6 +665,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row1', 'payableTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row1?.payableTax}
             />
           </td>
           <td
@@ -674,7 +684,7 @@ export default function Form28_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -748,6 +758,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceSales(absIndex, 'taxable', 'other', 'taxBase', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.taxable?.other?.taxBase}
             />
           </td>
           <td
@@ -785,6 +796,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.taxable?.other?.taxAmount}
             />
           </td>
         </tr>
@@ -885,6 +897,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.zeroRate?.invoice?.taxBase}
             />
           </td>
           <td
@@ -922,6 +935,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.zeroRate?.invoice?.taxAmount}
             />
           </td>
           <td
@@ -987,6 +1001,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlacePurchase(absIndex, 'deemedEtc', 'taxBase', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.purchase?.deemedEtc?.taxBase}
             />
           </td>
           <td
@@ -1020,6 +1035,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlacePurchase(absIndex, 'deemedEtc', 'taxAmount', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.purchase?.deemedEtc?.taxAmount}
             />
           </td>
           <td
@@ -1052,6 +1068,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row2', 'penaltyTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row2?.penaltyTax}
             />
           </td>
           <td
@@ -1084,6 +1101,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row2', 'deductionTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row2?.deductionTax}
             />
           </td>
           <td
@@ -1116,6 +1134,7 @@ export default function Form28_1({
               onChange={value =>
                 updatePlaceCalc(absIndex, 'row2', 'payableTax', value)
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.calcResult?.row2?.payableTax}
             />
           </td>
           <td
@@ -1135,7 +1154,7 @@ export default function Form28_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1215,6 +1234,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.zeroRate?.other?.taxBase}
             />
           </td>
           <td
@@ -1252,6 +1272,7 @@ export default function Form28_1({
                   value
                 )
               }
+            inputType={inputType?.businessPlaces?.[localIndex]?.sales?.zeroRate?.other?.taxAmount}
             />
           </td>
         </tr>
@@ -1294,7 +1315,7 @@ export default function Form28_1({
         }}
       >
         신고기간 :
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -1311,9 +1332,10 @@ export default function Form28_1({
           maxLength={4}
           value={reportingYear}
           onChange={e => updater('reportingYear', digitsOnly(e.target.value))}
+        inputType={inputType?.reportingYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1330,9 +1352,10 @@ export default function Form28_1({
           maxLength={2}
           value={reportingTerm}
           onChange={e => updater('reportingTerm', digitsOnly(e.target.value))}
+        inputType={inputType?.reportingTerm}
         />
         기 (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1351,9 +1374,10 @@ export default function Form28_1({
           onChange={e =>
             updater('periodStartMonth', digitsOnly(e.target.value))
           }
+        inputType={inputType?.periodStartMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1370,9 +1394,10 @@ export default function Form28_1({
           maxLength={2}
           value={periodStartDay}
           onChange={e => updater('periodStartDay', digitsOnly(e.target.value))}
+        inputType={inputType?.periodStartDay}
         />
         일 ~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1389,9 +1414,10 @@ export default function Form28_1({
           maxLength={2}
           value={periodEndMonth}
           onChange={e => updater('periodEndMonth', digitsOnly(e.target.value))}
+        inputType={inputType?.periodEndMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -1408,11 +1434,12 @@ export default function Form28_1({
           maxLength={2}
           value={periodEndDay}
           onChange={e => updater('periodEndDay', digitsOnly(e.target.value))}
+        inputType={inputType?.periodEndDay}
         />
         일)
         <span style={{ paddingLeft: '40pt' }}>사업자 단위 과세 적용사업장</span>
         <span style={{ paddingLeft: '20pt' }}>사업자등록번호</span> :
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '150pt',
@@ -1426,6 +1453,7 @@ export default function Form28_1({
           type="text"
           value={mainBizNumber}
           onChange={e => updater('mainBizNumber', e.target.value)}
+        inputType={inputType?.mainBizNumber}
         />
       </p>
       <hr
@@ -2082,6 +2110,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('taxable', 'invoice', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.sales?.taxable?.invoice?.taxBase}
             />
           </td>
           <td
@@ -2112,6 +2141,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('taxable', 'invoice', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.sales?.taxable?.invoice?.taxAmount}
             />
           </td>
           <td
@@ -2175,6 +2205,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalPurchase('taxable', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.purchase?.taxable?.taxBase}
             />
           </td>
           <td
@@ -2207,6 +2238,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalPurchase('taxable', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.purchase?.taxable?.taxAmount}
             />
           </td>
           <td
@@ -2236,6 +2268,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row1.penaltyTax}
               onChange={value => updateTotalCalc('row1', 'penaltyTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row1?.penaltyTax}
             />
           </td>
           <td
@@ -2265,6 +2298,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row1.deductionTax}
               onChange={value => updateTotalCalc('row1', 'deductionTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row1?.deductionTax}
             />
           </td>
           <td
@@ -2294,6 +2328,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row1.payableTax}
               onChange={value => updateTotalCalc('row1', 'payableTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row1?.payableTax}
             />
           </td>
           <td
@@ -2312,7 +2347,7 @@ export default function Form28_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -2384,6 +2419,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('taxable', 'other', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.sales?.taxable?.other?.taxBase}
             />
           </td>
           <td
@@ -2415,6 +2451,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('taxable', 'other', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.sales?.taxable?.other?.taxAmount}
             />
           </td>
         </tr>
@@ -2508,6 +2545,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('zeroRate', 'invoice', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.sales?.zeroRate?.invoice?.taxBase}
             />
           </td>
           <td
@@ -2539,6 +2577,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('zeroRate', 'invoice', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.sales?.zeroRate?.invoice?.taxAmount}
             />
           </td>
           <td
@@ -2602,6 +2641,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalPurchase('deemedEtc', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.purchase?.deemedEtc?.taxBase}
             />
           </td>
           <td
@@ -2634,6 +2674,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalPurchase('deemedEtc', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.purchase?.deemedEtc?.taxAmount}
             />
           </td>
           <td
@@ -2663,6 +2704,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row2.penaltyTax}
               onChange={value => updateTotalCalc('row2', 'penaltyTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row2?.penaltyTax}
             />
           </td>
           <td
@@ -2692,6 +2734,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row2.deductionTax}
               onChange={value => updateTotalCalc('row2', 'deductionTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row2?.deductionTax}
             />
           </td>
           <td
@@ -2721,6 +2764,7 @@ export default function Form28_1({
               }}
               value={total.calcResult.row2.payableTax}
               onChange={value => updateTotalCalc('row2', 'payableTax', value)}
+            inputType={inputType?.totalStats?.calcResult?.row2?.payableTax}
             />
           </td>
           <td
@@ -2739,7 +2783,7 @@ export default function Form28_1({
             }}
             rowSpan={2}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -2809,6 +2853,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('zeroRate', 'other', 'taxBase', value)
               }
+            inputType={inputType?.totalStats?.sales?.zeroRate?.other?.taxBase}
             />
           </td>
           <td
@@ -2839,6 +2884,7 @@ export default function Form28_1({
               onChange={value =>
                 updateTotalSales('zeroRate', 'other', 'taxAmount', value)
               }
+            inputType={inputType?.totalStats?.sales?.zeroRate?.other?.taxAmount}
             />
           </td>
         </tr>
@@ -2862,6 +2908,7 @@ export default function Form28_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addPageBtn"
         onClick={onAddPage}
       >

@@ -1,14 +1,19 @@
 'use client';
 import './form22.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   CommonTaxSettlementItem,
   Form22CommonTaxAllocationItem,
   Form22Data,
+  Form22InputData,
   Form22MissingDetails,
   TaxRecalculationItem,
 } from '@/components/taxDocument/template/Form22/type';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form22Props = UpdaterProps<Form22Data> & { inputType?: Form22InputData };
 
 const COMMON_TAX_ALLOCATION_ROW_COUNT = 5;
 const COMMON_TAX_SETTLEMENT_ROW_COUNT = 2;
@@ -40,7 +45,8 @@ export default function Form22({
   commonTaxSettlementTotal,
   taxRecalculationItems,
   taxRecalculationTotal,
-}: UpdaterProps<Form22Data>) {
+  inputType,
+}: Form22Props) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
   const toNumber = (value: string) => {
     const digits = digitsOnly(value);
@@ -208,7 +214,8 @@ export default function Form22({
     });
   };
   return (
-    <div className="form22">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form22">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -247,7 +254,7 @@ export default function Form22({
           textAlign: 'center',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -263,9 +270,10 @@ export default function Form22({
           type="text"
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionYear}
         />
         년 제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -282,9 +290,10 @@ export default function Form22({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionTerm}
         />
         기 (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -303,9 +312,10 @@ export default function Form22({
           onChange={e =>
             updater('periodStartMonth', digitsOnly(e.target.value))
           }
+          inputType={inputType?.periodStartMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -322,9 +332,10 @@ export default function Form22({
           maxLength={2}
           value={periodStartDay}
           onChange={e => updater('periodStartDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodStartDay}
         />
         일 ~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -341,9 +352,10 @@ export default function Form22({
           maxLength={2}
           value={periodEndMonth}
           onChange={e => updater('periodEndMonth', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -360,6 +372,7 @@ export default function Form22({
           maxLength={2}
           value={periodEndDay}
           onChange={e => updater('periodEndDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndDay}
         />
         일)
       </p>
@@ -437,7 +450,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -447,6 +460,7 @@ export default function Form22({
                   type="text"
                   value={bizName}
                   onChange={e => updater('bizName', e.target.value)}
+                  inputType={inputType?.bizName}
                 />
               </td>
               <td
@@ -490,7 +504,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -500,6 +514,7 @@ export default function Form22({
                   type="text"
                   value={repName}
                   onChange={e => updater('repName', e.target.value)}
+                  inputType={inputType?.repName}
                 />
               </td>
               <td
@@ -540,7 +555,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -550,6 +565,7 @@ export default function Form22({
                   type="text"
                   value={bizNumber}
                   onChange={e => updater('bizNumber', e.target.value)}
+                  inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -854,6 +870,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.missingRequiredDetails?.count}
                 />
               </td>
               <td
@@ -888,6 +905,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.missingRequiredDetails?.supplyAmount}
                 />
               </td>
               <td
@@ -922,6 +940,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.missingRequiredDetails?.taxAmount}
                 />
               </td>
               <td
@@ -940,7 +959,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1018,6 +1037,7 @@ export default function Form22({
                   onChange={value =>
                     updateMissingDetails('unrelatedToBusiness', 'count', value)
                   }
+                  inputType={inputType?.unrelatedToBusiness?.count}
                 />
               </td>
               <td
@@ -1052,6 +1072,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.unrelatedToBusiness?.supplyAmount}
                 />
               </td>
               <td
@@ -1086,6 +1107,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.unrelatedToBusiness?.taxAmount}
                 />
               </td>
               <td
@@ -1104,7 +1126,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1200,6 +1222,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.nonBizCarPurchaseMaintain?.count}
                 />
               </td>
               <td
@@ -1234,6 +1257,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.nonBizCarPurchaseMaintain?.supplyAmount}
                 />
               </td>
               <td
@@ -1268,6 +1292,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.nonBizCarPurchaseMaintain?.taxAmount}
                 />
               </td>
               <td
@@ -1286,7 +1311,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1368,6 +1393,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.entertainmentExpenses?.count}
                 />
               </td>
               <td
@@ -1402,6 +1428,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.entertainmentExpenses?.supplyAmount}
                 />
               </td>
               <td
@@ -1436,6 +1463,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.entertainmentExpenses?.taxAmount}
                 />
               </td>
               <td
@@ -1454,7 +1482,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1536,6 +1564,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.taxFreeBusinessRelated?.count}
                 />
               </td>
               <td
@@ -1570,6 +1599,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.taxFreeBusinessRelated?.supplyAmount}
                 />
               </td>
               <td
@@ -1604,6 +1634,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.taxFreeBusinessRelated?.taxAmount}
                 />
               </td>
               <td
@@ -1622,7 +1653,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1704,6 +1735,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.landCapitalExpenditure?.count}
                 />
               </td>
               <td
@@ -1738,6 +1770,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.landCapitalExpenditure?.supplyAmount}
                 />
               </td>
               <td
@@ -1772,6 +1805,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.landCapitalExpenditure?.taxAmount}
                 />
               </td>
               <td
@@ -1790,7 +1824,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -1868,6 +1902,7 @@ export default function Form22({
                   onChange={value =>
                     updateMissingDetails('preRegistrationTax', 'count', value)
                   }
+                  inputType={inputType?.preRegistrationTax?.count}
                 />
               </td>
               <td
@@ -1902,6 +1937,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.preRegistrationTax?.supplyAmount}
                 />
               </td>
               <td
@@ -1936,6 +1972,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.preRegistrationTax?.taxAmount}
                 />
               </td>
               <td
@@ -1954,7 +1991,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -2036,6 +2073,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.goldCopperScrapAccountUnused?.count}
                 />
               </td>
               <td
@@ -2069,6 +2107,9 @@ export default function Form22({
                       'supplyAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.goldCopperScrapAccountUnused?.supplyAmount
                   }
                 />
               </td>
@@ -2104,6 +2145,7 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={inputType?.goldCopperScrapAccountUnused?.taxAmount}
                 />
               </td>
               <td
@@ -2122,7 +2164,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -2198,6 +2240,7 @@ export default function Form22({
                   onChange={value =>
                     updateMissingDetails('section2Total', 'count', value)
                   }
+                  inputType={inputType?.section2Total?.count}
                 />
               </td>
               <td
@@ -2227,6 +2270,7 @@ export default function Form22({
                   onChange={value =>
                     updateMissingDetails('section2Total', 'supplyAmount', value)
                   }
+                  inputType={inputType?.section2Total?.supplyAmount}
                 />
               </td>
               <td
@@ -2256,6 +2300,7 @@ export default function Form22({
                   onChange={value =>
                     updateMissingDetails('section2Total', 'taxAmount', value)
                   }
+                  inputType={inputType?.section2Total?.taxAmount}
                 />
               </td>
               <td
@@ -2273,7 +2318,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -3528,6 +3573,9 @@ export default function Form22({
                   onChange={value =>
                     updateCommonTaxAllocationTotal('commonSupplyAmount', value)
                   }
+                  inputType={
+                    inputType?.commonTaxAllocationTotal?.commonSupplyAmount
+                  }
                 />
               </td>
               <td
@@ -3556,6 +3604,9 @@ export default function Form22({
                   value={commonTaxAllocationTotal.commonTaxAmount}
                   onChange={value =>
                     updateCommonTaxAllocationTotal('commonTaxAmount', value)
+                  }
+                  inputType={
+                    inputType?.commonTaxAllocationTotal?.commonTaxAmount
                   }
                 />
               </td>
@@ -3586,6 +3637,9 @@ export default function Form22({
                   onChange={value =>
                     updateCommonTaxAllocationTotal('totalSupplyAmount', value)
                   }
+                  inputType={
+                    inputType?.commonTaxAllocationTotal?.totalSupplyAmount
+                  }
                 />
               </td>
               <td
@@ -3615,6 +3669,9 @@ export default function Form22({
                   onChange={value =>
                     updateCommonTaxAllocationTotal('taxFreeSupplyAmount', value)
                   }
+                  inputType={
+                    inputType?.commonTaxAllocationTotal?.taxFreeSupplyAmount
+                  }
                 />
               </td>
               <td
@@ -3643,6 +3700,9 @@ export default function Form22({
                       'nonDeductibleTaxAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.commonTaxAllocationTotal?.nonDeductibleTaxAmount
                   }
                 />
               </td>
@@ -3958,7 +4018,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -4165,7 +4225,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -4349,6 +4409,9 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.commonTaxSettlementTotal?.totalCommonTaxAmount
+                  }
                 />
               </td>
               <td
@@ -4369,7 +4432,7 @@ export default function Form22({
                   verticalAlign: 'middle',
                 }}
               >
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 2pt)',
@@ -4383,6 +4446,7 @@ export default function Form22({
                       e.target.value
                     )
                   }
+                  inputType={inputType?.commonTaxSettlementTotal?.taxFreeRatio}
                 />
               </td>
               <td
@@ -4414,6 +4478,10 @@ export default function Form22({
                       'totalNonDeductibleTaxAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.commonTaxSettlementTotal
+                      ?.totalNonDeductibleTaxAmount
                   }
                 />
               </td>
@@ -4447,6 +4515,10 @@ export default function Form22({
                       value
                     )
                   }
+                  inputType={
+                    inputType?.commonTaxSettlementTotal
+                      ?.alreadyNonDeductedTaxAmount
+                  }
                 />
               </td>
               <td
@@ -4475,6 +4547,10 @@ export default function Form22({
                       'finalAdjustmentTaxAmount',
                       value
                     )
+                  }
+                  inputType={
+                    inputType?.commonTaxSettlementTotal
+                      ?.finalAdjustmentTaxAmount
                   }
                 />
               </td>
@@ -4755,7 +4831,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -4788,7 +4864,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -4907,7 +4983,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -4940,7 +5016,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -5036,6 +5112,7 @@ export default function Form22({
               onChange={value =>
                 updateTaxRecalculationTotal('goodsTaxAmount', value)
               }
+              inputType={inputType?.taxRecalculationTotal?.goodsTaxAmount}
             />
           </td>
           <td
@@ -5056,7 +5133,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -5068,6 +5145,7 @@ export default function Form22({
               onChange={e =>
                 updateTaxRecalculationTotal('reductionRate', e.target.value)
               }
+              inputType={inputType?.taxRecalculationTotal?.reductionRate}
             />
           </td>
           <td
@@ -5088,7 +5166,7 @@ export default function Form22({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -5100,6 +5178,7 @@ export default function Form22({
               onChange={e =>
                 updateTaxRecalculationTotal('fluctuationRatio', e.target.value)
               }
+              inputType={inputType?.taxRecalculationTotal?.fluctuationRatio}
             />
           </td>
           <td
@@ -5123,10 +5202,14 @@ export default function Form22({
               onChange={value =>
                 updateTaxRecalculationTotal('recalculatedTaxAmount', value)
               }
+              inputType={
+                inputType?.taxRecalculationTotal?.recalculatedTaxAmount
+              }
             />
           </td>
         </tr>
       </table>
-    </div>
+      </div>
+    </PageSlot>
   );
 }

@@ -1,15 +1,17 @@
 'use client';
 import './form32_1.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
-import { Form32Data } from '@/components/taxDocument/template/Form32/type';
+import Input from '@/components/taxDocument/template/common/Input';
+import {Form32Data, Form32InputData} from '@/components/taxDocument/template/Form32/type';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { MAX_BUILDING_MANAGEMENT_ITEM_LENGTH } from '@/components/taxDocument/template/Form32/constants';
-
-type Props = FormPageProps<Form32Data>;
+import InputField from '@/components/taxDocument/template/common/InputField';
+type Props = FormPageProps<Form32Data> & { inputType?: Form32InputData };
 
 export default function Form32_1({
   pageIndex,
   updater,
+  inputType,
   onAddPage,
   attributionYear,
   attributionTerm,
@@ -141,8 +143,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -150,9 +151,9 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           value={item.floor}
-          onChange={e => updateItemField(absIndex, 'floor', e.target.value)}
+          onChange={value => updateItemField(absIndex, 'floor', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.floor}
         />
       </td>
       <td
@@ -174,8 +175,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -183,9 +183,9 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           value={item.roomName}
-          onChange={e => updateItemField(absIndex, 'roomName', e.target.value)}
+          onChange={value => updateItemField(absIndex, 'roomName', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.roomName}
         />
       </td>
       <td
@@ -217,6 +217,7 @@ export default function Form32_1({
           }}
           value={item.area}
           onChange={value => updateItemField(absIndex, 'area', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.area}
         />
       </td>
       <td
@@ -238,8 +239,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -247,9 +247,9 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           value={item.tenantName}
-          onChange={e => updateItemField(absIndex, 'tenantName', e.target.value)}
+          onChange={value => updateItemField(absIndex, 'tenantName', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.tenantName}
         />
       </td>
       <td
@@ -271,8 +271,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -280,11 +279,11 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           value={item.tenantBizRegNumber}
-          onChange={e =>
-            updateItemField(absIndex, 'tenantBizRegNumber', e.target.value)
+          onChange={value =>
+            updateItemField(absIndex, 'tenantBizRegNumber', value)
           }
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.tenantBizRegNumber}
         />
       </td>
       <td
@@ -306,8 +305,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -315,9 +313,9 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontSize: '9pt',
           }}
-          type="text"
           value={item.moveInDate}
-          onChange={e => updateItemField(absIndex, 'moveInDate', e.target.value)}
+          onChange={value => updateItemField(absIndex, 'moveInDate', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.moveInDate}
         />
       </td>
       <td
@@ -339,8 +337,7 @@ export default function Form32_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: 'calc(100% - 2pt)',
             height: '20pt',
@@ -348,9 +345,9 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontSize: '9pt',
           }}
-          type="text"
           value={item.moveOutDate}
-          onChange={e => updateItemField(absIndex, 'moveOutDate', e.target.value)}
+          onChange={value => updateItemField(absIndex, 'moveOutDate', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.moveOutDate}
         />
       </td>
       <td
@@ -379,6 +376,7 @@ export default function Form32_1({
           }}
           value={item.managementFee}
           onChange={value => updateItemField(absIndex, 'managementFee', value)}
+          inputType={inputType?.buildingManagementItems?.[absIndex]?.managementFee}
         />
       </td>
     </tr>
@@ -407,8 +405,7 @@ export default function Form32_1({
         건물관리명세서
       </p>
       <h1 style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'center' }}>
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '40pt',
             height: '20pt',
@@ -417,15 +414,14 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={4}
           value={attributionYear}
-          onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          onChange={value => updater('attributionYear', digitsOnly(value))}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -434,14 +430,13 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={2}
           value={attributionTerm}
-          onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+          onChange={value => updater('attributionTerm', digitsOnly(value))}
+          inputType={inputType?.attributionTerm}
         />
         기(
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -450,16 +445,15 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={2}
           value={taxPeriodStartMonth}
-          onChange={e =>
-            updater('taxPeriodStartMonth', digitsOnly(e.target.value))
+          onChange={value =>
+            updater('taxPeriodStartMonth', digitsOnly(value))
           }
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -468,16 +462,15 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={2}
           value={taxPeriodStartDay}
-          onChange={e =>
-            updater('taxPeriodStartDay', digitsOnly(e.target.value))
+          onChange={value =>
+            updater('taxPeriodStartDay', digitsOnly(value))
           }
+          inputType={inputType?.taxPeriodStartDay}
         />
         일~
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -486,16 +479,15 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={2}
           value={taxPeriodEndMonth}
-          onChange={e =>
-            updater('taxPeriodEndMonth', digitsOnly(e.target.value))
+          onChange={value =>
+            updater('taxPeriodEndMonth', digitsOnly(value))
           }
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
-        <input
-          className="form-input form-input-text"
+        <Input
           style={{
             width: '20pt',
             height: '20pt',
@@ -504,12 +496,12 @@ export default function Form32_1({
             verticalAlign: 'middle',
             fontFamily: 'Arial',
           }}
-          type="text"
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={e =>
-            updater('taxPeriodEndDay', digitsOnly(e.target.value))
+          onChange={value =>
+            updater('taxPeriodEndDay', digitsOnly(value))
           }
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -588,8 +580,7 @@ export default function Form32_1({
             >
               ① 부동산 소재지
             </p>
-            <input
-              className="form-input form-input-text"
+            <Input
               style={{
                 width: 'calc(100% - 100pt)',
                 height: '20pt',
@@ -598,11 +589,11 @@ export default function Form32_1({
                 display: 'inline-block',
                 fontFamily: 'Arial',
               }}
-              type="text"
               value={submitterInfo.propertyLocation}
-              onChange={e =>
-                updateSubmitterInfo('propertyLocation', e.target.value)
+              onChange={value =>
+                updateSubmitterInfo('propertyLocation', value)
               }
+          inputType={inputType?.submitterInfo?.propertyLocation}
             />
           </td>
           <td
@@ -637,8 +628,7 @@ export default function Form32_1({
             >
               ② 건물명
             </p>
-            <input
-              className="form-input form-input-text"
+            <Input
               style={{
                 width: 'calc(100% - 100pt)',
                 height: '20pt',
@@ -647,9 +637,9 @@ export default function Form32_1({
                 display: 'inline-block',
                 fontFamily: 'Arial',
               }}
-              type="text"
               value={submitterInfo.buildingName}
-              onChange={e => updateSubmitterInfo('buildingName', e.target.value)}
+              onChange={value => updateSubmitterInfo('buildingName', value)}
+          inputType={inputType?.submitterInfo?.buildingName}
             />
           </td>
         </tr>
@@ -689,8 +679,7 @@ export default function Form32_1({
               ③ 상호
               <span className="s5">(관리업자)</span>
             </p>
-            <input
-              className="form-input form-input-text"
+            <Input
               style={{
                 width: 'calc(100% - 100pt)',
                 height: '20pt',
@@ -699,11 +688,11 @@ export default function Form32_1({
                 display: 'inline-block',
                 fontFamily: 'Arial',
               }}
-              type="text"
               value={submitterInfo.managerCompanyName}
-              onChange={e =>
-                updateSubmitterInfo('managerCompanyName', e.target.value)
+              onChange={value =>
+                updateSubmitterInfo('managerCompanyName', value)
               }
+          inputType={inputType?.submitterInfo?.managerCompanyName}
             />
           </td>
           <td
@@ -737,8 +726,7 @@ export default function Form32_1({
             >
               ④ 사업자등록번호
             </p>
-            <input
-              className="form-input form-input-text"
+            <Input
               style={{
                 width: 'calc(100% - 100pt)',
                 height: '20pt',
@@ -747,11 +735,11 @@ export default function Form32_1({
                 display: 'inline-block',
                 fontFamily: 'Arial',
               }}
-              type="text"
               value={submitterInfo.managerBizRegNumber}
-              onChange={e =>
-                updateSubmitterInfo('managerBizRegNumber', e.target.value)
+              onChange={value =>
+                updateSubmitterInfo('managerBizRegNumber', value)
               }
+          inputType={inputType?.submitterInfo?.managerBizRegNumber}
             />
           </td>
         </tr>
@@ -1207,7 +1195,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1226,7 +1214,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1255,6 +1243,7 @@ export default function Form32_1({
               }}
               value={total.totalArea}
               onChange={value => updateTotal('totalArea', value)}
+          inputType={inputType?.buildingManagementTotal?.totalArea}
             />
           </td>
           <td
@@ -1274,7 +1263,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1293,7 +1282,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1312,7 +1301,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1331,7 +1320,7 @@ export default function Form32_1({
               verticalAlign: 'middle',
             }}
           >
-            <input className="text-input" type="text" />
+            <InputField className="text-input" type="text" />
           </td>
           <td
             style={{
@@ -1357,6 +1346,7 @@ export default function Form32_1({
               }}
               value={total.totalManagementFee}
               onChange={value => updateTotal('totalManagementFee', value)}
+          inputType={inputType?.buildingManagementTotal?.totalManagementFee}
             />
           </td>
         </tr>
@@ -1383,6 +1373,7 @@ export default function Form32_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addPageBtn"
         onClick={onAddPage}
       >

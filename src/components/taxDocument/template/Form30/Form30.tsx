@@ -1,11 +1,16 @@
 'use client';
 import './form30.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import InputField from '@/components/taxDocument/template/common/InputField';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   Form30Data,
+  Form30InputData,
   SalesDetail,
 } from '@/components/taxDocument/template/Form30/type';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form30Props = UpdaterProps<Form30Data> & { inputType?: Form30InputData };
 
 export default function Form30({
   updater,
@@ -18,7 +23,7 @@ export default function Form30({
   submitterInfo,
   salesDetails,
   totalSales,
-}: UpdaterProps<Form30Data>) {
+  inputType}: Form30Props) {
   const updateSubmitterInfo = <K extends keyof Form30Data['submitterInfo']>(
     field: K,
     value: Form30Data['submitterInfo'][K]
@@ -74,7 +79,8 @@ export default function Form30({
   };
 
   return (
-    <div className="form30">
+    <PageSlot slotWidth={624} slotHeight={882}>
+      <div className="form30">
       <ul id="l1">
         <li data-list-text="■">
           <p
@@ -103,7 +109,7 @@ export default function Form30({
       <h1
         style={{ textIndent: '0pt', lineHeight: '13pt', textAlign: 'center' }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -116,10 +122,11 @@ export default function Form30({
           type="text"
           value={attributionYear}
           onChange={e => updater('attributionYear', e.target.value)}
+        inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -132,9 +139,10 @@ export default function Form30({
           type="text"
           value={attributionTerm}
           onChange={e => updater('attributionTerm', e.target.value)}
+        inputType={inputType?.attributionTerm}
         />
         기(
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -147,9 +155,10 @@ export default function Form30({
           type="text"
           value={taxPeriodStartMonth}
           onChange={e => updater('taxPeriodStartMonth', e.target.value)}
+        inputType={inputType?.taxPeriodStartMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -162,9 +171,10 @@ export default function Form30({
           type="text"
           value={taxPeriodStartDay}
           onChange={e => updater('taxPeriodStartDay', e.target.value)}
+        inputType={inputType?.taxPeriodStartDay}
         />
         일~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -177,9 +187,10 @@ export default function Form30({
           type="text"
           value={taxPeriodEndMonth}
           onChange={e => updater('taxPeriodEndMonth', e.target.value)}
+        inputType={inputType?.taxPeriodEndMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -192,6 +203,7 @@ export default function Form30({
           type="text"
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', e.target.value)}
+        inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -279,7 +291,7 @@ export default function Form30({
               ① 상호
               <span className="s6">(법인명)</span>
             </p>
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 100pt)',
@@ -291,6 +303,7 @@ export default function Form30({
               type="text"
               value={submitterInfo.companyName}
               onChange={e => updateSubmitterInfo('companyName', e.target.value)}
+            inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
           <td
@@ -324,7 +337,7 @@ export default function Form30({
             >
               ② 사업자등록번호
             </p>
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 100pt)',
@@ -338,6 +351,7 @@ export default function Form30({
               onChange={e =>
                 updateSubmitterInfo('bizRegNumber', e.target.value)
               }
+            inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -377,7 +391,7 @@ export default function Form30({
               ③ 성명
               <span className="s6">(대표자)</span>
             </p>
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 100pt)',
@@ -391,6 +405,7 @@ export default function Form30({
               onChange={e =>
                 updateSubmitterInfo('representativeName', e.target.value)
               }
+            inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -424,7 +439,7 @@ export default function Form30({
             >
               ④ 거래기간
             </p>
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 100pt)',
@@ -438,6 +453,7 @@ export default function Form30({
               onChange={e =>
                 updateSubmitterInfo('transactionPeriod', e.target.value)
               }
+            inputType={inputType?.submitterInfo?.transactionPeriod}
             />
           </td>
         </tr>
@@ -653,6 +669,7 @@ export default function Form30({
               onChange={value =>
                 updateSalesDetail('livestockDiagnosis', 'supplyCount', value)
               }
+            inputType={inputType?.salesDetails?.livestockDiagnosis?.supplyCount}
             />
           </td>
           <td
@@ -685,6 +702,7 @@ export default function Form30({
               onChange={value =>
                 updateSalesDetail('livestockDiagnosis', 'supplyPrice', value)
               }
+            inputType={inputType?.salesDetails?.livestockDiagnosis?.supplyPrice}
             />
           </td>
           <td
@@ -703,7 +721,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -787,6 +805,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.aquaticAnimalDiagnosis?.supplyCount}
             />
           </td>
           <td
@@ -823,6 +842,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.aquaticAnimalDiagnosis?.supplyPrice}
             />
           </td>
           <td
@@ -841,7 +861,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -921,6 +941,7 @@ export default function Form30({
               onChange={value =>
                 updateSalesDetail('serviceDogDiagnosis', 'supplyCount', value)
               }
+            inputType={inputType?.salesDetails?.serviceDogDiagnosis?.supplyCount}
             />
           </td>
           <td
@@ -953,6 +974,7 @@ export default function Form30({
               onChange={value =>
                 updateSalesDetail('serviceDogDiagnosis', 'supplyPrice', value)
               }
+            inputType={inputType?.salesDetails?.serviceDogDiagnosis?.supplyPrice}
             />
           </td>
           <td
@@ -971,7 +993,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1055,6 +1077,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.basicLivelihoodRecipientAnimal?.supplyCount}
             />
           </td>
           <td
@@ -1091,6 +1114,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.basicLivelihoodRecipientAnimal?.supplyPrice}
             />
           </td>
           <td
@@ -1109,7 +1133,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1193,6 +1217,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.diseasePreventionTreatment?.supplyCount}
             />
           </td>
           <td
@@ -1229,6 +1254,7 @@ export default function Form30({
                   value
                 )
               }
+            inputType={inputType?.salesDetails?.diseasePreventionTreatment?.supplyPrice}
             />
           </td>
           <td
@@ -1247,7 +1273,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1286,7 +1312,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1299,6 +1325,7 @@ export default function Form30({
               onChange={e =>
                 updateOtherDiagnosis('exemptionReason', e.target.value)
               }
+            inputType={inputType?.salesDetails?.otherDiagnosis?.exemptionReason}
             />
           </td>
           <td
@@ -1328,6 +1355,7 @@ export default function Form30({
               }}
               value={salesDetails.otherDiagnosis.supplyCount}
               onChange={value => updateOtherDiagnosis('supplyCount', value)}
+            inputType={inputType?.salesDetails?.otherDiagnosis?.supplyCount}
             />
           </td>
           <td
@@ -1357,6 +1385,7 @@ export default function Form30({
               }}
               value={salesDetails.otherDiagnosis.supplyPrice}
               onChange={value => updateOtherDiagnosis('supplyPrice', value)}
+            inputType={inputType?.salesDetails?.otherDiagnosis?.supplyPrice}
             />
           </td>
           <td
@@ -1374,7 +1403,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1441,6 +1470,7 @@ export default function Form30({
               }}
               value={totalSales.totalSupplyCount}
               onChange={value => updateTotalSales('totalSupplyCount', value)}
+            inputType={inputType?.totalSales?.totalSupplyCount}
             />
           </td>
           <td
@@ -1469,6 +1499,7 @@ export default function Form30({
               }}
               value={totalSales.totalSupplyPrice}
               onChange={value => updateTotalSales('totalSupplyPrice', value)}
+            inputType={inputType?.totalSales?.totalSupplyPrice}
             />
           </td>
           <td
@@ -1485,7 +1516,7 @@ export default function Form30({
               verticalAlign: 'middle',
             }}
           >
-            <input
+            <InputField
               className="form-input form-input-text"
               style={{
                 width: 'calc(100% - 2pt)',
@@ -1597,6 +1628,7 @@ export default function Form30({
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
         <br />
       </p>
-    </div>
+      </div>
+    </PageSlot>
   );
 }

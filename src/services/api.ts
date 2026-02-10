@@ -1934,6 +1934,26 @@ export async function addFormsToReport(
   return response.json();
 }
 
+export async function completeVatReport(
+  reportId: string,
+  token: string
+): Promise<VatReportCreateResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/vat/reports/${reportId}/complete`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || '신고서 완료에 실패했습니다.');
+  }
+  return response.json();
+}
+
 // VAT 서식 파일 업로드 API
 export interface VatFormUploadResponse {
   id: string;
@@ -1942,6 +1962,42 @@ export interface VatFormUploadResponse {
   data: Record<string, unknown>;
   inputType: Record<string, unknown>;
   uploadedDocumentIds: string[];
+}
+
+export async function completeVatForm<C extends FormCode>(
+  formId: string,
+  data: {
+    data: Record<string, unknown>;
+    inputType: Record<string, unknown>;
+  },
+  token: string
+): Promise<VatFormData> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/forms/${formId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorData;
+    try {
+      errorData = JSON.parse(errorText);
+    } catch {
+      errorData = {
+        error: errorText || `작업 완료에 실패했습니다. (${response.status})`,
+      };
+    }
+    throw new Error(
+      errorData.error ||
+        errorData.message ||
+        `작업 완료에 실패했습니다. (${response.status})`
+    );
+  }
+  return response.json();
 }
 
 export async function uploadVatFormFile(

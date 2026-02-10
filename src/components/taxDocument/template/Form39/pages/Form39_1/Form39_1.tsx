@@ -1,13 +1,16 @@
 'use client';
 import './form39_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form39Data } from '@/components/taxDocument/template/Form39/type';
+import {Form39Data, Form39InputData} from '@/components/taxDocument/template/Form39/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form39/constants';
+import InputField from '@/components/taxDocument/template/common/InputField';
+type Props = FormPageProps<Form39Data> & { inputType?: Form39InputData };
 
 export default function Form39_1({
   pageIndex,
   updater,
+  inputType,
   onAddPage,
   attributionYear,
   attributionTerm,
@@ -18,7 +21,7 @@ export default function Form39_1({
   submitterInfo,
   summary,
   detailList,
-}: FormPageProps<Form39Data>) {
+}: Props) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
   const createEmptySplit =
@@ -211,8 +214,11 @@ export default function Form39_1({
   const renderDetailRow = (
     detail: Form39Data['detailList'][number],
     absIndex: number
-  ) => (
-    <tr style={{ height: '20pt' }} key={absIndex}>
+  ) => {
+    const localIndex = absIndex - startIndex;
+
+    return (
+      <tr style={{ height: '20pt' }} key={absIndex}>
       <td
         style={{
           width: '30pt',
@@ -255,7 +261,7 @@ export default function Form39_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: 'calc(100% - 2pt)',
@@ -269,6 +275,7 @@ export default function Form39_1({
           onChange={e =>
             updateDetailField(absIndex, 'bizRegNumber', e.target.value)
           }
+          inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
         />
       </td>
       <td
@@ -289,7 +296,7 @@ export default function Form39_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: 'calc(100% - 2pt)',
@@ -303,6 +310,7 @@ export default function Form39_1({
           onChange={e =>
             updateDetailField(absIndex, 'companyName', e.target.value)
           }
+          inputType={inputType?.detailList?.[localIndex]?.companyName}
         />
       </td>
       <td
@@ -333,6 +341,7 @@ export default function Form39_1({
           }}
           value={detail.invoiceCount}
           onChange={value => updateDetailField(absIndex, 'invoiceCount', value)}
+        inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
         />
       </td>
       <td
@@ -365,6 +374,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.trillion}
         />
       </td>
       <td
@@ -397,6 +407,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.billion}
         />
       </td>
       <td
@@ -429,6 +440,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.million}
         />
       </td>
       <td
@@ -461,6 +473,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.thousand}
         />
       </td>
       <td
@@ -493,6 +506,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
         />
       </td>
       <td
@@ -525,6 +539,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'trillion', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
         />
       </td>
       <td
@@ -557,6 +572,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'billion', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
         />
       </td>
       <td
@@ -589,6 +605,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'million', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.tax?.million}
         />
       </td>
       <td
@@ -621,6 +638,7 @@ export default function Form39_1({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'thousand', value)
           }
+        inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
         />
       </td>
       <td
@@ -651,6 +669,7 @@ export default function Form39_1({
           }}
           value={detail.tax.one}
           onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
+        inputType={inputType?.detailList?.[localIndex]?.tax?.one}
         />
       </td>
       <td
@@ -669,7 +688,7 @@ export default function Form39_1({
           verticalAlign: 'middle',
         }}
       >
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: 'calc(100% - 2pt)',
@@ -684,7 +703,8 @@ export default function Form39_1({
         />
       </td>
     </tr>
-  );
+    );
+  };
   return (
     <div className="form39">
       <ul id="l1">
@@ -711,7 +731,7 @@ export default function Form39_1({
         <span className="s4">(갑)</span>
       </p>
       <p style={{ textIndent: '0pt', textAlign: 'center' }}>
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '40pt',
@@ -726,10 +746,11 @@ export default function Form39_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+        inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -744,9 +765,10 @@ export default function Form39_1({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+        inputType={inputType?.attributionTerm}
         />
         기 (
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -763,9 +785,10 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
+        inputType={inputType?.taxPeriodStartMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -782,9 +805,10 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
+        inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -801,9 +825,10 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodEndMonth', digitsOnly(e.target.value))
           }
+        inputType={inputType?.taxPeriodEndMonth}
         />
         월
-        <input
+        <InputField
           className="form-input form-input-text"
           style={{
             width: '20pt',
@@ -818,6 +843,7 @@ export default function Form39_1({
           maxLength={2}
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
+        inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </p>
@@ -883,7 +909,7 @@ export default function Form39_1({
                 >
                   ① 사업자등록번호
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 150pt)',
@@ -898,6 +924,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('bizRegNumber', e.target.value)
                   }
+                inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
               <td
@@ -930,7 +957,7 @@ export default function Form39_1({
                 >
                   ② 상호(법인명)
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 130pt)',
@@ -945,6 +972,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('companyName', e.target.value)
                   }
+                inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
             </tr>
@@ -980,7 +1008,7 @@ export default function Form39_1({
                 >
                   ③ 성명(대표자)
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: 'calc(100% - 150pt)',
@@ -995,6 +1023,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('representativeName', e.target.value)
                   }
+                inputType={inputType?.submitterInfo?.representativeName}
                 />
               </td>
               <td
@@ -1079,7 +1108,7 @@ export default function Form39_1({
                 >
                   ⑤ 거래기간
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '40pt',
@@ -1100,6 +1129,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionStartYear}
                 />
                 <p
                   className="s5"
@@ -1112,7 +1142,7 @@ export default function Form39_1({
                 >
                   년
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1133,6 +1163,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionStartMonth}
                 />
                 <p
                   className="s5"
@@ -1145,7 +1176,7 @@ export default function Form39_1({
                 >
                   월
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1166,6 +1197,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionStartDay}
                 />
                 <p
                   className="s5"
@@ -1190,7 +1222,7 @@ export default function Form39_1({
                 >
                   ~
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '40pt',
@@ -1210,6 +1242,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionEndYear}
                 />
                 <p
                   className="s5"
@@ -1222,7 +1255,7 @@ export default function Form39_1({
                 >
                   년
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1243,6 +1276,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionEndMonth}
                 />
                 <p
                   className="s5"
@@ -1255,7 +1289,7 @@ export default function Form39_1({
                 >
                   월
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1276,6 +1310,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.transactionEndDay}
                 />
                 <p
                   className="s5"
@@ -1319,7 +1354,7 @@ export default function Form39_1({
                 >
                   ⑥ 작성일
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '40pt',
@@ -1340,6 +1375,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.writingYear}
                 />
                 <p
                   className="s5"
@@ -1352,7 +1388,7 @@ export default function Form39_1({
                 >
                   년
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1373,6 +1409,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.writingMonth}
                 />
                 <p
                   className="s5"
@@ -1385,7 +1422,7 @@ export default function Form39_1({
                 >
                   월
                 </p>
-                <input
+                <InputField
                   className="form-input form-input-text"
                   style={{
                     width: '20pt',
@@ -1406,6 +1443,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
+                inputType={inputType?.submitterInfo?.writingDay}
                 />
                 <p
                   className="s5"
@@ -5491,6 +5529,7 @@ export default function Form39_1({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
         onClick={onAddPage}
       >

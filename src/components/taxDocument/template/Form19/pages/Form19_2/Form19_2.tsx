@@ -6,22 +6,24 @@ import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   badDebtDeductionItem,
   Form19Data,
+  Form19InputData,
 } from '@/components/taxDocument/template/Form19/type';
 import {
   FORM19_1_BAD_DEBT_ITEM_LENGTH,
   FORM19_2_BAD_DEBT_ITEM_LENGTH,
 } from '@/components/taxDocument/template/Form19/constants';
-
 type Props = Form19Data &
   UpdaterProps<Form19Data> & {
     index: number;
     onAddPage: () => void;
+    inputType?: Form19InputData;
   };
 
 export default function Form19_2({
   index,
   onAddPage,
   updater,
+  inputType,
   companyName,
   bizNumber,
   repName,
@@ -180,6 +182,7 @@ export default function Form19_2({
                   }}
                   value={companyName}
                   onChange={value => updater('companyName', value)}
+                inputType={inputType?.companyName}
                 />
               </td>
               <td
@@ -239,6 +242,7 @@ export default function Form19_2({
                   }}
                   value={bizNumber}
                   onChange={value => updater('bizNumber', value)}
+                inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -300,6 +304,7 @@ export default function Form19_2({
                   }}
                   value={repName}
                   onChange={value => updater('repName', value)}
+                inputType={inputType?.repName}
                 />
               </td>
               <td
@@ -1052,6 +1057,7 @@ export default function Form19_2({
           boxSizing: 'border-box',
           borderRadius: '3pt',
         }}
+        className="print:hidden"
         id="addTableBtn"
         onClick={onAddPage}
       >

@@ -6,21 +6,25 @@ import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import {
   badDebtDeductionItem,
   Form19Data,
+  Form19InputData,
   repaymentTaxItem,
 } from '@/components/taxDocument/template/Form19/type';
 import {
   FORM19_1_BAD_DEBT_ITEM_LENGTH,
   FORM19_1_REPAYMENT_ITEM_LENGTH,
 } from '@/components/taxDocument/template/Form19/constants';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
 
 type Props = Form19Data &
   UpdaterProps<Form19Data> & {
     onAddBadDebtPage: () => void;
     onAddRepaymentPage: () => void;
+    inputType?: Form19InputData;
   };
 
 export default function Form19_1({
   updater,
+  inputType,
   onAddBadDebtPage,
   onAddRepaymentPage,
   companyName,
@@ -257,6 +261,7 @@ export default function Form19_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={companyName}
               onChange={value => updater('companyName', value)}
+              inputType={inputType?.companyName}
             />
           </td>
           <td
@@ -312,6 +317,7 @@ export default function Form19_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={bizNumber}
               onChange={value => updater('bizNumber', value)}
+              inputType={inputType?.bizNumber}
             />
           </td>
         </tr>
@@ -369,6 +375,7 @@ export default function Form19_1({
               style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
               value={repName}
               onChange={value => updater('repName', value)}
+              inputType={inputType?.repName}
             />
           </td>
           <td
@@ -1070,6 +1077,7 @@ export default function Form19_1({
             boxSizing: 'border-box',
             borderRadius: '3pt',
           }}
+          className="print:hidden"
           id="addThirdTableBtn"
           onClick={onAddBadDebtPage}
         >
@@ -1716,6 +1724,7 @@ export default function Form19_1({
             boxSizing: 'border-box',
             borderRadius: '3pt',
           }}
+          className="print:hidden"
           id="addFourthTableBtn"
           onClick={onAddRepaymentPage}
         >
@@ -1754,6 +1763,7 @@ export default function Form19_1({
           }}
           value={writeYear}
           onChange={value => updater('writeYear', value.replace(/[^0-9]/g, ''))}
+          inputType={inputType?.writeYear}
         />
         <span className="s5" style={{ fontSize: '9pt', fontWeight: 'normal' }}>
           년
@@ -1771,6 +1781,7 @@ export default function Form19_1({
           onChange={value =>
             updater('writeMonth', value.replace(/[^0-9]/g, ''))
           }
+          inputType={inputType?.writeMonth}
         />
         <span className="s5" style={{ fontSize: '9pt', fontWeight: 'normal' }}>
           월
@@ -1786,6 +1797,7 @@ export default function Form19_1({
           }}
           value={writeDay}
           onChange={value => updater('writeDay', value.replace(/[^0-9]/g, ''))}
+          inputType={inputType?.writeDay}
         />
         <span className="s5" style={{ fontSize: '9pt', fontWeight: 'normal' }}>
           일
@@ -1814,10 +1826,11 @@ export default function Form19_1({
           }}
           value={submitterName}
           onChange={value => updater('submitterName', value)}
+          inputType={inputType?.submitterName}
         />
-        <span className="s5" style={{ color: '#C0C0C0' }}>
+        <Stamp className="s5" style={{ color: '#C0C0C0' }}>
           (서명 또는 인)
-        </span>
+        </Stamp>
       </p>
       <p
         style={{

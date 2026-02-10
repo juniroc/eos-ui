@@ -1,14 +1,24 @@
-import { ChangeEvent, CSSProperties, useMemo, useState } from 'react';
+import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { isNil } from 'lodash-es';
+import { InputType } from '@/components/taxDocument/template/common/type';
+import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
 type Props = {
   value?: number;
   onChange?: (value: number) => void;
   maxLength?: number;
   style?: CSSProperties;
+  inputType?: InputType;
 };
 
-const NumericTextArea = ({ value, onChange, maxLength, style }: Props) => {
+const NumericTextArea = ({
+  value,
+  onChange,
+  maxLength,
+  style,
+  inputType,
+}: Props) => {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [rawValue, setRawValue] = useState<string | null>(null);
 
   const digitsOnly = (str: string) => str.replace(/[^0-9]/g, '');
@@ -41,8 +51,21 @@ const NumericTextArea = ({ value, onChange, maxLength, style }: Props) => {
     setRawValue(null);
   };
 
+  useEffect(() => {
+    if (!inputType || !inputRef.current) return;
+    const className = getInputTypeClass(inputType);
+    if (!className) return;
+    const target = inputRef.current.closest('td') ?? inputRef.current;
+    const classes = className.split(' ').filter(Boolean);
+    target.classList.add(...classes);
+    return () => {
+      target.classList.remove(...classes);
+    };
+  }, [inputType]);
+
   return (
     <textarea
+      ref={inputRef}
       className="form-input form-input-numeric"
       style={style}
       value={displayValue}

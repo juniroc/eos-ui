@@ -89,8 +89,7 @@ function VatDocumentCreateContent() {
   );
 
   const selectedDocumentItem = useMemo(
-    () =>
-      documentList.find(doc => doc.id === selectedDocument) ?? null,
+    () => documentList.find(doc => doc.id === selectedDocument) ?? null,
     [documentList, selectedDocument]
   );
 
@@ -311,7 +310,12 @@ const DocListItem = memo(function DocListItem({
           {isDeleting ? (
             <div className="w-4 h-4 border-2 border-[#757575] border-t-transparent rounded-full animate-spin" />
           ) : (
-            <Image src="/icons/close.svg" alt="삭제" width={14} height={14} />
+            <Image
+              src="/icons/trash_red.svg"
+              alt="삭제"
+              width={14}
+              height={14}
+            />
           )}
         </button>
       )}

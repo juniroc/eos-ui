@@ -85,43 +85,40 @@ export default function Sidebar({
   onSectionChange,
 }: SidebarProps) {
   const { } = useAuth();
-  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
-  // 클라이언트에서만 실행되도록 보장
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // activeSection이 변경되면 해당 부모 메뉴를 자동으로 열기
+  useEffect(() => {
+    if (!isClient) return;
+    const parentMenu = navigationItems.find(item =>
+      item.subItems?.some(sub => sub.id === activeSection)
+    );
+    if (parentMenu) {
+      setOpenMenuId(parentMenu.id);
+    }
+  }, [activeSection, isClient]);
+
   const handleMenuClick = (itemId: string, hasSub?: boolean) => {
     if (hasSub) {
-      // 하위메뉴가 있는 경우 첫 번째 하위메뉴로 이동
-      const firstSubItem = navigationItems
-        .find(item => item.id === itemId)
-        ?.subItems?.[0];
-      if (firstSubItem) {
-        onSectionChange(firstSubItem.id);
-      }
+      // 아코디언 토글
+      setOpenMenuId(prev => (prev === itemId ? null : itemId));
     } else {
       onSectionChange(itemId);
     }
   };
 
   const handleSubMenuClick = (subId: string) => {
-    // account-ledger 선택 시 라우팅 이동 없음
-    if (subId === 'account-ledger') {
-      return;
-    } else {
-      onSectionChange(subId);
-    }
+    if (subId === 'account-ledger') return;
+    onSectionChange(subId);
   };
 
-  // 현재 활성화된 메뉴를 찾는 함수
   const getCurrentActiveMenu = () => {
-    if (!isClient) {
-      return 'basic-info';
-    }
-
+    if (!isClient) return 'basic-info';
     const mainMenu = navigationItems.find(item =>
       item.subItems?.some(sub => sub.id === activeSection)
     );
@@ -129,128 +126,126 @@ export default function Sidebar({
   };
 
   return (
-    <div className="flex h-screen bg-[#2C2C2C]">
-      {/* 왼쪽 큰 메뉴 */}
-      <div className="w-[160px] flex flex-col justify-between items-start p-0 gap-2 bg-[#2C2C2C]">
-        {/* 상단 영역: 로고 + 네비게이션 */}
-        <div className="flex flex-col items-start w-full">
-          {/* 로고 섹션 */}
-          <div className="flex flex-col items-start justify-center p-3 w-full h-[52px]">
-            <div className="flex flex-col justify-center items-start h-7">
-              <Image src="/eos-logo.png" alt="logo" width={80} height={28}/>
-            </div>
-          </div>
-
-          {/* 메인 네비게이션 섹션 */}
-          <div className="flex flex-col items-start py-2 gap-3 w-full flex-1">
-            {menuSections.map((section, sectionIdx) => {
-              const items = section.itemIds
-                .map(id => navItemMap.get(id))
-                .filter((item): item is NavItem => !!item);
-
-              return (
-                <div key={section.label} className="w-full">
-                  {sectionIdx > 0 && (
-                    <div className="w-full h-px border-t border-[#4A4A4A] mb-3"></div>
-                  )}
-                  <div className="w-full flex flex-col items-start gap-2">
-                    <div className="flex flex-row items-center gap-[2px] h-3 rounded px-6 w-full">
-                      <span className="text-xs font-medium text-[#F5F5F5]">{section.label}</span>
-                    </div>
-                    <div className="flex flex-col items-start gap-[4px] w-full">
-                      {items.map(item => {
-                        const isActive = getCurrentActiveMenu() === item.id;
-                        const hasSub = !!item.subItems;
-                        return (
-                          <button
-                            key={item.id}
-                            onClick={() => handleMenuClick(item.id, hasSub)}
-                            onMouseEnter={() => setHoveredMenu(item.id)}
-                            className={`flex flex-row items-center p-2 gap-[6px] h-8 transition-colors cursor-pointer px-6 w-full ${
-                              isActive ? 'bg-[#404040]' : 'hover:bg-[#3A3A3A]'
-                            }`}
-                          >
-                            <span className={`text-xs font-medium text-center ${
-                              isActive ? 'text-white' : 'text-[#999999]'
-                            }`}>
-                              {item.label}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+    <div className="w-[160px] min-w-[160px] flex flex-col justify-between items-start bg-[#2C2C2C] h-screen overflow-y-auto">
+      {/* 상단 영역 */}
+      <div className="flex flex-col items-start w-full gap-[6px]">
+        {/* 로고 */}
+        <div className="flex items-start px-6 py-4 w-full h-[60px]">
+          <Image src="/eos-logo.png" alt="logo" width={80} height={28} />
         </div>
 
-        {/* 계정관리 섹션 (하단 고정) */}
-        <Link href="/account-management" className="flex flex-col justify-center items-center w-full gap-1 pb-3 cursor-pointer">
-          <div className="flex flex-col justify-center items-center w-7 h-7 bg-[#5A5A5A] rounded-full">
-            <Image
-              src="/user.png"
-              alt="계정관리"
-              width={28}
-              height={28}
-            />
-          </div>
-          <span className="text-xs font-medium text-[#999999] text-center">계정관리</span>
-        </Link>
-      </div>
+        {/* 메뉴 섹션 */}
+        {menuSections.map((section, sectionIdx) => {
+          const items = section.itemIds
+            .map(id => navItemMap.get(id))
+            .filter((item): item is NavItem => !!item);
 
-      {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}
-      {(() => {
-        const hoveredItem = hoveredMenu ? navItemMap.get(hoveredMenu) : undefined;
-        if (!hoveredItem?.subItems) return null;
+          return (
+            <div key={section.label} className="w-full flex flex-col items-start">
+              {sectionIdx > 0 && (
+                <div className="w-full h-0 border-t border-white/5" />
+              )}
 
-        return (
-          <div
-            className="absolute left-[160px] top-0 flex flex-col items-start w-[120px] h-full bg-[#363636] animate-in slide-in-from-left duration-300 ease-out z-10"
-            onMouseEnter={() => setHoveredMenu(hoveredMenu)}
-            onMouseLeave={() => setHoveredMenu(null)}
-          >
-            {/* 헤더 섹션 */}
-            <div className="flex flex-col items-start py-3 px-3 w-full h-[41px]">
-              <div className="flex flex-row items-start h-[17px]">
-                <h2 className="text-xs font-semibold leading-[140%] text-white">
-                  {hoveredItem.label}
-                </h2>
+              {/* Menu Heading */}
+              <div className="flex items-center px-6 py-2 w-full h-[26px]">
+                <span className="text-[10px] font-medium uppercase text-[#F5F5F5] leading-none">
+                  {section.label}
+                </span>
               </div>
-            </div>
 
-            {/* 구분선 섹션 */}
-            <div className="flex flex-col items-start px-3 gap-[10px] w-full h-0">
-              <div className="w-full h-px border-t border-[#4A4A4A]"></div>
-            </div>
+              {/* 상위 메뉴 + 아코디언 서브메뉴 */}
+              <div className="flex flex-col items-start w-full gap-[2px]">
+                {items.map(item => {
+                  const isActive = getCurrentActiveMenu() === item.id;
+                  const hasSub = !!item.subItems;
+                  const isOpen = openMenuId === item.id;
 
-            {/* 네비게이션 버튼 리스트 */}
-            <div className="flex flex-col justify-center items-start py-3 px-3 gap-[10px] w-full">
-              <div className="flex flex-col items-start gap-[2px] w-full">
-                {hoveredItem.subItems.map((sub) => {
-                  const isSubActive = activeSection === sub.id;
                   return (
-                    <button
-                      key={sub.id}
-                      onClick={() => handleSubMenuClick(sub.id)}
-                      className={`flex flex-row items-center p-2 gap-[6px] w-full h-7 rounded transition-colors cursor-pointer ${
-                        isSubActive ? 'bg-[#4A4A4A]' : 'hover:bg-[#4A4A4A]'
-                      }`}
-                    >
-                      <span className={`text-xs font-medium leading-[100%] text-center ${
-                        isSubActive ? 'text-white' : 'text-[#999999]'
-                      }`}>
-                        {sub.label}
-                      </span>
-                    </button>
+                    <div key={item.id} className="w-full">
+                      {/* 상위 메뉴 아이템 */}
+                      <button
+                        onClick={() => handleMenuClick(item.id, hasSub)}
+                        className={`flex items-center justify-between px-6 py-2 w-full h-8 transition-colors cursor-pointer`}
+                      >
+                        <span className={`text-[11px] font-medium leading-[13px] ${
+                          isActive ? 'text-white' : 'text-[#757575]'
+                        }`}>
+                          {item.label}
+                        </span>
+                        {hasSub && (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                          >
+                            <path
+                              d="M4 6L8 10L12 6"
+                              stroke={isActive ? '#FFFFFF' : '#757575'}
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </button>
+
+                      {/* 아코디언 서브메뉴 */}
+                      {hasSub && isOpen && (
+                        <div className="flex flex-col items-start w-full gap-1">
+                          {item.subItems!.map(sub => {
+                            const isSubActive = activeSection === sub.id;
+                            return (
+                              <button
+                                key={sub.id}
+                                onClick={() => handleSubMenuClick(sub.id)}
+                                className={`flex items-center px-6 py-1 gap-1 w-full h-8 transition-colors cursor-pointer ${
+                                  isSubActive
+                                    ? 'bg-white/5 border-r-2 border-[#F26522]'
+                                    : 'hover:bg-white/5'
+                                }`}
+                              >
+                                <div className="w-4 h-4 flex items-center justify-center">
+                                  <Image src={isSubActive ? '/icons/dot_active.png' : '/icons/dot.png'} alt="dot" width={16} height={16} />
+                                </div>
+                                <span className={`text-[11px] font-medium leading-[13px] ${
+                                  isSubActive ? 'text-white' : 'text-[#757575]'
+                                }`}>
+                                  {sub.label}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })}
+      </div>
+
+      {/* 하단: 계정관리 + 로그아웃 */}
+      <div className="flex items-center justify-between px-6 py-4 w-full h-[60px]">
+        <Link href="/account-management" className="flex items-center gap-2">
+            <Image src="/user.png" alt="계정관리" width={28} height={28} />
+          <span className="text-[11px] font-medium leading-[13px] text-[#757575]">
+            계정관리
+          </span>
+        </Link>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+          <path
+            d="M6 2H3C2.44772 2 2 2.44772 2 3V13C2 13.5523 2.44772 14 3 14H6M11 11L14 8M14 8L11 5M14 8H6"
+            stroke="#757575"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   );
 }

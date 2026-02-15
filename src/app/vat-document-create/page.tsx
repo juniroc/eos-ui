@@ -14,7 +14,6 @@ import {
 } from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
 import Image from 'next/image';
-import VatDocumentCreateModal from '@/components/documentCreate/VatDocumentCreateModal';
 
 export default function VatDocumentCreatePage() {
   const router = useRouter();
@@ -63,8 +62,6 @@ export default function VatDocumentCreatePage() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [createdReportId, setCreatedReportId] = useState<string | null>(null);
 
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
@@ -246,11 +243,9 @@ export default function VatDocumentCreatePage() {
         token
       );
 
-      // 성공 시 모달 열기 및 토스트 메시지 표시
-      setCreatedReportId(response.id);
       setToastMessage('서류가 생성됐어요!');
       setShowToast(true);
-      setIsModalOpen(true);
+      router.push(`/vat-document-create/${response.id}`);
     } catch (err) {
       console.error('서류 생성 에러:', err);
       const errorMessage =
@@ -657,7 +652,7 @@ export default function VatDocumentCreatePage() {
                         className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-16 h-7 bg-[#2C2C2C] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F5F5F5] flex-none disabled:opacity-50"
                       >
                         <Image
-                          src="/icons/close.svg"
+                          src="/icons/trash.svg"
                           alt="삭제"
                           width={12}
                           height={12}
@@ -677,12 +672,6 @@ export default function VatDocumentCreatePage() {
         message={toastMessage}
         isVisible={showToast}
         onHide={() => setShowToast(false)}
-      />
-
-      <VatDocumentCreateModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        reportId={createdReportId || undefined}
       />
     </div>
   );

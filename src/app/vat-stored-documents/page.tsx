@@ -377,27 +377,30 @@ export default function VatStoredDocumentsPage() {
                       {/* 서류명 - 첫 번째 행에만 표시하고 병합 */}
                       {reportRowIndex === 0 && (
                         <div
-                          className={`flex flex-col items-start justify-center bg-white border-r border-b border-[#D9D9D9] p-2`}
+                          className="flex flex-row justify-between items-center p-[6px] gap-2 bg-white border-r border-b border-[#D9D9D9] min-h-[40px] box-border self-stretch flex-none grow-0"
                           style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 2, minWidth: '280px' }}
                         >
                           <span
                             onClick={() => handleReportClick(report.id)}
-                            className="text-[10px] leading-[140%] text-[#757575] cursor-pointer hover:underline mb-2 block"
+                            className="text-[10px] leading-[140%] text-[#757575] cursor-pointer hover:underline"
                           >
                             {report.title}
                           </span>
-                          {/* Action Buttons */}
-                          <div className="flex flex-row gap-1 flex-wrap" ref={openMenuReportId === report.id ? menuRef : null}>
+                          <div className="flex flex-row items-center gap-2 shrink-0" ref={openMenuReportId === report.id ? menuRef : null}>
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReportToDelete(report.id);
-                                setShowDeleteModal(true);
-                                setOpenMenuReportId(null);
-                              }}
-                              className="px-2 py-1 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6] whitespace-nowrap"
+                              onClick={() => handleReportClick(report.id)}
+                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                             >
-                              삭제
+                              <Image src="/icons/search.png" alt="조회" width={16} height={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setPreviewReportId(report.id);
+                                setShowPreviewModal(true);
+                              }}
+                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                            >
+                              <Image src="/icons/upload_icon.png" alt="업로드" width={16} height={16} />
                             </button>
                             {report.isCompleted ? (
                               <button
@@ -408,8 +411,9 @@ export default function VatStoredDocumentsPage() {
                                   setShowWorkModal(true);
                                   setOpenMenuReportId(null);
                                 }}
-                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap"
+                                className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-none grow-0"
                               >
+                                <Image src="/icons/edit_icon.png" alt="수정" width={14} height={14} />
                                 수정신고
                               </button>
                             ) : (
@@ -420,11 +424,24 @@ export default function VatStoredDocumentsPage() {
                                   setShowPreviewModal(true);
                                   setOpenMenuReportId(null);
                                 }}
-                                className="px-2 py-1 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap"
+                                className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-none grow-0"
                               >
+                                <Image src="/icons/edit_icon.png" alt="수정" width={14} height={14} />
                                 재작업
                               </button>
                             )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportToDelete(report.id);
+                                setShowDeleteModal(true);
+                                setOpenMenuReportId(null);
+                              }}
+                              className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 text-[11px] leading-[100%] text-[#1E1E1E] bg-[#F3F3F3] hover:bg-[#E6E6E6] whitespace-nowrap flex-none grow-0"
+                            >
+                              <Image src="/icons/delete_icon.png" alt="삭제" width={14} height={14} />
+                              삭제
+                            </button>
                           </div>
                         </div>
                       )}
@@ -502,7 +519,7 @@ export default function VatStoredDocumentsPage() {
                                               onClick={() => handleDownloadDocument(firstDoc.id)}
                                               className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                                             >
-                                              <Image src="/icons/download.png" alt="다운로드" width={16} height={16} />
+                                              <Image src="/icons/download_icon.png" alt="다운로드" width={16} height={16} />
                                             </button>
                                             <button
                                               onClick={() => handleDeleteDocument(firstDoc.id)}

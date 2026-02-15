@@ -12,7 +12,9 @@ interface ConditionalLayoutProps {
 const hiddenLayoutPaths = ['/login', '/register'];
 const excludedChatPaths = ['/settlement-info', '/'];
 
-export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
+export default function ConditionalLayout({
+  children,
+}: ConditionalLayoutProps) {
   const pathname = usePathname();
   const shouldHideLayout = hiddenLayoutPaths.includes(pathname);
   const shouldShowChat = !excludedChatPaths.includes(pathname);
@@ -39,7 +41,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
           <div className="flex-1 overflow-y-auto">{children}</div>
 
           {/* Chat Area - 우측에 표시 (settlement-info와 루트 제외) */}
-          {shouldShowChat && <ChatArea />}
+          {/* {shouldShowChat && <ChatArea />} */}
         </div>
       </div>
     </div>

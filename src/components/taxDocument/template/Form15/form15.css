@@ -60,6 +60,20 @@
         text-decoration: none;
         font-size: 11pt;
     }
+
+    @media screen {
+        .form-15 {
+            transform: scale(0.953);
+            transform-origin: top center;
+        }
+    }
+
+    @media print {
+        .form-15 {
+            transform: scale(0.953);
+            transform-origin: top center;
+        }
+    }
 }
 
 /* =========================

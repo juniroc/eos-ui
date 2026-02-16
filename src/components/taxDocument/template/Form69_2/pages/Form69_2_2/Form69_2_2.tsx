@@ -12,6 +12,7 @@ import {
   FORM_69_2_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
   FORM_69_2_2_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form69_2/constants';
+
 type Props = FormPageProps<Form6902Data> & { inputType?: Form6902InputData };
 
 export default function Form69_2_2({
@@ -123,7 +124,7 @@ export default function Form69_2_2({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년
         <Input
@@ -140,7 +141,7 @@ export default function Form69_2_2({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기
         <Input
@@ -157,7 +158,7 @@ export default function Form69_2_2({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         )
       </p>
@@ -209,7 +210,7 @@ export default function Form69_2_2({
               }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -596,7 +597,9 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.supplierName}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.supplierName
+                  }
                 />
               </td>
               <td
@@ -632,7 +635,10 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.supplierIdNumber}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.supplierIdNumber
+                  }
                 />
               </td>
               <td
@@ -668,7 +674,7 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.count}
+                  inputType={inputType?.receiptPurchaseItems?.[absIndex]?.count}
                 />
               </td>
               <td
@@ -704,7 +710,9 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.itemName}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.itemName
+                  }
                 />
               </td>
               <td
@@ -740,7 +748,9 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.quantity}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.quantity
+                  }
                 />
               </td>
               <td
@@ -776,7 +786,10 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.acquisitionAmount}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.acquisitionAmount
+                  }
                 />
               </td>
               <td
@@ -809,7 +822,10 @@ export default function Form69_2_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.deemedPurchaseTax}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.deemedPurchaseTax
+                  }
                 />
               </td>
             </tr>
@@ -820,7 +836,7 @@ export default function Form69_2_2({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-10pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

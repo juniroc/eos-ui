@@ -1053,6 +1053,7 @@ export default function Form25_1({
                 paddingRight: '7pt',
                 textIndent: '0pt',
                 lineHeight: '92%',
+                whiteSpace: 'nowrap',
                 textAlign: 'center',
               }}
             >
@@ -1090,6 +1091,7 @@ export default function Form25_1({
               style={{
                 textIndent: '0pt',
                 lineHeight: '11pt',
+                whiteSpace: 'nowrap',
                 textAlign: 'center',
               }}
             >

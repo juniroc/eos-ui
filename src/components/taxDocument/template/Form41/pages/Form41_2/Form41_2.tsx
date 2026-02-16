@@ -918,6 +918,7 @@ export default function Form41_2({
         }}
         className="print:hidden"
         id="addTableBtn"
+        onClick={onAddPage}
       >
         페이지추가
       </button>

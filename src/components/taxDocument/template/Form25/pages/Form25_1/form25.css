@@ -46,6 +46,7 @@
 
         .form25 {
             margin: 0 !important;
+            zoom: 0.94;
         }
     }
 }
@@ -217,4 +218,3 @@
 .form25 #addThirdTableBtn {
   bottom: 20pt !important;
 }
-

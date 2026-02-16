@@ -1,7 +1,10 @@
 'use client';
 import React, { Fragment, useState } from 'react';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form19Data, Form19InputData } from '@/components/taxDocument/template/Form19/type';
+import {
+  Form19Data,
+  Form19InputData,
+} from '@/components/taxDocument/template/Form19/type';
 import Form19_1 from '@/components/taxDocument/template/Form19/pages/Form19_1/Form19_1';
 import Form19_2 from '@/components/taxDocument/template/Form19/pages/Form19_2/Form19_2';
 import Form19_3 from '@/components/taxDocument/template/Form19/pages/Form19_3/Form19_3';

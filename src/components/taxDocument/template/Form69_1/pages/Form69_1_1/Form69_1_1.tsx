@@ -3600,7 +3600,7 @@ export default function Form69_1_1({
       />
       <p
         style={{
-          paddingTop: '5pt',
+          paddingTop: '2pt',
           paddingLeft: '9pt',
           textIndent: '10pt',
           textAlign: 'left',
@@ -3611,7 +3611,7 @@ export default function Form69_1_1({
       </p>
       <p
         className="s18"
-        style={{ paddingTop: '10pt', textIndent: '0pt', textAlign: 'right' }}
+        style={{ paddingTop: '5pt', textIndent: '0pt', textAlign: 'right' }}
       >
         <Input
           style={{
@@ -3712,7 +3712,7 @@ export default function Form69_1_1({
           margin: '0',
         }}
       />
-      <p style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'left' }}>
+      <p style={{ paddingTop: '0pt', textIndent: '0pt', textAlign: 'left' }}>
         <br />
       </p>
       <table
@@ -3828,7 +3828,7 @@ export default function Form69_1_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

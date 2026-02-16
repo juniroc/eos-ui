@@ -12,6 +12,13 @@
         padding: 0;
         text-indent: 0;
     }
+
+    @media print {
+        .form28 {
+            transform: scale(0.953);
+            transform-origin: top center;
+        }
+    }
 }
 
 @layer components {
@@ -165,4 +172,3 @@
 .form28 #addThirdTableBtn {
     bottom: 20pt !important;
 }
-

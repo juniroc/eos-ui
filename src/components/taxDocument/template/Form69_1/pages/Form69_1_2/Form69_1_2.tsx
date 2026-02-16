@@ -3,15 +3,12 @@ import './form69_1_2.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import {
-  Form6901Data,
-  Form6901InputData,
-  receiptPurchaseItem,
-} from '@/components/taxDocument/template/Form69_1/type';
+import { Form6901Data, Form6901InputData, receiptPurchaseItem, } from '@/components/taxDocument/template/Form69_1/type';
 import {
   FORM_69_1_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
   FORM_69_1_2_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form69_1/constants';
+
 type Props = FormPageProps<Form6901Data> & { inputType?: Form6901InputData };
 
 export default function Form69_1_2({
@@ -45,9 +42,7 @@ export default function Form69_1_2({
     (_, i) => receiptPurchaseItems[startIndex + i] ?? baseReceiptPurchaseItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form6901Data['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form6901Data['submitterInfo']>(
     field: K,
     value: Form6901Data['submitterInfo'][K]
   ) => {
@@ -132,7 +127,7 @@ export default function Form69_1_2({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년
         <Input
@@ -149,7 +144,7 @@ export default function Form69_1_2({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기)
       </p>
@@ -226,7 +221,7 @@ export default function Form69_1_2({
               }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -679,7 +674,10 @@ export default function Form69_1_2({
           const rowBorderTopColor = index === 0 ? '#4B4B4B' : '#787878';
 
           return (
-            <tr key={`receipt-purchase-item-${startIndex + index}`} style={{ height: '20pt' }}>
+            <tr
+              key={`receipt-purchase-item-${startIndex + index}`}
+              style={{ height: '20pt' }}
+            >
               <td
                 style={{
                   width: '25pt',
@@ -742,7 +740,9 @@ export default function Form69_1_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.supplierName}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.supplierName
+                  }
                 />
               </td>
               <td
@@ -778,7 +778,10 @@ export default function Form69_1_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.supplierIdNumber}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.supplierIdNumber
+                  }
                 />
               </td>
               <td
@@ -814,7 +817,10 @@ export default function Form69_1_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.classificationCode}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.classificationCode
+                  }
                 />
               </td>
               <td
@@ -844,9 +850,13 @@ export default function Form69_1_2({
                   }}
                   value={item.count}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(startIndex + index, 'count', value)
+                    receiptPurchaseItemUpdater(
+                      startIndex + index,
+                      'count',
+                      value
+                    )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.count}
+                  inputType={inputType?.receiptPurchaseItems?.[absIndex]?.count}
                 />
               </td>
               <td
@@ -876,9 +886,15 @@ export default function Form69_1_2({
                   }}
                   value={item.itemName}
                   onChange={value =>
-                    receiptPurchaseItemUpdater(startIndex + index, 'itemName', value)
+                    receiptPurchaseItemUpdater(
+                      startIndex + index,
+                      'itemName',
+                      value
+                    )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.itemName}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.itemName
+                  }
                 />
               </td>
               <td
@@ -914,7 +930,9 @@ export default function Form69_1_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.quantity}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]?.quantity
+                  }
                 />
               </td>
               <td
@@ -1016,13 +1034,15 @@ export default function Form69_1_2({
                       value
                     )
                   }
-                inputType={inputType?.receiptPurchaseItems?.[absIndex]?.acquisitionAmount}
+                  inputType={
+                    inputType?.receiptPurchaseItems?.[absIndex]
+                      ?.acquisitionAmount
+                  }
                 />
               </td>
             </tr>
           );
         })}
-
       </table>
       <p
         style={{
@@ -1047,7 +1067,7 @@ export default function Form69_1_2({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-10pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

@@ -255,6 +255,7 @@ function VatDocumentCreateModal({
   const handlePrint = () => {
     printElement({
       selector: '#preview-section',
+      orientation: previewOrientation,
     });
   };
   useEffect(() => {

@@ -11,6 +11,13 @@
         padding: 0;
         text-indent: 0;
     }
+
+    @media print {
+        .form34 {
+            transform: scale(0.953);
+            transform-origin: top center;
+        }
+    }
 }
 
 @layer components {

@@ -3,10 +3,12 @@ import './form40_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import InputField from '@/components/taxDocument/template/common/InputField';
-import { Form40Data, Form40InputData } from '@/components/taxDocument/template/Form40/type';
 import {
-  FORM_40_1_MAX_EXPORT_DETAIL_LIST_MAX_LENGTH,
-} from '@/components/taxDocument/template/Form40/constants';
+  Form40Data,
+  Form40InputData,
+} from '@/components/taxDocument/template/Form40/type';
+import { FORM_40_1_MAX_EXPORT_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form40/constants';
+
 type Props = FormPageProps<Form40Data> & { inputType?: Form40InputData };
 
 export default function Form40_1({
@@ -70,7 +72,9 @@ export default function Form40_1({
 
   const updateSummaryRow = (
     key: SummaryKey,
-    updaterFn: (row: Form40Data['summary']['grandTotal']) => Form40Data['summary']['grandTotal']
+    updaterFn: (
+      row: Form40Data['summary']['grandTotal']
+    ) => Form40Data['summary']['grandTotal']
   ) => {
     updater('summary', {
       ...summary,
@@ -101,7 +105,9 @@ export default function Form40_1({
 
   const updateExportItem = (
     absIndex: number,
-    updaterFn: (item: Form40Data['exportItems'][number]) => Form40Data['exportItems'][number]
+    updaterFn: (
+      item: Form40Data['exportItems'][number]
+    ) => Form40Data['exportItems'][number]
   ) => {
     const next = [...exportItems];
     const current = next[absIndex] ?? createEmptyExportItem();
@@ -190,9 +196,15 @@ export default function Form40_1({
           }}
           value={item.exportDeclarationNumber}
           onChange={e =>
-            updateExportItemField(absIndex, 'exportDeclarationNumber', e.target.value)
+            updateExportItemField(
+              absIndex,
+              'exportDeclarationNumber',
+              e.target.value
+            )
           }
-        inputType={inputType?.exportItems?.[absIndex]?.exportDeclarationNumber}
+          inputType={
+            inputType?.exportItems?.[absIndex]?.exportDeclarationNumber
+          }
         />
       </td>
       <td
@@ -228,8 +240,10 @@ export default function Form40_1({
             margin: '1pt 2pt 1pt 1pt',
           }}
           value={item.shippingDate}
-          onChange={e => updateExportItemField(absIndex, 'shippingDate', e.target.value)}
-        inputType={inputType?.exportItems?.[absIndex]?.shippingDate}
+          onChange={e =>
+            updateExportItemField(absIndex, 'shippingDate', e.target.value)
+          }
+          inputType={inputType?.exportItems?.[absIndex]?.shippingDate}
         />
       </td>
       <td
@@ -265,8 +279,10 @@ export default function Form40_1({
             margin: '1pt 2pt 1pt 1pt',
           }}
           value={item.currencyCode}
-          onChange={e => updateExportItemField(absIndex, 'currencyCode', e.target.value)}
-        inputType={inputType?.exportItems?.[absIndex]?.currencyCode}
+          onChange={e =>
+            updateExportItemField(absIndex, 'currencyCode', e.target.value)
+          }
+          inputType={inputType?.exportItems?.[absIndex]?.currencyCode}
         />
       </td>
       <td
@@ -301,7 +317,9 @@ export default function Form40_1({
             margin: '1pt 2pt 1pt 1pt',
           }}
           value={Number(item.exchangeRate || 0)}
-          onChange={value => updateExportItemField(absIndex, 'exchangeRate', String(value))}
+          onChange={value =>
+            updateExportItemField(absIndex, 'exchangeRate', String(value))
+          }
           inputType={inputType?.exportItems?.[absIndex]?.exchangeRate}
         />
       </td>
@@ -337,8 +355,10 @@ export default function Form40_1({
             margin: '1pt 2pt 1pt 1pt',
           }}
           value={item.foreignAmount}
-          onChange={value => updateExportItemField(absIndex, 'foreignAmount', value)}
-        inputType={inputType?.exportItems?.[absIndex]?.foreignAmount}
+          onChange={value =>
+            updateExportItemField(absIndex, 'foreignAmount', value)
+          }
+          inputType={inputType?.exportItems?.[absIndex]?.foreignAmount}
         />
       </td>
       <td
@@ -370,8 +390,10 @@ export default function Form40_1({
             margin: '1pt 2pt 1pt 1pt',
           }}
           value={item.wonAmount}
-          onChange={value => updateExportItemField(absIndex, 'wonAmount', value)}
-        inputType={inputType?.exportItems?.[absIndex]?.wonAmount}
+          onChange={value =>
+            updateExportItemField(absIndex, 'wonAmount', value)
+          }
+          inputType={inputType?.exportItems?.[absIndex]?.wonAmount}
         />
       </td>
     </tr>
@@ -424,7 +446,7 @@ export default function Form40_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ marginLeft: '15pt' }}></span>
         <InputField
@@ -443,7 +465,7 @@ export default function Form40_1({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <InputField
@@ -464,7 +486,7 @@ export default function Form40_1({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <InputField
@@ -485,7 +507,7 @@ export default function Form40_1({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <InputField
@@ -503,8 +525,10 @@ export default function Form40_1({
           }}
           maxLength={2}
           value={taxPeriodEndMonth}
-          onChange={e => updater('taxPeriodEndMonth', digitsOnly(e.target.value))}
-        inputType={inputType?.taxPeriodEndMonth}
+          onChange={e =>
+            updater('taxPeriodEndMonth', digitsOnly(e.target.value))
+          }
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <InputField
@@ -523,7 +547,7 @@ export default function Form40_1({
           maxLength={2}
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
-        inputType={inputType?.taxPeriodEndDay}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -614,8 +638,10 @@ export default function Form40_1({
                 margin: '1pt 0',
               }}
               value={submitterInfo.bizRegNumber}
-              onChange={e => updateSubmitterInfo('bizRegNumber', e.target.value)}
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              onChange={e =>
+                updateSubmitterInfo('bizRegNumber', e.target.value)
+              }
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
           <td
@@ -665,7 +691,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.companyName}
               onChange={e => updateSubmitterInfo('companyName', e.target.value)}
-            inputType={inputType?.submitterInfo?.companyName}
+              inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
         </tr>
@@ -723,7 +749,7 @@ export default function Form40_1({
               onChange={e =>
                 updateSubmitterInfo('representativeName', e.target.value)
               }
-            inputType={inputType?.submitterInfo?.representativeName}
+              inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -773,7 +799,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.address}
               onChange={e => updateSubmitterInfo('address', e.target.value)}
-            inputType={inputType?.submitterInfo?.address}
+              inputType={inputType?.submitterInfo?.address}
             />
           </td>
         </tr>
@@ -827,7 +853,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.bizType}
               onChange={e => updateSubmitterInfo('bizType', e.target.value)}
-            inputType={inputType?.submitterInfo?.bizType}
+              inputType={inputType?.submitterInfo?.bizType}
             />
           </td>
           <td
@@ -876,7 +902,7 @@ export default function Form40_1({
               }}
               value={submitterInfo.bizItem}
               onChange={e => updateSubmitterInfo('bizItem', e.target.value)}
-            inputType={inputType?.submitterInfo?.bizItem}
+              inputType={inputType?.submitterInfo?.bizItem}
             />
           </td>
         </tr>
@@ -956,7 +982,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('year', digitsOnly(e.target.value))
                 }
-              inputType={inputType?.transactionPeriod?.year}
+                inputType={inputType?.transactionPeriod?.year}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 년
@@ -1003,9 +1029,12 @@ export default function Form40_1({
                 maxLength={2}
                 value={transactionPeriod.startMonth}
                 onChange={e =>
-                  updateTransactionPeriod('startMonth', digitsOnly(e.target.value))
+                  updateTransactionPeriod(
+                    'startMonth',
+                    digitsOnly(e.target.value)
+                  )
                 }
-              inputType={inputType?.transactionPeriod?.startMonth}
+                inputType={inputType?.transactionPeriod?.startMonth}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 월
@@ -1053,9 +1082,12 @@ export default function Form40_1({
                 maxLength={2}
                 value={transactionPeriod.startDay}
                 onChange={e =>
-                  updateTransactionPeriod('startDay', digitsOnly(e.target.value))
+                  updateTransactionPeriod(
+                    'startDay',
+                    digitsOnly(e.target.value)
+                  )
                 }
-              inputType={inputType?.transactionPeriod?.startDay}
+                inputType={inputType?.transactionPeriod?.startDay}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 일 ~
@@ -1102,9 +1134,12 @@ export default function Form40_1({
                 maxLength={2}
                 value={transactionPeriod.endMonth}
                 onChange={e =>
-                  updateTransactionPeriod('endMonth', digitsOnly(e.target.value))
+                  updateTransactionPeriod(
+                    'endMonth',
+                    digitsOnly(e.target.value)
+                  )
                 }
-              inputType={inputType?.transactionPeriod?.endMonth}
+                inputType={inputType?.transactionPeriod?.endMonth}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 월
@@ -1156,7 +1191,7 @@ export default function Form40_1({
                 onChange={e =>
                   updateTransactionPeriod('endDay', digitsOnly(e.target.value))
                 }
-              inputType={inputType?.transactionPeriod?.endDay}
+                inputType={inputType?.transactionPeriod?.endDay}
               />
               <span style={{ fontSize: '10pt', verticalAlign: 'middle' }}>
                 일
@@ -1208,7 +1243,7 @@ export default function Form40_1({
               }}
               value={writingDate}
               onChange={e => updater('writingDate', e.target.value)}
-            inputType={inputType?.writingDate}
+              inputType={inputType?.writingDate}
             />
           </td>
         </tr>
@@ -1402,7 +1437,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('grandTotal').count} onChange={value => updateSummaryField('grandTotal', 'count', value)}/>
+              value={getSummaryRow('grandTotal').count}
+              onChange={value =>
+                updateSummaryField('grandTotal', 'count', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1435,7 +1474,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('grandTotal').foreignAmount} onChange={value => updateSummaryField('grandTotal', 'foreignAmount', value)}/>
+              value={getSummaryRow('grandTotal').foreignAmount}
+              onChange={value =>
+                updateSummaryField('grandTotal', 'foreignAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1468,7 +1511,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('grandTotal').wonAmount} onChange={value => updateSummaryField('grandTotal', 'wonAmount', value)}/>
+              value={getSummaryRow('grandTotal').wonAmount}
+              onChange={value =>
+                updateSummaryField('grandTotal', 'wonAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1560,7 +1607,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('exportGoodsTotal').count} onChange={value => updateSummaryField('exportGoodsTotal', 'count', value)}/>
+              value={getSummaryRow('exportGoodsTotal').count}
+              onChange={value =>
+                updateSummaryField('exportGoodsTotal', 'count', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1593,7 +1644,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('exportGoodsTotal').foreignAmount} onChange={value => updateSummaryField('exportGoodsTotal', 'foreignAmount', value)}/>
+              value={getSummaryRow('exportGoodsTotal').foreignAmount}
+              onChange={value =>
+                updateSummaryField('exportGoodsTotal', 'foreignAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1626,7 +1681,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('exportGoodsTotal').wonAmount} onChange={value => updateSummaryField('exportGoodsTotal', 'wonAmount', value)}/>
+              value={getSummaryRow('exportGoodsTotal').wonAmount}
+              onChange={value =>
+                updateSummaryField('exportGoodsTotal', 'wonAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1716,7 +1775,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('otherZeroRateTotal').count} onChange={value => updateSummaryField('otherZeroRateTotal', 'count', value)}/>
+              value={getSummaryRow('otherZeroRateTotal').count}
+              onChange={value =>
+                updateSummaryField('otherZeroRateTotal', 'count', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1748,7 +1811,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('otherZeroRateTotal').foreignAmount} onChange={value => updateSummaryField('otherZeroRateTotal', 'foreignAmount', value)}/>
+              value={getSummaryRow('otherZeroRateTotal').foreignAmount}
+              onChange={value =>
+                updateSummaryField('otherZeroRateTotal', 'foreignAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -1780,7 +1847,11 @@ export default function Form40_1({
                 textAlign: 'right',
                 margin: '1pt 2pt 1pt 1pt',
               }}
-             value={getSummaryRow('otherZeroRateTotal').wonAmount} onChange={value => updateSummaryField('otherZeroRateTotal', 'wonAmount', value)}/>
+              value={getSummaryRow('otherZeroRateTotal').wonAmount}
+              onChange={value =>
+                updateSummaryField('otherZeroRateTotal', 'wonAmount', value)
+              }
+            />
           </td>
           <td
             style={{
@@ -4534,7 +4605,7 @@ export default function Form40_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-10pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',
@@ -4551,6 +4622,7 @@ export default function Form40_1({
         }}
         className="print:hidden"
         id="addTableBtn"
+        onClick={onAddPage}
       >
         (을)표추가
       </button>

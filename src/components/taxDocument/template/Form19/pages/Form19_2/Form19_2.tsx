@@ -12,6 +12,7 @@ import {
   FORM19_1_BAD_DEBT_ITEM_LENGTH,
   FORM19_2_BAD_DEBT_ITEM_LENGTH,
 } from '@/components/taxDocument/template/Form19/constants';
+
 type Props = Form19Data &
   UpdaterProps<Form19Data> & {
     index: number;
@@ -182,7 +183,7 @@ export default function Form19_2({
                   }}
                   value={companyName}
                   onChange={value => updater('companyName', value)}
-                inputType={inputType?.companyName}
+                  inputType={inputType?.companyName}
                 />
               </td>
               <td
@@ -242,7 +243,7 @@ export default function Form19_2({
                   }}
                   value={bizNumber}
                   onChange={value => updater('bizNumber', value)}
-                inputType={inputType?.bizNumber}
+                  inputType={inputType?.bizNumber}
                 />
               </td>
             </tr>
@@ -304,7 +305,7 @@ export default function Form19_2({
                   }}
                   value={repName}
                   onChange={value => updater('repName', value)}
-                inputType={inputType?.repName}
+                  inputType={inputType?.repName}
                 />
               </td>
               <td
@@ -1041,8 +1042,8 @@ export default function Form19_2({
       <button
         style={{
           position: 'absolute',
-          right: '10pt',
-          bottom: '10pt',
+          right: '20pt',
+          bottom: '-80pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

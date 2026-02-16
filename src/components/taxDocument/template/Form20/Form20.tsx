@@ -4,7 +4,10 @@ import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import YesNoSelector from '@/components/taxDocument/template/common/YesNoSelector';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form20Data, Form20InputData, } from '@/components/taxDocument/template/Form20/type';
+import {
+  Form20Data,
+  Form20InputData,
+} from '@/components/taxDocument/template/Form20/type';
 import Stamp from '@/components/taxDocument/template/common/Stamp';
 import { PageSlot } from '@/components/documentCreate/PageSlot';
 

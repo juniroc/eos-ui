@@ -2143,7 +2143,7 @@ export default function Form69_2_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-10pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

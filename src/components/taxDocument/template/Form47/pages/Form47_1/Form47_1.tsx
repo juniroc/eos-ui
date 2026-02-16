@@ -3,8 +3,13 @@ import './form47_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import {Form47Data, SalesItem, Form47InputData} from '@/components/taxDocument/template/Form47/type';
+import {
+  Form47Data,
+  Form47InputData,
+  SalesItem,
+} from '@/components/taxDocument/template/Form47/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
+
 const FORM_47_1_SALES_ITEM_MAX_LENGTH = 13;
 
 type Props = FormPageProps<Form47Data> & { inputType?: Form47InputData };
@@ -41,9 +46,7 @@ export default function Form47_1({
     (_, i) => salesItems[startIndex + i] ?? baseSalesItem
   );
 
-  const submitterInfoUpdater = <
-    K extends keyof Form47Data['submitterInfo'],
-  >(
+  const submitterInfoUpdater = <K extends keyof Form47Data['submitterInfo']>(
     field: K,
     value: Form47Data['submitterInfo'][K]
   ) => {
@@ -126,7 +129,7 @@ export default function Form47_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -148,7 +151,7 @@ export default function Form47_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -169,7 +172,7 @@ export default function Form47_1({
           onChange={value =>
             updater('taxPeriodStartMonth', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <Input
@@ -190,7 +193,7 @@ export default function Form47_1({
           onChange={value =>
             updater('taxPeriodStartDay', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <Input
@@ -211,7 +214,7 @@ export default function Form47_1({
           onChange={value =>
             updater('taxPeriodEndMonth', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodEndMonth}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <Input
@@ -232,7 +235,7 @@ export default function Form47_1({
           onChange={value =>
             updater('taxPeriodEndDay', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodEndDay}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -294,7 +297,7 @@ export default function Form47_1({
               style={{ width: '100%', height: '19pt', padding: '1.5pt' }}
               value={submitterInfo.companyName}
               onChange={value => submitterInfoUpdater('companyName', value)}
-            inputType={inputType?.submitterInfo?.companyName}
+              inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
           <td
@@ -346,7 +349,7 @@ export default function Form47_1({
               style={{ width: '100%', height: '19pt', padding: '1.5pt' }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -400,7 +403,7 @@ export default function Form47_1({
               onChange={value =>
                 submitterInfoUpdater('representativeName', value)
               }
-            inputType={inputType?.submitterInfo?.representativeName}
+              inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -452,7 +455,7 @@ export default function Form47_1({
               onChange={value =>
                 submitterInfoUpdater('transactionPeriod', value)
               }
-            inputType={inputType?.submitterInfo?.transactionPeriod}
+              inputType={inputType?.submitterInfo?.transactionPeriod}
             />
           </td>
         </tr>
@@ -870,7 +873,7 @@ export default function Form47_1({
             </p>
           </td>
         </tr>
-        
+
         {mappedSalesItems.map((item, index) => {
           const absIndex = startIndex + index;
 
@@ -931,8 +934,10 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.supplyDate}
-                  onChange={value => salesItemUpdater(absIndex, 'supplyDate', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.supplyDate}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'supplyDate', value)
+                  }
+                  inputType={inputType?.salesItems?.[absIndex]?.supplyDate}
                 />
               </td>
               <td
@@ -961,8 +966,10 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.exemptionReason}
-                  onChange={value => salesItemUpdater(absIndex, 'exemptionReason', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.exemptionReason}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'exemptionReason', value)
+                  }
+                  inputType={inputType?.salesItems?.[absIndex]?.exemptionReason}
                 />
               </td>
               <td
@@ -991,8 +998,10 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.animalType}
-                  onChange={value => salesItemUpdater(absIndex, 'animalType', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.animalType}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'animalType', value)
+                  }
+                  inputType={inputType?.salesItems?.[absIndex]?.animalType}
                 />
               </td>
               <td
@@ -1021,8 +1030,12 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.diagnosisDetails}
-                  onChange={value => salesItemUpdater(absIndex, 'diagnosisDetails', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.diagnosisDetails}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'diagnosisDetails', value)
+                  }
+                  inputType={
+                    inputType?.salesItems?.[absIndex]?.diagnosisDetails
+                  }
                 />
               </td>
               <td
@@ -1051,8 +1064,10 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.supplyPrice}
-                  onChange={value => salesItemUpdater(absIndex, 'supplyPrice', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.supplyPrice}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'supplyPrice', value)
+                  }
+                  inputType={inputType?.salesItems?.[absIndex]?.supplyPrice}
                 />
               </td>
               <td
@@ -1081,8 +1096,10 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.recipientName}
-                  onChange={value => salesItemUpdater(absIndex, 'recipientName', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.recipientName}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'recipientName', value)
+                  }
+                  inputType={inputType?.salesItems?.[absIndex]?.recipientName}
                 />
               </td>
               <td
@@ -1111,8 +1128,12 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.recipientResidentNumber}
-                  onChange={value => salesItemUpdater(absIndex, 'recipientResidentNumber', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.recipientResidentNumber}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'recipientResidentNumber', value)
+                  }
+                  inputType={
+                    inputType?.salesItems?.[absIndex]?.recipientResidentNumber
+                  }
                 />
               </td>
               <td
@@ -1141,8 +1162,12 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.recipientContact}
-                  onChange={value => salesItemUpdater(absIndex, 'recipientContact', value)}
-                inputType={inputType?.salesItems?.[absIndex]?.recipientContact}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'recipientContact', value)
+                  }
+                  inputType={
+                    inputType?.salesItems?.[absIndex]?.recipientContact
+                  }
                 />
               </td>
               <td
@@ -1168,7 +1193,9 @@ export default function Form47_1({
                     padding: '1pt',
                   }}
                   value={item.remarks ?? ''}
-                  onChange={value => salesItemUpdater(absIndex, 'remarks', value)}
+                  onChange={value =>
+                    salesItemUpdater(absIndex, 'remarks', value)
+                  }
                 />
               </td>
             </tr>
@@ -1179,7 +1206,7 @@ export default function Form47_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-10pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',
@@ -1196,6 +1223,7 @@ export default function Form47_1({
         }}
         className="print:hidden"
         id="addTableBtn"
+        onClick={onAddPage}
       >
         (을)표추가
       </button>

@@ -14,6 +14,7 @@ import Stamp from '@/components/taxDocument/template/common/Stamp';
 type Props = FormPageProps<Form41Data> & { inputType?: Form41InputData };
 
 export default function Form41_1({
+  onAddPage,
   updater,
   inputType,
   attributionYear,
@@ -2325,6 +2326,7 @@ export default function Form41_1({
         }}
         className="print:hidden"
         id="addTableBtn"
+        onClick={onAddPage}
       >
         (을)표추가
       </button>

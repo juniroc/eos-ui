@@ -6,7 +6,7 @@ import NumericInput from '@/components/taxDocument/template/common/NumericInput'
 import InputField from '@/components/taxDocument/template/common/InputField';
 type Props = FormPageProps<Form40Data> & { inputType?: Form40InputData };
 
-export default function Form40_2({}: Props) {
+export default function Form40_2({ onAddPage }: Props) {
   return (
     <div className="form40_2">
       <ul id="l1">
@@ -3192,6 +3192,7 @@ export default function Form40_2({}: Props) {
         }}
         className="print:hidden"
         id="addTableBtn"
+        onClick={onAddPage}
       >
         페이지추가
       </button>

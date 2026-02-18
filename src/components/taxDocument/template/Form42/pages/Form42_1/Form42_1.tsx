@@ -4,15 +4,15 @@ import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
-import {
-  AttachmentItem,
-  Form42Data,
-  Form42InputData,
-} from '@/components/taxDocument/template/Form42/type';
+import { AttachmentItem, Form42Data, Form42InputData, } from '@/components/taxDocument/template/Form42/type';
+import { MAX_ATTACHMENT_ITEM_LENGTH } from '@/components/taxDocument/template/Form42/constants';
+
 type Props = FormPageProps<Form42Data> & { inputType?: Form42InputData };
 
 export default function Form42_1({
+  pageIndex,
   updater,
+  onAddPage,
   inputType,
   attributionYear,
   attributionTerm,
@@ -26,27 +26,10 @@ export default function Form42_1({
   submissionReason,
   attachmentItems,
 }: Props) {
-  const baseAttachmentItem: AttachmentItem = {
-    documentName: '',
-    issuerName: '',
-    issueDate: '',
-    shippingDate: '',
-    currencyCode: '',
-    exchangeRate: '',
-    currentSubmissionAmount: {
-      foreign: 0,
-      won: 0,
-    },
-    currentReportPortion: {
-      foreign: 0,
-      won: 0,
-    },
-    remarks: '',
-  };
-
+  const startIndex = pageIndex * MAX_ATTACHMENT_ITEM_LENGTH;
   const mappedAttachmentItems = Array.from(
-    { length: 19 },
-    (_, i) => attachmentItems[i] ?? baseAttachmentItem
+    { length: MAX_ATTACHMENT_ITEM_LENGTH },
+    (_, i) => attachmentItems[startIndex + i] ?? {}
   );
 
   const submitterInfoUpdater = <K extends keyof Form42Data['submitterInfo']>(
@@ -64,10 +47,11 @@ export default function Form42_1({
     field: K,
     value: AttachmentItem[K]
   ) => {
+    const targetIndex = startIndex + index;
     const items = [...attachmentItems];
-    const target = items[index] ?? baseAttachmentItem;
+    const target = items[targetIndex] ?? {};
 
-    items[index] = {
+    items[targetIndex] = {
       ...target,
       [field]: value,
     };
@@ -81,10 +65,11 @@ export default function Form42_1({
     field: 'foreign' | 'won',
     value: number
   ) => {
+    const targetIndex = startIndex + index;
     const items = [...attachmentItems];
-    const target = items[index] ?? baseAttachmentItem;
+    const target = items[targetIndex] ?? {};
 
-    items[index] = {
+    items[targetIndex] = {
       ...target,
       [section]: {
         ...target[section],
@@ -151,7 +136,7 @@ export default function Form42_1({
           onChange={value =>
             updater('attributionYear', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -173,7 +158,7 @@ export default function Form42_1({
           onChange={value =>
             updater('attributionTerm', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <Input
@@ -194,7 +179,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodStartMonth', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <Input
@@ -215,7 +200,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodStartDay', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <Input
@@ -236,7 +221,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodEndMonth', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodEndMonth}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <Input
@@ -257,7 +242,7 @@ export default function Form42_1({
           onChange={value =>
             updater('taxPeriodEndDay', value.replace(/[^0-9]/g, ''))
           }
-        inputType={inputType?.taxPeriodEndDay}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </p>
@@ -357,7 +342,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.bizRegNumber}
               onChange={value => submitterInfoUpdater('bizRegNumber', value)}
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
           <td
@@ -398,7 +383,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.companyName}
               onChange={value => submitterInfoUpdater('companyName', value)}
-            inputType={inputType?.submitterInfo?.companyName}
+              inputType={inputType?.submitterInfo?.companyName}
             />
           </td>
         </tr>
@@ -446,7 +431,7 @@ export default function Form42_1({
               onChange={value =>
                 submitterInfoUpdater('representativeName', value)
               }
-            inputType={inputType?.submitterInfo?.representativeName}
+              inputType={inputType?.submitterInfo?.representativeName}
             />
           </td>
           <td
@@ -486,7 +471,7 @@ export default function Form42_1({
               onChange={value =>
                 submitterInfoUpdater('addressAndContact', value)
               }
-            inputType={inputType?.submitterInfo?.addressAndContact}
+              inputType={inputType?.submitterInfo?.addressAndContact}
             />
           </td>
         </tr>
@@ -529,7 +514,7 @@ export default function Form42_1({
               }}
               value={submitterInfo.bizTypeAndItem}
               onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
-            inputType={inputType?.submitterInfo?.bizTypeAndItem}
+              inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />
           </td>
           <td
@@ -550,7 +535,7 @@ export default function Form42_1({
               onChange={e =>
                 submitterInfoUpdater('bizTypeAndItem', e.target.value)
               }
-            inputType={inputType?.submitterInfo?.bizTypeAndItem}
+              inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />
           </td>
         </tr>
@@ -591,7 +576,7 @@ export default function Form42_1({
               }}
               value={transactionPeriod}
               onChange={value => updater('transactionPeriod', value)}
-            inputType={inputType?.transactionPeriod}
+              inputType={inputType?.transactionPeriod}
             />
           </td>
           <td
@@ -629,7 +614,7 @@ export default function Form42_1({
               }}
               value={writingDate}
               onChange={value => updater('writingDate', value)}
-            inputType={inputType?.writingDate}
+              inputType={inputType?.writingDate}
             />
           </td>
         </tr>
@@ -656,7 +641,7 @@ export default function Form42_1({
         }}
         value={submissionReason}
         onChange={value => updater('submissionReason', value)}
-      inputType={inputType?.submissionReason}
+        inputType={inputType?.submissionReason}
       />
       <p
         style={{
@@ -1174,440 +1159,468 @@ export default function Form42_1({
           </td>
         </tr>
 
-        {mappedAttachmentItems.map((item, index) => (
-          <tr style={{ height: '20pt' }} key={`attachment-${index}`}>
-            <td
-              style={{
-                width: '34pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <InputField
-                className="form-input form-input-text"
+        {mappedAttachmentItems.map((item, index) => {
+          const targetIndex = startIndex + index;
+          return (
+            <tr style={{ height: '20pt' }} key={`attachment-${index}`}>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '34pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                type="text"
-                value={String(index + 1)}
-                readOnly
-              />
-            </td>
-            <td
-              style={{
-                width: '51pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <InputField
+                  className="form-input form-input-text"
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  type="text"
+                  value={String(targetIndex + 1)}
+                  readOnly
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '51pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.documentName}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'documentName', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.documentName}
-              />
-            </td>
-            <td
-              style={{
-                width: '51pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.documentName}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'documentName', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.documentName
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '51pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.issuerName}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'issuerName', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.issuerName}
-              />
-            </td>
-            <td
-              style={{
-                width: '51pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.issuerName}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'issuerName', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.issuerName
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '51pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.issueDate}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'issueDate', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.issueDate}
-              />
-            </td>
-            <td
-              style={{
-                width: '51pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.issueDate}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'issueDate', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.issueDate
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '51pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.shippingDate}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'shippingDate', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.shippingDate}
-              />
-            </td>
-            <td
-              style={{
-                width: '38pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.shippingDate}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'shippingDate', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.shippingDate
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '38pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.currencyCode}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'currencyCode', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.currencyCode}
-              />
-            </td>
-            <td
-              style={{
-                width: '46pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.currencyCode}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'currencyCode', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.currencyCode
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '46pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  textAlign: 'center',
-                  fontSize: '8pt',
                 }}
-                value={item.exchangeRate}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'exchangeRate', value)
-                }
-              inputType={inputType?.attachmentItems?.[index]?.exchangeRate}
-              />
-            </td>
-            <td
-              style={{
-                width: '57pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <NumericInput
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    textAlign: 'center',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.exchangeRate}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'exchangeRate', value)
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]?.exchangeRate
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '57pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  fontSize: '8pt',
                 }}
-                value={item.currentSubmissionAmount.foreign}
-                onChange={value =>
-                  attachmentAmountUpdater(
-                    index,
-                    'currentSubmissionAmount',
-                    'foreign',
-                    value
-                  )
-                }
-              inputType={inputType?.attachmentItems?.[index]?.currentSubmissionAmount?.foreign}
-              />
-            </td>
-            <td
-              style={{
-                width: '57pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <NumericInput
+              >
+                <NumericInput
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.currentSubmissionAmount?.foreign}
+                  onChange={value =>
+                    attachmentAmountUpdater(
+                      index,
+                      'currentSubmissionAmount',
+                      'foreign',
+                      value
+                    )
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]
+                      ?.currentSubmissionAmount?.foreign
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '57pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  fontSize: '8pt',
                 }}
-                value={item.currentSubmissionAmount.won}
-                onChange={value =>
-                  attachmentAmountUpdater(
-                    index,
-                    'currentSubmissionAmount',
-                    'won',
-                    value
-                  )
-                }
-              inputType={inputType?.attachmentItems?.[index]?.currentSubmissionAmount?.won}
-              />
-            </td>
-            <td
-              style={{
-                width: '57pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <NumericInput
+              >
+                <NumericInput
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.currentSubmissionAmount?.won}
+                  onChange={value =>
+                    attachmentAmountUpdater(
+                      index,
+                      'currentSubmissionAmount',
+                      'won',
+                      value
+                    )
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]
+                      ?.currentSubmissionAmount?.won
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '57pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  fontSize: '8pt',
                 }}
-                value={item.currentReportPortion.foreign}
-                onChange={value =>
-                  attachmentAmountUpdater(
-                    index,
-                    'currentReportPortion',
-                    'foreign',
-                    value
-                  )
-                }
-              inputType={inputType?.attachmentItems?.[index]?.currentReportPortion?.foreign}
-              />
-            </td>
-            <td
-              style={{
-                width: '57pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <NumericInput
+              >
+                <NumericInput
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.currentReportPortion?.foreign}
+                  onChange={value =>
+                    attachmentAmountUpdater(
+                      index,
+                      'currentReportPortion',
+                      'foreign',
+                      value
+                    )
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]
+                      ?.currentReportPortion?.foreign
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '57pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  borderRightStyle: 'solid',
+                  borderRightWidth: '1pt',
+                  borderRightColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  fontSize: '8pt',
                 }}
-                value={item.currentReportPortion.won}
-                onChange={value =>
-                  attachmentAmountUpdater(
-                    index,
-                    'currentReportPortion',
-                    'won',
-                    value
-                  )
-                }
-              inputType={inputType?.attachmentItems?.[index]?.currentReportPortion?.won}
-              />
-            </td>
-            <td
-              style={{
-                width: '60pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#939393',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#939393',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#939393',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-            >
-              <Input
+              >
+                <NumericInput
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.currentReportPortion?.won}
+                  onChange={value =>
+                    attachmentAmountUpdater(
+                      index,
+                      'currentReportPortion',
+                      'won',
+                      value
+                    )
+                  }
+                  inputType={
+                    inputType?.attachmentItems?.[targetIndex]
+                      ?.currentReportPortion?.won
+                  }
+                />
+              </td>
+              <td
                 style={{
-                  width: 'calc(100% - 3pt)',
-                  height: '20pt',
-                  padding: '1pt',
+                  width: '60pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#939393',
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: '1pt',
+                  borderLeftColor: '#939393',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#939393',
+                  padding: '1.5pt',
                   verticalAlign: 'middle',
-                  fontSize: '8pt',
                 }}
-                value={item.remarks ?? ''}
-                onChange={value =>
-                  attachmentItemUpdater(index, 'remarks', value)
-                }
-              />
-            </td>
-          </tr>
-        ))}
+              >
+                <Input
+                  style={{
+                    width: 'calc(100% - 3pt)',
+                    height: '20pt',
+                    padding: '1pt',
+                    verticalAlign: 'middle',
+                    fontSize: '8pt',
+                  }}
+                  value={item?.remarks ?? ''}
+                  onChange={value =>
+                    attachmentItemUpdater(index, 'remarks', value)
+                  }
+                />
+              </td>
+            </tr>
+          );
+        })}
       </table>
       <div style={{ height: '20pt' }}></div>
       <button
+        onClick={onAddPage}
         style={{
           position: 'absolute',
           right: '10pt',

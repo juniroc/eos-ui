@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -28,6 +28,7 @@ function AvailableFormsSidebar({
   const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set());
   const [loadingForms, setLoadingForms] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   // 서식 목록 조회
   useEffect(() => {
@@ -61,6 +62,19 @@ function AvailableFormsSidebar({
     }
   }, [isOpen, reportId, token]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
   // 체크박스 토글
   const handleToggleForm = (formCode: string) => {
     setSelectedForms(prev => {
@@ -74,6 +88,19 @@ function AvailableFormsSidebar({
     });
   };
 
+  const filteredForms = useMemo(() => {
+    const keyword = searchKeyword.trim().toLowerCase();
+    if (!keyword) {
+      return availableForms;
+    }
+
+    return availableForms.filter(form =>
+      [form.formNumber, form.name, form.description, form.requiredWhen]
+        .filter(Boolean)
+        .some(value => value.toLowerCase().includes(keyword))
+    );
+  }, [availableForms, searchKeyword]);
+
   // 전체 선택 여부 확인
   const isAllSelected =
     availableForms.length > 0 &&
@@ -82,12 +109,19 @@ function AvailableFormsSidebar({
   // 전체 선택/해제 토글
   const handleToggleAll = () => {
     if (isAllSelected) {
-      // 전체 해제
-      setSelectedForms(new Set());
+      // 현재 필터 결과만 해제
+      setSelectedForms(prev => {
+        const newSet = new Set(prev);
+        filteredForms.forEach(form => newSet.delete(form.formCode));
+        return newSet;
+      });
     } else {
-      // 전체 선택
-      const allFormCodes = new Set(availableForms.map(form => form.formCode));
-      setSelectedForms(allFormCodes);
+      // 현재 필터 결과만 선택
+      setSelectedForms(prev => {
+        const newSet = new Set(prev);
+        filteredForms.forEach(form => newSet.add(form.formCode));
+        return newSet;
+      });
     }
   };
 
@@ -125,138 +159,224 @@ function AvailableFormsSidebar({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-0 right-0 bottom-0 w-3/4 bg-white shadow-[0px_16px_32px_-4px_rgba(12,12,13,0.1),0px_4px_4px_-4px_rgba(12,12,13,0.05)] z-[60] flex flex-col">
-      {/* 헤더 */}
-      <div className="flex flex-row justify-between items-center p-3 w-full h-[52px] flex-shrink-0">
-        <div className="flex flex-row items-center py-[6px] px-0 gap-1">
-          <span className="text-sm leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
-            추가할 서류 서식
-          </span>
+    <div
+      className="fixed inset-0 z-[70] bg-[rgba(15,23,42,0.28)] flex items-center justify-center px-4 py-6"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[1176px] h-[min(800px,calc(100vh-48px))] bg-white shadow-[0px_24px_48px_-12px_rgba(15,23,42,0.28)] flex flex-col overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* top */}
+        <div className="w-full h-10 flex items-center justify-between p-3">
+          <div className="flex items-center gap-1 text-[11px] leading-[140%] font-['Pretendard'] min-w-0">
+            <span className="text-[#B3B3B3]">부가세</span>
+            <span className="text-[#B3B3B3]">{'>'}</span>
+            <span className="text-[#B3B3B3]">서류정보</span>
+            <span className="text-[#B3B3B3]">{'>'}</span>
+            <span className="text-[#1E1E1E] font-semibold">서류 서식 추가</span>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-4 h-4 text-[#1E1E1E] text-sm leading-none flex items-center justify-center"
+            aria-label="닫기"
+          >
+            ✕
+          </button>
         </div>
-        <button
-          onClick={onClose}
-          className="w-5 h-5 flex items-center justify-center cursor-pointer flex-shrink-0"
-        >
-          <Image src="/icons/close.svg" alt="close" width={20} height={20} />
-        </button>
-      </div>
 
-      {/* 컨텐츠 영역 */}
-      <div className="flex flex-col items-start p-3 gap-[10px] flex-1 overflow-hidden">
-        {/* 테이블 영역 */}
-        <div className="flex flex-col items-start w-full overflow-auto flex-1">
-          {/* 테이블 헤더 */}
-          <div className="flex flex-row items-stretch p-0 w-full h-7 flex-shrink-0">
-            {/* 체크박스 헤더 */}
-            <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border border-[#D9D9D9] flex-shrink-0">
-              <div
-                className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${
-                  isAllSelected
-                    ? 'border-[#2C2C2C] bg-[#2C2C2C]'
-                    : 'border-[#D9D9D9] bg-white'
-                }`}
-                onClick={handleToggleAll}
-              >
-                {isAllSelected && (
-                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+        {/* content */}
+        <div className="flex-1 flex justify-center items-stretch p-4 min-h-0">
+          <div className="w-full max-w-[972px] flex flex-col gap-4 min-h-0">
+            {/* title */}
+            <div className="h-7 flex items-end justify-between">
+              <h2 className="text-sm leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
+                추가할 서류 서식
+              </h2>
+            </div>
+
+            {/* toolbar */}
+            <div className="h-8 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 h-8">
+                <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">
+                  서식번호/서류명
+                </span>
+                <div className="h-8 w-[220px] border border-[#D9D9D9] px-2 flex items-center gap-2 bg-white">
+                  <input
+                    value={searchKeyword}
+                    onChange={e => setSearchKeyword(e.target.value)}
+                    placeholder="검색어를 입력해 주세요"
+                    className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] outline-none placeholder:text-[#B3B3B3]"
+                  />
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="7"
+                      cy="7"
+                      r="4.4"
+                      stroke="#757575"
+                      strokeWidth="1.2"
+                    />
                     <path
-                      d="M1.5 4.5L3.5 6.5L7.5 2.5"
-                      stroke="white"
-                      strokeWidth="1.5"
+                      d="M10.5 10.5L14 14"
+                      stroke="#757575"
+                      strokeWidth="1.2"
                       strokeLinecap="round"
-                      strokeLinejoin="round"
                     />
                   </svg>
-                )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] leading-[100%] text-[#757575] font-['Pretendard']">
+                  선택 {selectedForms.size}건
+                </span>
+                <button
+                  type="button"
+                  onClick={handleAddForms}
+                  disabled={selectedForms.size === 0 || isAdding}
+                  className={`h-[27px] px-3 text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
+                    selectedForms.size > 0 && !isAdding
+                      ? 'bg-[#2C2C2C] text-[#F5F5F5]'
+                      : 'bg-[#F3F3F3] text-[#A1A1A1]'
+                  }`}
+                >
+                  {isAdding ? '추가중...' : '첨부서류 추가'}
+                </button>
               </div>
             </div>
-            {/* 서식번호 */}
-            <div className="flex flex-row items-center p-2 w-[140px] min-w-[140px] bg-white border-t border-b border-r border-[#D9D9D9] flex-shrink-0">
-              <span className="text-[10px] leading-[100%] text-[#B3B3B3] font-medium font-['Pretendard']">
-                서식번호
-              </span>
-            </div>
-            {/* 서식명 */}
-            <div className="flex flex-row items-center p-2 w-[220px] min-w-[220px] max-w-[220px] bg-white border-t border-b border-r border-[#D9D9D9] flex-shrink-0">
-              <span className="text-[10px] leading-[100%] text-[#B3B3B3] font-medium font-['Pretendard']">
-                서식명
-              </span>
-            </div>
-            {/* 서식내용 해설 */}
-            <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-t border-b border-r border-[#D9D9D9] flex-1">
-              <span className="text-[10px] leading-[100%] text-[#B3B3B3] font-medium font-['Pretendard']">
-                서식내용 해설
-              </span>
-            </div>
-            {/* 첨부해야 하는 경우 */}
-            <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-t border-b border-r border-[#D9D9D9] flex-1">
-              <span className="text-[10px] leading-[100%] text-[#B3B3B3] font-medium font-['Pretendard']">
-                첨부해야 하는 경우
-              </span>
+
+            {/* table */}
+            <div className="flex-1 min-h-0 border border-[#D9D9D9] overflow-auto">
+              <table className="w-full min-w-[931px] border-collapse table-fixed">
+                <thead className="sticky top-0 z-[1]">
+                  <tr className="h-[30px] bg-[#F5F5F5]">
+                    <th className="w-[71px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
+                      서식번호
+                    </th>
+                    <th className="w-[200px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
+                      서식명
+                    </th>
+                    <th className="w-[300px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
+                      서식내용 해설
+                    </th>
+                    <th className="w-[300px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
+                      첨부해야 하는 경우
+                    </th>
+                    <th className="w-[60px] border-r border-b border-[#D9D9D9]">
+                      <button
+                        type="button"
+                        onClick={handleToggleAll}
+                        className={`mx-auto w-4 h-4 rounded-[6px] border flex items-center justify-center ${
+                          isAllSelected
+                            ? 'bg-[#2C2C2C] border-[#2C2C2C]'
+                            : 'bg-white border-[#D9D9D9]'
+                        }`}
+                        aria-label="전체 선택"
+                      >
+                        {isAllSelected && (
+                          <svg
+                            width="9"
+                            height="9"
+                            viewBox="0 0 9 9"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M1.5 4.5L3.5 6.5L7.5 2.5"
+                              stroke="white"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loadingForms && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="h-24 text-center text-[11px] text-[#757575] font-['Pretendard']"
+                      >
+                        로딩 중...
+                      </td>
+                    </tr>
+                  )}
+                  {!loadingForms && filteredForms.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="h-24 text-center text-[11px] text-[#757575] font-['Pretendard']"
+                      >
+                        검색 결과가 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                  {!loadingForms &&
+                    filteredForms.map(form => {
+                      const isChecked = selectedForms.has(form.formCode);
+
+                      return (
+                        <tr key={form.formCode} className="h-10 bg-white">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                            {form.formNumber}
+                          </td>
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis underline">
+                            {form.name}
+                          </td>
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                            {form.description}
+                          </td>
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                            {form.requiredWhen}
+                          </td>
+                          <td className="h-10 border-r border-b border-[#D9D9D9] text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleForm(form.formCode)}
+                              className={`mx-auto w-4 h-4 rounded-[6px] border flex items-center justify-center ${
+                                isChecked
+                                  ? 'bg-[#2C2C2C] border-[#2C2C2C]'
+                                  : 'bg-white border-[#D9D9D9]'
+                              }`}
+                              aria-label={`${form.name} 선택`}
+                            >
+                              {isChecked && (
+                                <svg
+                                  width="9"
+                                  height="9"
+                                  viewBox="0 0 9 9"
+                                  fill="none"
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    d="M1.5 4.5L3.5 6.5L7.5 2.5"
+                                    stroke="white"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
             </div>
           </div>
-
-          {/* 테이블 바디 */}
-          {loadingForms ? (
-            <div className="flex items-center justify-center w-full h-40">
-              <span className="text-sm text-[#757575]">로딩 중...</span>
-            </div>
-          ) : (
-            availableForms.map(form => (
-              <div
-                key={form.formCode}
-                className="flex flex-row items-stretch p-0 w-full min-h-[58px]"
-              >
-                {/* 체크박스 */}
-                <div className="flex flex-row items-center justify-center p-2 w-[28px] max-w-[32px] bg-white border-b border-l border-r border-[#D9D9D9] flex-shrink-0">
-                  <div
-                    className={`flex flex-row justify-center items-center w-3 h-3 border rounded cursor-pointer ${
-                      selectedForms.has(form.formCode)
-                        ? 'border-[#2C2C2C] bg-[#2C2C2C]'
-                        : 'border-[#D9D9D9] bg-white'
-                    }`}
-                    onClick={() => handleToggleForm(form.formCode)}
-                  >
-                    {selectedForms.has(form.formCode) && (
-                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
-                        <path
-                          d="M1.5 4.5L3.5 6.5L7.5 2.5"
-                          stroke="white"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                {/* 서식번호 */}
-                <div className="flex flex-row items-center p-2 w-[140px] min-w-[140px] max-w-[160px] bg-white border-b border-r border-[#D9D9D9] flex-shrink-0">
-                  <span className="text-[10px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
-                    {form.formNumber}
-                  </span>
-                </div>
-                {/* 서식명 */}
-                <div className="flex flex-row items-center p-2 w-[220px] min-w-[200px] max-w-[220px] bg-white border-b border-r border-[#D9D9D9] flex-shrink-0">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
-                    {form.name}
-                  </span>
-                </div>
-                {/* 서식내용 해설 */}
-                <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-b border-r border-[#D9D9D9] flex-1">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
-                    {form.description}
-                  </span>
-                </div>
-                {/* 첨부해야 하는 경우 */}
-                <div className="flex flex-row items-center p-2 min-w-[240px] bg-white border-b border-r border-[#D9D9D9] flex-1">
-                  <span className="text-[11px] leading-[140%] text-[#757575] font-medium font-['Pretendard'] line-clamp-3 break-words">
-                    {form.requiredWhen}
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
         </div>
 
         {/* 하단 버튼 */}

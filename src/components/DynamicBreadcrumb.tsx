@@ -5,7 +5,7 @@ import Breadcrumb from './Breadcrumb';
 
 // Breadcrumb 정보 매핑
 const getBreadcrumbInfo = (pathname: string) => {
-  const breadcrumbMap: Record<string, { mainMenu: string; subMenu: string }> = {
+  const breadcrumbMap: Record<string, { mainMenu: string; subMenu?: string; thirdMenu?: string }> = {
     '/': { mainMenu: '기초정보', subMenu: '사업자 정보' },
     '/settlement-info': { mainMenu: '기초정보', subMenu: '전기결산 정보' },
     '/account-info': { mainMenu: '기초정보', subMenu: '통장 정보' },
@@ -32,6 +32,8 @@ const getBreadcrumbInfo = (pathname: string) => {
     '/employee-salary': { mainMenu: '급여관리', subMenu: '직원 급여' },
     '/salary-structure': { mainMenu: '급여관리', subMenu: '급여 체계' },
     '/tax-deduction': { mainMenu: '급여관리', subMenu: '세금 공제' },
+    '/vat-stored-documents': { mainMenu: '부가세', subMenu: '보관서류' },
+    '/vat-stored-documents/preview': { mainMenu: '부가세', subMenu: '서류생성', thirdMenu: '내용입력' },
     '/account-management': { mainMenu: '계정관리', subMenu: '' },
     '/vat-document-create': { mainMenu: '부가세', subMenu: '서류생성' },
   };
@@ -52,6 +54,7 @@ export default function DynamicBreadcrumb() {
     <Breadcrumb
       mainMenu={breadcrumbInfo.mainMenu}
       subMenu={breadcrumbInfo.subMenu}
+      thirdMenu={breadcrumbInfo.thirdMenu}
     />
   );
 }

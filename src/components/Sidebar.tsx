@@ -8,12 +8,16 @@ interface SidebarProps {
   onSectionChange: (section: string) => void;
 }
 
-const navigationItems = [
+interface NavItem {
+  id: string;
+  label: string;
+  subItems?: { id: string; label: string }[];
+}
+
+const navigationItems: NavItem[] = [
   {
     id: 'basic-info',
     label: '기초정보',
-    icon: '/icons/layout_black.png',
-    iconGrey: '/icons/layout_grey.png',
     subItems: [
       { id: 'business-info', label: '사업자 정보' },
       { id: 'settlement-info', label: '전기결산 정보' },
@@ -27,8 +31,6 @@ const navigationItems = [
   {
     id: 'ai-journal',
     label: 'AI 분개',
-    icon: '/icons/chart_black.png',
-    iconGrey: '/icons/chart_grey.png',
     subItems: [
       { id: 'ai-journal', label: 'AI 분개' },
       { id: 'guideline-period', label: '지침 주기' },
@@ -39,8 +41,6 @@ const navigationItems = [
   {
     id: 'accounting',
     label: '회계장부',
-    icon: '/icons/book_black.png',
-    iconGrey: '/icons/book_grey.png',
     subItems: [
       { id: 'journal', label: '전표/수정' },
       { id: 'cashbook', label: '현금출납장' },
@@ -50,85 +50,75 @@ const navigationItems = [
       { id: 'proof-storage', label: '증빙보관소' },
     ],
   },
-  {
-    id: 'cost-management',
-    label: '원가관리',
-    icon: '/icons/trello_black.png',
-    iconGrey: '/icons/trello_grey.png',
-  },
+  { id: 'cost-management', label: '원가관리' },
   {
     id: 'payroll',
     label: '급여관리',
-    icon: '/icons/users_black.png',
-    iconGrey: '/icons/users_grey.png',
     subItems: [
       { id: 'employee-salary', label: '직원 급여' },
       { id: 'salary-structure', label: '급여 체계' },
       { id: 'tax-deduction', label: '세금 공제' },
     ],
   },
-  {
-    id: 'withholding-tax',
-    label: '원천세',
-    icon: '/icons/feather_black.png',
-    iconGrey: '/icons/feather_grey.png',
-  },
+  { id: 'withholding-tax', label: '원천세' },
   {
     id: 'vat',
     label: '부가세',
-    icon: '/icons/feather_black.png',
-    iconGrey: '/icons/feather_grey.png',
+    subItems: [
+      { id: 'vat-document-create', label: '서류생성' },
+      { id: 'vat-stored-documents', label: '보관서류' },
+    ],
   },
-  {
-    id: 'corporate-tax',
-    label: '법인세',
-    icon: '/icons/feather_black.png',
-    iconGrey: '/icons/feather_grey.png',
-  },
+  { id: 'corporate-tax', label: '법인세' },
 ];
+
+const menuSections = [
+  { label: '회계', itemIds: ['basic-info', 'ai-journal', 'accounting'] },
+  { label: 'AI세무', itemIds: ['withholding-tax', 'vat', 'corporate-tax'] },
+  { label: 'ERP', itemIds: ['cost-management', 'payroll'] },
+];
+
+const navItemMap = new Map(navigationItems.map(item => [item.id, item]));
 
 export default function Sidebar({
   activeSection,
   onSectionChange,
 }: SidebarProps) {
   const { } = useAuth();
-  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
-  // 클라이언트에서만 실행되도록 보장
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // activeSection이 변경되면 해당 부모 메뉴를 자동으로 열기
+  useEffect(() => {
+    if (!isClient) return;
+    const parentMenu = navigationItems.find(item =>
+      item.subItems?.some(sub => sub.id === activeSection)
+    );
+    if (parentMenu) {
+      setOpenMenuId(parentMenu.id);
+    }
+  }, [activeSection, isClient]);
+
   const handleMenuClick = (itemId: string, hasSub?: boolean) => {
     if (hasSub) {
-      // 하위메뉴가 있는 경우 첫 번째 하위메뉴로 이동
-      const firstSubItem = navigationItems
-        .find(item => item.id === itemId)
-        ?.subItems?.[0];
-      if (firstSubItem) {
-        onSectionChange(firstSubItem.id);
-      }
+      // 아코디언 토글
+      setOpenMenuId(prev => (prev === itemId ? null : itemId));
     } else {
       onSectionChange(itemId);
     }
   };
 
   const handleSubMenuClick = (subId: string) => {
-    // account-ledger 선택 시 라우팅 이동 없음
-    if (subId === 'account-ledger') {
-      return;
-    } else {
-      onSectionChange(subId);
-    }
+    if (subId === 'account-ledger') return;
+    onSectionChange(subId);
   };
 
-  // 현재 활성화된 메뉴를 찾는 함수
   const getCurrentActiveMenu = () => {
-    if (!isClient) {
-      return 'basic-info';
-    }
-
+    if (!isClient) return 'basic-info';
     const mainMenu = navigationItems.find(item =>
       item.subItems?.some(sub => sub.id === activeSection)
     );
@@ -136,284 +126,126 @@ export default function Sidebar({
   };
 
   return (
-    <div className="flex h-screen bg-[#F5F5F5]">
-      {/* 왼쪽 큰 메뉴 */}
-      <div className="min-w-[110px] flex flex-col items-start pb-3 bg-[#F5F5F5]">
-        {/* 로고 섹션 */}
-        <div className="flex flex-col items-center justify-center p-3 w-full h-[52px]">
-          <div className="flex flex-col justify-center items-center h-7">
-            <Image src="/eos-logo.svg" alt="logo" width={80} height={28}/>
-          </div>
+    <div className="w-[160px] min-w-[160px] flex flex-col justify-between items-start bg-[#2C2C2C] h-screen overflow-y-auto">
+      {/* 상단 영역 */}
+      <div className="flex flex-col items-start w-full gap-[6px]">
+        {/* 로고 */}
+        <div className="flex items-start px-6 py-4 w-full h-[60px]">
+          <Image src="/eos-logo.png" alt="logo" width={80} height={28} />
         </div>
 
-        {/* 메인 네비게이션 섹션 */}
-        <div className="flex flex-col items-center p-3 gap-3 w-full flex-1">
-          {/* 기초정보 섹션 */}
-          <div className="w-full flex flex-col items-start gap-2">
-            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
-              <span className="text-xs font-medium text-[#757575]">회계</span>
-            </div>
-            <div className="flex flex-col items-start gap-[2px]">
-              <button
-                onClick={() => handleMenuClick('basic-info', true)}
-                onMouseEnter={() => setHoveredMenu('basic-info')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'basic-info'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'basic-info' ? '/icons/layout_black.png' : '/icons/layout_grey.png'}
-                  alt="기초정보"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'basic-info' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  기초정보
-                </span>
-              </button>
-              <button
-                onClick={() => handleMenuClick('ai-journal', true)}
-                onMouseEnter={() => setHoveredMenu('ai-journal')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'ai-journal'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'ai-journal' ? '/icons/chart_black.png' : '/icons/chart_grey.png'}
-                  alt="AI 분개"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'ai-journal' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  AI 분개
-                </span>
-              </button>
-              <button
-                onClick={() => handleMenuClick('accounting', true)}
-                onMouseEnter={() => setHoveredMenu('accounting')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'accounting'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'accounting' ? '/icons/book_black.png' : '/icons/book_grey.png'}
-                  alt="회계장부"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'accounting' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  회계장부
-                </span>
-              </button>
-            </div>
-          </div>
+        {/* 메뉴 섹션 */}
+        {menuSections.map((section, sectionIdx) => {
+          const items = section.itemIds
+            .map(id => navItemMap.get(id))
+            .filter((item): item is NavItem => !!item);
 
-          {/* 구분선 */}
-          <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
+          return (
+            <div key={section.label} className="w-full flex flex-col items-start">
+              {sectionIdx > 0 && (
+                <div className="w-full h-0 border-t border-white/5" />
+              )}
 
-          {/* 세무 섹션 */}
-          <div className="w-full flex flex-col items-start gap-2">
-            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
-              <span className="text-xs font-medium text-[#757575]">AI세무</span>
-            </div>
-            <div className="flex flex-col items-start gap-[2px]">
-              <button
-                onClick={() => handleMenuClick('withholding-tax', false)}
-                onMouseEnter={() => setHoveredMenu('withholding-tax')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'withholding-tax'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'withholding-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
-                  alt="원천세"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'withholding-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  원천세
+              {/* Menu Heading */}
+              <div className="flex items-center px-6 py-2 w-full h-[26px]">
+                <span className="text-[10px] font-medium uppercase text-[#F5F5F5] leading-none">
+                  {section.label}
                 </span>
-              </button>
-              <button
-                onClick={() => handleMenuClick('vat', false)}
-                onMouseEnter={() => setHoveredMenu('vat')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'vat'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'vat' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
-                  alt="부가세"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'vat' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  부가세
-                </span>
-              </button>
-              <button
-                onClick={() => handleMenuClick('corporate-tax', false)}
-                onMouseEnter={() => setHoveredMenu('corporate-tax')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'corporate-tax'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'corporate-tax' ? '/icons/feather_black.png' : '/icons/feather_grey.png'}
-                  alt="법인세"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'corporate-tax' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  법인세
-                </span>
-              </button>
-            </div>
-          </div>
+              </div>
 
-          {/* 구분선 */}
-          <div className="w-20 h-px border-t border-[#D9D9D9]"></div>
+              {/* 상위 메뉴 + 아코디언 서브메뉴 */}
+              <div className="flex flex-col items-start w-full gap-[2px]">
+                {items.map(item => {
+                  const isActive = getCurrentActiveMenu() === item.id;
+                  const hasSub = !!item.subItems;
+                  const isOpen = openMenuId === item.id;
 
-          {/* ERP 섹션 */}
-          <div className="w-full flex flex-col items-start gap-2">
-            <div className="flex flex-row items-center gap-[2px] h-3 rounded">
-              <span className="text-xs font-medium text-[#757575]">ERP</span>
+                  return (
+                    <div key={item.id} className="w-full">
+                      {/* 상위 메뉴 아이템 */}
+                      <button
+                        onClick={() => handleMenuClick(item.id, hasSub)}
+                        className={`flex items-center justify-between px-6 py-2 w-full h-8 transition-colors cursor-pointer`}
+                      >
+                        <span className={`text-[11px] font-medium leading-[13px] ${
+                          isActive ? 'text-white' : 'text-[#757575]'
+                        }`}>
+                          {item.label}
+                        </span>
+                        {hasSub && (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                          >
+                            <path
+                              d="M4 6L8 10L12 6"
+                              stroke={isActive ? '#FFFFFF' : '#757575'}
+                              strokeWidth="1.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </button>
+
+                      {/* 아코디언 서브메뉴 */}
+                      {hasSub && isOpen && (
+                        <div className="flex flex-col items-start w-full gap-1">
+                          {item.subItems!.map(sub => {
+                            const isSubActive = activeSection === sub.id;
+                            return (
+                              <button
+                                key={sub.id}
+                                onClick={() => handleSubMenuClick(sub.id)}
+                                className={`flex items-center px-6 py-1 gap-1 w-full h-8 transition-colors cursor-pointer ${
+                                  isSubActive
+                                    ? 'bg-white/5 border-r-2 border-[#F26522]'
+                                    : 'hover:bg-white/5'
+                                }`}
+                              >
+                                <div className="w-4 h-4 flex items-center justify-center">
+                                  <Image src={isSubActive ? '/icons/dot_active.png' : '/icons/dot.png'} alt="dot" width={16} height={16} />
+                                </div>
+                                <span className={`text-[11px] font-medium leading-[13px] ${
+                                  isSubActive ? 'text-white' : 'text-[#757575]'
+                                }`}>
+                                  {sub.label}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex flex-col items-start gap-[2px]">
-              <button
-                onClick={() => handleMenuClick('cost-management', false)}
-                onMouseEnter={() => setHoveredMenu('cost-management')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'cost-management'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'cost-management' ? '/icons/trello_black.png' : '/icons/trello_grey.png'}
-                  alt="원가관리"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'cost-management' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  원가관리
-                </span>
-              </button>
-              <button
-                onClick={() => handleMenuClick('payroll', true)}
-                onMouseEnter={() => setHoveredMenu('payroll')}
-                className={`flex flex-row items-center p-2 gap-[6px] h-8 rounded transition-colors cursor-pointer ${
-                  getCurrentActiveMenu() === 'payroll'
-                    ? 'bg-[#E6E6E6]'
-                    : 'hover:bg-[#E6E6E6]'
-                }`}
-              >
-                <Image
-                  src={getCurrentActiveMenu() === 'payroll' ? '/icons/users_black.png' : '/icons/users_grey.png'}
-                  alt="급여관리"
-                  width={16}
-                  height={16}
-                />
-                <span className={`text-xs font-medium text-center ${
-                  getCurrentActiveMenu() === 'payroll' ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                }`}>
-                  급여관리
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* 계정관리 섹션 */}
-        <Link href="/account-management" className="flex flex-col justify-center items-center w-full gap-1 cursor-pointer">
-          <div className="flex flex-col justify-center items-center w-7 h-7 bg-[#5A5A5A] rounded-full">
-            <Image
-              src="/user.png"
-              alt="계정관리"
-              width={28}
-              height={28}
-            />
-          </div>
-          <span className="text-xs font-medium text-[#757575] text-center">계정관리</span>
-        </Link>
+          );
+        })}
       </div>
 
-      {/* 오른쪽 서브메뉴 - 호버 시에만 표시 */}
-      {hoveredMenu &&
-        navigationItems.find(i => i.id === hoveredMenu)?.subItems && (
-          <div 
-            className="absolute left-[104px] top-0 flex flex-col items-start w-[108px] h-full bg-[#F5F5F5] animate-in slide-in-from-left duration-300 ease-out z-10"
-            onMouseEnter={() => setHoveredMenu(hoveredMenu)}
-            onMouseLeave={() => setHoveredMenu(null)}
-          >
-            {/* 헤더 섹션 */}
-            <div className="flex flex-col items-start py-3 px-3 pr-3 pl-1 w-full h-[41px]">
-              <div className="flex flex-row items-start w-[92px] h-[17px]">
-                <h2 className="text-xs font-semibold leading-[140%] text-[#1E1E1E]">
-                  {navigationItems.find(i => i.id === hoveredMenu)?.label}
-                </h2>
-              </div>
-            </div>
-
-            {/* 구분선 섹션 */}
-            <div className="flex flex-col items-start py-0 px-3 pr-3 pl-1 gap-[10px] w-full h-0">
-              <div className="w-[92px] h-px border-t border-[#D9D9D9]"></div>
-            </div>
-
-            {/* 네비게이션 버튼 리스트 */}
-            <div className="flex flex-col justify-center items-start py-3 px-3 pr-3 pl-1 gap-[10px] w-full">
-              <div className="flex flex-col items-start gap-[2px] w-[92px]">
-                {navigationItems
-                  .find(i => i.id === hoveredMenu)
-                  ?.subItems?.map((sub) => {
-                    return (
-                      <button
-                        key={sub.id}
-                        onClick={() => handleSubMenuClick(sub.id)}
-                        className={`flex flex-row items-center p-2 gap-[6px] w-[92px] h-7 rounded transition-colors cursor-pointer ${
-                          activeSection === sub.id
-                            ? 'bg-[#E6E6E6]'
-                            : 'hover:bg-[#E6E6E6]'
-                        }`}
-                      >
-                        <span className={`text-xs font-medium leading-[100%] text-center ${
-                          activeSection === sub.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                        }`}>
-                          {sub.label}
-                        </span>
-                      </button>
-                    );
-                  })}
-              </div>
-            </div>
-          </div>
-        )}
+      {/* 하단: 계정관리 + 로그아웃 */}
+      <div className="flex items-center justify-between px-6 py-4 w-full h-[60px]">
+        <Link href="/account-management" className="flex items-center gap-2">
+            <Image src="/user.png" alt="계정관리" width={28} height={28} />
+          <span className="text-[11px] font-medium leading-[13px] text-[#757575]">
+            계정관리
+          </span>
+        </Link>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="cursor-pointer">
+          <path
+            d="M6 2H3C2.44772 2 2 2.44772 2 3V13C2 13.5523 2.44772 14 3 14H6M11 11L14 8M14 8L11 5M14 8H6"
+            stroke="#757575"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   );
 }

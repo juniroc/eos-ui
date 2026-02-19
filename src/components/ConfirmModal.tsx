@@ -41,7 +41,7 @@ export default function ConfirmModal({
           </h2>
           
           {/* Description */}
-          <p className="text-[12px] leading-[140%] text-black w-full">
+          <p className="text-[12px] leading-[140%] text-black w-full whitespace-pre-line">
             {description}
           </p>
         </div>

@@ -13,6 +13,8 @@ import {
   type VatCompanyInfo,
 } from '@/services/api';
 import ToastMessage from '@/components/ToastMessage';
+import ConfirmModal from '@/components/ConfirmModal';
+import ModalContainer from '@/components/modal/ModalContainer';
 import Image from 'next/image';
 
 export default function VatDocumentCreatePage() {
@@ -62,6 +64,8 @@ export default function VatDocumentCreatePage() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [showCreateConfirm, setShowCreateConfirm] = useState(false);
 
   /** 회사정보 조회 */
   const fetchVatCompanyInfo = useCallback(async () => {
@@ -312,7 +316,7 @@ export default function VatDocumentCreatePage() {
             <div className="flex flex-row items-start p-0 gap-2 flex-none">
               <button
                 type="button"
-                onClick={handleCreateDocument}
+                onClick={() => setShowCreateConfirm(true)}
                 disabled={!canCreateDocument || loading}
                 className={`flex flex-row justify-center items-center px-3 py-2 gap-2 font-['Pretendard'] font-medium text-[11px] leading-[100%] flex-none ${
                   !canCreateDocument || loading
@@ -340,7 +344,7 @@ export default function VatDocumentCreatePage() {
               </h3>
               <button
                 type="button"
-                onClick={handleSaveCompanyInfo}
+                onClick={() => setShowSaveConfirm(true)}
                 disabled={loading}
                 className="flex flex-row justify-center items-center px-3 py-2 gap-2 min-w-[66px] h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
               >
@@ -364,14 +368,17 @@ export default function VatDocumentCreatePage() {
                     readOnly: false,
                   },
                   {
-                    label: '사업자등록번호',
-                    value: vatCompanyInfo.businessNumber ?? '',
-                    onChange: undefined,
-                    readOnly: true,
+                    label: '개업일자',
+                    value: vatCompanyInfo.establishmentDate ?? '',
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev ? { ...prev, establishmentDate: v } : null
+                      ),
+                    readOnly: false,
                   },
                   {
-                    label: '법인등록번호',
-                    value: vatCompanyInfo.corporateNumber ?? '',
+                    label: '법인/개인 구분',
+                    value: vatCompanyInfo.businessCategory ?? '',
                     onChange: undefined,
                     readOnly: true,
                   },
@@ -395,11 +402,100 @@ export default function VatDocumentCreatePage() {
                     readOnly: false,
                   },
                   {
-                    label: '사업장주소',
+                    label: '전화번호',
+                    value: vatCompanyInfo.phone ?? '',
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev ? { ...prev, phone: v } : null
+                      ),
+                    readOnly: false,
+                  },
+                  {
+                    label: '사업장 주소',
                     value: vatCompanyInfo.address ?? '',
                     onChange: (v: string) =>
                       setVatCompanyInfo(prev =>
                         prev ? { ...prev, address: v } : null
+                      ),
+                    readOnly: false,
+                  },
+                  {
+                    label: '휴대전화',
+                    value: vatCompanyInfo.mobilePhone ?? '',
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev ? { ...prev, mobilePhone: v } : null
+                      ),
+                    readOnly: false,
+                  },
+                ].map(({ label, value, onChange, readOnly }) => (
+                  <div
+                    key={label}
+                    className="flex flex-row items-center w-full min-h-[40px] border-b border-r border-[#D9D9D9]"
+                  >
+                    <div className="box-border flex flex-row items-center px-4 py-1.5 gap-3 min-w-[118px] h-10 bg-[#F5F5F5] border-r border-[#D9D9D9] flex-shrink-0">
+                      <span className="font-['Pretendard'] font-bold text-[11px] leading-[13px] text-center text-[#757575]">
+                        {label}
+                      </span>
+                    </div>
+                    <div className="box-border flex flex-row items-center p-1.5 flex-1 min-w-0 bg-white">
+                      <div
+                        className={`box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 rounded-[2px] border border-[#E9EAEB] ${readOnly ? 'bg-[#E6E6E6]' : 'bg-white'}`}
+                      >
+                        <input
+                          className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
+                          placeholder="입력"
+                          readOnly={readOnly}
+                          value={value}
+                          onChange={
+                            onChange ? e => onChange(e.target.value) : undefined
+                          }
+                          type={label === '개업일자' ? 'date' : 'text'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col items-start p-0 flex-1">
+                {[
+                  {
+                    label: '대표자명',
+                    value: vatCompanyInfo.representativeName ?? '',
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev ? { ...prev, representativeName: v } : null
+                      ),
+                    readOnly: false,
+                  },
+                  {
+                    label: '사업자번호',
+                    value: vatCompanyInfo.businessNumber ?? '',
+                    onChange: undefined,
+                    readOnly: true,
+                  },
+                  {
+                    label: '법인등록번호',
+                    value: vatCompanyInfo.corporateNumber ?? '',
+                    onChange: undefined,
+                    readOnly: true,
+                  },
+                  {
+                    label: '종목/종목코드',
+                    value: Array.isArray(vatCompanyInfo.businessCategory2)
+                      ? vatCompanyInfo.businessCategory2.join(', ')
+                      : (vatCompanyInfo.businessCategory2 ?? ''),
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev
+                          ? {
+                              ...prev,
+                              businessCategory2: v
+                                .split(',')
+                                .map(s => s.trim())
+                                .filter(Boolean),
+                            }
+                          : null
                       ),
                     readOnly: false,
                   },
@@ -411,11 +507,20 @@ export default function VatDocumentCreatePage() {
                     isBank: true,
                   },
                   {
-                    label: '휴대전화',
-                    value: vatCompanyInfo.mobilePhone ?? '',
+                    label: '계좌번호',
+                    value: vatCompanyInfo.refundAccount ?? '',
                     onChange: (v: string) =>
                       setVatCompanyInfo(prev =>
-                        prev ? { ...prev, mobilePhone: v } : null
+                        prev ? { ...prev, refundAccount: v } : null
+                      ),
+                    readOnly: false,
+                  },
+                  {
+                    label: '전자우편주소',
+                    value: vatCompanyInfo.email ?? '',
+                    onChange: (v: string) =>
+                      setVatCompanyInfo(prev =>
+                        prev ? { ...prev, email: v } : null
                       ),
                     readOnly: false,
                   },
@@ -481,111 +586,10 @@ export default function VatDocumentCreatePage() {
                                 ? e => onChange(e.target.value)
                                 : undefined
                             }
-                            type={label === '개업일자' ? 'date' : 'text'}
+                            type="text"
                           />
                         </div>
                       )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col items-start p-0 flex-1">
-                {[
-                  {
-                    label: '대표자명',
-                    value: vatCompanyInfo.representativeName ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, representativeName: v } : null
-                      ),
-                    readOnly: false,
-                  },
-                  {
-                    label: '법인/개인 구분',
-                    value: vatCompanyInfo.businessCategory ?? '',
-                    onChange: undefined,
-                    readOnly: true,
-                  },
-                  {
-                    label: '개업일자',
-                    value: vatCompanyInfo.establishmentDate ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, establishmentDate: v } : null
-                      ),
-                    readOnly: false,
-                  },
-                  {
-                    label: '종목',
-                    value: Array.isArray(vatCompanyInfo.businessCategory2)
-                      ? vatCompanyInfo.businessCategory2.join(', ')
-                      : (vatCompanyInfo.businessCategory2 ?? ''),
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev
-                          ? {
-                              ...prev,
-                              businessCategory2: v
-                                .split(',')
-                                .map(s => s.trim())
-                                .filter(Boolean),
-                            }
-                          : null
-                      ),
-                    readOnly: false,
-                  },
-                  {
-                    label: '사업장 전화번호',
-                    value: vatCompanyInfo.phone ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, phone: v } : null
-                      ),
-                    readOnly: false,
-                  },
-                  {
-                    label: '계좌번호',
-                    value: vatCompanyInfo.refundAccount ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, refundAccount: v } : null
-                      ),
-                    readOnly: false,
-                  },
-                  {
-                    label: '전자우편주소',
-                    value: vatCompanyInfo.email ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, email: v } : null
-                      ),
-                    readOnly: false,
-                  },
-                ].map(({ label, value, onChange, readOnly }) => (
-                  <div
-                    key={label}
-                    className="flex flex-row items-center w-full min-h-[40px] border-b border-r border-[#D9D9D9]"
-                  >
-                    <div className="box-border flex flex-row items-center px-4 py-1.5 gap-3 min-w-[118px] h-10 bg-[#F5F5F5] border-r border-[#D9D9D9] flex-shrink-0">
-                      <span className="font-['Pretendard'] font-bold text-[11px] leading-[13px] text-center text-[#757575]">
-                        {label}
-                      </span>
-                    </div>
-                    <div className="box-border flex flex-row items-center p-1.5 flex-1 min-w-0 bg-white">
-                      <div
-                        className={`box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 rounded-[2px] border border-[#E9EAEB] ${readOnly ? 'bg-[#E6E6E6]' : 'bg-white'}`}
-                      >
-                        <input
-                          className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
-                          placeholder="입력"
-                          readOnly={readOnly}
-                          value={value}
-                          onChange={
-                            onChange ? e => onChange(e.target.value) : undefined
-                          }
-                          type={label === '개업일자' ? 'date' : 'text'}
-                        />
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -667,6 +671,51 @@ export default function VatDocumentCreatePage() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showSaveConfirm}
+        onClose={() => setShowSaveConfirm(false)}
+        title="회사정보 저장"
+        description={`사업 기본정보도 변경하시겠습니까?\n변하지 않으면 법인세무에만 반영됩니다.`}
+        cancelText="회사정보 변경 안함"
+        confirmText="수정하기"
+        onConfirm={handleSaveCompanyInfo}
+      />
+
+      <ModalContainer isOpen={showCreateConfirm}>
+        <div className="flex flex-col gap-6 bg-white p-6 w-[400px]">
+          <div className="flex flex-col gap-4">
+            <span className="font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-black">
+              서류생성
+            </span>
+            <div className="flex flex-col gap-0">
+              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black">
+                해당기간에 입력된 회계자료가 없습니다. 서식 양식만 생성합니다.
+              </p>
+              <br />
+              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black">
+                생성 서류:
+              </p>
+              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black whitespace-pre-line">
+                {`* 일반과세자부가가치세신고서\n* 매출처별세금계산서합계표\n* 매입처별세금계산서합계표\n* 신용카드매출전표수령명세서`}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-row justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setShowCreateConfirm(false);
+                handleCreateDocument();
+              }}
+              disabled={loading}
+              className="flex flex-row justify-center items-center px-3 py-2 h-7 bg-[#2C2C2C] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#F5F5F5] disabled:opacity-50"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      </ModalContainer>
 
       <ToastMessage
         message={toastMessage}

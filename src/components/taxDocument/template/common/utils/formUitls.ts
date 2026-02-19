@@ -32,9 +32,6 @@ export const removeEmptyFromArrays = <T>(value: T): T => {
 export const convertToApiData = (FormData: VatFormData) => {
   return {
     ...FormData,
-    data: {
-      ...FormData.data,
-      data: removeEmptyFromArrays(FormData.data.data),
-    },
+    data: removeEmptyFromArrays(FormData.data),
   };
 };

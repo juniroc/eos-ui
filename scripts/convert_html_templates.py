@@ -400,10 +400,6 @@ export default function {component_name}() {{
         with open(os.path.join(comp_dir, f"{component_name.lower()}.css"), 'w', encoding='utf-8') as f:
             f.write(css_content)
 
-        # 6. Write NumericInput
-        with open(os.path.join(comp_dir, "NumericInput.tsx"), 'w', encoding='utf-8') as f:
-            f.write(NUMERIC_INPUT_CONTENT)
-
     print("Conversion Complete.")
 
 if __name__ == "__main__":

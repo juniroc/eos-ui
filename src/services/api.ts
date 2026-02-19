@@ -1890,10 +1890,8 @@ export type VatFormData = {
     reportId: string;
     formCode: C;
     name: string;
-    data: {
-      data: FormDataMap[C];
-      inputType: Record<string, unknown>;
-    };
+    data: FormDataMap[C];
+    inputType: Record<string, unknown>;
     isAdded?: boolean;
   };
 }[FormCode];
@@ -1955,14 +1953,9 @@ export async function completeVatReport(
 }
 
 // VAT 서식 파일 업로드 API
-export interface VatFormUploadResponse {
-  id: string;
-  reportId: string;
-  formCode: string;
-  data: Record<string, unknown>;
-  inputType: Record<string, unknown>;
+export type VatFormUploadResponse = VatFormData & {
   uploadedDocumentIds: string[];
-}
+};
 
 export async function completeVatForm<C extends FormCode>(
   formId: string,

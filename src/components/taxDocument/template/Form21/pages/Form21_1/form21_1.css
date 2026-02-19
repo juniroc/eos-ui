@@ -293,9 +293,9 @@
 }
 
 .form21_1 td.tax-rate-cell {
-    max-width: 30pt !important;
-    width: 30pt !important;
-    min-width: 30pt !important;
+    max-width: 40pt !important;
+    width: 40pt !important;
+    min-width: 40pt !important;
 }
 
 /* 테이블 3을 제외한 모든 테이블에만 table-layout: fixed 적용 */
@@ -445,8 +445,10 @@
 }
 
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .form-input-numeric,
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input,
 .form21_1 table.new-purchase-tax-table .number-input,
+.form21_1 table.new-purchase-tax-table .form-input-numeric,
 .form21_1 table.new-purchase-tax-table .text-input {
     position: absolute;
     top: 0;
@@ -466,7 +468,9 @@
 }
 
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input,
-.form21_1 table.new-purchase-tax-table .number-input {
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .form-input-numeric,
+.form21_1 table.new-purchase-tax-table .number-input,
+.form21_1 table.new-purchase-tax-table .form-input-numeric {
     text-align: right;
     padding-right: 10pt !important;
 }
@@ -479,8 +483,10 @@
 }
 
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:hover,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .form-input-numeric:hover,
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:hover,
 .form21_1 table.new-purchase-tax-table .number-input:hover,
+.form21_1 table.new-purchase-tax-table .form-input-numeric:hover,
 .form21_1 table.new-purchase-tax-table .text-input:hover {
     border: 1pt solid #808080;
     margin: 0 !important;
@@ -490,8 +496,10 @@
 }
 
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input:focus,
+.form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .form-input-numeric:focus,
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:focus,
 .form21_1 table.new-purchase-tax-table .number-input:focus,
+.form21_1 table.new-purchase-tax-table .form-input-numeric:focus,
 .form21_1 table.new-purchase-tax-table .text-input:focus {
     border: 1pt solid #808080;
     margin: 0 !important;

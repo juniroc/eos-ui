@@ -68,10 +68,7 @@ function VatDocumentCreateModal({
       ...selectedDocument,
       data: {
         ...selectedDocument.data,
-        data: {
-          ...selectedDocument.data.data,
-          [field]: value,
-        },
+        [field]: value,
       },
     } as VatFormData;
 
@@ -568,8 +565,8 @@ function VatDocumentCreateModal({
                 >
                   <TaxDocument
                     formCode={selectedDocument.formCode}
-                    data={selectedDocument.data.data}
-                    inputType={selectedDocument.data.inputType}
+                    data={selectedDocument.data}
+                    inputType={selectedDocument.inputType}
                     updater={handleDocumentUpdate}
                   />
                 </PreviewWrapper>

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -138,9 +137,17 @@ function AvailableFormsSidebar({
 
       // 성공 시 콜백 호출하여 추가된 서식 정보 전달
       if (onFormsAdded && response.forms) {
-        const addedForms = response.forms.filter((form: { formCode: string }) =>
-          formCodes.includes(form.formCode)
-        );
+        const addedForms = response.forms
+          .filter((form: { formCode: string }) =>
+            formCodes.includes(form.formCode)
+          )
+          .map(
+            (form: any) =>
+              ({
+                ...form,
+                ...form.data,
+              }) as VatFormData
+          );
         onFormsAdded(addedForms);
       }
 

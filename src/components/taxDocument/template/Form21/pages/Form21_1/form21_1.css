@@ -346,6 +346,11 @@
     margin-bottom: 2pt !important;
 }
 
+.form21_1 table.new-purchase-tax-table td,
+.form21_1 table.output-tax-table td {
+    position: relative;
+}
+
 .form21_1 table.new-purchase-tax-table tr td:last-child {
     border-right: none !important;
     border-right-width: 0 !important;
@@ -449,7 +454,9 @@
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input,
 .form21_1 table.new-purchase-tax-table .number-input,
 .form21_1 table.new-purchase-tax-table .form-input-numeric,
-.form21_1 table.new-purchase-tax-table .text-input {
+.form21_1 table.new-purchase-tax-table .text-input,
+.form21_1 table.output-tax-table .form-input-numeric,
+.form21_1 table.output-tax-table .text-input {
     position: absolute;
     top: 0;
     left: 0;
@@ -470,13 +477,15 @@
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .number-input,
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .form-input-numeric,
 .form21_1 table.new-purchase-tax-table .number-input,
-.form21_1 table.new-purchase-tax-table .form-input-numeric {
+.form21_1 table.new-purchase-tax-table .form-input-numeric,
+.form21_1 table.output-tax-table .form-input-numeric {
     text-align: right;
     padding-right: 10pt !important;
 }
 
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input,
-.form21_1 table.new-purchase-tax-table .text-input {
+.form21_1 table.new-purchase-tax-table .text-input,
+.form21_1 table.output-tax-table .text-input {
     text-align: center;
     font-size: 9pt;
     color: #000;
@@ -487,7 +496,9 @@
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:hover,
 .form21_1 table.new-purchase-tax-table .number-input:hover,
 .form21_1 table.new-purchase-tax-table .form-input-numeric:hover,
-.form21_1 table.new-purchase-tax-table .text-input:hover {
+.form21_1 table.new-purchase-tax-table .text-input:hover,
+.form21_1 table.output-tax-table .form-input-numeric:hover,
+.form21_1 table.output-tax-table .text-input:hover {
     border: 1pt solid #808080;
     margin: 0 !important;
     margin-top: 0 !important;
@@ -500,7 +511,9 @@
 .form21_1 table[style*="width:624pt"][style*="table-layout:fixed"] .text-input:focus,
 .form21_1 table.new-purchase-tax-table .number-input:focus,
 .form21_1 table.new-purchase-tax-table .form-input-numeric:focus,
-.form21_1 table.new-purchase-tax-table .text-input:focus {
+.form21_1 table.new-purchase-tax-table .text-input:focus,
+.form21_1 table.output-tax-table .form-input-numeric:focus,
+.form21_1 table.output-tax-table .text-input:focus {
     border: 1pt solid #808080;
     margin: 0 !important;
     margin-top: 0 !important;

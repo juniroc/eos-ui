@@ -27,7 +27,7 @@ function Input({ value, onChange, style, inputType, ...rest }: Props) {
     <input
       ref={inputRef}
       className="form-input form-input-text"
-      style={style}
+      style={{ zIndex: 2, ...style }}
       type="text"
       value={value}
       onChange={e => onChange(e.target.value)}

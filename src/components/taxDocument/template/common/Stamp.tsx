@@ -22,22 +22,21 @@ function Stamp({
 
   return (
     <span className={className} style={{ ...style, position: 'relative' }}>
-      {children}
+      <span style={{ position: 'relative', zIndex: 0 }}>{children}</span>
       {imageSource && (
-        <>
-          <img
-            src={imageSource}
-            alt="stamp"
-            className="absolute
+        <img
+          src={imageSource}
+          alt="stamp"
+          className="absolute
         left-1/2
         top-1/2
         -translate-x-1/2
         -translate-y-1/2
-        w-[48pt]
-        h-[48pt]
+        w-[32pt]
+        h-[32pt]
         pointer-events-none"
-          />
-        </>
+          style={{ zIndex: 1 }}
+        />
       )}
     </span>
   );

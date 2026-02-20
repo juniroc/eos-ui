@@ -21,7 +21,11 @@ function InputField({ inputType, ...rest }: Props) {
     };
   }, [inputType]);
 
-  return <input ref={inputRef} {...rest} />;
+  const mergedStyle = rest.style
+    ? { zIndex: 2, ...rest.style }
+    : { zIndex: 2 };
+
+  return <input ref={inputRef} {...rest} style={mergedStyle} />;
 }
 
 export default InputField;

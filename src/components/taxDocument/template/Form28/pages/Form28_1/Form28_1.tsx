@@ -2,7 +2,10 @@
 import './form28_1.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form28Data, Form28InputData, } from '@/components/taxDocument/template/Form28/type';
+import {
+  Form28Data,
+  Form28InputData,
+} from '@/components/taxDocument/template/Form28/type';
 import { MAX_BUSINESS_PLACE_LENGTH } from '@/components/taxDocument/template/Form28/constants';
 import InputField from '@/components/taxDocument/template/common/InputField';
 

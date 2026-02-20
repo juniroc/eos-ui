@@ -64,7 +64,7 @@ const NumericInput = ({ value, onChange, maxLength, style, inputType }: Props) =
       ref={inputRef}
       type="text"
       className="form-input form-input-numeric"
-      style={style}
+      style={{ zIndex: 2, ...style }}
       value={displayValue}
       maxLength={maxLength}
       onChange={handleChange}

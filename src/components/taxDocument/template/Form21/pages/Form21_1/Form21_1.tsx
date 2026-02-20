@@ -4,86 +4,176 @@ import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import OutputTaxTable from '@/components/taxDocument/template/Form21/pages/Form21_1/OutputTaxTable';
+import InputTaxTable from '@/components/taxDocument/template/Form21/pages/Form21_1/InputTaxTable';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
 
 type Props = Form21Data &
   UpdaterProps<Form21Data> & { inputType?: Form21InputData };
 
-export default function Form21_1({
-  updater,
-  inputType,
-  isScheduled,
-  isFinal,
-  isAfterDeadline,
-  isZeroRateEarlyRefund,
-  attributionYear,
-  bizName,
-  repName,
-  bizNumber,
-  residentNumber,
-  phoneNumber,
-  bizAddress,
-  homeAddress,
-  mobileNumber,
-  email,
-  salesTaxInvoice,
-  salesPurchaserIssued,
-  salesCreditCard,
-  salesOther,
-  salesZeroTaxInvoice,
-  salesZeroOther,
-  salesOmission,
-  salesBadDebt,
-  salesTotal,
-  purchaseGeneral,
-  purchaseImportDeferral,
-  purchaseFixedAsset,
-  purchaseOmission,
-  purchasePurchaserIssued,
-  purchaseOtherDeduction,
-  purchaseTotalInput,
-  purchaseNonDeductible,
-  purchaseNetResult,
-  taxPayableOrRefundable,
-  deductionOther,
-  deductionCreditCardIssuance,
-  deductionTotal,
-  smallBizExemption,
-  prepaidUnrefunded,
-  prepaidNotified,
-  taxPaidByProxy,
-  taxPaidBySpecialPurchase,
-  taxPaidByCardCompany,
-  penaltyTotal,
-  finalTaxToPay,
-  consolidatedPaymentTax,
-  taxAgentName,
-  taxAgentPhone,
-  taxAgentBizNumber,
-  taxAgentMgmtNumber,
-  taxAgentResidentNumber,
-}: Props) {
+function StampOption({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <span
+      onClick={onClick}
+      style={{
+        position: 'relative',
+        display: 'inline-block',
+        padding: '0 5pt',
+        cursor: 'pointer',
+        lineHeight: '1',
+        userSelect: 'none',
+      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-pressed={selected}
+    >
+      {label}
+
+      {selected && (
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '1.3em',
+            height: '1.3em',
+            border: '1pt solid #000',
+            borderRadius: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+      )}
+    </span>
+  );
+}
+
+function BracketOption({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <span
+      onClick={onClick}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '2pt',
+        cursor: 'pointer',
+        lineHeight: '1',
+        userSelect: 'none',
+      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-pressed={selected}
+    >
+      <span>{label}[</span>
+      <span
+        aria-hidden
+        style={{
+          display: 'inline-block',
+          width: '8pt',
+          textAlign: 'center',
+        }}
+      >
+        {selected ? 'O' : ''}
+      </span>
+      <span>]</span>
+    </span>
+  );
+}
+
+export default function Form21_1({ updater, inputType, ...data }: Props) {
+  const {
+    isScheduled,
+    isFinal,
+    isAfterDeadline,
+    isZeroRateEarlyRefund,
+    attributionYear,
+    bizName,
+    repName,
+    bizNumber,
+    residentNumber,
+    phoneNumber,
+    bizAddress,
+    homeAddress,
+    mobileNumber,
+    email,
+    salesTaxInvoice,
+    salesPurchaserIssued,
+    salesCreditCard,
+    salesOther,
+    salesZeroTaxInvoice,
+    salesZeroOther,
+    salesOmission,
+    salesBadDebt,
+    salesTotal,
+    purchaseGeneral,
+    purchaseImportDeferral,
+    purchaseFixedAsset,
+    purchaseOmission,
+    purchasePurchaserIssued,
+    purchaseOtherDeduction,
+    purchaseTotalInput,
+    purchaseNonDeductible,
+    purchaseNetResult,
+    taxPayableOrRefundable,
+    deductionOther,
+    deductionCreditCardIssuance,
+    deductionTotal,
+    smallBizExemption,
+    prepaidUnrefunded,
+    prepaidNotified,
+    taxPaidByProxy,
+    taxPaidBySpecialPurchase,
+    taxPaidByCardCompany,
+    penaltyTotal,
+    finalTaxToPay,
+    consolidatedPaymentTax,
+    taxAgentName,
+    taxAgentPhone,
+    taxAgentBizNumber,
+    taxAgentMgmtNumber,
+    taxAgentResidentNumber,
+    refundBankName,
+    refundBranchName,
+    refundAccountNumber,
+    closureDate,
+    closureReason,
+    isZeroRateReciprocity,
+    applicationType,
+    zeroRateBizType,
+    zeroRateCountry,
+    taxBaseProofs,
+  } = data;
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
-
-  const toNumber = (value: string) => {
-    const digits = digitsOnly(value);
-    return digits ? Number(digits) : 0;
-  };
-
-  const updateNestedField = <
-    K extends keyof Form21Data,
-    F extends keyof Form21Data[K],
-  >(
-    key: K,
-    current: Form21Data[K],
-    field: F,
-    value: Form21Data[K][F]
-  ) => {
-    const updated = {
-      ...(current as Form21Data[K]),
-      [field]: value,
-    };
-    updater(key, updated);
-  };
 
   const getBizNumberDigit = (index: number) =>
     digitsOnly(bizNumber).charAt(index) || '';
@@ -95,6 +185,29 @@ export default function Form21_1({
     chars[index] = nextDigit || ' ';
     const next = chars.join('').replace(/\s/g, '');
     updater('bizNumber', next);
+  };
+
+  const updateTaxBaseProof = <
+    F extends keyof Form21Data['taxBaseProofs'][number],
+  >(
+    index: number,
+    field: F,
+    value: Form21Data['taxBaseProofs'][number][F]
+  ) => {
+    const current = taxBaseProofs ?? [];
+    const existing = current[index] ?? {
+      bizType: '',
+      bizItem: '',
+      productionFactor: '',
+      bizCode: '',
+      amount: 0,
+    };
+    const next = [...current];
+    next[index] = {
+      ...existing,
+      [field]: value,
+    };
+    updater('taxBaseProofs', next);
   };
   return (
     <div className="form21_1">
@@ -1305,7 +1418,10 @@ export default function Form21_1({
       >
         ①&nbsp;&nbsp;<b>신고내용</b>
       </p>
+      <OutputTaxTable inputType={inputType} updater={updater} {...data} />
+      <InputTaxTable inputType={inputType} updater={updater} {...data} />
       <table
+        className="below-purchase-tax-table"
         style={{
           borderCollapse: 'collapse',
           tableLayout: 'fixed',
@@ -1317,3546 +1433,1758 @@ export default function Form21_1({
         }}
         cellSpacing="0"
       >
-        <colgroup>
-          <col style={{ width: '40pt' }} />
-          <col style={{ width: '25pt' }} />
-          <col style={{ width: '161pt' }} />
-          <col style={{ width: '25pt' }} />
-          <col style={{ width: '161pt' }} />
-          <col style={{ width: '40pt' }} />
-          <col style={{ width: '171pt' }} />
-        </colgroup>
-        <tbody>
-          <tr style={{ height: '15pt' }}>
-            <td
+        <tr style={{ height: '20pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '147pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: 'none',
+              position: 'relative',
+              padding: '0',
+              paddingLeft: '3pt',
+              textAlign: 'left',
+            }}
+          >
+            <p
+              className="s3"
               style={{
-                verticalAlign: 'middle',
-                width: '251pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              colSpan={4}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '11pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  paddingLeft: '0pt',
-                }}
-              >
-                구 분
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                textIndent: '0pt',
+                lineHeight: '11pt',
+                fontSize: '11pt',
+                textAlign: 'left',
+                paddingLeft: '0',
               }}
             >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '11pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  paddingLeft: '0pt',
-                }}
-              >
-                금 액
-              </p>
-            </td>
-            <td
+              ② <b>국세환급금 계좌신고</b>
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '92pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              position: 'relative',
+              padding: '0',
+            }}
+          >
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '40pt',
+                textIndent: '0pt',
+                lineHeight: '9pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
               }}
             >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '11pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  paddingLeft: '0pt',
-                }}
-              >
-                세율
-              </p>
-            </td>
-            <td
+              거래은행
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '162pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              position: 'relative',
+              padding: '0',
+            }}
+          >
+            <InputField
+              type="text"
+              className="text-input"
+              maxLength={5}
+              value={refundBankName}
+              onChange={e => updater('refundBankName', e.target.value)}
+              inputType={inputType?.refundBankName}
               style={{
-                verticalAlign: 'middle',
-                width: '171pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '11pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  paddingLeft: '0pt',
-                }}
-              >
-                세 액
-              </p>
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                width: '50pt',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '9pt',
+                fontFamily: '돋움체, monospace',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                outline: 'none',
+                padding: '0px',
+                margin: '0px',
+                boxSizing: 'border-box',
               }}
-              rowSpan={9}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '130%',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                }}
-              >
-                과세
-                <br />
-                표준
-                <br />
-                <span style={{ display: 'block', marginTop: '5pt' }}> 및 </span>
-                <span style={{ display: 'block', marginTop: '5pt' }}>
-                  매출
-                  <br />
-                  세액
-                </span>
-              </p>
-            </td>
-            <td
+            />
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '25pt',
+                position: 'absolute',
+                left: '55pt',
+                top: '0px',
+                margin: '0px',
+                padding: '0px',
+                textIndent: '0px',
+                lineHeight: '20pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              rowSpan={4}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                }}
-              >
-                과세
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                fontSize: '9pt',
+                fontFamily: '돋움체, monospace',
               }}
             >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                }}
-              >
-                세금계산서 발급분
-              </p>
-            </td>
-            <td
+              은행
+            </p>
+            <InputField
+              type="text"
+              className="text-input"
+              maxLength={5}
+              value={refundBranchName}
+              onChange={e => updater('refundBranchName', e.target.value)}
+              inputType={inputType?.refundBranchName}
               style={{
-                verticalAlign: 'middle',
-                width: '25pt',
+                position: 'absolute',
+                left: '80pt',
+                top: '0px',
+                width: '50pt',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '9pt',
+                fontFamily: '돋움체, monospace',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                outline: 'none',
+                padding: '0px',
+                margin: '0px',
+                boxSizing: 'border-box',
               }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (1)
-              </p>
-            </td>
-            <td
+            />
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesTaxInvoice.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesTaxInvoice',
-
-                    salesTaxInvoice,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesTaxInvoice?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
+                position: 'absolute',
+                left: '135pt',
+                top: '0px',
+                margin: '0px',
+                padding: '0px',
+                textIndent: '0px',
+                lineHeight: '20pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                fontSize: '9pt',
+                fontFamily: '돋움체, monospace',
               }}
             >
-              <p
-                className="s9"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '8pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                10/100
-              </p>
-            </td>
-            <td
+              지점
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '82pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              position: 'relative',
+              padding: '0',
+            }}
+          >
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '171pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesTaxInvoice.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesTaxInvoice',
-
-                    salesTaxInvoice,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesTaxInvoice?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                }}
-              >
-                매입자발행 세금계산서
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
+                textIndent: '0pt',
+                lineHeight: '9pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
               }}
             >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (2)
-              </p>
-            </td>
-            <td
+              계좌번호
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '141pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderRight: 'none',
+              position: 'relative',
+              padding: '0',
+            }}
+          >
+            <InputField
+              type="text"
+              className="text-input"
+              value={refundAccountNumber}
+              onChange={e => updater('refundAccountNumber', e.target.value)}
+              inputType={inputType?.refundAccountNumber}
               style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesPurchaserIssued.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesPurchaserIssued',
-
-                    salesPurchaserIssued,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesPurchaserIssued?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
+                position: 'absolute',
+                inset: '0px',
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '8pt',
+                fontFamily: 'Arial, sans-serif',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                padding: '0px',
+                outline: 'none',
+                margin: '0px',
+                boxSizing: 'border-box',
+              }}
+            />
+          </td>
+        </tr>
+      </table>
+      <table
+        className="inserted-between-tables"
+        style={{
+          borderCollapse: 'collapse',
+          marginTop: '2pt',
+          tableLayout: 'fixed',
+          marginRight: 'auto',
+          width: '624pt',
+          marginLeft: '0',
+          boxSizing: 'border-box',
+          border: 'none',
+        }}
+        cellSpacing="0"
+      >
+        <tr style={{ height: '20pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '150pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '10pt',
+                paddingLeft: '3pt',
               }}
             >
-              <p
-                className="s9"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '8pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                10/100
-              </p>
-            </td>
-            <td
+              ③ <span style={{ fontWeight: 'bold' }}>폐업신고</span>
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '118pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesPurchaserIssued.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesPurchaserIssued',
-
-                    salesPurchaserIssued,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesPurchaserIssued?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                }}
-              >
-                신용카드ㆍ현금영수증 발행분
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
+                textIndent: '0pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                fontSize: '9pt',
               }}
             >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (3)
-              </p>
-            </td>
-            <td
+              폐업일
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '118pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              position: 'relative',
+              padding: '0',
+              margin: '0',
+            }}
+          >
+            <InputField
+              type="text"
+              className="closure-date-input"
+              value={closureDate}
+              onChange={e => updater('closureDate', e.target.value)}
+              inputType={inputType?.closureDate}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '119pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
               style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesCreditCard.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesCreditCard',
-
-                    salesCreditCard,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesCreditCard?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
+                textIndent: '0pt',
                 textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
+                fontSize: '9pt',
               }}
             >
-              <p
-                className="s9"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '8pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                10/100
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesCreditCard.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesCreditCard',
-
-                    salesCreditCard,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesCreditCard?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                }}
-              >
-                기타(정규영수증 외 매출분)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                }}
-              >
-                (4)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesOther.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesOther',
-
-                    salesOther,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesOther?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s9"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '8pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                10/100
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesOther.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesOther',
-
-                    salesOther,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesOther?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              rowSpan={2}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                }}
-              >
-                영세율
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  textAlign: 'left',
-                }}
-              >
-                세금계산서 발급분
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (5)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesZeroTaxInvoice.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesZeroTaxInvoice',
-
-                    salesZeroTaxInvoice,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesZeroTaxInvoice?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s9"
-                style={{
-                  paddingTop: '1pt',
-                  textIndent: '0pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                0/100
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesZeroTaxInvoice.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesZeroTaxInvoice',
-
-                    salesZeroTaxInvoice,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesZeroTaxInvoice?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '10pt',
-                  textAlign: 'left',
-                }}
-              >
-                기 타
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '10pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (6)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesZeroOther.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesZeroOther',
-
-                    salesZeroOther,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesZeroOther?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s9"
-                style={{
-                  textIndent: '0pt',
-                  textAlign: 'center',
-                  fontSize: '9pt',
-                  color: '#000',
-                  paddingLeft: '0pt',
-                }}
-              >
-                0/100
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesZeroOther.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesZeroOther',
-
-                    salesZeroOther,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesZeroOther?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '186pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              colSpan={2}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                  fontSize: '9pt',
-                }}
-              >
-                예정 신고 누락분
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (7)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesOmission.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesOmission',
-
-                    salesOmission,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesOmission?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <InputField
-                className="text-input"
-                type="text"
-                value={salesOmission.taxRate ?? ''}
-                onChange={e =>
-                  updateNestedField(
-                    'salesOmission',
-
-                    salesOmission,
-
-                    'taxRate',
-
-                    e.target.value
-                  )
-                }
-                inputType={inputType?.salesOmission?.taxRate}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '134pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesOmission.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesOmission',
-
-                    salesOmission,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesOmission?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '186pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              colSpan={2}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '6pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                  fontSize: '9pt',
-                }}
-              >
-                대손세액 가감
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '25pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (8)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesBadDebt.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesBadDebt',
-
-                    salesBadDebt,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesBadDebt?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderBottomColor: '#7E7E7E',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <InputField
-                className="text-input"
-                type="text"
-                value={salesBadDebt.taxRate ?? ''}
-                onChange={e =>
-                  updateNestedField(
-                    'salesBadDebt',
-
-                    salesBadDebt,
-
-                    'taxRate',
-
-                    e.target.value
-                  )
-                }
-                inputType={inputType?.salesBadDebt?.taxRate}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '171pt',
-                borderTop: '1pt solid #7E7E7E',
-                borderLeft: '1pt solid #7E7E7E',
-                borderBottom: '1pt solid #7E7E7E',
-                borderRight: '0 !important',
-                borderRightWidth: '0 !important',
-                borderRightStyle: 'none',
-                borderRightColor: 'transparent !important',
-              }}
-            >
-              <NumericInput
-                value={salesBadDebt.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesBadDebt',
-
-                    salesBadDebt,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesBadDebt?.tax}
-              />
-            </td>
-          </tr>
-          <tr style={{ height: '15pt' }}>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '186pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-              colSpan={2}
-            >
-              <p
-                className="s3"
-                style={{
-                  paddingLeft: '5pt',
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'left',
-                  fontSize: '9pt',
-                }}
-              >
-                합계
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '15pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s3"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '9pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                (9)
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '161pt',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <NumericInput
-                value={salesTotal.amount}
-                onChange={value =>
-                  updateNestedField(
-                    'salesTotal',
-
-                    salesTotal,
-
-                    'amount',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesTotal?.amount}
-              />
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '40pt',
-                textAlign: 'center',
-                borderTopStyle: 'solid',
-                borderTopWidth: '1pt',
-                borderTopColor: '#7E7E7E',
-                borderLeftStyle: 'solid',
-                borderLeftWidth: '1pt',
-                borderLeftColor: '#7E7E7E',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1pt',
-                borderRightStyle: 'solid',
-                borderRightWidth: '1pt',
-                borderRightColor: '#7E7E7E',
-              }}
-            >
-              <p
-                className="s6"
-                style={{
-                  textIndent: '0pt',
-                  lineHeight: '10pt',
-                  textAlign: 'center',
-                  paddingLeft: '0pt',
-                }}
-              >
-                ㉮
-              </p>
-            </td>
-            <td
-              style={{
-                verticalAlign: 'middle',
-                width: '171pt',
-                borderTop: '1pt solid #7E7E7E',
-                borderLeft: 'none !important',
-                borderBottom: '1pt solid #7E7E7E',
-                borderRight: 'none',
-              }}
-            >
-              <NumericInput
-                value={salesTotal.tax}
-                onChange={value =>
-                  updateNestedField(
-                    'salesTotal',
-
-                    salesTotal,
-
-                    'tax',
-
-                    value
-                  )
-                }
-                inputType={inputType?.salesTotal?.tax}
-              />
-            </td>
-          </tr>
-        </tbody>
+              폐업 사유
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '119pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              position: 'relative',
+              padding: '0',
+              margin: '0',
+            }}
+          >
+            <InputField
+              type="text"
+              className="closure-reason-input"
+              value={closureReason}
+              onChange={e => updater('closureReason', e.target.value)}
+              inputType={inputType?.closureReason}
+            />
+          </td>
+        </tr>
       </table>
       <table
+        className="closure-report-detail-table"
+        style={{
+          borderCollapse: 'collapse',
+          tableLayout: 'fixed',
+          marginTop: '2pt',
+          marginRight: 'auto',
+          width: '624pt',
+          marginLeft: '0',
+          boxSizing: 'border-box',
+          border: 'none',
+        }}
         cellSpacing="0"
-        style={{ width: '624pt', borderCollapse: 'collapse', margin: '0pt 0px 0px', tableLayout: 'fixed' }}
       >
-        <tr style={{ height: '15pt' }}>
+        <tr style={{ height: '20pt' }}>
           <td
-            rowSpan={9}
-            style={{ verticalAlign: 'middle', width: '39.5pt', borderTop: '1pt solid rgb(0, 0, 0)', borderBottom: '1pt solid rgb(126, 126, 126)', textAlign: 'center' }}
+            style={{
+              verticalAlign: 'middle',
+              width: '150pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              paddingLeft: '3pt',
+              textAlign: 'left',
+            }}
           >
             <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '110%', textAlign: 'center', fontSize: '9pt' }}
+              style={{
+                textIndent: '0pt',
+                fontSize: '10pt',
+                textAlign: 'left',
+                paddingLeft: '0',
+              }}
             >
-              매입
-              <br />
-              세액
+              <span style={{ marginLeft: '3pt' }}>④</span>{' '}
+              <span style={{ fontWeight: 'bold' }}>영세율 상호주의</span>
             </p>
           </td>
           <td
-            rowSpan={3}
-            style={{ verticalAlign: 'middle', width: '63pt', borderTop: '1pt solid rgb(0, 0, 0)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', textAlign: 'center' }}
+            style={{
+              verticalAlign: 'middle',
+              width: '118pt',
+              borderTop: '1pt solid rgb(0, 0, 0)',
+              borderBottom: '1pt solid rgb(0, 0, 0)',
+              borderLeft: '1pt solid rgb(126, 126, 126)',
+              textAlign: 'center',
+              padding: '0px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8pt',
+                fontSize: '9pt',
+                fontFamily: '돋움체, monospace',
+              }}
+            >
+              <BracketOption
+                label="해당"
+                selected={isZeroRateReciprocity === true}
+                onClick={() => updater('isZeroRateReciprocity', true)}
+              />
+              <BracketOption
+                label="미해당"
+                selected={isZeroRateReciprocity === false}
+                onClick={() => updater('isZeroRateReciprocity', false)}
+              />
+            </div>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '59pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+            }}
           >
             <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '100%', textAlign: 'center', fontSize: '9pt' }}
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
             >
-              세금계산서
-              <br />
-              <span style={{ letterSpacing: '8pt' }}>수취</span>분
+              적용구분
             </p>
           </td>
-          <td style={{ verticalAlign: 'middle', width: '122.5pt', borderTop: '1pt solid rgb(0, 0, 0)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              일반매입
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '24pt', borderTop: '1pt solid rgb(0, 0, 0)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (10)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '90pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseGeneral.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseGeneral',
-
-                  purchaseGeneral,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseGeneral?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '59pt',
+              borderTop: '1pt solid rgb(0, 0, 0)',
+              borderBottom: '1pt solid rgb(0, 0, 0)',
+              borderLeft: '1pt solid rgb(126, 126, 126)',
+              position: 'relative',
+              padding: '0px',
+            }}
+          >
             <InputField
-
-              className="text-input"
-
               type="text"
-
-              value={purchaseGeneral.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseGeneral',
-
-                  purchaseGeneral,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseGeneral?.taxRate}
-
+              className="text-input"
+              value={applicationType}
+              onChange={e => updater('applicationType', e.target.value)}
+              inputType={inputType?.applicationType}
+              style={{
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '9pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                outline: 'none',
+                padding: '0px',
+                margin: '0px',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
             />
           </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseGeneral.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseGeneral',
-
-                  purchaseGeneral,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseGeneral?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td style={{ verticalAlign: 'middle', width: '98pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '59pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+            }}
+          >
             <p
-              className="s3"
-              style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
             >
-              수출기업 수입분 납부유예
+              업종
             </p>
           </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (11)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)', backgroundColor: 'rgb(213, 213, 213)' }}>
-            <NumericInput
-
-              value={purchaseImportDeferral.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseImportDeferral',
-
-                  purchaseImportDeferral,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseImportDeferral?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '59pt',
+              borderTop: '1pt solid rgb(0, 0, 0)',
+              borderBottom: '1pt solid rgb(0, 0, 0)',
+              borderLeft: '1pt solid rgb(126, 126, 126)',
+              position: 'relative',
+              padding: '0px',
+            }}
+          >
             <InputField
-
-              className="text-input"
-
               type="text"
-
-              value={purchaseImportDeferral.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseImportDeferral',
-
-                  purchaseImportDeferral,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseImportDeferral?.taxRate}
-
+              className="text-input"
+              value={zeroRateBizType}
+              onChange={e => updater('zeroRateBizType', e.target.value)}
+              inputType={inputType?.zeroRateBizType}
+              style={{
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '9pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                outline: 'none',
+                padding: '0px',
+                margin: '0px',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
             />
           </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseImportDeferral.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseImportDeferral',
-
-                  purchaseImportDeferral,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseImportDeferral?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td style={{ verticalAlign: 'middle', width: '98pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '59pt',
+              borderTop: '1pt solid #000',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+            }}
+          >
             <p
-              className="s3"
-              style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
             >
-              고정자산 매입
+              해당국가
             </p>
           </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (12)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseFixedAsset.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseFixedAsset',
-
-                  purchaseFixedAsset,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseFixedAsset?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              width: '61pt',
+              borderTop: '1pt solid rgb(0, 0, 0)',
+              borderBottom: '1pt solid rgb(0, 0, 0)',
+              borderLeft: '1pt solid rgb(126, 126, 126)',
+              position: 'relative',
+              padding: '0px',
+            }}
+          >
             <InputField
-
-              className="text-input"
-
               type="text"
-
-              value={purchaseFixedAsset.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseFixedAsset',
-
-                  purchaseFixedAsset,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseFixedAsset?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseFixedAsset.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseFixedAsset',
-
-                  purchaseFixedAsset,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseFixedAsset?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left', fontSize: '9pt' }}
-            >
-              예정 신고 누락분
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (13)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseOmission.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseOmission',
-
-                  purchaseOmission,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOmission?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
               className="text-input"
-
-              type="text"
-
-              value={purchaseOmission.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseOmission',
-
-                  purchaseOmission,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOmission?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseOmission.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseOmission',
-
-                  purchaseOmission,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOmission?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              매입자발행 세금계산서
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (14)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchasePurchaserIssued.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchasePurchaserIssued',
-
-                  purchasePurchaserIssued,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchasePurchaserIssued?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={purchasePurchaserIssued.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchasePurchaserIssued',
-
-                  purchasePurchaserIssued,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchasePurchaserIssued?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchasePurchaserIssued.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchasePurchaserIssued',
-
-                  purchasePurchaserIssued,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchasePurchaserIssued?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              그 밖의 공제매입세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (15)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseOtherDeduction.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseOtherDeduction',
-
-                  purchaseOtherDeduction,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOtherDeduction?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={purchaseOtherDeduction.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseOtherDeduction',
-
-                  purchaseOtherDeduction,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOtherDeduction?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseOtherDeduction.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseOtherDeduction',
-
-                  purchaseOtherDeduction,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseOtherDeduction?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              합계 (10)-(11)+(12)+(13)+(14)+(15)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (16)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseTotalInput.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseTotalInput',
-
-                  purchaseTotalInput,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseTotalInput?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={purchaseTotalInput.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseTotalInput',
-
-                  purchaseTotalInput,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseTotalInput?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseTotalInput.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseTotalInput',
-
-                  purchaseTotalInput,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseTotalInput?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              공제받지 못할 매입세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (17)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseNonDeductible.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseNonDeductible',
-
-                  purchaseNonDeductible,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseNonDeductible?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={purchaseNonDeductible.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'purchaseNonDeductible',
-
-                  purchaseNonDeductible,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseNonDeductible?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseNonDeductible.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseNonDeductible',
-
-                  purchaseNonDeductible,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseNonDeductible?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderTopColor: 'rgb(126, 126, 126)', borderLeftColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}
-            >
-              차감계 (16)-(17)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '15pt', borderStyle: 'solid', borderWidth: '1pt', borderTopColor: 'rgb(126, 126, 126)', borderLeftColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              (18)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '120pt', borderStyle: 'solid', borderWidth: '1pt', borderTopColor: 'rgb(126, 126, 126)', borderLeftColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={purchaseNetResult.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseNetResult',
-
-                  purchaseNetResult,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseNetResult?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderStyle: 'solid', borderWidth: '1pt', borderTopColor: 'rgb(126, 126, 126)', borderLeftColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'center' }}
-            >
-              ㉯
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <NumericInput
-
-              value={purchaseNetResult.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'purchaseNetResult',
-
-                  purchaseNetResult,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.purchaseNetResult?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={5}
-            style={{ verticalAlign: 'middle', width: '321pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '36pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              납 부 ( 환 급 ) 세 액 ( 매 출 세 액 ㉮ - 매 입 세 액 ㉯ )
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉰
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '171pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <NumericInput
-
-              value={taxPayableOrRefundable.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPayableOrRefundable',
-
-                  taxPayableOrRefundable,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPayableOrRefundable?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            rowSpan={3}
-            style={{ verticalAlign: 'middle', width: '39.5pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', textAlign: 'center' }}
-          >
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '110%', textAlign: 'center', fontSize: '9pt' }}
-            >
-              경감
-              <br />·<br />
-              공제
-              <br />
-              세액
-            </p>
-          </td>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              그 밖의 경감ㆍ공제세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ paddingLeft: '2pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              (19)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)', backgroundColor: 'rgb(213, 213, 213)' }}>
-            <NumericInput
-
-              value={deductionOther.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionOther',
-
-                  deductionOther,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionOther?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderStyle: 'solid', borderWidth: '1pt', borderLeftColor: 'rgb(126, 126, 126)', borderBottomColor: 'rgb(126, 126, 126)', borderRightColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={deductionOther.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'deductionOther',
-
-                  deductionOther,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionOther?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '171pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={deductionOther.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionOther',
-
-                  deductionOther,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionOther?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              신용카드매출전표등 발행공제 등
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ paddingLeft: '2pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              (20)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={deductionCreditCardIssuance.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionCreditCardIssuance',
-
-                  deductionCreditCardIssuance,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionCreditCardIssuance?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <InputField
-
-              className="text-input"
-
-              type="text"
-
-              value={deductionCreditCardIssuance.taxRate ?? ''}
-
-              onChange={e =>
-
-                updateNestedField(
-
-                  'deductionCreditCardIssuance',
-
-                  deductionCreditCardIssuance,
-
-                  'taxRate',
-
-                  e.target.value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionCreditCardIssuance?.taxRate}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={deductionCreditCardIssuance.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionCreditCardIssuance',
-
-                  deductionCreditCardIssuance,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionCreditCardIssuance?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={2}
-            style={{ verticalAlign: 'middle', width: '151pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingTop: '1pt', paddingLeft: '3pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              합계
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ paddingTop: '1pt', paddingLeft: '2pt', textIndent: '0pt', textAlign: 'left' }}
-            >
-              (20)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={deductionTotal.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionTotal',
-
-                  deductionTotal,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionTotal?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ paddingTop: '1pt', textIndent: '0pt', textAlign: 'center' }}
-            >
-              ㉱
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={deductionTotal.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'deductionTotal',
-
-                  deductionTotal,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.deductionTotal?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(153, 153, 153)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              소규모 개인사업자 부가가치세 감면세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '15pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126) rgb(126, 126, 126) rgb(153, 153, 153)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (21)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '120pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126) rgb(126, 126, 126) rgb(153, 153, 153)' }}>
-            <NumericInput
-
-              value={smallBizExemption.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'smallBizExemption',
-
-                  smallBizExemption,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.smallBizExemption?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126) rgb(126, 126, 126) rgb(153, 153, 153)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉲
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(153, 153, 153)' }}>
-            <NumericInput
-
-              value={smallBizExemption.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'smallBizExemption',
-
-                  smallBizExemption,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.smallBizExemption?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(153, 153, 153)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              예정 신고 미환급 세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '15pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(153, 153, 153) rgb(126, 126, 126) rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (22)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '120pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(153, 153, 153) rgb(126, 126, 126) rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={prepaidUnrefunded.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'prepaidUnrefunded',
-
-                  prepaidUnrefunded,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.prepaidUnrefunded?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '30pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(153, 153, 153) rgb(126, 126, 126) rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉳
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(153, 153, 153)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={prepaidUnrefunded.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'prepaidUnrefunded',
-
-                  prepaidUnrefunded,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.prepaidUnrefunded?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              예정 고지 세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (23)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={prepaidNotified.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'prepaidNotified',
-
-                  prepaidNotified,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.prepaidNotified?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉴
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={prepaidNotified.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'prepaidNotified',
-
-                  prepaidNotified,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.prepaidNotified?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              사업양수자가 대리납부한 세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (24)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)', backgroundColor: 'rgb(213, 213, 213)' }}>
-            <NumericInput
-
-              value={taxPaidByProxy.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidByProxy',
-
-                  taxPaidByProxy,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidByProxy?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉵
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={taxPaidByProxy.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidByProxy',
-
-                  taxPaidByProxy,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidByProxy?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              매입자 납부특례에 따라 납부한 세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (25)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)', backgroundColor: 'rgb(213, 213, 213)' }}>
-            <NumericInput
-
-              value={taxPaidBySpecialPurchase.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidBySpecialPurchase',
-
-                  taxPaidBySpecialPurchase,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidBySpecialPurchase?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉶
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={taxPaidBySpecialPurchase.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidBySpecialPurchase',
-
-                  taxPaidBySpecialPurchase,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidBySpecialPurchase?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              신용카드업자가 대리납부한 세액
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (26)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)', backgroundColor: 'rgb(213, 213, 213)' }}>
-            <NumericInput
-
-              value={taxPaidByCardCompany.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidByCardCompany',
-
-                  taxPaidByCardCompany,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidByCardCompany?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉷
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={taxPaidByCardCompany.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'taxPaidByCardCompany',
-
-                  taxPaidByCardCompany,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.taxPaidByCardCompany?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={3}
-            style={{ verticalAlign: 'middle', width: '185pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '6pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              가산세액 계
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '25pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              (27)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '161pt', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={penaltyTotal.amount}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'penaltyTotal',
-
-                  penaltyTotal,
-
-                  'amount',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.penaltyTotal?.amount}
-
-            />
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '10pt', textAlign: 'center' }}
-            >
-              ㉸
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={penaltyTotal.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'penaltyTotal',
-
-                  penaltyTotal,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.penaltyTotal?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={5}
-            style={{ verticalAlign: 'middle', width: '321pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ paddingLeft: '7pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}
-            >
-              차감ㆍ가감하여 납부할 세액(환급받을
-              세액)(㉰-㉱-㉲-㉳-㉴-㉵-㉶-㉷+㉸)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '40pt', textAlign: 'center', borderStyle: 'solid', borderWidth: '1pt', borderColor: 'rgb(126, 126, 126)' }}>
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '11pt', textAlign: 'center' }}
-            >
-              (28)
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottom: '1pt solid rgb(126, 126, 126)' }}>
-            <NumericInput
-
-              value={finalTaxToPay.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'finalTaxToPay',
-
-                  finalTaxToPay,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.finalTaxToPay?.tax}
-
-            />
-          </td>
-        </tr>
-        <tr style={{ height: '15pt' }}>
-          <td
-            colSpan={6}
-            style={{ verticalAlign: 'middle', width: '351pt', borderTop: '1pt solid rgb(126, 126, 126)', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRight: '1pt solid rgb(126, 126, 126)' }}
-          >
-            <p
-              className="s3"
-              style={{ textIndent: '0pt', lineHeight: '11pt', textAlign: 'center' }}
-            >
-              총 괄 납 부 사 업 자 가 납 부 할 세 액 (환 급 받 을 세 액 )
-            </p>
-          </td>
-          <td style={{ verticalAlign: 'middle', width: '134pt', borderTop: '1pt solid rgb(126, 126, 126)', borderLeft: '1pt solid rgb(126, 126, 126)', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
-            <NumericInput
-
-              value={consolidatedPaymentTax.tax}
-
-              onChange={value =>
-
-                updateNestedField(
-
-                  'consolidatedPaymentTax',
-
-                  consolidatedPaymentTax,
-
-                  'tax',
-
-                  value
-
-                )
-
-              }
-
-              inputType={inputType?.consolidatedPaymentTax?.tax}
-
+              value={zeroRateCountry}
+              onChange={e => updater('zeroRateCountry', e.target.value)}
+              inputType={inputType?.zeroRateCountry}
+              style={{
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '9pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                outline: 'none',
+                padding: '0px',
+                margin: '0px',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
             />
           </td>
         </tr>
       </table>
+      <table
+        className="below-zero-rate-table"
+        style={{
+          borderCollapse: 'collapse',
+          marginRight: 'auto',
+          marginTop: '2pt',
+          tableLayout: 'fixed',
+          display: 'table',
+          visibility: 'visible',
+          opacity: '1',
+          width: '624pt',
+          marginLeft: '0',
+          boxSizing: 'border-box',
+          border: 'none',
+          marginBottom: '2pt !important',
+        }}
+        cellSpacing="0"
+        data-protected="true"
+        data-below-zero-rate="true"
+      >
+        <colgroup>
+          <col style={{ width: '80pt' }} />
+          <col style={{ width: '50.33pt' }} />
+          <col style={{ width: '50.33pt' }} />
+          <col style={{ width: '50.34pt' }} />
+          <col style={{ width: '70pt' }} />
+          <col style={{ width: '323pt' }} />
+        </colgroup>
+        <tr style={{ height: '20pt' }}>
+          <td
+            colSpan={5}
+            style={{
+              verticalAlign: 'middle',
+              borderTop: '1pt solid #000',
+              borderLeft: 'none',
+              borderRight: 'none',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '10pt',
+                paddingLeft: '3pt',
+              }}
+            >
+              ⑤ <span style={{ fontWeight: 'bold' }}>과세표준명세</span>
+            </p>
+          </td>
+          <td
+            rowSpan={6}
+            style={{
+              borderTop: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderRight: 'none',
+              verticalAlign: 'top !important',
+              borderBottom: '1pt solid #7E7E7E !important',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '9pt',
+                padding: '3pt',
+                paddingLeft: '5pt',
+                lineHeight: '0.9',
+              }}
+            >
+              <p
+                style={{
+                  textIndent: '0pt',
+                  textAlign: 'left',
+                  margin: '0',
+                  paddingLeft: '6pt',
+                  letterSpacing: '-0.05em',
+                }}
+              >
+                「부가가치세법」 제48조ㆍ제49조 또는 제59조와 「국세기본법」
+                제45조 의3에 따라 위의 내용을 신고하며,{' '}
+                <span style={{ fontWeight: 'bold' }}>
+                  위 내용을 충분히 검토하였고 신고인이 알고 있는 사실 그대로를
+                  정확하게 적었음을 확인합니다.
+                </span>
+              </p>
+              <div style={{ textAlign: 'right', margin: '2pt 0' }}>
+                <input
+                  type="text"
+                  maxLength={4}
+                  className="cell-input"
+                  style={{
+                    width: '24pt',
+                    height: '9pt',
+                    border: '1pt solid transparent',
+                    outline: 'none',
+                    padding: '0',
+                    margin: '0',
+                    fontSize: '9pt',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    boxSizing: 'border-box',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    lineHeight: '1em',
+                  }}
+                />
+                년{' '}
+                <input
+                  type="text"
+                  maxLength={2}
+                  className="cell-input"
+                  style={{
+                    width: '16pt',
+                    height: '9pt',
+                    border: '1pt solid transparent',
+                    outline: 'none',
+                    padding: '0',
+                    margin: '0',
+                    fontSize: '9pt',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    boxSizing: 'border-box',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    lineHeight: '1em',
+                  }}
+                />
+                월{' '}
+                <input
+                  type="text"
+                  maxLength={2}
+                  className="cell-input"
+                  style={{
+                    width: '16pt',
+                    height: '9pt',
+                    border: '1pt solid transparent',
+                    outline: 'none',
+                    padding: '0',
+                    margin: '0',
+                    fontSize: '9pt',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    boxSizing: 'border-box',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    lineHeight: '1em',
+                  }}
+                />
+                일
+              </div>
+              <p
+                style={{
+                  textIndent: '0pt',
+                  textAlign: 'right',
+                  margin: '0',
+                  marginLeft: '10pt',
+                  position: 'relative',
+                }}
+              >
+                신고인:{' '}
+                <input
+                  type="text"
+                  className="cell-input"
+                  style={{
+                    width: '80pt',
+                    height: '20pt',
+                    border: '1pt solid transparent',
+                    outline: 'none',
+                    padding: '0',
+                    margin: '0 20pt',
+                    fontSize: '9pt',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    boxSizing: 'border-box',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    lineHeight: '1em',
+                  }}
+                />
+                <Stamp style={{ fontSize: '9pt' }}>(서명 또는 인)</Stamp>
+              </p>
+              <div
+                style={{
+                  height: '2pt',
+                  backgroundColor: '#808080',
+                  margin: '0',
+                  marginLeft: '4pt',
+                  marginRight: '0',
+                }}
+              ></div>
+              <p
+                style={{
+                  textIndent: '0pt',
+                  textAlign: 'left',
+                  margin: '0',
+                  paddingLeft: '6pt',
+                }}
+              >
+                <span style={{ fontWeight: 'bold' }}>
+                  세무대리인은 조세전문자격자로서 위 신고서를 성실하고 공정하게
+                  작성 하였음을 확인합니다.
+                </span>
+              </p>
+              <p
+                style={{
+                  textIndent: '0pt',
+                  textAlign: 'right',
+                  margin: '0',
+                  marginLeft: '10pt',
+                  position: 'relative',
+                }}
+              >
+                세무대리인:{' '}
+                <input
+                  type="text"
+                  className="cell-input"
+                  style={{
+                    width: '80pt',
+                    height: '20pt',
+                    border: '1pt solid transparent',
+                    outline: 'none',
+                    padding: '0',
+                    margin: '0 20pt',
+                    fontSize: '9pt',
+                    fontFamily: 'Arial, sans-serif',
+                    textAlign: 'center',
+                    background: 'transparent',
+                    boxSizing: 'border-box',
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    lineHeight: '1em',
+                  }}
+                />
+                <Stamp style={{ fontSize: '9pt' }}>(서명 또는 인)</Stamp>
+              </p>
+              <div
+                style={{
+                  height: '2pt',
+                  backgroundColor: '#808080',
+                  margin: '0',
+                  marginLeft: '4pt',
+                  marginRight: '0',
+                }}
+              ></div>
+              <p
+                style={{
+                  textIndent: '0pt',
+                  textAlign: 'left',
+                  margin: '0',
+                  paddingLeft: '10pt',
+                  fontSize: '12pt',
+                  fontWeight: 'bold',
+                }}
+              >
+                세무서장{' '}
+                <span style={{ fontSize: '10pt', fontWeight: 'normal' }}>
+                  귀하
+                </span>
+              </p>
+            </div>
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
+            >
+              업태
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
+            >
+              종목
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
+            >
+              생산요소
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
+            >
+              업종 코드
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'center',
+                fontSize: '9pt',
+              }}
+            >
+              금액
+            </p>
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                paddingLeft: '3pt',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              (31)
+              <InputField
+                type="text"
+                className="cell-input"
+                value={taxBaseProofs?.[0]?.bizType ?? ''}
+                onChange={e => updateTaxBaseProof(0, 'bizType', e.target.value)}
+                inputType={inputType?.taxBaseProofs?.[0]?.bizType}
+                style={{
+                  marginLeft: '5pt',
+                  border: '1pt solid transparent',
+                  outline: 'none',
+                  padding: '0',
+                  fontSize: '9pt',
+                  fontFamily: 'Arial, sans-serif',
+                  background: 'transparent',
+                  boxSizing: 'border-box',
+                  width: '50pt',
+                }}
+              />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[0]?.bizItem ?? ''}
+              onChange={e => updateTaxBaseProof(0, 'bizItem', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[0]?.bizItem}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[0]?.productionFactor ?? ''}
+              onChange={e =>
+                updateTaxBaseProof(0, 'productionFactor', e.target.value)
+              }
+              inputType={inputType?.taxBaseProofs?.[0]?.productionFactor}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[0]?.bizCode ?? ''}
+              onChange={e => updateTaxBaseProof(0, 'bizCode', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[0]?.bizCode}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <NumericInput
+              value={taxBaseProofs?.[0]?.amount ?? 0}
+              onChange={value => updateTaxBaseProof(0, 'amount', value)}
+              inputType={inputType?.taxBaseProofs?.[0]?.amount}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'right',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                paddingLeft: '3pt',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              (32)
+              <InputField
+                type="text"
+                className="cell-input"
+                value={taxBaseProofs?.[1]?.bizType ?? ''}
+                onChange={e => updateTaxBaseProof(1, 'bizType', e.target.value)}
+                inputType={inputType?.taxBaseProofs?.[1]?.bizType}
+                style={{
+                  marginLeft: '5pt',
+                  border: '1pt solid transparent',
+                  outline: 'none',
+                  padding: '0',
+                  fontSize: '9pt',
+                  fontFamily: 'Arial, sans-serif',
+                  background: 'transparent',
+                  boxSizing: 'border-box',
+                  width: '50pt',
+                }}
+              />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[1]?.bizItem ?? ''}
+              onChange={e => updateTaxBaseProof(1, 'bizItem', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[1]?.bizItem}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[1]?.productionFactor ?? ''}
+              onChange={e =>
+                updateTaxBaseProof(1, 'productionFactor', e.target.value)
+              }
+              inputType={inputType?.taxBaseProofs?.[1]?.productionFactor}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[1]?.bizCode ?? ''}
+              onChange={e => updateTaxBaseProof(1, 'bizCode', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[1]?.bizCode}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <NumericInput
+              value={taxBaseProofs?.[1]?.amount ?? 0}
+              onChange={value => updateTaxBaseProof(1, 'amount', value)}
+              inputType={inputType?.taxBaseProofs?.[1]?.amount}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'right',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                paddingLeft: '3pt',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              (33)
+              <InputField
+                type="text"
+                className="cell-input"
+                value={taxBaseProofs?.[2]?.bizType ?? ''}
+                onChange={e => updateTaxBaseProof(2, 'bizType', e.target.value)}
+                inputType={inputType?.taxBaseProofs?.[2]?.bizType}
+                style={{
+                  marginLeft: '5pt',
+                  border: '1pt solid transparent',
+                  outline: 'none',
+                  padding: '0',
+                  fontSize: '9pt',
+                  fontFamily: 'Arial, sans-serif',
+                  background: 'transparent',
+                  boxSizing: 'border-box',
+                  width: '50pt',
+                }}
+              />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[2]?.bizItem ?? ''}
+              onChange={e => updateTaxBaseProof(2, 'bizItem', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[2]?.bizItem}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[2]?.productionFactor ?? ''}
+              onChange={e =>
+                updateTaxBaseProof(2, 'productionFactor', e.target.value)
+              }
+              inputType={inputType?.taxBaseProofs?.[2]?.productionFactor}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[2]?.bizCode ?? ''}
+              onChange={e => updateTaxBaseProof(2, 'bizCode', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[2]?.bizCode}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <NumericInput
+              value={taxBaseProofs?.[2]?.amount ?? 0}
+              onChange={value => updateTaxBaseProof(2, 'amount', value)}
+              inputType={inputType?.taxBaseProofs?.[2]?.amount}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'right',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+              borderBottom: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                paddingLeft: '3pt',
+              }}
+            >
+              (34)<span style={{ letterSpacing: '-0.3em' }}>수입금액</span>{' '}
+              <span style={{ letterSpacing: '-0.3em' }}>제외</span>
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              borderBottom: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[3]?.bizItem ?? ''}
+              onChange={e => updateTaxBaseProof(3, 'bizItem', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[3]?.bizItem}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              borderBottom: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[3]?.productionFactor ?? ''}
+              onChange={e =>
+                updateTaxBaseProof(3, 'productionFactor', e.target.value)
+              }
+              inputType={inputType?.taxBaseProofs?.[3]?.productionFactor}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              borderBottom: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <InputField
+              type="text"
+              className="cell-input"
+              value={taxBaseProofs?.[3]?.bizCode ?? ''}
+              onChange={e => updateTaxBaseProof(3, 'bizCode', e.target.value)}
+              inputType={inputType?.taxBaseProofs?.[3]?.bizCode}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'center',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              borderBottom: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <NumericInput
+              value={taxBaseProofs?.[3]?.amount ?? 0}
+              onChange={value => updateTaxBaseProof(3, 'amount', value)}
+              inputType={inputType?.taxBaseProofs?.[3]?.amount}
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'right',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '15pt' }}>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                paddingLeft: '3pt',
+              }}
+            >
+              (35) 합 계
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+              <br />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+              <br />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+              <br />
+            </p>
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderTop: '1pt solid #7E7E7E',
+              padding: '0',
+              position: 'relative',
+            }}
+          >
+            <input
+              type="text"
+              className="cell-input number-input-comma"
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                width: '100%',
+                height: '100%',
+                border: '1pt solid transparent',
+                outline: 'none',
+                padding: '0',
+                margin: '0',
+                fontSize: '7pt',
+                fontFamily: 'Arial, sans-serif',
+                textAlign: 'right',
+                background: 'transparent',
+                boxSizing: 'border-box',
+                lineHeight: '1em',
+              }}
+            />
+          </td>
+          <td
+            style={{
+              verticalAlign: 'middle',
+              borderBottom: '1pt solid #000',
+              borderLeft: '1pt solid #7E7E7E',
+              borderRight: 'none',
+              borderTop: '1pt solid #7E7E7E',
+            }}
+          >
+            <p
+              style={{
+                textIndent: '0pt',
+                textAlign: 'left',
+                fontSize: '9pt',
+                fontFamily: '돋움, Dotum, sans-serif',
+                paddingLeft: '15pt',
+                margin: '0',
+              }}
+            >
+              <span style={{ marginRight: '15pt' }}>첨부서류</span>
+              <span>뒤쪽참조</span>
+            </p>
+          </td>
+        </tr>
+      </table>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
       <table
         style={{ borderCollapse: 'collapse', marginLeft: '5.929pt' }}
         cellSpacing="0"

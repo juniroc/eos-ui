@@ -1,9 +1,6 @@
 import React from 'react';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import {
-  Form21Data,
-  Form21InputData,
-} from '@/components/taxDocument/template/Form21/type';
+import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 
@@ -46,6 +43,7 @@ function InputTaxTable({
     value: Form21Data[K][F]
   ) => {
     const updated = {
+      // @ts-ignore
       ...(current as Form21Data[K]),
       [field]: value,
     };
@@ -169,13 +167,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseGeneral.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseGeneral',
 
                 purchaseGeneral,
@@ -183,13 +177,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseGeneral?.amount}
-
           />
         </td>
         <td
@@ -202,17 +192,11 @@ function InputTaxTable({
           }}
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseGeneral.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseGeneral',
 
                 purchaseGeneral,
@@ -220,13 +204,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseGeneral?.taxRate}
-
           />
         </td>
         <td
@@ -242,13 +222,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseGeneral.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseGeneral',
 
                 purchaseGeneral,
@@ -256,13 +232,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseGeneral?.tax}
-
           />
         </td>
       </tr>
@@ -320,13 +292,9 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <NumericInput
-
             value={purchaseImportDeferral.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseImportDeferral',
 
                 purchaseImportDeferral,
@@ -334,13 +302,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseImportDeferral?.amount}
-
           />
         </td>
         <td
@@ -354,17 +318,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseImportDeferral.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseImportDeferral',
 
                 purchaseImportDeferral,
@@ -372,13 +330,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseImportDeferral?.taxRate}
-
           />
         </td>
         <td
@@ -394,13 +348,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseImportDeferral.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseImportDeferral',
 
                 purchaseImportDeferral,
@@ -408,13 +358,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseImportDeferral?.tax}
-
           />
         </td>
       </tr>
@@ -472,13 +418,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseFixedAsset.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseFixedAsset',
 
                 purchaseFixedAsset,
@@ -486,13 +428,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseFixedAsset?.amount}
-
           />
         </td>
         <td
@@ -506,17 +444,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseFixedAsset.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseFixedAsset',
 
                 purchaseFixedAsset,
@@ -524,13 +456,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseFixedAsset?.taxRate}
-
           />
         </td>
         <td
@@ -546,13 +474,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseFixedAsset.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseFixedAsset',
 
                 purchaseFixedAsset,
@@ -560,13 +484,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseFixedAsset?.tax}
-
           />
         </td>
       </tr>
@@ -625,13 +545,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseOmission.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseOmission',
 
                 purchaseOmission,
@@ -639,13 +555,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseOmission?.amount}
-
           />
         </td>
         <td
@@ -659,17 +571,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseOmission.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseOmission',
 
                 purchaseOmission,
@@ -677,13 +583,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseOmission?.taxRate}
-
           />
         </td>
         <td
@@ -699,13 +601,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseOmission.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseOmission',
 
                 purchaseOmission,
@@ -713,13 +611,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseOmission?.tax}
-
           />
         </td>
       </tr>
@@ -778,13 +672,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchasePurchaserIssued.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchasePurchaserIssued',
 
                 purchasePurchaserIssued,
@@ -792,13 +682,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchasePurchaserIssued?.amount}
-
           />
         </td>
         <td
@@ -812,17 +698,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchasePurchaserIssued.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchasePurchaserIssued',
 
                 purchasePurchaserIssued,
@@ -830,13 +710,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchasePurchaserIssued?.taxRate}
-
           />
         </td>
         <td
@@ -852,13 +728,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchasePurchaserIssued.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchasePurchaserIssued',
 
                 purchasePurchaserIssued,
@@ -866,13 +738,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchasePurchaserIssued?.tax}
-
           />
         </td>
       </tr>
@@ -931,13 +799,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseOtherDeduction.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseOtherDeduction',
 
                 purchaseOtherDeduction,
@@ -945,13 +809,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseOtherDeduction?.amount}
-
           />
         </td>
         <td
@@ -965,17 +825,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseOtherDeduction.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseOtherDeduction',
 
                 purchaseOtherDeduction,
@@ -983,13 +837,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseOtherDeduction?.taxRate}
-
           />
         </td>
         <td
@@ -1005,13 +855,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseOtherDeduction.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseOtherDeduction',
 
                 purchaseOtherDeduction,
@@ -1019,13 +865,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseOtherDeduction?.tax}
-
           />
         </td>
       </tr>
@@ -1082,13 +924,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseTotalInput.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseTotalInput',
 
                 purchaseTotalInput,
@@ -1096,13 +934,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseTotalInput?.amount}
-
           />
         </td>
         <td
@@ -1116,17 +950,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseTotalInput.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseTotalInput',
 
                 purchaseTotalInput,
@@ -1134,13 +962,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseTotalInput?.taxRate}
-
           />
         </td>
         <td
@@ -1156,13 +980,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseTotalInput.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseTotalInput',
 
                 purchaseTotalInput,
@@ -1170,13 +990,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseTotalInput?.tax}
-
           />
         </td>
       </tr>
@@ -1235,13 +1051,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseNonDeductible.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseNonDeductible',
 
                 purchaseNonDeductible,
@@ -1249,13 +1061,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseNonDeductible?.amount}
-
           />
         </td>
         <td
@@ -1269,17 +1077,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={purchaseNonDeductible.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'purchaseNonDeductible',
 
                 purchaseNonDeductible,
@@ -1287,13 +1089,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.purchaseNonDeductible?.taxRate}
-
           />
         </td>
         <td
@@ -1309,13 +1107,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseNonDeductible.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseNonDeductible',
 
                 purchaseNonDeductible,
@@ -1323,13 +1117,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseNonDeductible?.tax}
-
           />
         </td>
       </tr>
@@ -1388,13 +1178,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseNetResult.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseNetResult',
 
                 purchaseNetResult,
@@ -1402,13 +1188,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseNetResult?.amount}
-
           />
         </td>
         <td
@@ -1446,13 +1228,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={purchaseNetResult.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'purchaseNetResult',
 
                 purchaseNetResult,
@@ -1460,13 +1238,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.purchaseNetResult?.tax}
-
           />
         </td>
       </tr>
@@ -1527,13 +1301,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPayableOrRefundable.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPayableOrRefundable',
 
                 taxPayableOrRefundable,
@@ -1541,13 +1311,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPayableOrRefundable?.tax}
-
           />
         </td>
       </tr>
@@ -1633,13 +1399,9 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <NumericInput
-
             value={deductionOther.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionOther',
 
                 deductionOther,
@@ -1647,13 +1409,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionOther?.amount}
-
           />
         </td>
         <td
@@ -1666,17 +1424,11 @@ function InputTaxTable({
           }}
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={deductionOther.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'deductionOther',
 
                 deductionOther,
@@ -1684,13 +1436,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.deductionOther?.taxRate}
-
           />
         </td>
         <td
@@ -1706,13 +1454,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={deductionOther.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionOther',
 
                 deductionOther,
@@ -1720,13 +1464,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionOther?.tax}
-
           />
         </td>
       </tr>
@@ -1786,13 +1526,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={deductionCreditCardIssuance.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionCreditCardIssuance',
 
                 deductionCreditCardIssuance,
@@ -1800,13 +1536,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionCreditCardIssuance?.amount}
-
           />
         </td>
         <td
@@ -1820,17 +1552,11 @@ function InputTaxTable({
           data-input-removed="true"
         >
           <InputField
-
             className="text-input"
-
             type="text"
-
             value={deductionCreditCardIssuance.taxRate ?? ''}
-
             onChange={e =>
-
               updateNestedField(
-
                 'deductionCreditCardIssuance',
 
                 deductionCreditCardIssuance,
@@ -1838,13 +1564,9 @@ function InputTaxTable({
                 'taxRate',
 
                 e.target.value
-
               )
-
             }
-
             inputType={inputType?.deductionCreditCardIssuance?.taxRate}
-
           />
         </td>
         <td
@@ -1860,13 +1582,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={deductionCreditCardIssuance.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionCreditCardIssuance',
 
                 deductionCreditCardIssuance,
@@ -1874,13 +1592,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionCreditCardIssuance?.tax}
-
           />
         </td>
       </tr>
@@ -1940,13 +1654,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={deductionTotal.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionTotal',
 
                 deductionTotal,
@@ -1954,13 +1664,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionTotal?.amount}
-
           />
         </td>
         <td
@@ -1998,13 +1704,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={deductionTotal.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'deductionTotal',
 
                 deductionTotal,
@@ -2012,13 +1714,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.deductionTotal?.tax}
-
           />
         </td>
       </tr>
@@ -2077,13 +1775,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={smallBizExemption.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'smallBizExemption',
 
                 smallBizExemption,
@@ -2091,13 +1785,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.smallBizExemption?.amount}
-
           />
         </td>
         <td
@@ -2135,13 +1825,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={smallBizExemption.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'smallBizExemption',
 
                 smallBizExemption,
@@ -2149,13 +1835,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.smallBizExemption?.tax}
-
           />
         </td>
       </tr>
@@ -2214,13 +1896,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidUnrefunded.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidUnrefunded',
 
                 prepaidUnrefunded,
@@ -2228,13 +1906,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidUnrefunded?.amount}
-
           />
         </td>
         <td
@@ -2271,13 +1945,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidUnrefunded.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidUnrefunded',
 
                 prepaidUnrefunded,
@@ -2285,13 +1955,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidUnrefunded?.tax}
-
           />
         </td>
       </tr>
@@ -2350,13 +2016,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidNotified.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidNotified',
 
                 prepaidNotified,
@@ -2364,13 +2026,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidNotified?.amount}
-
           />
         </td>
         <td
@@ -2407,13 +2065,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidNotified.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidNotified',
 
                 prepaidNotified,
@@ -2421,13 +2075,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidNotified?.tax}
-
           />
         </td>
       </tr>
@@ -2486,13 +2136,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidOccasional.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidOccasional',
 
                 prepaidOccasional,
@@ -2500,13 +2146,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidOccasional?.amount}
-
           />
         </td>
         <td
@@ -2543,13 +2185,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={prepaidOccasional.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'prepaidOccasional',
 
                 prepaidOccasional,
@@ -2557,13 +2195,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.prepaidOccasional?.tax}
-
           />
         </td>
       </tr>
@@ -2621,13 +2255,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidByProxy.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidByProxy',
 
                 taxPaidByProxy,
@@ -2635,13 +2265,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidByProxy?.amount}
-
           />
         </td>
         <td
@@ -2678,13 +2304,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidByProxy.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidByProxy',
 
                 taxPaidByProxy,
@@ -2692,13 +2314,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidByProxy?.tax}
-
           />
         </td>
       </tr>
@@ -2756,13 +2374,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidBySpecialPurchase.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidBySpecialPurchase',
 
                 taxPaidBySpecialPurchase,
@@ -2770,13 +2384,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidBySpecialPurchase?.amount}
-
           />
         </td>
         <td
@@ -2813,13 +2423,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidBySpecialPurchase.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidBySpecialPurchase',
 
                 taxPaidBySpecialPurchase,
@@ -2827,13 +2433,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidBySpecialPurchase?.tax}
-
           />
         </td>
       </tr>
@@ -2891,13 +2493,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidByCardCompany.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidByCardCompany',
 
                 taxPaidByCardCompany,
@@ -2905,13 +2503,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidByCardCompany?.amount}
-
           />
         </td>
         <td
@@ -2948,13 +2542,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={taxPaidByCardCompany.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'taxPaidByCardCompany',
 
                 taxPaidByCardCompany,
@@ -2962,13 +2552,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.taxPaidByCardCompany?.tax}
-
           />
         </td>
       </tr>
@@ -3027,13 +2613,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={penaltyTotal.amount}
-
             onChange={value =>
-
               updateNestedField(
-
                 'penaltyTotal',
 
                 penaltyTotal,
@@ -3041,13 +2623,9 @@ function InputTaxTable({
                 'amount',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.penaltyTotal?.amount}
-
           />
         </td>
         <td
@@ -3084,13 +2662,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={penaltyTotal.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'penaltyTotal',
 
                 penaltyTotal,
@@ -3098,13 +2672,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.penaltyTotal?.tax}
-
           />
         </td>
       </tr>
@@ -3165,13 +2735,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={finalTaxToPay.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'finalTaxToPay',
 
                 finalTaxToPay,
@@ -3179,13 +2745,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.finalTaxToPay?.tax}
-
           />
         </td>
       </tr>
@@ -3225,13 +2787,9 @@ function InputTaxTable({
           }}
         >
           <NumericInput
-
             value={consolidatedPaymentTax.tax}
-
             onChange={value =>
-
               updateNestedField(
-
                 'consolidatedPaymentTax',
 
                 consolidatedPaymentTax,
@@ -3239,13 +2797,9 @@ function InputTaxTable({
                 'tax',
 
                 value
-
               )
-
             }
-
             inputType={inputType?.consolidatedPaymentTax?.tax}
-
           />
         </td>
       </tr>

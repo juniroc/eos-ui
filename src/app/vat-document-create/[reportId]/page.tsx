@@ -13,6 +13,7 @@ import {
   VatFormData,
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import ConfirmModal from '@/components/ConfirmModal';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
 import {
@@ -44,6 +45,7 @@ function VatDocumentCreateContent() {
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const handleOpenSidePanel = useCallback(() => {
     if (!reportId) {
@@ -61,8 +63,7 @@ function VatDocumentCreateContent() {
   }, []);
 
   const handleRemoveAddedForm = useCallback(
-    async (formId: string, e: React.MouseEvent) => {
-      e.stopPropagation();
+    async (formId: string) => {
       if (!token) {
         alert('로그인이 필요합니다.');
         return;
@@ -204,7 +205,10 @@ function VatDocumentCreateContent() {
           isSelected={selectedDocument?.id === doc.id}
           isDeleting={isDeleting === doc.id}
           onSelect={() => setSelectedDocument(doc)}
-          onRemove={e => handleRemoveAddedForm(doc.id, e)}
+          onRemove={e => {
+            e.stopPropagation();
+            setPendingDeleteId(doc.id);
+          }}
         />
       )),
     [documentList, selectedDocument, isDeleting, handleRemoveAddedForm]
@@ -396,6 +400,18 @@ function VatDocumentCreateContent() {
         onClose={() => setShowSidePanel(false)}
         reportId={reportId}
         onFormsAdded={handleFormsAdded}
+      />
+
+      <ConfirmModal
+        isOpen={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+        title="서류 삭제하시겠어요?"
+        description="한 번 삭제하면 되돌릴 수 없어요."
+        cancelText="뒤로가기"
+        confirmText="삭제하기"
+        onConfirm={() => {
+          if (pendingDeleteId) handleRemoveAddedForm(pendingDeleteId);
+        }}
       />
 
       <ToastMessage

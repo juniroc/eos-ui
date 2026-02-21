@@ -1,6 +1,9 @@
 import React from 'react';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 

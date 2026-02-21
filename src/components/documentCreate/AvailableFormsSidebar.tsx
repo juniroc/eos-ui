@@ -8,6 +8,7 @@ import {
   getAvailableForms,
   VatFormData,
 } from '@/services/api';
+import Image from 'next/image';
 
 interface AvailableFormsSidebarProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ function AvailableFormsSidebar({
   const [loadingForms, setLoadingForms] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [appliedKeyword, setAppliedKeyword] = useState('');
 
   // 서식 목록 조회
   useEffect(() => {
@@ -88,7 +90,7 @@ function AvailableFormsSidebar({
   };
 
   const filteredForms = useMemo(() => {
-    const keyword = searchKeyword.trim().toLowerCase();
+    const keyword = appliedKeyword.trim().toLowerCase();
     if (!keyword) {
       return availableForms;
     }
@@ -98,7 +100,7 @@ function AvailableFormsSidebar({
         .filter(Boolean)
         .some(value => value.toLowerCase().includes(keyword))
     );
-  }, [availableForms, searchKeyword]);
+  }, [availableForms, appliedKeyword]);
 
   // 전체 선택 여부 확인
   const isAllSelected =
@@ -199,7 +201,7 @@ function AvailableFormsSidebar({
             {/* title */}
             <div className="h-7 flex items-end justify-between">
               <h2 className="text-sm leading-[140%] text-[#1E1E1E] font-semibold font-['Pretendard']">
-                추가할 서류 서식
+                서류 추가
               </h2>
             </div>
 
@@ -213,6 +215,9 @@ function AvailableFormsSidebar({
                   <input
                     value={searchKeyword}
                     onChange={e => setSearchKeyword(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') setAppliedKeyword(searchKeyword);
+                    }}
                     placeholder="검색어를 입력해 주세요"
                     className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] outline-none placeholder:text-[#B3B3B3]"
                   />
@@ -238,12 +243,16 @@ function AvailableFormsSidebar({
                     />
                   </svg>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setAppliedKeyword(searchKeyword)}
+                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[44px] h-[27px] bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none"
+                >
+                  검색
+                </button>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] leading-[100%] text-[#757575] font-['Pretendard']">
-                  선택 {selectedForms.size}건
-                </span>
                 <button
                   type="button"
                   onClick={handleAddForms}
@@ -334,12 +343,30 @@ function AvailableFormsSidebar({
                       const isChecked = selectedForms.has(form.formCode);
 
                       return (
-                        <tr key={form.formCode} className="h-10 bg-white">
+                        <tr key={form.formCode} className="h-10 bg-white group">
                           <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.formNumber}
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis underline">
-                            {form.name}
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle">
+                            <div className="flex items-center gap-1 min-w-0">
+                              <span className="flex-1 min-w-0 truncate underline">
+                                {form.name}
+                              </span>
+                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100 cursor-pointer">
+                                <Image
+                                  src="/icons/search.svg"
+                                  alt="검색"
+                                  width={16}
+                                  height={16}
+                                />
+                                <Image
+                                  src="/icons/upload.svg"
+                                  alt="내보내기"
+                                  width={16}
+                                  height={16}
+                                />
+                              </div>
+                            </div>
                           </td>
                           <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.description}

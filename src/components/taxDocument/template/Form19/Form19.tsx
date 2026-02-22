@@ -42,7 +42,7 @@ const Form19 = ({ updater, inputType, ...data }: Props) => {
 
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form19_1
           updater={updater}
           inputType={inputType}
@@ -52,7 +52,7 @@ const Form19 = ({ updater, inputType, ...data }: Props) => {
         />
       </PageSlot>
       {Array.from({ length: badDebtPageCount }).map((_, index) => (
-        <PageSlot key={`badDebt-${index}`} slotWidth={624} slotHeight={882}>
+        <PageSlot key={`badDebt-${index}`} slotWidth={880} slotHeight={1243.85}>
           <Form19_2
             index={index}
             updater={updater}
@@ -63,7 +63,7 @@ const Form19 = ({ updater, inputType, ...data }: Props) => {
         </PageSlot>
       ))}
       {Array.from({ length: repaymentPageCount }).map((_, index) => (
-        <PageSlot key={`repayment-${index}`} slotWidth={624} slotHeight={882}>
+        <PageSlot key={`repayment-${index}`} slotWidth={880} slotHeight={1243.85}>
           <Form19_3
             index={index}
             updater={updater}

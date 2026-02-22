@@ -16,7 +16,7 @@ function Form32({ updater, inputType, ...data }: Form32Props) {
     )
   );
   return Array.from({ length: pageCount + 1 }).map((_, index) => (
-    <PageSlot key={index} slotWidth={624} slotHeight={882}>
+    <PageSlot key={index} slotWidth={880} slotHeight={1243.85}>
       <Form32_1
         updater={updater}
         inputType={inputType}

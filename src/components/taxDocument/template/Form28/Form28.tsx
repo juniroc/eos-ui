@@ -22,7 +22,7 @@ function Form28({ updater, inputType, ...data }: Props) {
     )
   );
   return Array.from({ length: formCount + 1 }).map((_, index) => (
-    <PageSlot key={index} slotWidth={882} slotHeight={624}>
+    <PageSlot key={index} slotWidth={880} slotHeight={622.59}>
       <Form28_1
         updater={updater}
         inputType={inputType}

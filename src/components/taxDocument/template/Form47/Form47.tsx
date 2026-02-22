@@ -25,7 +25,7 @@ function Form47({ updater, inputType, ...data }: Form47Props) {
   );
   return (
     <Fragment>
-      <PageSlot slotWidth={882} slotHeight={624}>
+      <PageSlot slotWidth={880} slotHeight={622.59}>
         <Form47_1
           updater={updater}
           inputType={inputType}
@@ -35,7 +35,7 @@ function Form47({ updater, inputType, ...data }: Form47Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount }).map((_, index) => (
-        <PageSlot key={index} slotWidth={882} slotHeight={624}>
+        <PageSlot key={index} slotWidth={880} slotHeight={622.59}>
           <Form47_2
             updater={updater}
             inputType={inputType}

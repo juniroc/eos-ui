@@ -33,7 +33,7 @@ function Form16({ updater, inputType, ...data }: Props) {
 
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form16_1
           updater={updater}
           inputType={inputType}
@@ -42,7 +42,7 @@ function Form16({ updater, inputType, ...data }: Props) {
         />
       </PageSlot>
       {Array.from({ length: page2Count }).map((_, index) => (
-        <PageSlot slotWidth={624} slotHeight={882}>
+        <PageSlot slotWidth={880} slotHeight={1243.85}>
           <Form16_2
             key={index}
             pageIndex={index}

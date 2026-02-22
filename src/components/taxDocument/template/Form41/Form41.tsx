@@ -23,7 +23,7 @@ function Form41({ updater, inputType, ...data }: Form41Props) {
 
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form41_1
           pageIndex={0}
           updater={updater}
@@ -33,7 +33,7 @@ function Form41({ updater, inputType, ...data }: Form41Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount }).map((_, i) => (
-        <PageSlot key={i} slotWidth={624} slotHeight={882}>
+        <PageSlot key={i} slotWidth={880} slotHeight={1243.85}>
           <Form41_2
             pageIndex={i}
             updater={updater}

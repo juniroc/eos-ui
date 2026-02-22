@@ -1,5 +1,8 @@
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 
@@ -28,6 +31,7 @@ const OutputTaxTable = ({
     value: Form21Data[K][F]
   ) => {
     const updated = {
+      //@ts-ignore
       ...(current as Form21Data[K]),
       [field]: value,
     };
@@ -316,13 +320,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesTaxInvoice.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesTaxInvoice',
 
                   salesTaxInvoice,
@@ -330,13 +330,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesTaxInvoice?.amount}
-
             />
           </td>
           <td
@@ -386,13 +382,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesTaxInvoice.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesTaxInvoice',
 
                   salesTaxInvoice,
@@ -400,13 +392,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesTaxInvoice?.tax}
-
             />
           </td>
         </tr>
@@ -491,13 +479,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesPurchaserIssued.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesPurchaserIssued',
 
                   salesPurchaserIssued,
@@ -505,13 +489,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesPurchaserIssued?.amount}
-
             />
           </td>
           <td
@@ -563,13 +543,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesPurchaserIssued.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesPurchaserIssued',
 
                   salesPurchaserIssued,
@@ -577,13 +553,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesPurchaserIssued?.tax}
-
             />
           </td>
         </tr>
@@ -668,13 +640,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesCreditCard.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesCreditCard',
 
                   salesCreditCard,
@@ -682,13 +650,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesCreditCard?.amount}
-
             />
           </td>
           <td
@@ -740,13 +704,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesCreditCard.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesCreditCard',
 
                   salesCreditCard,
@@ -754,13 +714,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesCreditCard?.tax}
-
             />
           </td>
         </tr>
@@ -844,13 +800,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesOther.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesOther',
 
                   salesOther,
@@ -858,13 +810,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesOther?.amount}
-
             />
           </td>
           <td
@@ -916,13 +864,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesOther.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesOther',
 
                   salesOther,
@@ -930,13 +874,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesOther?.tax}
-
             />
           </td>
         </tr>
@@ -1048,13 +988,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesZeroTaxInvoice.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesZeroTaxInvoice',
 
                   salesZeroTaxInvoice,
@@ -1062,13 +998,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesZeroTaxInvoice?.amount}
-
             />
           </td>
           <td
@@ -1120,13 +1052,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesZeroTaxInvoice.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesZeroTaxInvoice',
 
                   salesZeroTaxInvoice,
@@ -1134,13 +1062,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesZeroTaxInvoice?.tax}
-
             />
           </td>
         </tr>
@@ -1225,13 +1149,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesZeroOther.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesZeroOther',
 
                   salesZeroOther,
@@ -1239,13 +1159,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesZeroOther?.amount}
-
             />
           </td>
           <td
@@ -1296,13 +1212,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesZeroOther.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesZeroOther',
 
                   salesZeroOther,
@@ -1310,13 +1222,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesZeroOther?.tax}
-
             />
           </td>
         </tr>
@@ -1403,13 +1311,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesOmission.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesOmission',
 
                   salesOmission,
@@ -1417,13 +1321,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesOmission?.amount}
-
             />
           </td>
           <td
@@ -1446,17 +1346,11 @@ const OutputTaxTable = ({
             }}
           >
             <InputField
-
               className="text-input"
-
               type="text"
-
               value={salesOmission.taxRate ?? ''}
-
               onChange={e =>
-
                 updateNestedField(
-
                   'salesOmission',
 
                   salesOmission,
@@ -1464,13 +1358,9 @@ const OutputTaxTable = ({
                   'taxRate',
 
                   e.target.value
-
                 )
-
               }
-
               inputType={inputType?.salesOmission?.taxRate}
-
             />
           </td>
           <td
@@ -1489,13 +1379,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesOmission.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesOmission',
 
                   salesOmission,
@@ -1503,13 +1389,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesOmission?.tax}
-
             />
           </td>
         </tr>
@@ -1596,13 +1478,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesBadDebt.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesBadDebt',
 
                   salesBadDebt,
@@ -1610,13 +1488,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesBadDebt?.amount}
-
             />
           </td>
           <td
@@ -1639,17 +1513,11 @@ const OutputTaxTable = ({
             }}
           >
             <InputField
-
               className="text-input"
-
               type="text"
-
               value={salesBadDebt.taxRate ?? ''}
-
               onChange={e =>
-
                 updateNestedField(
-
                   'salesBadDebt',
 
                   salesBadDebt,
@@ -1657,13 +1525,9 @@ const OutputTaxTable = ({
                   'taxRate',
 
                   e.target.value
-
                 )
-
               }
-
               inputType={inputType?.salesBadDebt?.taxRate}
-
             />
           </td>
           <td
@@ -1680,13 +1544,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesBadDebt.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesBadDebt',
 
                   salesBadDebt,
@@ -1694,13 +1554,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesBadDebt?.tax}
-
             />
           </td>
         </tr>
@@ -1783,13 +1639,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesTotal.amount}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesTotal',
 
                   salesTotal,
@@ -1797,13 +1649,9 @@ const OutputTaxTable = ({
                   'amount',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesTotal?.amount}
-
             />
           </td>
           <td
@@ -1847,13 +1695,9 @@ const OutputTaxTable = ({
             }}
           >
             <NumericInput
-
               value={salesTotal.tax}
-
               onChange={value =>
-
                 updateNestedField(
-
                   'salesTotal',
 
                   salesTotal,
@@ -1861,13 +1705,9 @@ const OutputTaxTable = ({
                   'tax',
 
                   value
-
                 )
-
               }
-
               inputType={inputType?.salesTotal?.tax}
-
             />
           </td>
         </tr>

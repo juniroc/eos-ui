@@ -26,7 +26,7 @@ function Form691({ updater, inputType, ...data }: Form69_2Props) {
   );
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form69_2_1
           updater={updater}
           inputType={inputType}
@@ -36,7 +36,7 @@ function Form691({ updater, inputType, ...data }: Form69_2Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount }).map((_, index) => (
-        <PageSlot key={index} slotWidth={624} slotHeight={882}>
+        <PageSlot key={index} slotWidth={880} slotHeight={1243.85}>
           <Form69_2_2
             updater={updater}
             inputType={inputType}

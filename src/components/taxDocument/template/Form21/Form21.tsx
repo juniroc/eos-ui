@@ -16,13 +16,13 @@ type Form21Props = UpdaterProps<Form21Data> & { inputType?: Form21InputData };
 function Form21({ updater, inputType, ...data }: Form21Props) {
   return (
     <Fragment>
-      <PageSlot>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form21_1 updater={updater} inputType={inputType} {...data} />
       </PageSlot>
-      <PageSlot>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form21_2 updater={updater} inputType={inputType} {...data} />
       </PageSlot>
-      <PageSlot slotHeight={1000}>
+      <PageSlot slotWidth={880} slotHeight={1410.26}>
         <Form21_3 updater={updater} inputType={inputType} {...data} />
       </PageSlot>
     </Fragment>

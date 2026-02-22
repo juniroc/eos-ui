@@ -17,7 +17,7 @@ function Form42({ updater, inputType, ...data }: Form42Props) {
   );
 
   return Array.from({ length: pageCount + 1 }).map((_, index) => (
-    <PageSlot key={index} slotWidth={624} slotHeight={882}>
+    <PageSlot key={index} slotWidth={880} slotHeight={1243.85}>
       <Form42_1
         pageIndex={index}
         updater={updater}

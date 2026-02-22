@@ -21,7 +21,7 @@ function Form40({ updater, inputType, ...data }: Form40Props) {
   );
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form40_1
           pageIndex={0}
           updater={updater}
@@ -31,7 +31,7 @@ function Form40({ updater, inputType, ...data }: Form40Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount }).map((_, i) => (
-        <PageSlot key={i} slotWidth={624} slotHeight={882}>
+        <PageSlot key={i} slotWidth={880} slotHeight={1243.85}>
           <Form40_2
             pageIndex={i}
             onAddPage={() => setPageCount(prev => prev + 1)}

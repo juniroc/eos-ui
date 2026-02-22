@@ -37,7 +37,7 @@ export default function Form15({ updater, inputType, ...data }: Form15Props) {
   };
 
   return (
-    <PageSlot slotWidth={624} slotHeight={882}>
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
       <div className="form-15">
         <p
           className="s1"

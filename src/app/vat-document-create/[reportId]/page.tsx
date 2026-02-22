@@ -193,8 +193,7 @@ function VatDocumentCreateContent() {
   const previewOrientation = getOrientation(
     selectedDocument?.formCode as FormCode
   );
-  const previewWidth = previewOrientation === 'portrait' ? 624 : 882;
-  const previewFrameWidth = previewWidth;
+  const previewFrameWidth = 884;
 
   const docListItems = useMemo(
     () =>
@@ -362,7 +361,7 @@ function VatDocumentCreateContent() {
                 >
                   <PreviewWrapper
                     orientation={previewOrientation}
-                    maxWidth={previewWidth}
+                    maxWidth={882}
                   >
                     <TaxDocument
                       formCode={selectedDocument.formCode}

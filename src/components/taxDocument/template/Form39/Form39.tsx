@@ -23,7 +23,7 @@ function Form39({ updater, inputType, ...data }: Form39Props) {
 
   return (
     <Fragment>
-      <PageSlot slotWidth={624} slotHeight={882}>
+      <PageSlot slotWidth={880} slotHeight={1243.85}>
         <Form39_1
           pageIndex={0}
           updater={updater}
@@ -33,7 +33,7 @@ function Form39({ updater, inputType, ...data }: Form39Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount }).map((_, i) => (
-        <PageSlot key={i} slotWidth={624} slotHeight={882}>
+        <PageSlot key={i} slotWidth={880} slotHeight={1243.85}>
           <Form39_2
             pageIndex={i}
             onAddPage={() => setPageCount(prev => prev + 1)}

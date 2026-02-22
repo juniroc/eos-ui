@@ -35,7 +35,7 @@ export default function Form20({
   submitterName,
 }: Props) {
   return (
-    <PageSlot slotWidth={624} slotHeight={882}>
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
       <div className="form20">
         <ul id="l1">
           <li data-list-text="■">

@@ -117,7 +117,7 @@ export default function Form33({
     updateBasicExpenses({ ...basicExpenses, rent: next });
   };
   return (
-    <PageSlot slotWidth={624} slotHeight={882}>
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
       <div className="form33">
         <ul id="l1">
           <li data-list-text="■">

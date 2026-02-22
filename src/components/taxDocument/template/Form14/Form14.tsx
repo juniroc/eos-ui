@@ -135,7 +135,7 @@ export default function Form14({
   };
 
   return (
-    <PageSlot slotWidth={624} slotHeight={882} className="form-page">
+    <PageSlot slotWidth={880} slotHeight={1243.85} className="form-page">
       <div className="form14">
         <ul id="l1">
           <li data-list-text="■">

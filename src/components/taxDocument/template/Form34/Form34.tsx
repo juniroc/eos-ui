@@ -181,7 +181,7 @@ export default function Form34({
     });
   };
   return (
-    <PageSlot slotWidth={882} slotHeight={624}>
+    <PageSlot slotWidth={880} slotHeight={622.59}>
       <div className="form34">
         <ul id="l1">
           <li data-list-text="■">

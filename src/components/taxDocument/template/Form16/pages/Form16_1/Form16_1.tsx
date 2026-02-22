@@ -69,7 +69,7 @@ export default function Form16_1({
   };
 
   return (
-    <PageSlot slotWidth={624} slotHeight={882}>
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
       <div className="form16">
         <ul id="l1">
           <li data-list-text="■">

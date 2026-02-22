@@ -1,13 +1,14 @@
 'use client';
 import './form39_2.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form39Data, Form39InputData } from '@/components/taxDocument/template/Form39/type';
+import { Form39Data, Form39InputData, } from '@/components/taxDocument/template/Form39/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import {
   FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH,
   FORM_39_2_MAX_DETAIL_LIST_MAX_LENGTH,
 } from '@/components/taxDocument/template/Form39/constants';
+
 type Props = FormPageProps<Form39Data> & { inputType?: Form39InputData };
 
 export default function Form39_2({
@@ -92,7 +93,8 @@ export default function Form39_2({
 
   const renderDetailRow = (
     detail: Form39Data['detailList'][number],
-    absIndex: number
+    absIndex: number,
+    localIndex: number
   ) => (
     <tr style={{ height: '26pt' }} key={absIndex}>
       <td
@@ -152,7 +154,7 @@ export default function Form39_2({
           onChange={e =>
             updateDetailField(absIndex, 'bizRegNumber', e.target.value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.bizRegNumber}
+          inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
         />
       </td>
       <td
@@ -184,7 +186,7 @@ export default function Form39_2({
           onChange={e =>
             updateDetailField(absIndex, 'companyName', e.target.value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.companyName}
+          inputType={inputType?.detailList?.[localIndex]?.companyName}
         />
       </td>
       <td
@@ -212,7 +214,7 @@ export default function Form39_2({
           }}
           value={detail.invoiceCount}
           onChange={value => updateDetailField(absIndex, 'invoiceCount', value)}
-        inputType={inputType?.detailItems?.[localIndex]?.invoiceCount}
+          inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
         />
       </td>
       <td
@@ -242,7 +244,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.supplyPrice?.trillion}
+          inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.trillion}
         />
       </td>
       <td
@@ -272,7 +274,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.supplyPrice?.billion}
+          inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.billion}
         />
       </td>
       <td
@@ -302,7 +304,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.supplyPrice?.million}
+          inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.million}
         />
       </td>
       <td
@@ -332,7 +334,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.supplyPrice?.thousand}
+          inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.thousand}
         />
       </td>
       <td
@@ -362,7 +364,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.supplyPrice?.one}
+          inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
         />
       </td>
       <td
@@ -392,7 +394,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'trillion', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.tax?.trillion}
+          inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
         />
       </td>
       <td
@@ -422,7 +424,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'billion', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.tax?.billion}
+          inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
         />
       </td>
       <td
@@ -452,7 +454,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'million', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.tax?.million}
+          inputType={inputType?.detailList?.[localIndex]?.tax?.million}
         />
       </td>
       <td
@@ -482,7 +484,7 @@ export default function Form39_2({
           onChange={value =>
             updateDetailSplit(absIndex, 'tax', 'thousand', value)
           }
-        inputType={inputType?.detailItems?.[localIndex]?.tax?.thousand}
+          inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
         />
       </td>
       <td
@@ -510,7 +512,7 @@ export default function Form39_2({
           }}
           value={detail.tax.one}
           onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
-        inputType={inputType?.detailItems?.[localIndex]?.tax?.one}
+          inputType={inputType?.detailList?.[localIndex]?.tax?.one}
         />
       </td>
       <td
@@ -596,7 +598,7 @@ export default function Form39_2({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -614,7 +616,7 @@ export default function Form39_2({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <InputField
@@ -633,7 +635,7 @@ export default function Form39_2({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <InputField
@@ -652,7 +654,7 @@ export default function Form39_2({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <InputField
@@ -671,7 +673,7 @@ export default function Form39_2({
           onChange={e =>
             updater('taxPeriodEndMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodEndMonth}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <InputField
@@ -688,7 +690,7 @@ export default function Form39_2({
           maxLength={2}
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
-        inputType={inputType?.taxPeriodEndDay}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </h1>
@@ -771,7 +773,7 @@ export default function Form39_2({
                   bizRegNumber: e.target.value,
                 })
               }
-            inputType={inputType?.submitterInfo?.bizRegNumber}
+              inputType={inputType?.submitterInfo?.bizRegNumber}
             />
           </td>
         </tr>
@@ -1037,7 +1039,7 @@ export default function Form39_2({
           </td>
         </tr>
         {detailItems.map((detail, localIndex) =>
-          renderDetailRow(detail, startIndex + localIndex)
+          renderDetailRow(detail, startIndex + localIndex, localIndex)
         )}
       </table>
       <p style={{ paddingTop: '10pt', textIndent: '0pt', textAlign: 'left' }}>
@@ -1189,7 +1191,7 @@ export default function Form39_2({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

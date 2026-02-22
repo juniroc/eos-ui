@@ -2,10 +2,14 @@
 import './form32_1.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import Input from '@/components/taxDocument/template/common/Input';
-import {Form32Data, Form32InputData} from '@/components/taxDocument/template/Form32/type';
+import {
+  Form32Data,
+  Form32InputData,
+} from '@/components/taxDocument/template/Form32/type';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import { MAX_BUILDING_MANAGEMENT_ITEM_LENGTH } from '@/components/taxDocument/template/Form32/constants';
 import InputField from '@/components/taxDocument/template/common/InputField';
+
 type Props = FormPageProps<Form32Data> & { inputType?: Form32InputData };
 
 export default function Form32_1({
@@ -23,19 +27,19 @@ export default function Form32_1({
   buildingManagementTotal,
   buildingManagementItems,
 }: Props) {
-
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
-  const createEmptyItem = (): Form32Data['buildingManagementItems'][number] => ({
-    floor: '',
-    roomName: '',
-    area: 0,
-    tenantName: '',
-    tenantBizRegNumber: '',
-    moveInDate: '',
-    moveOutDate: '',
-    managementFee: 0,
-  });
+  const createEmptyItem =
+    (): Form32Data['buildingManagementItems'][number] => ({
+      floor: '',
+      roomName: '',
+      area: 0,
+      tenantName: '',
+      tenantBizRegNumber: '',
+      moveInDate: '',
+      moveOutDate: '',
+      managementFee: 0,
+    });
 
   const total = buildingManagementTotal ?? {
     totalArea: 0,
@@ -43,9 +47,12 @@ export default function Form32_1({
   };
 
   const startIndex = pageIndex * MAX_BUILDING_MANAGEMENT_ITEM_LENGTH;
-  const items = Array.from({ length: MAX_BUILDING_MANAGEMENT_ITEM_LENGTH }, (_, i) => {
-    return buildingManagementItems[startIndex + i] ?? createEmptyItem();
-  });
+  const items = Array.from(
+    { length: MAX_BUILDING_MANAGEMENT_ITEM_LENGTH },
+    (_, i) => {
+      return buildingManagementItems[startIndex + i] ?? createEmptyItem();
+    }
+  );
 
   const updateSubmitterInfo = (
     field: keyof Form32Data['submitterInfo'],
@@ -283,7 +290,9 @@ export default function Form32_1({
           onChange={value =>
             updateItemField(absIndex, 'tenantBizRegNumber', value)
           }
-          inputType={inputType?.buildingManagementItems?.[absIndex]?.tenantBizRegNumber}
+          inputType={
+            inputType?.buildingManagementItems?.[absIndex]?.tenantBizRegNumber
+          }
         />
       </td>
       <td
@@ -347,7 +356,9 @@ export default function Form32_1({
           }}
           value={item.moveOutDate}
           onChange={value => updateItemField(absIndex, 'moveOutDate', value)}
-          inputType={inputType?.buildingManagementItems?.[absIndex]?.moveOutDate}
+          inputType={
+            inputType?.buildingManagementItems?.[absIndex]?.moveOutDate
+          }
         />
       </td>
       <td
@@ -376,7 +387,9 @@ export default function Form32_1({
           }}
           value={item.managementFee}
           onChange={value => updateItemField(absIndex, 'managementFee', value)}
-          inputType={inputType?.buildingManagementItems?.[absIndex]?.managementFee}
+          inputType={
+            inputType?.buildingManagementItems?.[absIndex]?.managementFee
+          }
         />
       </td>
     </tr>
@@ -447,9 +460,7 @@ export default function Form32_1({
           }}
           maxLength={2}
           value={taxPeriodStartMonth}
-          onChange={value =>
-            updater('taxPeriodStartMonth', digitsOnly(value))
-          }
+          onChange={value => updater('taxPeriodStartMonth', digitsOnly(value))}
           inputType={inputType?.taxPeriodStartMonth}
         />
         월
@@ -464,9 +475,7 @@ export default function Form32_1({
           }}
           maxLength={2}
           value={taxPeriodStartDay}
-          onChange={value =>
-            updater('taxPeriodStartDay', digitsOnly(value))
-          }
+          onChange={value => updater('taxPeriodStartDay', digitsOnly(value))}
           inputType={inputType?.taxPeriodStartDay}
         />
         일~
@@ -481,9 +490,7 @@ export default function Form32_1({
           }}
           maxLength={2}
           value={taxPeriodEndMonth}
-          onChange={value =>
-            updater('taxPeriodEndMonth', digitsOnly(value))
-          }
+          onChange={value => updater('taxPeriodEndMonth', digitsOnly(value))}
           inputType={inputType?.taxPeriodEndMonth}
         />
         월
@@ -498,9 +505,7 @@ export default function Form32_1({
           }}
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={value =>
-            updater('taxPeriodEndDay', digitsOnly(value))
-          }
+          onChange={value => updater('taxPeriodEndDay', digitsOnly(value))}
           inputType={inputType?.taxPeriodEndDay}
         />
         일)
@@ -590,10 +595,8 @@ export default function Form32_1({
                 fontFamily: 'Arial',
               }}
               value={submitterInfo.propertyLocation}
-              onChange={value =>
-                updateSubmitterInfo('propertyLocation', value)
-              }
-          inputType={inputType?.submitterInfo?.propertyLocation}
+              onChange={value => updateSubmitterInfo('propertyLocation', value)}
+              inputType={inputType?.submitterInfo?.propertyLocation}
             />
           </td>
           <td
@@ -639,7 +642,7 @@ export default function Form32_1({
               }}
               value={submitterInfo.buildingName}
               onChange={value => updateSubmitterInfo('buildingName', value)}
-          inputType={inputType?.submitterInfo?.buildingName}
+              inputType={inputType?.submitterInfo?.buildingName}
             />
           </td>
         </tr>
@@ -692,7 +695,7 @@ export default function Form32_1({
               onChange={value =>
                 updateSubmitterInfo('managerCompanyName', value)
               }
-          inputType={inputType?.submitterInfo?.managerCompanyName}
+              inputType={inputType?.submitterInfo?.managerCompanyName}
             />
           </td>
           <td
@@ -739,7 +742,7 @@ export default function Form32_1({
               onChange={value =>
                 updateSubmitterInfo('managerBizRegNumber', value)
               }
-          inputType={inputType?.submitterInfo?.managerBizRegNumber}
+              inputType={inputType?.submitterInfo?.managerBizRegNumber}
             />
           </td>
         </tr>
@@ -1243,7 +1246,7 @@ export default function Form32_1({
               }}
               value={total.totalArea}
               onChange={value => updateTotal('totalArea', value)}
-          inputType={inputType?.buildingManagementTotal?.totalArea}
+              inputType={inputType?.buildingManagementTotal?.totalArea}
             />
           </td>
           <td
@@ -1346,7 +1349,7 @@ export default function Form32_1({
               }}
               value={total.totalManagementFee}
               onChange={value => updateTotal('totalManagementFee', value)}
-          inputType={inputType?.buildingManagementTotal?.totalManagementFee}
+              inputType={inputType?.buildingManagementTotal?.totalManagementFee}
             />
           </td>
         </tr>
@@ -1358,7 +1361,7 @@ export default function Form32_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

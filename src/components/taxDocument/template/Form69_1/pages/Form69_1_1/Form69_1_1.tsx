@@ -3828,7 +3828,7 @@ export default function Form69_1_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '-pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

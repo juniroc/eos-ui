@@ -975,7 +975,7 @@ export default function Form19_3({
         style={{
           position: 'absolute',
           right: '20pt',
-          bottom: '-80pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

@@ -53,7 +53,7 @@ export default function Form16_2({
   };
 
   return (
-    <PageSlot slotWidth={880} slotHeight={1243.85} >
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
       <div className="form16_2">
         <ul id="l1">
           <li data-list-text="■">
@@ -720,7 +720,7 @@ export default function Form16_2({
           style={{
             position: 'absolute',
             right: '10pt',
-            bottom: '10pt',
+            bottom: '-2pt',
             width: '55pt',
             height: '20pt',
             backgroundColor: '#CD8D65',

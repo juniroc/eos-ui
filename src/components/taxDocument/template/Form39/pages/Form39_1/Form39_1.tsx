@@ -1,10 +1,14 @@
 'use client';
 import './form39_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import {Form39Data, Form39InputData} from '@/components/taxDocument/template/Form39/type';
+import {
+  Form39Data,
+  Form39InputData,
+} from '@/components/taxDocument/template/Form39/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FORM_39_1_MAX_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form39/constants';
 import InputField from '@/components/taxDocument/template/common/InputField';
+
 type Props = FormPageProps<Form39Data> & { inputType?: Form39InputData };
 
 export default function Form39_1({
@@ -219,490 +223,502 @@ export default function Form39_1({
 
     return (
       <tr style={{ height: '20pt' }} key={absIndex}>
-      <td
-        style={{
-          width: '30pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-        }}
-      >
-        <p
-          className="s7"
+        <td
           style={{
-            paddingTop: '3pt',
-            textIndent: '0pt',
-            textAlign: 'center',
+            width: '30pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
           }}
         >
-          {absIndex + 1}
-        </p>
-      </td>
-      <td
-        style={{
-          width: '64pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+          <p
+            className="s7"
+            style={{
+              paddingTop: '3pt',
+              textIndent: '0pt',
+              textAlign: 'center',
+            }}
+          >
+            {absIndex + 1}
+          </p>
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '64pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.bizRegNumber}
-          onChange={e =>
-            updateDetailField(absIndex, 'bizRegNumber', e.target.value)
-          }
-          inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
-        />
-      </td>
-      <td
-        style={{
-          width: '64pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.bizRegNumber}
+            onChange={e =>
+              updateDetailField(absIndex, 'bizRegNumber', e.target.value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '64pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.companyName}
-          onChange={e =>
-            updateDetailField(absIndex, 'companyName', e.target.value)
-          }
-          inputType={inputType?.detailList?.[localIndex]?.companyName}
-        />
-      </td>
-      <td
-        style={{
-          width: '34pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.companyName}
+            onChange={e =>
+              updateDetailField(absIndex, 'companyName', e.target.value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.companyName}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '34pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.invoiceCount}
-          onChange={value => updateDetailField(absIndex, 'invoiceCount', value)}
-        inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.invoiceCount}
+            onChange={value =>
+              updateDetailField(absIndex, 'invoiceCount', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.trillion}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.trillion}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.trillion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.trillion
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.billion}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.billion}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.billion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.billion
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.million}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.million}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.million}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.million
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.thousand}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.thousand}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.thousand}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.thousand
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.one}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.one}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.trillion}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'tax', 'trillion', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.trillion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'trillion', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.billion}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'tax', 'billion', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.billion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'billion', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.million}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'tax', 'million', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.tax?.million}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.million}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'million', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.million}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.thousand}
-          onChange={value =>
-            updateDetailSplit(absIndex, 'tax', 'thousand', value)
-          }
-        inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.thousand}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'thousand', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.one}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.one}
-        />
-      </td>
-      <td
-        style={{
-          width: '47pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderTopColor: '#808080',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.one}
+            onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
+            inputType={inputType?.detailList?.[localIndex]?.tax?.one}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '47pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderTopColor: '#808080',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.remarks ?? ''}
-          onChange={e => updateDetailField(absIndex, 'remarks', e.target.value)}
-        />
-      </td>
-    </tr>
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.remarks ?? ''}
+            onChange={e =>
+              updateDetailField(absIndex, 'remarks', e.target.value)
+            }
+          />
+        </td>
+      </tr>
     );
   };
   return (
@@ -746,7 +762,7 @@ export default function Form39_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -765,7 +781,7 @@ export default function Form39_1({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <InputField
@@ -785,7 +801,7 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <InputField
@@ -805,7 +821,7 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <InputField
@@ -825,7 +841,7 @@ export default function Form39_1({
           onChange={e =>
             updater('taxPeriodEndMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodEndMonth}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <InputField
@@ -843,7 +859,7 @@ export default function Form39_1({
           maxLength={2}
           value={taxPeriodEndDay}
           onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
-        inputType={inputType?.taxPeriodEndDay}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </p>
@@ -924,7 +940,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('bizRegNumber', e.target.value)
                   }
-                inputType={inputType?.submitterInfo?.bizRegNumber}
+                  inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
               <td
@@ -972,7 +988,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('companyName', e.target.value)
                   }
-                inputType={inputType?.submitterInfo?.companyName}
+                  inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
             </tr>
@@ -1023,7 +1039,7 @@ export default function Form39_1({
                   onChange={e =>
                     updateSubmitterInfo('representativeName', e.target.value)
                   }
-                inputType={inputType?.submitterInfo?.representativeName}
+                  inputType={inputType?.submitterInfo?.representativeName}
                 />
               </td>
               <td
@@ -1129,7 +1145,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartYear}
+                  inputType={inputType?.submitterInfo?.transactionStartYear}
                 />
                 <p
                   className="s5"
@@ -1163,7 +1179,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartMonth}
+                  inputType={inputType?.submitterInfo?.transactionStartMonth}
                 />
                 <p
                   className="s5"
@@ -1197,7 +1213,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartDay}
+                  inputType={inputType?.submitterInfo?.transactionStartDay}
                 />
                 <p
                   className="s5"
@@ -1242,7 +1258,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndYear}
+                  inputType={inputType?.submitterInfo?.transactionEndYear}
                 />
                 <p
                   className="s5"
@@ -1276,7 +1292,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndMonth}
+                  inputType={inputType?.submitterInfo?.transactionEndMonth}
                 />
                 <p
                   className="s5"
@@ -1310,7 +1326,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndDay}
+                  inputType={inputType?.submitterInfo?.transactionEndDay}
                 />
                 <p
                   className="s5"
@@ -1375,7 +1391,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingYear}
+                  inputType={inputType?.submitterInfo?.writingYear}
                 />
                 <p
                   className="s5"
@@ -1409,7 +1425,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingMonth}
+                  inputType={inputType?.submitterInfo?.writingMonth}
                 />
                 <p
                   className="s5"
@@ -1443,7 +1459,7 @@ export default function Form39_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingDay}
+                  inputType={inputType?.submitterInfo?.writingDay}
                 />
                 <p
                   className="s5"
@@ -5514,7 +5530,7 @@ export default function Form39_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

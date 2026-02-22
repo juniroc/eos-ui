@@ -2,9 +2,13 @@
 import './form38_1.css';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import {Form38Data, Form38InputData} from '@/components/taxDocument/template/Form38/type';
+import {
+  Form38Data,
+  Form38InputData,
+} from '@/components/taxDocument/template/Form38/type';
 import { FORM_38_1_MAX_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form38/constants';
 import InputField from '@/components/taxDocument/template/common/InputField';
+
 type Props = FormPageProps<Form38Data> & { inputType?: Form38InputData };
 
 export default function Form38_1({
@@ -24,13 +28,14 @@ export default function Form38_1({
 }: Props) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
-  const createEmptySplit = (): Form38Data['summary']['grandTotal']['supplyPrice'] => ({
-    trillion: 0,
-    billion: 0,
-    million: 0,
-    thousand: 0,
-    one: 0,
-  });
+  const createEmptySplit =
+    (): Form38Data['summary']['grandTotal']['supplyPrice'] => ({
+      trillion: 0,
+      billion: 0,
+      million: 0,
+      thousand: 0,
+      one: 0,
+    });
 
   const createEmptyDetail = (): Form38Data['detailList'][number] => ({
     bizRegNumber: '',
@@ -79,7 +84,9 @@ export default function Form38_1({
 
   const updateSummaryRow = (
     rowKey: SummaryRowKey,
-    updaterFn: (row: Form38Data['summary']['grandTotal']) => Form38Data['summary']['grandTotal']
+    updaterFn: (
+      row: Form38Data['summary']['grandTotal']
+    ) => Form38Data['summary']['grandTotal']
   ) => {
     const next = { ...summary };
     switch (rowKey) {
@@ -172,7 +179,9 @@ export default function Form38_1({
 
   const updateDetailItem = (
     absIndex: number,
-    updaterFn: (item: Form38Data['detailList'][number]) => Form38Data['detailList'][number]
+    updaterFn: (
+      item: Form38Data['detailList'][number]
+    ) => Form38Data['detailList'][number]
   ) => {
     const next = [...detailList];
     const current = next[absIndex] ?? createEmptyDetail();
@@ -213,468 +222,502 @@ export default function Form38_1({
     const localIndex = absIndex - startIndex;
     return (
       <tr style={{ height: '20pt' }} key={absIndex}>
-      <td
-        style={{
-          width: '30pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-        }}
-      >
-        <p
-          className="s7"
+        <td
           style={{
-            paddingTop: '3pt',
-            textIndent: '0pt',
-            textAlign: 'center',
+            width: '30pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
           }}
         >
-          {absIndex + 1}
-        </p>
-      </td>
-      <td
-        style={{
-          width: '64pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+          <p
+            className="s7"
+            style={{
+              paddingTop: '3pt',
+              textIndent: '0pt',
+              textAlign: 'center',
+            }}
+          >
+            {absIndex + 1}
+          </p>
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '64pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.bizRegNumber}
-          onChange={e => updateDetailField(absIndex, 'bizRegNumber', e.target.value)}
-        inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
-        />
-      </td>
-      <td
-        style={{
-          width: '64pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.bizRegNumber}
+            onChange={e =>
+              updateDetailField(absIndex, 'bizRegNumber', e.target.value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.bizRegNumber}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '64pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.companyName}
-          onChange={e => updateDetailField(absIndex, 'companyName', e.target.value)}
-        inputType={inputType?.detailList?.[localIndex]?.companyName}
-        />
-      </td>
-      <td
-        style={{
-          width: '34pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.companyName}
+            onChange={e =>
+              updateDetailField(absIndex, 'companyName', e.target.value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.companyName}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '34pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.invoiceCount}
-          onChange={value => updateDetailField(absIndex, 'invoiceCount', value)}
-        inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.invoiceCount}
+            onChange={value =>
+              updateDetailField(absIndex, 'invoiceCount', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.invoiceCount}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)}
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.trillion}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.trillion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'trillion', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.trillion
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.billion}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)}
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.billion}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.billion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'billion', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.billion
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.million}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'million', value)}
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.million}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.million}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'million', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.million
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)}
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.thousand}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.thousand}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'thousand', value)
+            }
+            inputType={
+              inputType?.detailList?.[localIndex]?.supplyPrice?.thousand
+            }
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.supplyPrice.one}
-          onChange={value => updateDetailSplit(absIndex, 'supplyPrice', 'one', value)}
-        inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.supplyPrice.one}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'supplyPrice', 'one', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.supplyPrice?.one}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.trillion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'trillion', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.trillion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'trillion', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.trillion}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.billion}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'billion', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.billion}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'billion', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.billion}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.million}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'million', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.million}
-        />
-      </td>
-      <td
-        style={{
-          width: '24pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.million}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'million', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.million}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '24pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.thousand}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'thousand', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
-        />
-      </td>
-      <td
-        style={{
-          width: '25pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          borderRightStyle: 'solid',
-          borderRightWidth: '1pt',
-          borderRightColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <NumericInput
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.thousand}
+            onChange={value =>
+              updateDetailSplit(absIndex, 'tax', 'thousand', value)
+            }
+            inputType={inputType?.detailList?.[localIndex]?.tax?.thousand}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '25pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
+            borderRightStyle: 'solid',
+            borderRightWidth: '1pt',
+            borderRightColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          value={detail.tax.one}
-          onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
-        inputType={inputType?.detailList?.[localIndex]?.tax?.one}
-        />
-      </td>
-      <td
-        style={{
-          width: '47pt',
-          borderTopStyle: 'solid',
-          borderTopWidth: '1pt',
-          borderTopColor: '#808080',
-          borderLeftStyle: 'solid',
-          borderLeftWidth: '1pt',
-          borderLeftColor: '#808080',
-          borderBottomStyle: 'solid',
-          borderBottomWidth: '1pt',
-          borderBottomColor: '#808080',
-          padding: '1pt',
-          verticalAlign: 'middle',
-        }}
-      >
-        <InputField
-          className="form-input form-input-text"
+        >
+          <NumericInput
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            value={detail.tax.one}
+            onChange={value => updateDetailSplit(absIndex, 'tax', 'one', value)}
+            inputType={inputType?.detailList?.[localIndex]?.tax?.one}
+          />
+        </td>
+        <td
           style={{
-            width: 'calc(100% - 2pt)',
-            height: '20pt',
+            width: '47pt',
+            borderTopStyle: 'solid',
+            borderTopWidth: '1pt',
+            borderTopColor: '#808080',
+            borderLeftStyle: 'solid',
+            borderLeftWidth: '1pt',
+            borderLeftColor: '#808080',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1pt',
+            borderBottomColor: '#808080',
             padding: '1pt',
             verticalAlign: 'middle',
-            fontFamily: 'Arial',
           }}
-          type="text"
-          value={detail.remarks ?? ''}
-          onChange={e => updateDetailField(absIndex, 'remarks', e.target.value)}
-        />
-      </td>
-    </tr>
+        >
+          <InputField
+            className="form-input form-input-text"
+            style={{
+              width: 'calc(100% - 2pt)',
+              height: '20pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+              fontFamily: 'Arial',
+            }}
+            type="text"
+            value={detail.remarks ?? ''}
+            onChange={e =>
+              updateDetailField(absIndex, 'remarks', e.target.value)
+            }
+          />
+        </td>
+      </tr>
     );
   };
   return (
@@ -718,7 +761,7 @@ export default function Form38_1({
           maxLength={4}
           value={attributionYear}
           onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionYear}
+          inputType={inputType?.attributionYear}
         />
         년<span style={{ paddingLeft: '15pt' }}></span>
         제
@@ -737,7 +780,7 @@ export default function Form38_1({
           maxLength={2}
           value={attributionTerm}
           onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
-        inputType={inputType?.attributionTerm}
+          inputType={inputType?.attributionTerm}
         />
         기 (
         <InputField
@@ -757,7 +800,7 @@ export default function Form38_1({
           onChange={e =>
             updater('taxPeriodStartMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartMonth}
+          inputType={inputType?.taxPeriodStartMonth}
         />
         월
         <InputField
@@ -777,7 +820,7 @@ export default function Form38_1({
           onChange={e =>
             updater('taxPeriodStartDay', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodStartDay}
+          inputType={inputType?.taxPeriodStartDay}
         />
         일 ~
         <InputField
@@ -797,7 +840,7 @@ export default function Form38_1({
           onChange={e =>
             updater('taxPeriodEndMonth', digitsOnly(e.target.value))
           }
-        inputType={inputType?.taxPeriodEndMonth}
+          inputType={inputType?.taxPeriodEndMonth}
         />
         월
         <InputField
@@ -814,10 +857,8 @@ export default function Form38_1({
           type="text"
           maxLength={2}
           value={taxPeriodEndDay}
-          onChange={e =>
-            updater('taxPeriodEndDay', digitsOnly(e.target.value))
-          }
-        inputType={inputType?.taxPeriodEndDay}
+          onChange={e => updater('taxPeriodEndDay', digitsOnly(e.target.value))}
+          inputType={inputType?.taxPeriodEndDay}
         />
         일)
       </p>
@@ -895,8 +936,10 @@ export default function Form38_1({
                   }}
                   type="text"
                   value={submitterInfo.bizRegNumber}
-                  onChange={e => updateSubmitterInfo('bizRegNumber', e.target.value)}
-                inputType={inputType?.submitterInfo?.bizRegNumber}
+                  onChange={e =>
+                    updateSubmitterInfo('bizRegNumber', e.target.value)
+                  }
+                  inputType={inputType?.submitterInfo?.bizRegNumber}
                 />
               </td>
               <td
@@ -941,8 +984,10 @@ export default function Form38_1({
                   }}
                   type="text"
                   value={submitterInfo.companyName}
-                  onChange={e => updateSubmitterInfo('companyName', e.target.value)}
-                inputType={inputType?.submitterInfo?.companyName}
+                  onChange={e =>
+                    updateSubmitterInfo('companyName', e.target.value)
+                  }
+                  inputType={inputType?.submitterInfo?.companyName}
                 />
               </td>
             </tr>
@@ -993,7 +1038,7 @@ export default function Form38_1({
                   onChange={e =>
                     updateSubmitterInfo('representativeName', e.target.value)
                   }
-                inputType={inputType?.submitterInfo?.representativeName}
+                  inputType={inputType?.submitterInfo?.representativeName}
                 />
               </td>
               <td
@@ -1099,7 +1144,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartYear}
+                  inputType={inputType?.submitterInfo?.transactionStartYear}
                 />
                 <p
                   className="s5"
@@ -1133,7 +1178,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartMonth}
+                  inputType={inputType?.submitterInfo?.transactionStartMonth}
                 />
                 <p
                   className="s5"
@@ -1167,7 +1212,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionStartDay}
+                  inputType={inputType?.submitterInfo?.transactionStartDay}
                 />
                 <p
                   className="s5"
@@ -1212,7 +1257,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndYear}
+                  inputType={inputType?.submitterInfo?.transactionEndYear}
                 />
                 <p
                   className="s5"
@@ -1246,7 +1291,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndMonth}
+                  inputType={inputType?.submitterInfo?.transactionEndMonth}
                 />
                 <p
                   className="s5"
@@ -1280,7 +1325,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.transactionEndDay}
+                  inputType={inputType?.submitterInfo?.transactionEndDay}
                 />
                 <p
                   className="s5"
@@ -1345,7 +1390,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingYear}
+                  inputType={inputType?.submitterInfo?.writingYear}
                 />
                 <p
                   className="s5"
@@ -1379,7 +1424,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingMonth}
+                  inputType={inputType?.submitterInfo?.writingMonth}
                 />
                 <p
                   className="s5"
@@ -1413,7 +1458,7 @@ export default function Form38_1({
                       digitsOnly(e.target.value)
                     )
                   }
-                inputType={inputType?.submitterInfo?.writingDay}
+                  inputType={inputType?.submitterInfo?.writingDay}
                 />
                 <p
                   className="s5"
@@ -1684,7 +1729,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').sellerCount} onChange={value => updateSummaryField('grandTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('grandTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField('grandTotal', 'sellerCount', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1712,7 +1761,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').invoiceCount} onChange={value => updateSummaryField('grandTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('grandTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField('grandTotal', 'invoiceCount', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1740,7 +1793,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1768,7 +1830,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.billion} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'billion', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1796,7 +1867,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.million} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'million', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1824,7 +1904,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1852,7 +1941,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').supplyPrice.one} onChange={value => updateSummarySplit('grandTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('grandTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'grandTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1880,7 +1978,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.trillion} onChange={value => updateSummarySplit('grandTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('grandTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'trillion', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1908,7 +2010,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.billion} onChange={value => updateSummarySplit('grandTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('grandTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'billion', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1936,7 +2042,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.million} onChange={value => updateSummarySplit('grandTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('grandTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'million', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1964,7 +2074,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.thousand} onChange={value => updateSummarySplit('grandTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('grandTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'thousand', value)
+                  }
+                />
               </td>
               <td
                 style={{
@@ -1989,7 +2103,11 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('grandTotal').tax.one} onChange={value => updateSummarySplit('grandTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('grandTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit('grandTotal', 'tax', 'one', value)
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2076,7 +2194,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').sellerCount} onChange={value => updateSummaryField('electronicIssuedBiz', 'sellerCount', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicIssuedBiz',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2105,7 +2231,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').invoiceCount} onChange={value => updateSummaryField('electronicIssuedBiz', 'invoiceCount', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicIssuedBiz',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2134,7 +2268,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicIssuedBiz', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedBiz').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2163,7 +2308,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').supplyPrice.billion} onChange={value => updateSummarySplit('electronicIssuedBiz', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedBiz').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2192,7 +2348,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').supplyPrice.million} onChange={value => updateSummarySplit('electronicIssuedBiz', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedBiz').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2221,7 +2388,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicIssuedBiz', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedBiz').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2250,7 +2428,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').supplyPrice.one} onChange={value => updateSummarySplit('electronicIssuedBiz', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2279,7 +2466,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').tax.trillion} onChange={value => updateSummarySplit('electronicIssuedBiz', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2308,7 +2504,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').tax.billion} onChange={value => updateSummarySplit('electronicIssuedBiz', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2337,7 +2542,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').tax.million} onChange={value => updateSummarySplit('electronicIssuedBiz', 'tax', 'million', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2366,7 +2580,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').tax.thousand} onChange={value => updateSummarySplit('electronicIssuedBiz', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2392,7 +2615,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedBiz').tax.one} onChange={value => updateSummarySplit('electronicIssuedBiz', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicIssuedBiz').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedBiz',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2454,7 +2686,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').sellerCount} onChange={value => updateSummaryField('electronicIssuedResident', 'sellerCount', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicIssuedResident',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2483,7 +2723,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').invoiceCount} onChange={value => updateSummaryField('electronicIssuedResident', 'invoiceCount', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicIssuedResident',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2512,7 +2760,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicIssuedResident', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedResident').supplyPrice
+                      .trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2541,7 +2801,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').supplyPrice.billion} onChange={value => updateSummarySplit('electronicIssuedResident', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedResident').supplyPrice
+                      .billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2570,7 +2842,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').supplyPrice.million} onChange={value => updateSummarySplit('electronicIssuedResident', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedResident').supplyPrice
+                      .million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2599,7 +2883,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicIssuedResident', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedResident').supplyPrice
+                      .thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2628,7 +2924,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').supplyPrice.one} onChange={value => updateSummarySplit('electronicIssuedResident', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('electronicIssuedResident').supplyPrice.one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2657,7 +2964,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').tax.trillion} onChange={value => updateSummarySplit('electronicIssuedResident', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2686,7 +3002,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').tax.billion} onChange={value => updateSummarySplit('electronicIssuedResident', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2715,7 +3040,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').tax.million} onChange={value => updateSummarySplit('electronicIssuedResident', 'tax', 'million', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2744,7 +3078,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').tax.thousand} onChange={value => updateSummarySplit('electronicIssuedResident', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2770,7 +3113,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicIssuedResident').tax.one} onChange={value => updateSummarySplit('electronicIssuedResident', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicIssuedResident').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicIssuedResident',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -2829,7 +3181,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').sellerCount} onChange={value => updateSummaryField('electronicSubTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('electronicSubTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicSubTotal',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2858,7 +3218,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').invoiceCount} onChange={value => updateSummaryField('electronicSubTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('electronicSubTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'electronicSubTotal',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2887,7 +3255,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2916,7 +3295,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.billion} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2945,7 +3335,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.million} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -2974,7 +3375,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('electronicSubTotal').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3003,7 +3415,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').supplyPrice.one} onChange={value => updateSummarySplit('electronicSubTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('electronicSubTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3032,7 +3453,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.trillion} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3061,7 +3491,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.billion} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3090,7 +3529,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.million} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3119,7 +3567,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.thousand} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3145,7 +3602,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('electronicSubTotal').tax.one} onChange={value => updateSummarySplit('electronicSubTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('electronicSubTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'electronicSubTotal',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3232,7 +3698,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').sellerCount} onChange={value => updateSummaryField('nonElectronicIssuedBiz', 'sellerCount', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicIssuedBiz',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3261,7 +3735,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').invoiceCount} onChange={value => updateSummaryField('nonElectronicIssuedBiz', 'invoiceCount', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicIssuedBiz',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3290,7 +3772,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedBiz').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3319,7 +3812,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedBiz').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3348,7 +3852,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedBiz').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3377,7 +3892,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedBiz').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3406,7 +3932,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedBiz').supplyPrice.one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3435,7 +3972,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').tax.trillion} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3464,7 +4010,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').tax.billion} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3493,7 +4048,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').tax.million} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'tax', 'million', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3522,7 +4086,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').tax.thousand} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3548,7 +4121,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedBiz').tax.one} onChange={value => updateSummarySplit('nonElectronicIssuedBiz', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedBiz').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedBiz',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3610,7 +4192,17 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').sellerCount} onChange={value => updateSummaryField('nonElectronicIssuedResident', 'sellerCount', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').sellerCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicIssuedResident',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3639,7 +4231,17 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').invoiceCount} onChange={value => updateSummaryField('nonElectronicIssuedResident', 'invoiceCount', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').invoiceCount
+                  }
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicIssuedResident',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3668,7 +4270,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').supplyPrice
+                      .trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3697,7 +4311,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').supplyPrice
+                      .billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3726,7 +4352,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').supplyPrice
+                      .million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3755,7 +4393,19 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').supplyPrice
+                      .thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3784,7 +4434,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'supplyPrice', 'one', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').supplyPrice.one
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3813,7 +4474,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').tax.trillion} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'tax', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').tax.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3842,7 +4514,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').tax.billion} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'tax', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').tax.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3871,7 +4554,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').tax.million} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'tax', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').tax.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3900,7 +4594,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').tax.thousand} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'tax', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicIssuedResident').tax.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -3926,7 +4631,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicIssuedResident').tax.one} onChange={value => updateSummarySplit('nonElectronicIssuedResident', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicIssuedResident').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicIssuedResident',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
             <tr style={{ height: '29pt' }}>
@@ -3983,7 +4697,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').sellerCount} onChange={value => updateSummaryField('nonElectronicSubTotal', 'sellerCount', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').sellerCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicSubTotal',
+                      'sellerCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4011,7 +4733,15 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').invoiceCount} onChange={value => updateSummaryField('nonElectronicSubTotal', 'invoiceCount', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').invoiceCount}
+                  onChange={value =>
+                    updateSummaryField(
+                      'nonElectronicSubTotal',
+                      'invoiceCount',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4039,7 +4769,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.trillion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'trillion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.trillion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4067,7 +4808,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.billion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'billion', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.billion
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4095,7 +4847,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.million} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'million', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.million
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4123,7 +4886,18 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.thousand} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'thousand', value)}/>
+                  value={
+                    getSummaryRow('nonElectronicSubTotal').supplyPrice.thousand
+                  }
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4151,7 +4925,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').supplyPrice.one} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'supplyPrice', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').supplyPrice.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'supplyPrice',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4179,7 +4962,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.trillion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'trillion', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.trillion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'trillion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4207,7 +4999,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.billion} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'billion', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.billion}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'billion',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4235,7 +5036,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.million} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'million', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.million}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'million',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4263,7 +5073,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.thousand} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'thousand', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.thousand}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'thousand',
+                      value
+                    )
+                  }
+                />
               </td>
               <td
                 style={{
@@ -4288,7 +5107,16 @@ export default function Form38_1({
                     verticalAlign: 'middle',
                     fontFamily: 'Arial',
                   }}
-                 value={getSummaryRow('nonElectronicSubTotal').tax.one} onChange={value => updateSummarySplit('nonElectronicSubTotal', 'tax', 'one', value)}/>
+                  value={getSummaryRow('nonElectronicSubTotal').tax.one}
+                  onChange={value =>
+                    updateSummarySplit(
+                      'nonElectronicSubTotal',
+                      'tax',
+                      'one',
+                      value
+                    )
+                  }
+                />
               </td>
             </tr>
           </table>
@@ -4578,7 +5406,7 @@ export default function Form38_1({
         {detailItems.map((detail, localIndex) =>
           renderDetailRow(detail, startIndex + localIndex)
         )}
-</table>
+      </table>
       <p style={{ textIndent: '0pt', textAlign: 'left' }}>
         <br />
       </p>
@@ -4664,7 +5492,7 @@ export default function Form38_1({
         style={{
           position: 'absolute',
           right: '10pt',
-          bottom: '10pt',
+          bottom: '-2pt',
           width: '55pt',
           height: '20pt',
           backgroundColor: '#CD8D65',

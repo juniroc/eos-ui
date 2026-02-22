@@ -4,7 +4,7 @@ import ToastMessage from '@/components/ToastMessage';
 import VatPreviewModal from '@/components/VatPreviewModal';
 import VatSimplePreviewModal from '@/components/VatSimplePreviewModal';
 import { useAuth } from '@/contexts/AuthContext';
-import type { VatForm } from '@/services/vat';
+import type { VatFormData } from '@/services/api';
 import {
   deleteVatDocument,
   deleteVatForm,
@@ -12,6 +12,7 @@ import {
   getVatDocumentDownloadUrl,
   getVatReports,
   workOnVatReport,
+  type VatForm,
   type VatReport,
 } from '@/services/vat';
 import Image from 'next/image';
@@ -281,7 +282,7 @@ export default function VatStoredDocumentsPage() {
             // 모든 report의 행들을 미리 계산 - form 단위로 행 생성
             const allTableRows: Array<{
               report: VatReport;
-              row: { form?: VatForm };
+              row: { form?: VatFormData };
               reportRowIndex: number;
               globalRowIndex: number;
             }> = [];
@@ -501,7 +502,9 @@ export default function VatStoredDocumentsPage() {
                             return (
                               <div className="flex flex-col w-full h-full">
                                 {reportRows.map((reportRow, idx) => {
-                                  const docs = reportRow.row.form?.uploadedDocuments || [];
+                                  const docs =
+                                    (reportRow.row.form as VatForm | undefined)
+                                      ?.uploadedDocuments || [];
                                   const firstDoc = docs[0];
                                   return (
                                     <div

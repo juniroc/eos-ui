@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback, Suspense } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getVatReport,
   getVatReports,
   type VatReport,
-  type VatForm,
   type VatUploadedDocument,
 } from '@/services/vat';
 import FileUploadBox from '@/components/FileUploadBox';
@@ -38,7 +36,7 @@ function VatStoredDocumentsPreviewContent() {
   // 신고서 목록 조회
   const fetchAllReports = useCallback(async () => {
     if (!token) return;
-    
+
     try {
       const data = await getVatReports(token);
       setAllReports(data);
@@ -50,19 +48,25 @@ function VatStoredDocumentsPreviewContent() {
   // 신고서 상세 조회
   const fetchReport = useCallback(async () => {
     if (!token || !reportId) return;
-    
+
     try {
       setLoading(true);
       const data = await getVatReport(reportId, token);
       setReport(data);
       setSelectedFormId(data.forms?.[0]?.id || null);
       // 첫 번째 form의 uploadedDocuments를 기본으로 설정
-      if (data.forms && data.forms.length > 0 && data.forms[0].uploadedDocuments) {
+      if (
+        data.forms &&
+        data.forms.length > 0 &&
+        data.forms[0].uploadedDocuments
+      ) {
         setUploadedFiles(data.forms[0].uploadedDocuments);
       }
     } catch (error) {
       console.error('신고서 조회 실패:', error);
-      setToastMessage(error instanceof Error ? error.message : '신고서 조회에 실패했습니다.');
+      setToastMessage(
+        error instanceof Error ? error.message : '신고서 조회에 실패했습니다.'
+      );
       setShowToast(true);
     } finally {
       setLoading(false);
@@ -92,13 +96,13 @@ function VatStoredDocumentsPreviewContent() {
   // 파일 업로드
   const handleFileUpload = async (file: File) => {
     if (!token || !reportId || !selectedFormId) return;
-    
+
     try {
       setUploading(true);
       // TODO: 실제 파일 업로드 API 호출
       // const uploadedDoc = await uploadVatDocument(reportId, selectedFormId, file, token);
       // setUploadedFiles([...uploadedFiles, uploadedDoc]);
-      
+
       // 임시로 로컬 상태에 추가
       const newDoc: VatUploadedDocument = {
         id: `temp-${Date.now()}`,
@@ -109,7 +113,9 @@ function VatStoredDocumentsPreviewContent() {
       setShowToast(true);
     } catch (error) {
       console.error('파일 업로드 실패:', error);
-      setToastMessage(error instanceof Error ? error.message : '파일 업로드에 실패했습니다.');
+      setToastMessage(
+        error instanceof Error ? error.message : '파일 업로드에 실패했습니다.'
+      );
       setShowToast(true);
     } finally {
       setUploading(false);
@@ -198,30 +204,48 @@ function VatStoredDocumentsPreviewContent() {
               <span className="text-[11px] leading-[100%] text-[#1E1E1E]">
                 생성된 서류 리스트 ({report.forms?.length || 0})
               </span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6L8 10L12 6" stroke="#1E1E1E" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 6L8 10L12 6"
+                  stroke="#1E1E1E"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
-            
+
             {/* 서류 리스트 */}
             <div className="flex flex-col items-start w-full gap-1">
-              {report.forms?.map((form) => (
+              {report.forms?.map(form => (
                 <button
                   key={form.id}
                   onClick={() => handleFormSelect(form.id)}
                   className={`w-full text-left p-2 rounded ${
-                    selectedFormId === form.id ? 'bg-[#E6E6E6]' : 'bg-white hover:bg-[#F5F5F5]'
+                    selectedFormId === form.id
+                      ? 'bg-[#E6E6E6]'
+                      : 'bg-white hover:bg-[#F5F5F5]'
                   }`}
                 >
-                  <span className={`text-[11px] leading-[140%] ${
-                    selectedFormId === form.id ? 'text-[#1E1E1E]' : 'text-[#757575]'
-                  }`}>
+                  <span
+                    className={`text-[11px] leading-[140%] ${
+                      selectedFormId === form.id
+                        ? 'text-[#1E1E1E]'
+                        : 'text-[#757575]'
+                    }`}
+                  >
                     {form.name}
                   </span>
                 </button>
               ))}
             </div>
-            
+
             {/* 서류 서식 추가하기 버튼 */}
             <button
               onClick={handleAddForm}
@@ -240,17 +264,18 @@ function VatStoredDocumentsPreviewContent() {
                 자료 업로드
               </span>
               <span className="text-[10px] leading-[140%] text-[#757575]">
-                해당 서류와 관련된 내용이 있는 자료를 업로드하세요. Eos가 읽고 기록해 줍니다.
+                해당 서류와 관련된 내용이 있는 자료를 업로드하세요. Eos가 읽고
+                기록해 줍니다.
               </span>
             </div>
-            
+
             <FileUploadBox
               id="vat-document-upload"
               onFileUpload={handleFileUpload}
               loading={uploading}
               uploadText="파일을 선택하거나 여기로 드래그하세요."
             />
-            
+
             {/* 저장하기 버튼 */}
             <button
               onClick={() => {
@@ -263,12 +288,15 @@ function VatStoredDocumentsPreviewContent() {
                 저장하기
               </span>
             </button>
-            
+
             {/* 업로드된 파일 리스트 */}
             {uploadedFiles.length > 0 && (
               <div className="flex flex-col items-start w-full gap-2">
-                {uploadedFiles.map((doc) => (
-                  <div key={doc.id} className="flex flex-row items-center justify-between w-full p-2 bg-white rounded">
+                {uploadedFiles.map(doc => (
+                  <div
+                    key={doc.id}
+                    className="flex flex-row items-center justify-between w-full p-2 bg-white rounded"
+                  >
                     <span className="text-[11px] leading-[100%] text-[#1E1E1E] flex-1 truncate">
                       {doc.name}
                     </span>
@@ -277,17 +305,45 @@ function VatStoredDocumentsPreviewContent() {
                         onClick={() => handleFileDownload(doc.id)}
                         className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                       >
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 1V8M6 8L3 5M6 8L9 5" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M1 10H11" stroke="#1E1E1E" strokeWidth="1.5" strokeLinecap="round"/>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M6 1V8M6 8L3 5M6 8L9 5"
+                            stroke="#1E1E1E"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M1 10H11"
+                            stroke="#1E1E1E"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
                         </svg>
                       </button>
                       <button
                         onClick={() => handleFileDelete(doc.id)}
                         className="w-4 h-4 flex items-center justify-center hover:opacity-70"
                       >
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3 3L9 9M3 9L9 3" stroke="#FF0000" strokeWidth="1.5" strokeLinecap="round"/>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M3 3L9 9M3 9L9 3"
+                            stroke="#FF0000"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -304,13 +360,13 @@ function VatStoredDocumentsPreviewContent() {
           <div className="flex flex-col items-start w-full gap-2">
             <div className="flex flex-row items-center justify-between w-full">
               <span className="text-[14px] leading-[140%] text-[#1E1E1E] font-semibold">
-                서류 보기                
+                서류 보기
               </span>
               <span className="text-[11px] leading-[100%] text-[#757575]">
-                  납부할 세액(환급받을 세액): 000,000,000,000원
-                </span>
+                납부할 세액(환급받을 세액): 000,000,000,000원
+              </span>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="flex flex-row items-center gap-2">
               <button
@@ -343,7 +399,9 @@ function VatStoredDocumentsPreviewContent() {
           {/* Document Content Area */}
           <div className="flex flex-col items-center justify-center w-full flex-1 bg-white border border-[#D9D9D9] rounded">
             <p className="text-[11px] text-[#B3B3B3]">
-              {selectedForm ? `${selectedForm.name} 내용이 여기에 표시됩니다.` : '서류를 선택해주세요.'}
+              {selectedForm
+                ? `${selectedForm.name} 내용이 여기에 표시됩니다.`
+                : '서류를 선택해주세요.'}
             </p>
           </div>
         </div>
@@ -360,7 +418,15 @@ function VatStoredDocumentsPreviewContent() {
 
 export default function VatStoredDocumentsPreviewPage() {
   return (
-    <Suspense fallback={<div className="p-8"><div className="max-w-6xl mx-auto"><div className="text-center py-8">로딩 중...</div></div></div>}>
+    <Suspense
+      fallback={
+        <div className="p-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center py-8">로딩 중...</div>
+          </div>
+        </div>
+      }
+    >
       <VatStoredDocumentsPreviewContent />
     </Suspense>
   );

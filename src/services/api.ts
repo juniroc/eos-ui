@@ -1,8 +1,6 @@
 // API 서버 호스트
-import {
-  FormCode,
-  FormDataMap,
-} from '@/components/taxDocument/template/common/type';
+import { FormCode, FormDataMap, } from '@/components/taxDocument/template/common/type';
+import { VatUploadedDocument } from '@/services/vat';
 
 const API_BASE_URL = 'https://api.eosxai.com';
 
@@ -1893,6 +1891,7 @@ export type VatFormData = {
     data: FormDataMap[C];
     inputType: Record<string, unknown>;
     isAdded?: boolean;
+    uploadedDocuments?: VatUploadedDocument[];
   };
 }[FormCode];
 

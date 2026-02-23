@@ -3,7 +3,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
+import AvailableFormsModal from '@/components/documentCreate/AvailableFormsModal';
 import ToastMessage from '@/components/ToastMessage';
 import {
   completeVatForm,
@@ -172,7 +172,7 @@ function VatDocumentCreateContent() {
           file,
           token
         );
-        // @ts-ignore
+        // @ts-expect-error: 타입 에러 방지
         setSelectedDocument({ ...selectedDocument, data, inputType });
         setToastMessage('자료가 업로드됐어요!');
         setShowToast(true);
@@ -220,13 +220,11 @@ function VatDocumentCreateContent() {
   if (!reportId) {
     return (
       <div className="flex flex-col items-start py-4 gap-6 max-w-[1100px] w-full flex-1">
-        <p className="font-['Pretendard'] text-sm text-[#1E1E1E]">
-          서류 정보가 없습니다.
-        </p>
+        <p className="text-sm text-[#1E1E1E]">서류 정보가 없습니다.</p>
         <button
           type="button"
           onClick={() => router.push('/vat-document-create')}
-          className="font-['Pretendard'] font-medium text-[11px] text-[#F26522] border border-[#F26522] px-3 py-2"
+          className="font-medium text-[11px] text-[#F26522] border border-[#F26522] px-3 py-2"
         >
           부가세 서류 생성으로 돌아가기
         </button>
@@ -241,7 +239,7 @@ function VatDocumentCreateContent() {
     >
       {/* Title row */}
       <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-[51px] flex-none">
-        <h1 className="font-['Pretendard'] font-semibold text-[18px] leading-[140%] text-[#1E1E1E] w-[63px]">
+        <h1 className="font-semibold text-[18px] leading-[140%] text-[#1E1E1E] w-[63px]">
           부가세
         </h1>
         <div className="flex flex-row items-start gap-2.5">
@@ -255,7 +253,7 @@ function VatDocumentCreateContent() {
               width={12}
               height={12}
             />
-            <span className="font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F26522]">
+            <span className="font-medium text-[11px] leading-[100%] text-[#F26522]">
               자료 업로드
             </span>
           </label>
@@ -273,14 +271,14 @@ function VatDocumentCreateContent() {
         {/* 서류리스트 - 200px */}
         <div className="flex flex-col items-start gap-4 w-[200px] flex-none">
           <div className="flex flex-col justify-center items-start w-full gap-4 flex-none">
-            <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-[51px]">
-              <div className="flex flex-row justify-between items-center gap-1 flex-1">
+            <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-5">
+              <div className="flex flex-row items-center gap-1 flex-1">
                 <div className="flex flex-row items-center gap-1">
-                  <span className="font-['Pretendard'] font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
+                  <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
                     생성된 서류 리스트
                   </span>
                 </div>
-                <span className="font-['Pretendard'] font-semibold text-[14px] leading-[140%] text-[#1E1E1E] w-5">
+                <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
                   ({documentList.length})
                 </span>
               </div>
@@ -314,7 +312,7 @@ function VatDocumentCreateContent() {
                   onClick={handleOpenSidePanel}
                   className="flex flex-row justify-center items-center py-2 px-3 gap-2 w-full h-[27px] bg-[#2C2C2C] flex-none  mt-4"
                 >
-                  <span className="font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F5F5F5]">
+                  <span className="font-medium text-[11px] leading-[100%] text-[#F5F5F5]">
                     서류 서식 추가하기
                   </span>
                 </button>
@@ -326,20 +324,20 @@ function VatDocumentCreateContent() {
         {/* 서식보기 - 미리보기 영역 최대 너비/높이 + 하단 버튼 그룹 */}
         <div className="flex flex-col items-stretch gap-4 flex-1 min-w-0 min-h-0 w-full overflow-hidden">
           <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-[51px] flex-none">
-            <span className="font-['Pretendard'] font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
+            <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
               서류보기
             </span>
             {/* 미리보기·파일변환 버튼 그룹: 136×27, gap 10px */}
             <div className="flex flex-row items-start p-0 gap-[10px] w-[136px] h-[27px] flex-none grow-0">
               <button
                 type="button"
-                className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
               >
                 미리보기
               </button>
               <button
                 type="button"
-                className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#2C2C2C] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F5F5F5]"
+                className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#2C2C2C] font-medium text-[11px] leading-[100%] text-[#F5F5F5]"
               >
                 파일변환
               </button>
@@ -377,14 +375,14 @@ function VatDocumentCreateContent() {
             <div className="flex flex-row justify-between items-start p-0 gap-[10px] h-[27px] flex-none">
               <button
                 type="button"
-                className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
                 onClick={handleCompleteReport}
               >
                 작업완료
               </button>
               <button
                 type="button"
-                className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
                 onClick={handleCompleteForm}
               >
                 반영하기
@@ -394,7 +392,7 @@ function VatDocumentCreateContent() {
         </div>
       </div>
 
-      <AvailableFormsSidebar
+      <AvailableFormsModal
         isOpen={showSidePanel}
         onClose={() => setShowSidePanel(false)}
         reportId={reportId}
@@ -443,7 +441,7 @@ const DocListItem = memo(function DocListItem({
       onClick={onSelect}
     >
       <span
-        className={`font-['Pretendard'] font-medium text-[11px] leading-[100%] flex-1 ${
+        className={`font-medium text-[11px] leading-[100%] flex-1 ${
           isSelected ? 'text-[#1E1E1E]' : 'text-[#757575]'
         }`}
       >

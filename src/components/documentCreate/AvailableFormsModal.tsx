@@ -10,19 +10,19 @@ import {
 } from '@/services/api';
 import Image from 'next/image';
 
-interface AvailableFormsSidebarProps {
+interface AvailableFormsModalProps {
   isOpen: boolean;
   onClose: () => void;
   reportId?: string;
   onFormsAdded?: (forms: Array<VatFormData>) => void;
 }
 
-function AvailableFormsSidebar({
+function AvailableFormsModal({
   isOpen,
   onClose,
   reportId,
   onFormsAdded,
-}: AvailableFormsSidebarProps) {
+}: AvailableFormsModalProps) {
   const { token } = useAuth();
   const [availableForms, setAvailableForms] = useState<AvailableForm[]>([]);
   const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set());
@@ -178,7 +178,7 @@ function AvailableFormsSidebar({
       >
         {/* top */}
         <div className="w-full h-10 flex items-center justify-between p-3">
-          <div className="flex items-center gap-1 text-[11px] leading-[140%] font-['Pretendard'] min-w-0">
+          <div className="flex items-center gap-1 text-[11px] leading-[140%] min-w-0">
             <span className="text-[#B3B3B3]">부가세</span>
             <span className="text-[#B3B3B3]">{'>'}</span>
             <span className="text-[#B3B3B3]">서류정보</span>
@@ -219,7 +219,7 @@ function AvailableFormsSidebar({
                       if (e.key === 'Enter') setAppliedKeyword(searchKeyword);
                     }}
                     placeholder="검색어를 입력해 주세요"
-                    className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] outline-none placeholder:text-[#B3B3B3]"
+                    className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium outline-none placeholder:text-[#B3B3B3]"
                   />
                   <svg
                     width="16"
@@ -246,7 +246,7 @@ function AvailableFormsSidebar({
                 <button
                   type="button"
                   onClick={() => setAppliedKeyword(searchKeyword)}
-                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[44px] h-[27px] bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none"
+                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[44px] h-[27px] bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none"
                 >
                   검색
                 </button>
@@ -257,7 +257,7 @@ function AvailableFormsSidebar({
                   type="button"
                   onClick={handleAddForms}
                   disabled={selectedForms.size === 0 || isAdding}
-                  className={`h-[27px] px-3 text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
+                  className={`h-[27px] px-3 text-[11px] leading-[100%] font-medium ${
                     selectedForms.size > 0 && !isAdding
                       ? 'bg-[#2C2C2C] text-[#F5F5F5]'
                       : 'bg-[#F3F3F3] text-[#A1A1A1]'
@@ -344,10 +344,10 @@ function AvailableFormsSidebar({
 
                       return (
                         <tr key={form.formCode} className="h-10 bg-white group">
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.formNumber}
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle">
                             <div className="flex items-center gap-1 min-w-0">
                               <span className="flex-1 min-w-0 truncate underline">
                                 {form.name}
@@ -368,10 +368,10 @@ function AvailableFormsSidebar({
                               </div>
                             </div>
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.description}
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.requiredWhen}
                           </td>
                           <td className="h-10 border-r border-b border-[#D9D9D9] text-center">
@@ -412,32 +412,9 @@ function AvailableFormsSidebar({
             </div>
           </div>
         </div>
-
-        {/* 하단 버튼 */}
-        <div className="flex flex-row justify-end items-center gap-2 w-full h-[27px] flex-shrink-0">
-          <button
-            onClick={handleAddForms}
-            disabled={selectedForms.size === 0 || isAdding}
-            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${
-              selectedForms.size > 0 && !isAdding
-                ? 'bg-[#2C2C2C] cursor-pointer'
-                : 'bg-[#E6E6E6] cursor-not-allowed'
-            }`}
-          >
-            <span
-              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
-                selectedForms.size > 0 && !isAdding
-                  ? 'text-[#F5F5F5]'
-                  : 'text-[#B3B3B3]'
-              }`}
-            >
-              {isAdding ? '추가중...' : '서식 추가하기'}
-            </span>
-          </button>
-        </div>
       </div>
     </div>
   );
 }
 
-export default AvailableFormsSidebar;
+export default AvailableFormsModal;

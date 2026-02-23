@@ -103,7 +103,10 @@ function VatDocumentCreateContent() {
           isSelected={selectedDocument === doc.id}
           isDeleting={isDeleting === doc.id}
           onSelect={() => setSelectedDocument(doc.id)}
-          onRemove={e => { e.stopPropagation(); setPendingDeleteId(doc.id); }}
+          onRemove={e => {
+            e.stopPropagation();
+            setPendingDeleteId(doc.id);
+          }}
         />
       )),
     [documentList, selectedDocument, isDeleting, handleRemoveAddedForm]
@@ -112,9 +115,7 @@ function VatDocumentCreateContent() {
   if (!reportId) {
     return (
       <div className="flex flex-col items-start py-4 gap-6 max-w-[1100px] w-full flex-1">
-        <p className="text-sm text-[#1E1E1E]">
-          서류 정보가 없습니다.
-        </p>
+        <p className="text-sm text-[#1E1E1E]">서류 정보가 없습니다.</p>
         <button
           type="button"
           onClick={() => router.push('/vat-document-create')}
@@ -159,14 +160,14 @@ function VatDocumentCreateContent() {
         {/* 서류리스트 - 200px */}
         <div className="flex flex-col items-start gap-4 w-[200px] flex-none">
           <div className="flex flex-col justify-center items-start w-full gap-4 flex-none">
-            <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-[51px]">
-              <div className="flex flex-row justify-between items-center gap-1 flex-1">
+            <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-5">
+              <div className="flex flex-row items-center gap-1 flex-1">
                 <div className="flex flex-row items-center gap-1">
                   <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
                     생성된 서류 리스트
                   </span>
                 </div>
-                <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E] w-5">
+                <span className="font-semibold text-[14px] leading-[140%] text-[#1E1E1E]">
                   ({documentList.length})
                 </span>
               </div>

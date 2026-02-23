@@ -269,7 +269,7 @@ export default function VatDocumentCreatePage() {
           style={{
             width: 1068,
             minWidth: 1068,
-            gridTemplateColumns: '692px 360px',
+            gridTemplateColumns: '1fr 360px',
           }}
         >
           {/* 액션 그룹: 전체 너비(1 / -1) → 회사인감 영역 위까지 확장 */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -9,6 +9,7 @@ import {
   VatFormData,
 } from '@/services/api';
 import Image from 'next/image';
+import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
 
 interface AvailableFormsModalProps {
   isOpen: boolean;
@@ -31,6 +32,22 @@ function AvailableFormsModal({
   const [searchKeyword, setSearchKeyword] = useState('');
   const [appliedKeyword, setAppliedKeyword] = useState('');
   const [previewForm, setPreviewForm] = useState<AvailableForm | null>(null);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  // 서식 미리보기 HTML 로딩
+  const handlePreview = useCallback(async (form: AvailableForm) => {
+    setPreviewForm(form);
+    setPreviewLoading(true);
+    const html = await loadFormHtml(form.formCode);
+    setPreviewHtml(html);
+    setPreviewLoading(false);
+  }, []);
+
+  const handleClosePreview = useCallback(() => {
+    setPreviewForm(null);
+    setPreviewHtml(null);
+  }, []);
 
   // 서식 목록 조회
   useEffect(() => {
@@ -358,7 +375,7 @@ function AvailableFormsModal({
                                   type="button"
                                   onClick={e => {
                                     e.stopPropagation();
-                                    setPreviewForm(form);
+                                    handlePreview(form);
                                   }}
                                   className="cursor-pointer"
                                   aria-label={`${form.name} 미리보기`}
@@ -444,7 +461,7 @@ function AvailableFormsModal({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setPreviewForm(null)}
+                  onClick={handleClosePreview}
                   className="w-4 h-4 flex items-center justify-center flex-none"
                   aria-label="미리보기 닫기"
                 >
@@ -474,9 +491,24 @@ function AvailableFormsModal({
 
             {/* Content Box */}
             <div className="w-[624px] flex-1 border border-[#D9D9D9] overflow-auto">
-              <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575] font-['Pretendard']">
-                서식 미리보기 영역
-              </div>
+              {previewLoading && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  로딩 중...
+                </div>
+              )}
+              {!previewLoading && previewHtml && (
+                <iframe
+                  srcDoc={previewHtml}
+                  className="w-full h-full border-none"
+                  title={`${previewForm?.name} 미리보기`}
+                  sandbox="allow-same-origin"
+                />
+              )}
+              {!previewLoading && !previewHtml && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  미리보기를 지원하지 않는 서식입니다.
+                </div>
+              )}
             </div>
           </div>
         )}

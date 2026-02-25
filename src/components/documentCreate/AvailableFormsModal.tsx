@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -9,6 +9,7 @@ import {
   VatFormData,
 } from '@/services/api';
 import Image from 'next/image';
+import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
 
 interface AvailableFormsModalProps {
   isOpen: boolean;
@@ -30,6 +31,23 @@ function AvailableFormsModal({
   const [isAdding, setIsAdding] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [appliedKeyword, setAppliedKeyword] = useState('');
+  const [previewForm, setPreviewForm] = useState<AvailableForm | null>(null);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  // 서식 미리보기 HTML 로딩
+  const handlePreview = useCallback(async (form: AvailableForm) => {
+    setPreviewForm(form);
+    setPreviewLoading(true);
+    const html = await loadFormHtml(form.formCode);
+    setPreviewHtml(html);
+    setPreviewLoading(false);
+  }, []);
+
+  const handleClosePreview = useCallback(() => {
+    setPreviewForm(null);
+    setPreviewHtml(null);
+  }, []);
 
   // 서식 목록 조회
   useEffect(() => {
@@ -173,7 +191,7 @@ function AvailableFormsModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[1176px] h-[min(800px,calc(100vh-48px))] bg-white shadow-[0px_24px_48px_-12px_rgba(15,23,42,0.28)] flex flex-col overflow-hidden"
+        className="relative w-full max-w-[1176px] h-[min(800px,calc(100vh-48px))] bg-white shadow-[0px_24px_48px_-12px_rgba(15,23,42,0.28)] flex flex-col overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* top */}
@@ -352,18 +370,29 @@ function AvailableFormsModal({
                               <span className="flex-1 min-w-0 truncate underline">
                                 {form.name}
                               </span>
-                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100 cursor-pointer">
-                                <Image
-                                  src="/icons/search.svg"
-                                  alt="검색"
-                                  width={16}
-                                  height={16}
-                                />
+                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100">
+                                <button
+                                  type="button"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handlePreview(form);
+                                  }}
+                                  className="cursor-pointer"
+                                  aria-label={`${form.name} 미리보기`}
+                                >
+                                  <Image
+                                    src="/icons/search.svg"
+                                    alt="미리보기"
+                                    width={16}
+                                    height={16}
+                                  />
+                                </button>
                                 <Image
                                   src="/icons/upload.svg"
                                   alt="내보내기"
                                   width={16}
                                   height={16}
+                                  className="cursor-pointer"
                                 />
                               </div>
                             </div>
@@ -412,6 +441,77 @@ function AvailableFormsModal({
             </div>
           </div>
         </div>
+
+        {/* 서식 미리보기 오버레이 패널 */}
+        {previewForm && (
+          <div
+            className="absolute right-0 top-0 w-[656px] h-full max-h-[800px] bg-white flex flex-col items-center p-4 gap-4 z-10"
+            style={{
+              boxShadow:
+                '0px 8px 20px rgba(0, 0, 0, 0.06), 0px 24px 60px rgba(0, 0, 0, 0.12), 0px 32px 64px -12px rgba(0, 0, 0, 0.14)',
+            }}
+          >
+            {/* Title */}
+            <div className="w-[624px] h-7 min-h-[28px] flex items-center">
+              <div className="w-[624px] h-5 flex items-center justify-between">
+                <div className="flex">
+                  <span className="text-sm font-semibold leading-[140%] text-[#1E1E1E]">
+                    서식 미리보기
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleClosePreview}
+                  className="w-4 h-4 flex items-center justify-center flex-none"
+                  aria-label="미리보기 닫기"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 4L12 12"
+                      stroke="#767676"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M12 4L4 12"
+                      stroke="#767676"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content Box */}
+            <div className="w-[624px] flex-1 border border-[#D9D9D9] overflow-auto">
+              {previewLoading && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  로딩 중...
+                </div>
+              )}
+              {!previewLoading && previewHtml && (
+                <iframe
+                  srcDoc={previewHtml}
+                  className="w-full h-full border-none"
+                  title={`${previewForm?.name} 미리보기`}
+                  sandbox="allow-same-origin"
+                />
+              )}
+              {!previewLoading && !previewHtml && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  미리보기를 지원하지 않는 서식입니다.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,0 +1,3 @@
+export const FORM_47_1_SALES_ITEM_MAX_LENGTH = 13;
+
+export const FORM_47_2_SALES_ITEM_MAX_LENGTH = 13;

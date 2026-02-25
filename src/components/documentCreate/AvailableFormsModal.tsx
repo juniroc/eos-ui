@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  getAvailableForms,
   addFormsToReport,
   type AvailableForm,
+  getAvailableForms,
+  VatFormData,
 } from '@/services/api';
 import Image from 'next/image';
 
@@ -13,7 +14,7 @@ interface AvailableFormsModalProps {
   isOpen: boolean;
   onClose: () => void;
   reportId?: string;
-  onFormsAdded?: (forms: Array<{ id: string; name: string }>) => void;
+  onFormsAdded?: (forms: Array<VatFormData>) => void;
 }
 
 function AvailableFormsModal({
@@ -104,8 +105,8 @@ function AvailableFormsModal({
 
   // 전체 선택 여부 확인
   const isAllSelected =
-    filteredForms.length > 0 &&
-    filteredForms.every(form => selectedForms.has(form.formCode));
+    availableForms.length > 0 &&
+    availableForms.every(form => selectedForms.has(form.formCode));
 
   // 전체 선택/해제 토글
   const handleToggleAll = () => {
@@ -143,10 +144,13 @@ function AvailableFormsModal({
           .filter((form: { formCode: string }) =>
             formCodes.includes(form.formCode)
           )
-          .map((form: { id: string; name: string }) => ({
-            id: form.id,
-            name: form.name,
-          }));
+          .map(
+            (form: any) =>
+              ({
+                ...form,
+                ...form.data,
+              }) as VatFormData
+          );
         onFormsAdded(addedForms);
       }
 

@@ -1,26 +1,33 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, memo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AvailableFormsModal from '@/components/documentCreate/AvailableFormsModal';
 import ToastMessage from '@/components/ToastMessage';
-import ConfirmModal from '@/components/ConfirmModal';
-import { deleteVatForm } from '@/services/api';
+import {
+  completeVatForm,
+  completeVatReport,
+  deleteVatForm,
+  uploadVatFormFile,
+  VatFormData,
+} from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import ConfirmModal from '@/components/ConfirmModal';
+import TaxDocument from '@/components/taxDocument/TaxDocument';
+import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
+import {
+  convertToApiData,
+  getOrientation,
+} from '@/components/taxDocument/template/common/utils/formUitls';
+import { FormCode } from '@/components/taxDocument/template/common/type';
+import { getVatReport } from '@/services/vat';
 
 interface DocumentItem {
   id: string;
   name: string;
   isAdded?: boolean;
 }
-
-const DEFAULT_DOCUMENT_LIST: DocumentItem[] = [
-  { id: '1', name: '일반과세자 부가가치세 신고서' },
-  { id: '2', name: '매출처별 세금계산서 합계표' },
-  { id: '3', name: '매입처별 세금계산서 합계표' },
-  { id: '4', name: '신용카드 매출전표 등 수령 명세서' },
-];
 
 function VatDocumentCreateContent() {
   const params = useParams();
@@ -29,11 +36,9 @@ function VatDocumentCreateContent() {
     typeof params.reportId === 'string' ? params.reportId : undefined;
   const { token } = useAuth();
 
-  const [documentList, setDocumentList] = useState<DocumentItem[]>(
-    DEFAULT_DOCUMENT_LIST
-  );
-  const [selectedDocument, setSelectedDocument] = useState<string | null>(
-    DEFAULT_DOCUMENT_LIST[0]?.id ?? null
+  const [documentList, setDocumentList] = useState<VatFormData[]>([]);
+  const [selectedDocument, setSelectedDocument] = useState<VatFormData | null>(
+    null
   );
   const [isListOpen, setIsListOpen] = useState(true);
   const [showSidePanel, setShowSidePanel] = useState(false);
@@ -50,15 +55,12 @@ function VatDocumentCreateContent() {
     setShowSidePanel(true);
   }, [reportId]);
 
-  const handleFormsAdded = useCallback(
-    (addedForms: Array<{ id: string; name: string }>) => {
-      const newForms = addedForms.map(form => ({ ...form, isAdded: true }));
-      setDocumentList(prev => [...prev, ...newForms]);
-      setToastMessage('서류 서식이 추가됐어요!');
-      setShowToast(true);
-    },
-    []
-  );
+  const handleFormsAdded = useCallback((addedForms: Array<VatFormData>) => {
+    const newForms = addedForms.map(form => ({ ...form, isAdded: true }));
+    setDocumentList(prev => [...prev, ...newForms]);
+    setToastMessage('서류 서식이 추가됐어요!');
+    setShowToast(true);
+  }, []);
 
   const handleRemoveAddedForm = useCallback(
     async (formId: string) => {
@@ -70,9 +72,9 @@ function VatDocumentCreateContent() {
         setIsDeleting(formId);
         await deleteVatForm(formId, token);
         setDocumentList(prev => prev.filter(doc => doc.id !== formId));
-        if (selectedDocument === formId) {
+        if (selectedDocument?.id === formId) {
           setSelectedDocument(
-            documentList.find(doc => doc.id !== formId)?.id ?? null
+            documentList.find(doc => doc.id !== formId) ?? null
           );
         }
         setToastMessage('서류가 삭제됐어요!');
@@ -89,10 +91,109 @@ function VatDocumentCreateContent() {
     [token, selectedDocument, documentList]
   );
 
-  const selectedDocumentItem = useMemo(
-    () => documentList.find(doc => doc.id === selectedDocument) ?? null,
-    [documentList, selectedDocument]
+  const handleDocumentUpdate = (field: string, value: unknown) => {
+    if (!selectedDocument) return;
+
+    const nextDocument = {
+      ...selectedDocument,
+      data: {
+        ...selectedDocument.data,
+        [field]: value,
+      },
+    } as VatFormData;
+
+    setSelectedDocument(nextDocument);
+  };
+
+  const getDocumentList = useCallback(async () => {
+    if (!reportId) return;
+    if (!token) return;
+
+    const { forms } = await getVatReport(reportId, token);
+    setDocumentList(forms);
+  }, [reportId, token]);
+
+  const handleCompleteForm = async () => {
+    try {
+      if (!selectedDocument) return;
+      const { id, data, inputType } = convertToApiData(selectedDocument);
+      await completeVatForm(id, { data, inputType }, token!);
+      const { forms } = await getVatReport(reportId!, token!);
+      setDocumentList(forms);
+
+      setToastMessage('서류가 저장됐어요!');
+      setShowToast(true);
+    } catch (error) {
+      console.error('서식 저장 에러:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : '서식 저장에 실패했습니다.';
+      alert(errorMessage);
+    }
+  };
+
+  const handleCompleteReport = async () => {
+    try {
+      if (!reportId) return;
+      // 완료 API 호출
+      await completeVatReport(reportId, token!);
+      // 토스트 메시지 표시
+      setToastMessage('서류 작성이 완료되었습니다!');
+      setShowToast(true);
+    } catch (error) {
+      console.error('서류 작성 완료 에러:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '서류 작성 완료에 실패했습니다.';
+      alert(errorMessage);
+    }
+  };
+
+  const handleUploadFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!selectedDocument) {
+        alert('업로드할 서류를 선택해주세요.');
+        return;
+      }
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+      if (!selectedDocument) {
+        alert('업로드할 서류를 선택해주세요.');
+        return;
+      }
+
+      try {
+        const { data, inputType } = await uploadVatFormFile(
+          selectedDocument.id,
+          file,
+          token
+        );
+        // @ts-expect-error: 타입 에러 방지
+        setSelectedDocument({ ...selectedDocument, data, inputType });
+        setToastMessage('자료가 업로드됐어요!');
+        setShowToast(true);
+      } catch (error) {
+        console.error('자료 업로드 에러:', error);
+        const message =
+          error instanceof Error
+            ? error.message
+            : '자료 업로드에 실패했습니다.';
+        alert(message);
+      } finally {
+        event.target.value = '';
+      }
+    },
+    [token, selectedDocument, reportId]
   );
+
+  const previewOrientation = getOrientation(
+    selectedDocument?.formCode as FormCode
+  );
+  const previewFrameWidth = 884;
 
   const docListItems = useMemo(
     () =>
@@ -100,9 +201,9 @@ function VatDocumentCreateContent() {
         <DocListItem
           key={doc.id}
           doc={doc}
-          isSelected={selectedDocument === doc.id}
+          isSelected={selectedDocument?.id === doc.id}
           isDeleting={isDeleting === doc.id}
-          onSelect={() => setSelectedDocument(doc.id)}
+          onSelect={() => setSelectedDocument(doc)}
           onRemove={e => {
             e.stopPropagation();
             setPendingDeleteId(doc.id);
@@ -111,6 +212,10 @@ function VatDocumentCreateContent() {
       )),
     [documentList, selectedDocument, isDeleting, handleRemoveAddedForm]
   );
+
+  useEffect(() => {
+    getDocumentList();
+  }, [getDocumentList]);
 
   if (!reportId) {
     return (
@@ -138,9 +243,9 @@ function VatDocumentCreateContent() {
           부가세
         </h1>
         <div className="flex flex-row items-start gap-2.5">
-          <button
-            type="button"
-            className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-white border border-[#F26522]"
+          <label
+            htmlFor="vat-document-upload"
+            className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-white border border-[#F26522] cursor-pointer"
           >
             <Image
               src="/icons/upload_orange.svg"
@@ -151,7 +256,13 @@ function VatDocumentCreateContent() {
             <span className="font-medium text-[11px] leading-[100%] text-[#F26522]">
               자료 업로드
             </span>
-          </button>
+          </label>
+          <input
+            id="vat-document-upload"
+            type="file"
+            className="hidden"
+            onChange={handleUploadFile}
+          />
         </div>
       </div>
 
@@ -235,22 +346,44 @@ function VatDocumentCreateContent() {
 
           {/* 서류 미리보기 프레임 - 내용 없어도 가용 영역 꽉 채움 */}
           <div className="flex flex-col items-stretch w-full flex-1 min-h-0 min-w-0 bg-white overflow-hidden gap-4">
-            <div className="flex-1 min-h-0 min-w-0 overflow-auto p-4 box-border border border-[#D9D9D9]">
-              <p className="text-sm text-[#1E1E1E]">
-                {selectedDocumentItem?.name ?? '서류를 선택해 주세요'}
-              </p>
+            <div className="flex-1 min-h-0 min-w-0 p-[1px] overflow-y-auto overflow-x-hidden box-border border border-[#D9D9D9]">
+              {selectedDocument && (
+                <div
+                  className="mx-auto"
+                  style={{
+                    width: previewFrameWidth,
+                    minWidth: previewFrameWidth,
+                    maxWidth: previewFrameWidth,
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <PreviewWrapper
+                    orientation={previewOrientation}
+                    maxWidth={882}
+                  >
+                    <TaxDocument
+                      formCode={selectedDocument.formCode}
+                      data={selectedDocument.data}
+                      inputType={selectedDocument.inputType}
+                      updater={handleDocumentUpdate}
+                    />
+                  </PreviewWrapper>
+                </div>
+              )}
             </div>
             {/* button group - 작업완료, 반영하기 (스펙: 852×27, space-between) */}
             <div className="flex flex-row justify-between items-start p-0 gap-[10px] h-[27px] flex-none">
               <button
                 type="button"
                 className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                onClick={handleCompleteReport}
               >
                 작업완료
               </button>
               <button
                 type="button"
                 className="flex flex-row justify-center items-center py-2 px-3 gap-2 h-[27px] w-[63px] flex-none bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                onClick={handleCompleteForm}
               >
                 반영하기
               </button>

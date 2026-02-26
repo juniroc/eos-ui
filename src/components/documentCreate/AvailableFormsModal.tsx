@@ -1,12 +1,6 @@
 'use client';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -40,9 +34,6 @@ function AvailableFormsModal({
   const [previewForm, setPreviewForm] = useState<AvailableForm | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
-  const [iframeScale, setIframeScale] = useState(1);
-  const previewContainerRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // 서식 미리보기 HTML 로딩
   const handlePreview = useCallback(async (form: AvailableForm) => {
@@ -499,10 +490,7 @@ function AvailableFormsModal({
             </div>
 
             {/* Content Box */}
-            <div
-              ref={previewContainerRef}
-              className="w-[624px] flex-1 border border-[#D9D9D9] overflow-hidden relative"
-            >
+            <div className="w-[624px] flex-1 border border-[#D9D9D9] overflow-y-auto">
               {previewLoading && (
                 <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
                   로딩 중...
@@ -510,35 +498,10 @@ function AvailableFormsModal({
               )}
               {!previewLoading && previewHtml && (
                 <iframe
-                  ref={iframeRef}
-                  srcDoc={previewHtml}
-                  className="border-none origin-top-left absolute top-0 left-0"
-                  style={{
-                    width: `${624 / iframeScale}px`,
-                    height: `${100 / iframeScale}%`,
-                    transform: `scale(${iframeScale})`,
-                  }}
+                  srcDoc={`<style>html{zoom:0.75;overflow-x:hidden;}</style>${previewHtml}`}
+                  className="w-full h-full border-none"
                   title={`${previewForm?.name} 미리보기`}
                   sandbox="allow-same-origin"
-                  scrolling="no"
-                  onLoad={() => {
-                    const iframe = iframeRef.current;
-                    const container = previewContainerRef.current;
-                    if (!iframe?.contentDocument?.body || !container) return;
-
-                    const contentWidth =
-                      iframe.contentDocument.body.scrollWidth;
-                    const contentHeight =
-                      iframe.contentDocument.body.scrollHeight;
-                    const containerWidth = container.clientWidth;
-                    const containerHeight = container.clientHeight;
-
-                    const scale = Math.min(
-                      containerWidth / contentWidth,
-                      containerHeight / contentHeight
-                    );
-                    setIframeScale(scale);
-                  }}
                 />
               )}
               {!previewLoading && !previewHtml && (

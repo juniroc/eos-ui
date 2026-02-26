@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -34,6 +40,7 @@ function AvailableFormsModal({
   const [previewForm, setPreviewForm] = useState<AvailableForm | null>(null);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // 서식 미리보기 HTML 로딩
   const handlePreview = useCallback(async (form: AvailableForm) => {
@@ -498,10 +505,23 @@ function AvailableFormsModal({
               )}
               {!previewLoading && previewHtml && (
                 <iframe
-                  srcDoc={`<style>html{zoom:0.75;overflow-x:hidden;}</style>${previewHtml}`}
+                  ref={iframeRef}
+                  srcDoc={`<style>html{overflow-x:hidden;}</style>${previewHtml}`}
                   className="w-full h-full border-none"
                   title={`${previewForm?.name} 미리보기`}
                   sandbox="allow-same-origin"
+                  onLoad={() => {
+                    const iframe = iframeRef.current;
+                    if (!iframe?.contentDocument?.body) return;
+                    const contentWidth =
+                      iframe.contentDocument.body.scrollWidth;
+                    const containerWidth = iframe.clientWidth;
+                    if (contentWidth > containerWidth) {
+                      const zoom = containerWidth / contentWidth;
+                      iframe.contentDocument.documentElement.style.zoom =
+                        String(zoom);
+                    }
+                  }}
                 />
               )}
               {!previewLoading && !previewHtml && (

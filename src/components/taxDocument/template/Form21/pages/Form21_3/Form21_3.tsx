@@ -20,7 +20,7 @@ export default function Form21_3(props: Props) {
     updater(field, { ...current, [key]: value } as Form21Data[K]);
   };
   const getDigits = (value: string | undefined, length: number) =>
-    Array.from({ length }, (_, i) => value?.[i] ?? '');
+    Array.from({ length }, (_, i) => digitsOnly(value ?? '')[i] ?? '');
   const updateDigit = (
     value: string | undefined,
     length: number,
@@ -31,6 +31,11 @@ export default function Form21_3(props: Props) {
     const digits = getDigits(value, length);
     digits[index] = digitsOnly(nextDigit).slice(-1);
     onChange(digits.join(''));
+  };
+  const formatBizNumber = (value: string) => {
+    if (value.length <= 3) return value;
+    if (value.length <= 5) return `${value.slice(0, 3)}-${value.slice(3)}`;
+    return `${value.slice(0, 3)}-${value.slice(3, 5)}-${value.slice(5, 10)}`;
   };
   const bizNumberDigits = getDigits(props.bizNumber, 10);
   const getCodeDigits = (value?: string) =>
@@ -117,7 +122,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 0, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -152,7 +157,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 1, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -187,7 +192,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 2, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -232,7 +237,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 3, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -267,7 +272,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 4, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -312,7 +317,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 5, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -347,7 +352,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 6, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -382,7 +387,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 7, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -417,7 +422,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 8, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />
@@ -452,7 +457,7 @@ export default function Form21_3(props: Props) {
               inputType={inputType?.bizNumber}
               onChange={value =>
                 updateDigit(props.bizNumber, 10, 9, value, value =>
-                  updater('bizNumber', value)
+                  updater('bizNumber', formatBizNumber(value))
                 )
               }
             />

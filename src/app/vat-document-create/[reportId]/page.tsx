@@ -5,23 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 import ToastMessage from '@/components/ToastMessage';
-import {
-  completeVatForm,
-  completeVatReport,
-  deleteVatForm,
-  uploadVatFormFile,
-  VatFormData,
-} from '@/services/api';
+import { completeVatForm, completeVatReport, deleteVatForm, VatFormData, } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import ConfirmModal from '@/components/ConfirmModal';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
-import {
-  convertToApiData,
-  getOrientation,
-} from '@/components/taxDocument/template/common/utils/formUitls';
+import { convertToApiData, getOrientation, } from '@/components/taxDocument/template/common/utils/formUitls';
 import { FormCode } from '@/components/taxDocument/template/common/type';
 import { getVatReport } from '@/services/vat';
+import FileUpload from '@/components/documentCreate/FileUpload';
 
 interface DocumentItem {
   id: string;
@@ -150,44 +142,18 @@ function VatDocumentCreateContent() {
   };
 
   const handleUploadFile = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      if (!selectedDocument) {
-        alert('업로드할 서류를 선택해주세요.');
-        return;
-      }
-      if (!token) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-      if (!selectedDocument) {
-        alert('업로드할 서류를 선택해주세요.');
-        return;
-      }
-
-      try {
-        const { data, inputType } = await uploadVatFormFile(
-          selectedDocument.id,
-          file,
-          token
-        );
+    async ({ data, inputType, uploadedDocuments }: VatFormData) => {
+      setSelectedDocument({
+        ...selectedDocument,
         // @ts-ignore
-        setSelectedDocument({ ...selectedDocument, data, inputType });
-        setToastMessage('자료가 업로드됐어요!');
-        setShowToast(true);
-      } catch (error) {
-        console.error('자료 업로드 에러:', error);
-        const message =
-          error instanceof Error
-            ? error.message
-            : '자료 업로드에 실패했습니다.';
-        alert(message);
-      } finally {
-        event.target.value = '';
-      }
+        data,
+        inputType,
+        uploadedDocuments,
+      });
+      setToastMessage('자료가 업로드됐어요!');
+      setShowToast(true);
     },
-    [token, selectedDocument, reportId]
+    [selectedDocument]
   );
 
   const previewOrientation = getOrientation(
@@ -210,7 +176,7 @@ function VatDocumentCreateContent() {
           }}
         />
       )),
-    [documentList, selectedDocument, isDeleting, handleRemoveAddedForm]
+    [documentList, selectedDocument, isDeleting]
   );
 
   useEffect(() => {
@@ -240,33 +206,11 @@ function VatDocumentCreateContent() {
       style={{ minHeight: 'calc(100vh - 120px)' }}
     >
       {/* Title row */}
-      <div className="flex flex-row justify-between items-center w-full min-h-[28px] gap-[51px] flex-none">
-        <h1 className="font-['Pretendard'] font-semibold text-[18px] leading-[140%] text-[#1E1E1E] w-[63px]">
-          부가세
-        </h1>
-        <div className="flex flex-row items-start gap-2.5">
-          <label
-            htmlFor="vat-document-upload"
-            className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 h-7 bg-white border border-[#F26522] cursor-pointer"
-          >
-            <Image
-              src="/icons/upload_orange.svg"
-              alt="upload"
-              width={12}
-              height={12}
-            />
-            <span className="font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F26522]">
-              자료 업로드
-            </span>
-          </label>
-          <input
-            id="vat-document-upload"
-            type="file"
-            className="hidden"
-            onChange={handleUploadFile}
-          />
-        </div>
-      </div>
+
+      <FileUpload
+        selectedDocument={selectedDocument}
+        onSuccess={handleUploadFile}
+      />
 
       {/* Main content: 서류리스트 + 서식보기 */}
       <div className="flex flex-row items-stretch gap-4 w-full flex-1 min-h-0">

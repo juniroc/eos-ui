@@ -2,17 +2,15 @@ import { InputType } from '@/components/taxDocument/template/common/type';
 
 export const getInputTypeClass = (inputType: InputType) => {
   switch (inputType) {
-    case 'A':
-      return 'background-color-[transparent] print:background-color-[transparent]';
     case 'B':
-      return 'background-color-[#FBFEF0] print:background-color-[transparent]';
+      return 'bg-[#FBFEF0] print:bg-[transparent]';
     case 'C':
-      return 'background-color-[#F3EBEB] print:background-color-[transparent]';
-    case 'D':
-      return 'background-color-[#FBFEF0] print:background-color-[transparent]';
+      return 'bg-[#F3EBEB] print:bg-[transparent]';
     case 'E':
-      return 'background-color-[#EAF4FE] print:background-color-[transparent]';
+      return 'bg-[#EAF4FE] print:bg-[transparent]';
     case 'F':
-      return 'background-color-[#ED8F11] print:background-color-[transparent]';
+      return 'bg-[#ED8F11] print:bg-[transparent]';
+    default:
+      return 'bg-[transparent] print:bg-[transparent]';
   }
 };

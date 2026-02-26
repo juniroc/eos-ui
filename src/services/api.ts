@@ -1995,7 +1995,8 @@ export async function completeVatForm<C extends FormCode>(
 export async function uploadVatFormFile(
   formId: string,
   file: File,
-  token: string
+  token: string,
+  signal?: AbortSignal
 ): Promise<VatFormUploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
@@ -2009,6 +2010,7 @@ export async function uploadVatFormFile(
         // Content-Type은 FormData 사용 시 브라우저가 자동으로 설정 (multipart/form-data)
       },
       body: formData,
+      signal,
     }
   );
 

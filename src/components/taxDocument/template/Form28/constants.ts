@@ -1,0 +1,1 @@
+export const MAX_BUSINESS_PLACE_LENGTH = 5;

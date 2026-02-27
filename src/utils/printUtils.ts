@@ -13,6 +13,8 @@ export interface PrintOptions {
   onAfterPrint?: () => void;
   /** 인쇄 전 콜백 함수 */
   onBeforePrint?: () => void;
+  /** 인쇄 방향 */
+  orientation?: 'portrait' | 'landscape';
 }
 
 /**
@@ -98,7 +100,14 @@ const syncFormValues = (source: HTMLElement, target: HTMLElement) => {
 };
 
 export const printElement = (options: PrintOptions) => {
-  const { selector, title, delay = 100, onBeforePrint, onAfterPrint } = options;
+  const {
+    selector,
+    title,
+    delay = 100,
+    orientation = 'portrait',
+    onBeforePrint,
+    onAfterPrint,
+  } = options;
 
   if (!selector) {
     console.error('printElement: selector is required');
@@ -145,9 +154,44 @@ export const printElement = (options: PrintOptions) => {
     .map(link => link.outerHTML)
     .join('\n');
 
-
   const clonedElement = element.cloneNode(true) as HTMLElement;
   syncFormValues(element as HTMLElement, clonedElement);
+  const hasForm19_2 = !!clonedElement.querySelector('.form19_2');
+  const hasForm19_3 = !!clonedElement.querySelector('.form19_3');
+  const form19HeightOverride =
+    hasForm19_2 || hasForm19_3
+      ? `
+          @media print {
+            .form19_2 *,
+            .form19_3 * {
+              height: unset !important;
+            }
+          }
+        `
+      : '';
+
+  const pageStyle =
+    orientation === 'landscape'
+      ? '@page { size: A4 landscape; margin: 10 0; }'
+      : '@page { size: A4 portrait; margin: 10 0; }';
+
+  const slotStyle =
+    orientation === 'landscape'
+      ? `@media print { 
+              [data-pageslot] {
+                width: 297mm !important;
+                height: 210mm !important;
+                page-break-after: always;
+            }   
+          }`
+      : `@media print {
+              [data-pageslot] { 
+                width: 210mm !important;
+                height: 297mm !important;
+                page-break-after: always;
+            }   
+          }
+      `;
 
   // HTML 구성
   const htmlContent = `
@@ -159,6 +203,18 @@ export const printElement = (options: PrintOptions) => {
         ${linkTags}
         <style>
           ${styles}
+          
+          ${pageStyle}
+          
+          ${slotStyle}
+          
+          @media print {
+              input[type="checkbox"] {
+                  display: inline-block;
+                  -webkit-print-color-adjust: exact;
+                  print-color-adjust: exact;
+              }
+          }
           
           /* 인쇄 전용 스타일 */
           @media print {
@@ -199,6 +255,16 @@ export const printElement = (options: PrintOptions) => {
               background: white !important;
               box-shadow: none !important;
             }
+
+            /* Tax document forms should keep cell background colors */
+            [class^="form"] input,
+            [class*=" form"] input,
+            [class^="form"] select,
+            [class*=" form"] select,
+            [class^="form"] textarea,
+            [class*=" form"] textarea {
+              background: transparent !important;
+            }
             
             /* 숫자 입력 필드 스핀 버튼 숨기기 */
             input[type="number"]::-webkit-outer-spin-button,
@@ -216,6 +282,8 @@ export const printElement = (options: PrintOptions) => {
               appearance: none;
             }
           }
+          
+          ${form19HeightOverride}
         </style>
       </head>
       <body>
@@ -231,13 +299,13 @@ export const printElement = (options: PrintOptions) => {
   setTimeout(() => {
     printWindow.print();
 
-    // 인쇄 후 창 닫기
-    setTimeout(() => {
-      printWindow.close();
-      if (onAfterPrint) {
-        onAfterPrint();
-      }
-    }, delay);
+    // // 인쇄 후 창 닫기
+    // setTimeout(() => {
+    //   printWindow.close();
+    //   if (onAfterPrint) {
+    //     onAfterPrint();
+    //   }
+    // }, delay);
   }, delay);
 };
 

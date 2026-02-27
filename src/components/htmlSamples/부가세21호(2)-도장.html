@@ -1,0 +1,121 @@
+<!DOCTYPE  html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>[별지 제21호서식] 일반과세자 부가가치세(예정¸ 확정준¸ 영세율 등 조기환급)신고서(부가가치세법 시행규칙) 2</title><meta name="author" content="wonsa"/><style type="text/css"> * {margin:0; padding:0; text-indent:0; }
+ .s1 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 7pt; }
+ .s2 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ .s3 { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+ p { color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; margin:0pt; }
+ .s4 { color: #7E7E7E; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+ li {display: block; }
+ #l1 {padding-left: 0pt;counter-reset: c1 13; }
+ #l1> li>*:first-child:before {counter-increment: c1; content: counter(c1, decimal)". "; color: black; font-family:돋움체, monospace; font-style: normal; font-weight: normal; text-decoration: none; font-size: 9pt; }
+ #l1> li:first-child>*:first-child:before {counter-increment: c1 0;  }
+ table, tbody {vertical-align: top; overflow: visible; }
+body { width: 624pt; min-height: 882pt; padding-top: 10pt; padding-bottom: 20pt; margin: 0 auto; position: relative; }
+div[style*="background-color: #c0c0c0"] p { font-size: 11pt !important; line-height: 200% !important; font-weight: bold !important; font-family: 돋움체, monospace !important; }
+table .s2 { font-size: 9pt !important; line-height: 200% !important; }
+</style><script type="text/javascript">
+function initStampBoxes() {
+  // "(서명 또는 인)" 텍스트를 포함하는 모든 span 요소 찾기
+  const allSpans = document.querySelectorAll('span');
+  const signSpans = [];
+  
+  allSpans.forEach(function(span) {
+    if (span.textContent && span.textContent.includes('(서명 또는 인)')) {
+      signSpans.push(span);
+    }
+  });
+  
+  signSpans.forEach(function(signSpan) {
+    // 부모 요소 찾기 (position: relative를 추가하기 위해)
+    const parent = signSpan.parentElement;
+    if (!parent) return;
+    
+    // 부모 요소에 position: relative 추가
+    const parentStyle = parent.getAttribute('style') || '';
+    if (!parentStyle.includes('position')) {
+      parent.setAttribute('style', parentStyle + ';position: relative;');
+    } else if (!parentStyle.includes('position: relative')) {
+      parent.setAttribute('style', parentStyle.replace(/position[^;]*;?/g, 'position: relative;'));
+    }
+    
+    // span 요소를 클릭 가능하게 만들기
+    signSpan.style.cursor = 'pointer';
+    signSpan.style.position = 'relative';
+    
+    // 클릭 이벤트 추가
+    signSpan.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      // 기존 도장박스가 있으면 제거
+      const existingBox = parent.querySelector('.stamp-input-box');
+      if (existingBox) {
+        existingBox.remove();
+        return;
+      }
+      
+      // 텍스트 span의 위치를 기준으로 박스 위치 계산 (60pt = 약 80px, 1pt ≈ 1.33px)
+      const spanRect = signSpan.getBoundingClientRect();
+      const parentRect = parent.getBoundingClientRect();
+      const spanTop = spanRect.top - parentRect.top;
+      const spanLeft = spanRect.left - parentRect.left;
+      const spanWidth = spanRect.width;
+      const spanHeight = spanRect.height;
+      const boxSize = 80; // 60pt ≈ 80px
+      
+      // 새로운 입력박스 생성 (텍스트를 박스 중앙에 배치)
+      const stampBox = document.createElement('div');
+      stampBox.className = 'stamp-input-box';
+      // 텍스트의 중앙을 박스의 중앙에 맞춤
+      const boxTop = spanTop + (spanHeight / 2) - (boxSize / 2);
+      const boxLeft = spanLeft + (spanWidth / 2) - (boxSize / 2);
+      
+      stampBox.setAttribute('style', 'position: absolute; display: block; width: 60pt; height: 60pt; min-width: 60pt; min-height: 60pt; max-width: 60pt; max-height: 60pt; background: transparent; border: none !important; outline: none; left: ' + boxLeft + 'px; top: ' + boxTop + 'px; cursor: pointer; box-sizing: border-box; z-index: 9999;');
+      stampBox.setAttribute('data-clicked', 'false');
+      
+      // 도장박스 클릭 시 테두리 토글
+      stampBox.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var clickedBox = stampBox;
+        var isClicked = clickedBox.getAttribute('data-clicked') === 'true';
+        isClicked = !isClicked;
+        clickedBox.setAttribute('data-clicked', isClicked ? 'true' : 'false');
+        if (isClicked) {
+          clickedBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+        } else {
+          clickedBox.style.setProperty('border', 'none', 'important');
+        }
+      });
+      
+      // hover 시 테두리 표시 (클릭 상태가 아닐 때만)
+      stampBox.addEventListener('mouseenter', function(e) {
+        var hoveredBox = stampBox;
+        var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+        if (!isClicked) {
+          hoveredBox.style.setProperty('border', '0.5pt solid #808080', 'important');
+        }
+      });
+      stampBox.addEventListener('mouseleave', function(e) {
+        var hoveredBox = stampBox;
+        var isClicked = hoveredBox.getAttribute('data-clicked') === 'true';
+        if (!isClicked) {
+          hoveredBox.style.setProperty('border', 'none', 'important');
+        }
+      });
+      
+      // 이미지를 표시할 영역 (백엔드에서 이미지를 뿌려줄 수 있도록)
+      const stampImg = document.createElement('img');
+      stampImg.setAttribute('style', 'width: 100%; height: 100%; object-fit: contain; display: none; pointer-events: none;');
+      stampImg.className = 'stamp-image';
+      stampBox.appendChild(stampImg);
+      
+      parent.appendChild(stampBox);
+    });
+  });
+}
+
+window.onload = function() {
+  initStampBoxes();
+};
+</script></head><body><table style="border-collapse:collapse;margin-left:5.329pt;width:624pt" cellspacing="0"><tr style="height:116pt"><td style="width:49pt;border-top-style:solid;border-top-width:1pt;border-top-color:#7E7E7E;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#7E7E7E;border-right-style:solid;border-right-width:1pt;border-right-color:#7E7E7E;text-align: center;vertical-align: middle;"><p class="s2" style="text-indent: 0pt;line-height: 200%;text-align: center;margin: 0;padding: 0;">신고인<br/>제출서류</p></td><td style="width:398pt;border-top-style:solid;border-top-width:1pt;border-top-color:#7E7E7E;border-left-style:solid;border-left-width:1pt;border-left-color:#7E7E7E;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#7E7E7E;border-right-style:solid;border-right-width:1pt;border-right-color:#7E7E7E"><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;position: relative;"><span>1. 매출처별 세금계산서합계표</span><span style="position: absolute;left: 189pt;top: 0;">2. 매입처별 세금계산서합계표</span></p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;position: relative;"><span>3. 매입자발행 세금계산서합계표</span><span style="position: absolute;left: 189pt;top: 0;">4. 영세율 첨부서류</span></p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;">5. 대손세액 공제(변제)신고서와 대손사실 또는 변제사실을 증명하는 서류</p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;position: relative;"><span>6. 공제받지 못할 매입세액 명세서</span><span style="position: absolute;left: 189pt;top: 0;">7. 매출처별 계산서합계표</span></p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;position: relative;"><span>8. 매입처별 계산서합계표</span><span style="position: absolute;left: 189pt;top: 0;">9. 신용카드매출전표등 수령명세서</span></p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;">10. 전자화폐결제명세서(전산작성분 첨부 가능)</p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;letter-spacing: -0.5pt;white-space: nowrap;">11. 부동산임대공급가액명세서 및 임대계약서 사본(사업장을 임대한 후 임대차계약을 갱신한 경우에만 첨부합니다)</p><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 10pt;text-align: left;">12. 건물관리명세서(주거용 건물관리의 경우는 제외합니다)</p><ol id="l1"><li data-list-text="13."><p class="s2" style="padding-left: 18pt;text-indent: -13pt;line-height: 10pt;text-align: left;">현금매출명세서</p></li><li data-list-text="14."><p class="s2" style="padding-left: 18pt;text-indent: -13pt;line-height: 10pt;text-align: left;letter-spacing: -0.5pt;white-space: nowrap;">사업장별 부가가치세 과세표준 및 납부세액(환급세액) 신고명세서(주사업장 총괄납부를 하는 경우만 첨부합니다)</p></li><li data-list-text="15."><p class="s2" style="padding-left: 12pt;text-indent: -7pt;line-height: 92%;text-align: left;">사업자 단위 과세의 사업장별 부가가치세 과세표준 및 납부세액(환급세액) 신고명세서(사업자 단위 과세자인 경우만 첨부합니다)</p></li><li data-list-text="16."><p class="s2" style="padding-left: 18pt;text-indent: -13pt;line-height: 9pt;text-align: left;position: relative;"><span>건물 등 감가상각자산 취득명세서</span><span style="position: absolute;left: 189pt;top: 0;">17. 의제매입세액 공제신고서</span></p></li></ol><p class="s2" style="padding-left: 4pt;text-indent: 0pt;line-height: 9pt;text-align: left;">18. 그 밖에 필요한 증명서류</p></td><td style="width:33pt;border-top-style:solid;border-top-width:1pt;border-top-color:#7E7E7E;border-left-style:solid;border-left-width:1pt;border-left-color:#7E7E7E;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#7E7E7E;text-align: center;vertical-align: middle;" rowspan="2"><p class="s2" style="text-indent: 0pt;line-height: 200%;text-align: center;margin: 0;padding: 0;">수수료 없음</p></td></tr><tr style="height:21pt"><td style="width:49pt;border-top-style:solid;border-top-width:1pt;border-top-color:#7E7E7E;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#7E7E7E;border-right-style:solid;border-right-width:1pt;border-right-color:#7E7E7E"><p class="s2" style="text-indent: 0pt;line-height: 200%;text-align: center;letter-spacing: -0.5pt;">담당 공무원 확인사항</p></td><td style="width:398pt;border-top-style:solid;border-top-width:1pt;border-top-color:#7E7E7E;border-left-style:solid;border-left-width:1pt;border-left-color:#7E7E7E;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#7E7E7E;border-right-style:solid;border-right-width:1pt;border-right-color:#7E7E7E"><p class="s2" style="padding-top: 5pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">사업자등록증(사업을 폐업하고 확정신고하는 사업자의 경우에는 해당 서류를 제출하게 하고 이를 확인)</p></td></tr></table><p style="text-indent: 0pt;text-align: left;"><br/></p><div style="width: 624pt; margin-left: 5.329pt; background-color: #c0c0c0; padding: 0; box-sizing: border-box;"><div style="width: 624pt; height: 1pt; border-top: 1pt solid #7E7E7E; margin: 0 0 3pt 0;"></div><p style="text-indent: 0pt; line-height: 200%; text-align: center; margin: 0; padding: 0; font-weight: bold; font-size: 11pt; font-family: 돋움체, monospace; color: black;">행정정보 공동이용 동의서</p><div style="width: 624pt; height: 1pt; border-top: 1pt solid #7E7E7E; margin: 3pt 0 0 0;"></div></div><p style="text-indent: 0pt;text-align: left;"/><p style="padding-top: 1pt;padding-left: 11pt;text-indent: 0pt;text-align: left;font-size: 9pt;line-height: 200%;font-family: 돋움체, monospace;margin-bottom: 20pt;">본인은 이 건 업무처리와 관련하여 담당 공무원이 「전자정부법」 제36조제1항에 따른 행정정보의 공동이용을 통하여 위의 담당 공무원 확인 사항을 확인하는 것에 동의합니다. 동의하지 않는 경우에는 신고인이 직접 관련 서류를 제출해야 합니다.</p><p class="s3" style="padding-top: 1pt;padding-left: 0;padding-right: 15pt;text-indent: 0pt;display: flex;align-items: center;margin-bottom: 5pt;position: relative;"><span style="position: absolute;left: 50%;transform: translateX(-50%);">신고인</span><span style="flex: 1;"></span><input type="text" style="width: 120pt;height: 20pt;border: none;outline: none;padding: 0;font-size: 10pt;font-family: Arial, sans-serif;background: transparent;box-sizing: border-box;margin: 0 20pt 0 0;" onfocus="this.style.border='0.5pt solid #808080';" onblur="this.style.border='none';"/><span class="s4 signature-text" style="font-size: 9pt;">(서명 또는 인)</span></p><div style="width: 624pt; height: 1pt; border-top: 1pt solid #7E7E7E; margin-left: 5.329pt;"></div></body></html>

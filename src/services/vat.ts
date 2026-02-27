@@ -2,6 +2,8 @@
 // 부가세 보관서류 페이지 관련 API 함수들
 // ========================================
 
+import { VatFormData } from '@/services/api';
+
 const API_BASE_URL = 'https://api.eosxai.com';
 
 // 타입 정의
@@ -31,7 +33,7 @@ export interface VatReport {
   isCompleted: boolean;
   isDeadlinePassed?: boolean;
   lastModifiedAt: string;
-  forms: VatForm[];
+  forms: VatFormData[];
 }
 
 export interface VatReportListResponse {
@@ -83,7 +85,7 @@ export async function getVatReports(token: string): Promise<VatReport[]> {
 export async function getVatReport(id: string, token: string): Promise<VatReportDetailResponse> {
   const response = await fetch(`${API_BASE_URL}/api/vat/reports/${id}`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -98,11 +100,14 @@ export async function getVatReport(id: string, token: string): Promise<VatReport
 /**
  * 신고서 삭제
  */
-export async function deleteVatReport(id: string, token: string): Promise<VatDeleteResponse> {
+export async function deleteVatReport(
+  id: string,
+  token: string
+): Promise<VatDeleteResponse> {
   const response = await fetch(`${API_BASE_URL}/api/vat/reports/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -122,14 +127,17 @@ export async function workOnVatReport(
   actionType: 'continue' | 'rework' | 'amendment',
   token: string
 ): Promise<VatWorkResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}/work`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ actionType }),
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/vat/reports/${reportId}/work`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ actionType }),
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -142,11 +150,14 @@ export async function workOnVatReport(
 /**
  * 서식 삭제
  */
-export async function deleteVatForm(formId: string, token: string): Promise<VatDeleteResponse> {
+export async function deleteVatForm(
+  formId: string,
+  token: string
+): Promise<VatDeleteResponse> {
   const response = await fetch(`${API_BASE_URL}/api/vat/forms/${formId}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -161,13 +172,19 @@ export async function deleteVatForm(formId: string, token: string): Promise<VatD
 /**
  * 업로드 파일 삭제
  */
-export async function deleteVatDocument(documentId: string, token: string): Promise<VatDeleteResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/vat/documents/${documentId}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+export async function deleteVatDocument(
+  documentId: string,
+  token: string
+): Promise<VatDeleteResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/vat/documents/${documentId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -184,11 +201,14 @@ export async function getVatDocumentDownloadUrl(
   documentId: string,
   token: string
 ): Promise<VatDownloadResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/vat/documents/${documentId}/download`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/vat/documents/${documentId}/download`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

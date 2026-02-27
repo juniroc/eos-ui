@@ -1,0 +1,1641 @@
+'use client';
+import './form27.css';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import { UpdaterProps } from '@/components/taxDocument/template/common/type';
+import {
+  Form27Data,
+  Form27InputData,
+} from '@/components/taxDocument/template/Form27/type';
+import InputField from '@/components/taxDocument/template/common/InputField';
+import Stamp from '@/components/taxDocument/template/common/Stamp';
+import { PageSlot } from '@/components/documentCreate/PageSlot';
+
+type Form27Props = UpdaterProps<Form27Data> & { inputType?: Form27InputData };
+
+type Props = Form27Data & Form27Props & { inputType?: Form27InputData };
+
+export default function Form27({
+  updater,
+  inputType,
+  attributionYear,
+  attributionTerm,
+  periodStartMonth,
+  periodStartDay,
+  periodEndMonth,
+  periodEndDay,
+  bizName,
+  bizNumber,
+  bizType,
+  bizItem,
+  totalStats,
+  buildingStructureStats,
+  machineryStats,
+  vehicleStats,
+  otherAssetStats,
+  writeYear,
+  writeMonth,
+  writeDay,
+  submitterName,
+}: Props) {
+  const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
+
+  const updateRow = <K extends keyof Form27Data, F extends keyof Form27Data[K]>(
+    key: K,
+    current: Form27Data[K],
+    field: F,
+    value: Form27Data[K][F]
+  ) => {
+    const updated = Object.assign({} as Form27Data[K], current, {
+      [field]: value,
+    });
+    updater(key, updated);
+  };
+
+  return (
+    <PageSlot slotWidth={880} slotHeight={1243.85}>
+      <div className="form27">
+      <ul id="l1">
+        <li data-list-text="■">
+          <p
+            className="s1"
+            style={{
+              paddingTop: '2pt',
+              paddingLeft: '19pt',
+              textIndent: '-11pt',
+              textAlign: 'left',
+            }}
+          >
+            부가가치세법 시행규칙 [별지 제27호서식]
+            <span style={{ color: '#00F' }}>&lt;개정 2022. 3. 18.&gt;</span>
+          </p>
+        </li>
+      </ul>
+      <p style={{ paddingTop: '11pt', textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p
+        className="s3"
+        style={{ paddingLeft: '10pt', textIndent: '0pt', textAlign: 'center' }}
+      >
+        건물 등 감가상각자산 취득명세서
+      </p>
+      <h2
+        style={{
+          paddingTop: '2pt',
+          paddingLeft: '13pt',
+          textIndent: '0pt',
+          textAlign: 'center',
+        }}
+      >
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '40pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={4}
+          value={attributionYear}
+          onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionYear}
+        />
+        년 제
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={attributionTerm}
+          onChange={e => updater('attributionTerm', digitsOnly(e.target.value))}
+          inputType={inputType?.attributionTerm}
+        />
+        기 (
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={periodStartMonth}
+          onChange={e =>
+            updater('periodStartMonth', digitsOnly(e.target.value))
+          }
+          inputType={inputType?.periodStartMonth}
+        />
+        월
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={periodStartDay}
+          onChange={e => updater('periodStartDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodStartDay}
+        />
+        일 ~
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={periodEndMonth}
+          onChange={e => updater('periodEndMonth', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndMonth}
+        />
+        월
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '10pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={periodEndDay}
+          onChange={e => updater('periodEndDay', digitsOnly(e.target.value))}
+          inputType={inputType?.periodEndDay}
+        />
+        일)
+      </h2>
+      <p style={{ paddingTop: '11pt', textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p
+        style={{
+          paddingLeft: '5pt',
+          textIndent: '0pt',
+          lineHeight: '1pt',
+          textAlign: 'left',
+        }}
+      >
+        <hr
+          style={{
+            width: '624pt',
+            border: 'none',
+            borderTop: '1pt solid #000',
+            margin: '0',
+            padding: '0',
+          }}
+        />
+      </p>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <hr
+          style={{
+            width: '624pt',
+            border: 'none',
+            borderTop: '1pt solid #000',
+            margin: '0',
+            padding: '0',
+          }}
+        />
+      </p>
+      <div
+        style={{
+          background: '#c0c0c0',
+          display: 'block',
+          width: '624pt',
+          height: '20pt',
+          padding: '1pt 0',
+        }}
+      >
+        <p
+          className="s4"
+          style={{
+            paddingTop: '1pt',
+            paddingLeft: '2pt',
+            textIndent: '0pt',
+            textAlign: 'left',
+          }}
+        >
+          접수번호
+          <span style={{ paddingLeft: '30pt' }}>접수일</span>
+          <span style={{ paddingLeft: '400pt' }}>처리기간</span>
+          <span style={{ paddingLeft: '20pt' }}>즉시</span>
+        </p>
+      </div>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}></p>
+      <ol id="l2">
+        <li data-list-text="1.">
+          <p
+            className="s6"
+            style={{
+              paddingTop: '10pt',
+              paddingLeft: '22pt',
+              textIndent: '-13pt',
+              textAlign: 'left',
+            }}
+          >
+            제출자 인적사항
+          </p>
+          <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+            <br />
+          </p>
+          <table
+            style={{
+              borderCollapse: 'collapse',
+              width: '624pt',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              tableLayout: 'fixed',
+            }}
+            cellSpacing="0"
+          >
+            <tr style={{ height: '32pt' }}>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#ADADAD',
+                }}
+              >
+                <p
+                  className="s7"
+                  style={{
+                    paddingTop: '4pt',
+                    paddingLeft: '6pt',
+                    textIndent: '0pt',
+                    textAlign: 'left',
+                  }}
+                >
+                  ① 성명(법인명)
+                </p>
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#ADADAD',
+                  padding: '1pt',
+                  verticalAlign: 'middle',
+                }}
+              >
+                <InputField
+                  className="form-input form-input-text"
+                  style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+                  type="text"
+                  value={bizName}
+                  onChange={e => updater('bizName', e.target.value)}
+                  inputType={inputType?.bizName}
+                />
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#ADADAD',
+                }}
+              >
+                <p
+                  className="s7"
+                  style={{
+                    paddingTop: '4pt',
+                    paddingLeft: '4pt',
+                    textIndent: '0pt',
+                    textAlign: 'left',
+                  }}
+                >
+                  ② 사업자등록번호
+                </p>
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  borderBottomColor: '#ADADAD',
+                  padding: '1pt',
+                  verticalAlign: 'middle',
+                }}
+              >
+                <InputField
+                  className="form-input form-input-text"
+                  style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+                  type="text"
+                  value={bizNumber}
+                  onChange={e => updater('bizNumber', e.target.value)}
+                  inputType={inputType?.bizNumber}
+                />
+              </td>
+            </tr>
+            <tr style={{ height: '31pt' }}>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#ADADAD',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                }}
+              >
+                <p
+                  className="s7"
+                  style={{
+                    paddingTop: '4pt',
+                    paddingLeft: '6pt',
+                    textIndent: '0pt',
+                    textAlign: 'left',
+                  }}
+                >
+                  ③ 업태
+                </p>
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#ADADAD',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  padding: '1pt',
+                  verticalAlign: 'middle',
+                }}
+              >
+                <InputField
+                  className="form-input form-input-text"
+                  style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+                  type="text"
+                  value={bizType}
+                  onChange={e => updater('bizType', e.target.value)}
+                  inputType={inputType?.bizType}
+                />
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#ADADAD',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                }}
+              >
+                <p
+                  className="s7"
+                  style={{
+                    paddingTop: '4pt',
+                    paddingLeft: '4pt',
+                    textIndent: '0pt',
+                    textAlign: 'left',
+                  }}
+                >
+                  ④ 종목
+                </p>
+              </td>
+              <td
+                style={{
+                  width: '154.9pt',
+                  borderTopStyle: 'solid',
+                  borderTopWidth: '1pt',
+                  borderTopColor: '#ADADAD',
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '1pt',
+                  padding: '1pt',
+                  verticalAlign: 'middle',
+                }}
+              >
+                <InputField
+                  className="form-input form-input-text"
+                  style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+                  type="text"
+                  value={bizItem}
+                  onChange={e => updater('bizItem', e.target.value)}
+                  inputType={inputType?.bizItem}
+                />
+              </td>
+            </tr>
+          </table>
+          <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+            <br />
+          </p>
+          <p
+            style={{
+              paddingLeft: '5pt',
+              textIndent: '0pt',
+              lineHeight: '1pt',
+              textAlign: 'left',
+            }}
+          >
+            <hr
+              style={{
+                width: '624pt',
+                border: 'none',
+                borderTop: '1pt solid #000',
+                margin: '0',
+                padding: '0',
+              }}
+            />
+          </p>
+        </li>
+        <li data-list-text="2.">
+          <h2
+            style={{
+              paddingTop: '12pt',
+              paddingLeft: '24pt',
+              textIndent: '-15pt',
+              textAlign: 'left',
+            }}
+          >
+            감가상각자산 취득명세 합계
+          </h2>
+        </li>
+      </ol>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <table
+        style={{
+          borderCollapse: 'collapse',
+          width: '624pt',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          tableLayout: 'fixed',
+        }}
+        cellSpacing="0"
+      >
+        <tr style={{ height: '26pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '6pt',
+                paddingLeft: '22pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              감가상각자산 종류
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '6pt',
+                textIndent: '0pt',
+                textAlign: 'center',
+              }}
+            >
+              건수
+            </p>
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '6pt',
+                paddingLeft: '21pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              공급가액
+            </p>
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '6pt',
+                textIndent: '0pt',
+                textAlign: 'center',
+              }}
+            >
+              세액
+            </p>
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '6pt',
+                textIndent: '0pt',
+                textAlign: 'center',
+              }}
+            >
+              비고
+            </p>
+          </td>
+        </tr>
+        <tr style={{ height: '29pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '7pt',
+                paddingLeft: '4pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              ⑤ 합계
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.count}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'count', value)
+              }
+              inputType={inputType?.totalStats?.count}
+            />
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.supplyAmount}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'supplyAmount', value)
+              }
+              inputType={inputType?.totalStats?.supplyAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={totalStats.taxAmount}
+              onChange={value =>
+                updateRow('totalStats', totalStats, 'taxAmount', value)
+              }
+              inputType={inputType?.totalStats?.taxAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="form-input form-input-text"
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              type="text"
+              value={totalStats.note ?? ''}
+              onChange={e =>
+                updateRow('totalStats', totalStats, 'note', e.target.value)
+              }
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '29pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '8pt',
+                paddingLeft: '4pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              ⑥ 건물ㆍ구축물
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.count}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'count',
+                  value
+                )
+              }
+              inputType={inputType?.buildingStructureStats?.count}
+            />
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'supplyAmount',
+                  value
+                )
+              }
+              inputType={inputType?.buildingStructureStats?.supplyAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={buildingStructureStats.taxAmount}
+              onChange={value =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'taxAmount',
+                  value
+                )
+              }
+              inputType={inputType?.buildingStructureStats?.taxAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="form-input form-input-text"
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              type="text"
+              value={buildingStructureStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'buildingStructureStats',
+                  buildingStructureStats,
+                  'note',
+                  e.target.value
+                )
+              }
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '29pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '8pt',
+                paddingLeft: '4pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              ⑦ 기계장치
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.count}
+              onChange={value =>
+                updateRow('machineryStats', machineryStats, 'count', value)
+              }
+              inputType={inputType?.machineryStats?.count}
+            />
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'machineryStats',
+                  machineryStats,
+                  'supplyAmount',
+                  value
+                )
+              }
+              inputType={inputType?.machineryStats?.supplyAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={machineryStats.taxAmount}
+              onChange={value =>
+                updateRow('machineryStats', machineryStats, 'taxAmount', value)
+              }
+              inputType={inputType?.machineryStats?.taxAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="form-input form-input-text"
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              type="text"
+              value={machineryStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'machineryStats',
+                  machineryStats,
+                  'note',
+                  e.target.value
+                )
+              }
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '29pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '8pt',
+                paddingLeft: '4pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              ⑧ 차량운반구
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.count}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'count', value)
+              }
+              inputType={inputType?.vehicleStats?.count}
+            />
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.supplyAmount}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'supplyAmount', value)
+              }
+              inputType={inputType?.vehicleStats?.supplyAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={vehicleStats.taxAmount}
+              onChange={value =>
+                updateRow('vehicleStats', vehicleStats, 'taxAmount', value)
+              }
+              inputType={inputType?.vehicleStats?.taxAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderBottomColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="form-input form-input-text"
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              type="text"
+              value={vehicleStats.note ?? ''}
+              onChange={e =>
+                updateRow('vehicleStats', vehicleStats, 'note', e.target.value)
+              }
+            />
+          </td>
+        </tr>
+        <tr style={{ height: '29pt' }}>
+          <td
+            style={{
+              width: '129pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+            }}
+          >
+            <p
+              className="s8"
+              style={{
+                paddingTop: '8pt',
+                paddingLeft: '4pt',
+                textIndent: '0pt',
+                textAlign: 'left',
+              }}
+            >
+              ⑨ 그 밖의 감가상각자산
+            </p>
+          </td>
+          <td
+            style={{
+              width: '70pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.count}
+              onChange={value =>
+                updateRow('otherAssetStats', otherAssetStats, 'count', value)
+              }
+              inputType={inputType?.otherAssetStats?.count}
+            />
+          </td>
+          <td
+            style={{
+              width: '84pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.supplyAmount}
+              onChange={value =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'supplyAmount',
+                  value
+                )
+              }
+              inputType={inputType?.otherAssetStats?.supplyAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '78pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderRightStyle: 'solid',
+              borderRightWidth: '1pt',
+              borderRightColor: '#ADADAD',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <NumericInput
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              value={otherAssetStats.taxAmount}
+              onChange={value =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'taxAmount',
+                  value
+                )
+              }
+              inputType={inputType?.otherAssetStats?.taxAmount}
+            />
+          </td>
+          <td
+            style={{
+              width: '119pt',
+              borderTopStyle: 'solid',
+              borderTopWidth: '1pt',
+              borderTopColor: '#ADADAD',
+              borderLeftStyle: 'solid',
+              borderLeftWidth: '1pt',
+              borderLeftColor: '#ADADAD',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              padding: '1pt',
+              verticalAlign: 'middle',
+            }}
+          >
+            <InputField
+              className="form-input form-input-text"
+              style={{ width: 'calc(100% - 2pt)', height: '20pt' }}
+              type="text"
+              value={otherAssetStats.note ?? ''}
+              onChange={e =>
+                updateRow(
+                  'otherAssetStats',
+                  otherAssetStats,
+                  'note',
+                  e.target.value
+                )
+              }
+            />
+          </td>
+        </tr>
+      </table>
+      <p
+        className="s9"
+        style={{
+          paddingTop: '8pt',
+          paddingLeft: '13pt',
+          textIndent: '0pt',
+          lineHeight: '123%',
+          textAlign: 'left',
+        }}
+      >
+        「부가가치세법 시행령」 제90조제3항의 표 제7호, 제91조제2항의 표 제10호
+        및 제107조제3항에 따라 건물 등 감가상각자산 취득명세서를 제출합니다.
+      </p>
+      <p
+        className="s5"
+        style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}
+      >
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '40pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '9pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={4}
+          value={writeYear}
+          onChange={e => updater('writeYear', digitsOnly(e.target.value))}
+          inputType={inputType?.writeYear}
+        />
+        년
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '9pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={writeMonth}
+          onChange={e => updater('writeMonth', digitsOnly(e.target.value))}
+          inputType={inputType?.writeMonth}
+        />
+        월
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '20pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 2pt',
+            background: 'transparent',
+            fontFamily: 'Arial',
+            fontSize: '9pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          maxLength={2}
+          value={writeDay}
+          onChange={e => updater('writeDay', digitsOnly(e.target.value))}
+          inputType={inputType?.writeDay}
+        />
+        일
+      </p>
+      <p
+        className="s10"
+        style={{
+          paddingTop: '9pt',
+          paddingLeft: '210pt',
+          textIndent: '0pt',
+          textAlign: 'right',
+          position: 'relative',
+        }}
+      >
+        <span style={{ paddingLeft: '30pt' }}>제출자</span>
+        <InputField
+          className="form-input form-input-text"
+          style={{
+            width: '100pt',
+            height: '20pt',
+            display: 'inline-block',
+            verticalAlign: 'middle',
+            margin: '0 20pt',
+            marginLeft: '50pt',
+            textAlign: 'center',
+          }}
+          type="text"
+          value={submitterName}
+          onChange={e => updater('submitterName', e.target.value)}
+          inputType={inputType?.submitterName}
+        />
+        <Stamp className="s11">(서명 또는 인)</Stamp>
+      </p>
+      <h1
+        style={{
+          paddingTop: '8pt',
+          paddingLeft: '44pt',
+          textIndent: '0pt',
+          textAlign: 'left',
+        }}
+      >
+        세 무 서 장
+        <span className="s12" style={{ paddingLeft: '20pt' }}>
+          귀하
+        </span>
+      </h1>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p
+        style={{
+          paddingLeft: '5pt',
+          textIndent: '0pt',
+          lineHeight: '2pt',
+          textAlign: 'left',
+        }}
+      >
+        <hr
+          style={{
+            width: '624pt',
+            border: 'none',
+            borderTop: '1pt solid #000',
+            margin: '0',
+            padding: '0',
+          }}
+        />
+      </p>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <hr
+          style={{
+            width: '624pt',
+            border: 'none',
+            borderTop: '1pt solid #000',
+            margin: '0',
+            padding: '0',
+          }}
+        />
+      </p>
+      <h3 style={{ paddingTop: '5pt', textIndent: '0pt', textAlign: 'center' }}>
+        작 성 방 법
+      </h3>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}></p>
+      <p
+        style={{
+          paddingTop: '8pt',
+          paddingLeft: '13pt',
+          textIndent: '0pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ① ~ ④: 제출자의 성명 또는 법인명과 사업자등록번호, 업태, 종목을
+        적습니다.
+      </p>
+      <p
+        style={{
+          paddingLeft: '29pt',
+          textIndent: '-15pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ⑤: 신고대상기간 중 취득한 건물ㆍ구축물ㆍ기계장비ㆍ차량운반구 등
+        감가상각자산의 건수ㆍ공급가액ㆍ세액을 합하여 적으 며, 공급가액 및 세액
+        합계액은 부가가치세 신고서 "(11)번+(42)번 고정자산"란의 금액 및 세액과
+        일치하여야 합니다.
+      </p>
+      <p
+        style={{
+          paddingLeft: '29pt',
+          textIndent: '-15pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ⑥: 신고대상기간 중 건물ㆍ구축물을 취득하고 발급받은 신용카드매출전표등
+        수취분이나 세금계산서상의 건수ㆍ공급가액ㆍ세 액을 더하여 적습니다.
+      </p>
+      <p
+        style={{
+          paddingLeft: '28pt',
+          textIndent: '-14pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ⑦: 신고대상기간 중 기계 및 장비를 취득하고 발급받은 신용카드매출전표등
+        수취분이나 세금계산서의 건수ㆍ공급가액ㆍ세액 을 더하여 적습니다.
+      </p>
+      <p
+        style={{
+          paddingLeft: '28pt',
+          textIndent: '-14pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ⑧: 신고대상기간 중 차량운반구를 취득하고 발급받은 신용카드매출전표등
+        수취분이나 세금계산서의 건수ㆍ공급가액ㆍ세액을 더하여 적습니다.
+      </p>
+      <p
+        style={{
+          paddingLeft: '29pt',
+          textIndent: '-15pt',
+          lineHeight: '150%',
+          textAlign: 'left',
+        }}
+      >
+        ⑨: 신고대상기간 중 건물ㆍ구축물ㆍ기계 및 장비ㆍ차량운반구를 제외한 그
+        밖의 감가상각자산을 취득하고 발급받은 신용카 드매출전표등 수취분이나
+        세금계산서의 건수ㆍ공급가액ㆍ세액을 더하여 적습니다.
+      </p>
+      <p style={{ textIndent: '0pt', textAlign: 'left' }}>
+        <br />
+      </p>
+      <p
+        style={{
+          paddingLeft: '5pt',
+          textIndent: '0pt',
+          lineHeight: '1pt',
+          textAlign: 'left',
+        }}
+      >
+        <hr
+          style={{
+            width: '624pt',
+            border: 'none',
+            borderTop: '1pt solid #000',
+            margin: '0',
+            padding: '0',
+          }}
+        />
+      </p>
+      </div>
+    </PageSlot>
+  );
+}

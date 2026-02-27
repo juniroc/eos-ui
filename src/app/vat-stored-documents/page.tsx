@@ -447,102 +447,76 @@ export default function VatStoredDocumentsPage() {
                         </div>
                       )}
                       
-                      {/* 첨부서류명 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 && (
-                        <div
-                          className={`flex flex-col items-start bg-white border-r border-b border-[#D9D9D9]`}
-                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 3, minWidth: '240px' }}
-                        >
-                          {(() => {
-                            const reportRows = allTableRows.filter(r => r.report.id === report.id);
-                            return (
-                              <div className="flex flex-col w-full h-full">
-                                {reportRows.map((reportRow, idx) => (
-                                  <div
-                                    key={idx}
-                                    className={`flex flex-row items-center justify-between p-2 min-h-[32px] ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
-                                  >
-                                    {reportRow.row.form ? (
-                                      <>
-                                        <span 
-                                          onClick={() => handleReportClick(reportRow.report.id)}
-                                          className="text-[10px] leading-[140%] text-[#757575] flex-1 cursor-pointer hover:underline"
-                                        >
-                                          {reportRow.row.form.name}
-                                        </span>
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteForm(reportRow.row.form!.id);
-                                          }}
-                                          className="ml-2 w-4 h-4 flex items-center justify-center hover:opacity-70 shrink-0"
-                                        >
-                                          <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
-                                        </button>
-                                      </>
-                                    ) : (
-                                      <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      )}
+                      {/* 첨부서류명 - 각 form마다 개별 grid cell */}
+                      {(() => {
+                        const form = report.forms?.[reportRowIndex];
+                        return (
+                          <div
+                            className="flex flex-row items-center justify-between p-2 bg-white border-r border-b border-[#D9D9D9]"
+                            style={{ gridRow: globalRowIndex + 1, gridColumn: 3, minWidth: '240px' }}
+                          >
+                            {form ? (
+                              <>
+                                <span
+                                  onClick={() => handleReportClick(report.id)}
+                                  className="text-[10px] leading-[140%] text-[#757575] flex-1 cursor-pointer hover:underline"
+                                >
+                                  {form.name}
+                                </span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteForm(form.id);
+                                  }}
+                                  className="ml-2 w-4 h-4 flex items-center justify-center hover:opacity-70 shrink-0"
+                                >
+                                  <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
+                            )}
+                          </div>
+                        );
+                      })()}
 
-                      {/* 업로드한 관련 파일 - 첫 번째 행에만 표시하고 병합 */}
-                      {reportRowIndex === 0 && (
-                        <div
-                          className={`flex flex-col items-start bg-white border-b border-[#D9D9D9]`}
-                          style={{ gridRow: `${range.start + 1} / ${range.end + 2}`, gridColumn: 4, minWidth: '240px' }}
-                        >
-                          {(() => {
-                            const reportRows = allTableRows.filter(r => r.report.id === report.id);
-                            return (
-                              <div className="flex flex-col w-full h-full">
-                                {reportRows.map((reportRow, idx) => {
-                                  const docs =
-                                    (reportRow.row.form as VatForm | undefined)
-                                      ?.uploadedDocuments || [];
-                                  const firstDoc = docs[0];
-                                  return (
-                                    <div
-                                      key={idx}
-                                      className={`flex flex-row items-center justify-between p-2 min-h-[32px] ${idx < reportRows.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
-                                    >
-                                      {firstDoc ? (
-                                        <>
-                                          <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
-                                            {firstDoc.name}
-                                            {docs.length > 1 && ` 외 ${docs.length - 1}개`}
-                                          </span>
-                                          <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
-                                            <button
-                                              onClick={() => handleDownloadDocument(firstDoc.id)}
-                                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                            >
-                                              <Image src="/icons/download_icon.png" alt="다운로드" width={16} height={16} />
-                                            </button>
-                                            <button
-                                              onClick={() => handleDeleteDocument(firstDoc.id)}
-                                              className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                            >
-                                              <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
-                                            </button>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      )}
+                      {/* 업로드한 관련 파일 - 각 form마다 개별 grid cell */}
+                      {(() => {
+                        const form = report.forms?.[reportRowIndex];
+                        const docs = form?.uploadedDocuments || [];
+                        const firstDoc = docs[0];
+                        return (
+                          <div
+                            className="flex flex-row items-center justify-between p-2 bg-white border-b border-[#D9D9D9]"
+                            style={{ gridRow: globalRowIndex + 1, gridColumn: 4, minWidth: '240px' }}
+                          >
+                            {firstDoc ? (
+                              <>
+                                <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
+                                  {firstDoc.name}
+                                  {docs.length > 1 && ` 외 ${docs.length - 1}개`}
+                                </span>
+                                <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
+                                  <button
+                                    onClick={() => handleDownloadDocument(firstDoc.id)}
+                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                  >
+                                    <Image src="/icons/download_icon.png" alt="다운로드" width={16} height={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteDocument(firstDoc.id)}
+                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                  >
+                                    <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
+                                  </button>
+                                </div>
+                              </>
+                            ) : (
+                              <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
+                            )}
+                          </div>
+                        );
+                      })()}
                       
                       
                     </React.Fragment>

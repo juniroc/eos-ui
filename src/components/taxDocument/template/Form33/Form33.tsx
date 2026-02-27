@@ -9,6 +9,7 @@ import {
 } from '@/components/taxDocument/template/Form33/type';
 import Stamp from '@/components/taxDocument/template/common/Stamp';
 import { PageSlot } from '@/components/documentCreate/PageSlot';
+import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
 type Form33Props = UpdaterProps<Form33Data> & { inputType?: Form33InputData };
 
@@ -24,11 +25,10 @@ function StampOption({
   return (
     <span
       onClick={onClick}
-      // (중요) 기존 파일처럼 글자 주변 클릭영역 확보
       style={{
         position: 'relative',
         display: 'inline-block',
-        padding: '0 5pt',
+        padding: '0 7pt',
         cursor: 'pointer',
         lineHeight: '1',
         userSelect: 'none',
@@ -52,8 +52,8 @@ function StampOption({
             position: 'absolute',
             top: '50%',
             left: '50%',
-            width: '1.3em',
-            height: '1.3em',
+            width: '2em',
+            height: '2em',
             border: '1pt solid #000',
             borderRadius: '50%',
             transform: 'translate(-50%, -50%)',
@@ -1336,6 +1336,9 @@ export default function Form33({
                   </p>
                 </td>
                 <td
+                  className={getInputTypeClass(
+                    inputType?.basicStatus?.facilities?.parkingLotStatus
+                  )}
                   style={{
                     width: '47pt',
                     borderTopStyle: 'solid',

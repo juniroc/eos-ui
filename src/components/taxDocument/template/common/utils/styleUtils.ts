@@ -1,6 +1,6 @@
 import { InputType } from '@/components/taxDocument/template/common/type';
 
-export const getInputTypeClass = (inputType: InputType) => {
+export const getInputTypeClass = (inputType?: InputType) => {
   switch (inputType) {
     case 'B':
       return 'bg-[#FBFEF0] print:bg-[transparent]';

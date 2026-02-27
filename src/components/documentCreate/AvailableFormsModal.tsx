@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   addFormsToReport,
@@ -9,20 +15,21 @@ import {
   VatFormData,
 } from '@/services/api';
 import Image from 'next/image';
+import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
 
-interface AvailableFormsSidebarProps {
+interface AvailableFormsModalProps {
   isOpen: boolean;
   onClose: () => void;
   reportId?: string;
   onFormsAdded?: (forms: Array<VatFormData>) => void;
 }
 
-function AvailableFormsSidebar({
+function AvailableFormsModal({
   isOpen,
   onClose,
   reportId,
   onFormsAdded,
-}: AvailableFormsSidebarProps) {
+}: AvailableFormsModalProps) {
   const { token } = useAuth();
   const [availableForms, setAvailableForms] = useState<AvailableForm[]>([]);
   const [selectedForms, setSelectedForms] = useState<Set<string>>(new Set());
@@ -30,6 +37,24 @@ function AvailableFormsSidebar({
   const [isAdding, setIsAdding] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [appliedKeyword, setAppliedKeyword] = useState('');
+  const [previewForm, setPreviewForm] = useState<AvailableForm | null>(null);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // 서식 미리보기 HTML 로딩
+  const handlePreview = useCallback(async (form: AvailableForm) => {
+    setPreviewForm(form);
+    setPreviewLoading(true);
+    const html = await loadFormHtml(form.formCode);
+    setPreviewHtml(html);
+    setPreviewLoading(false);
+  }, []);
+
+  const handleClosePreview = useCallback(() => {
+    setPreviewForm(null);
+    setPreviewHtml(null);
+  }, []);
 
   // 서식 목록 조회
   useEffect(() => {
@@ -173,12 +198,12 @@ function AvailableFormsSidebar({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[1176px] h-[min(800px,calc(100vh-48px))] bg-white shadow-[0px_24px_48px_-12px_rgba(15,23,42,0.28)] flex flex-col overflow-hidden"
+        className="relative w-full max-w-[1176px] h-[min(800px,calc(100vh-48px))] bg-white shadow-[0px_24px_48px_-12px_rgba(15,23,42,0.28)] flex flex-col overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* top */}
         <div className="w-full h-10 flex items-center justify-between p-3">
-          <div className="flex items-center gap-1 text-[11px] leading-[140%] font-['Pretendard'] min-w-0">
+          <div className="flex items-center gap-1 text-[11px] leading-[140%] min-w-0">
             <span className="text-[#B3B3B3]">부가세</span>
             <span className="text-[#B3B3B3]">{'>'}</span>
             <span className="text-[#B3B3B3]">서류정보</span>
@@ -219,7 +244,7 @@ function AvailableFormsSidebar({
                       if (e.key === 'Enter') setAppliedKeyword(searchKeyword);
                     }}
                     placeholder="검색어를 입력해 주세요"
-                    className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard'] outline-none placeholder:text-[#B3B3B3]"
+                    className="w-full text-[11px] leading-[100%] text-[#1E1E1E] font-medium outline-none placeholder:text-[#B3B3B3]"
                   />
                   <svg
                     width="16"
@@ -246,7 +271,7 @@ function AvailableFormsSidebar({
                 <button
                   type="button"
                   onClick={() => setAppliedKeyword(searchKeyword)}
-                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[44px] h-[27px] bg-[#F3F3F3] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none"
+                  className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[44px] h-[27px] bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none"
                 >
                   검색
                 </button>
@@ -257,7 +282,7 @@ function AvailableFormsSidebar({
                   type="button"
                   onClick={handleAddForms}
                   disabled={selectedForms.size === 0 || isAdding}
-                  className={`h-[27px] px-3 text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
+                  className={`h-[27px] px-3 text-[11px] leading-[100%] font-medium ${
                     selectedForms.size > 0 && !isAdding
                       ? 'bg-[#2C2C2C] text-[#F5F5F5]'
                       : 'bg-[#F3F3F3] text-[#A1A1A1]'
@@ -344,34 +369,45 @@ function AvailableFormsSidebar({
 
                       return (
                         <tr key={form.formCode} className="h-10 bg-white group">
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.formNumber}
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle">
                             <div className="flex items-center gap-1 min-w-0">
                               <span className="flex-1 min-w-0 truncate underline">
                                 {form.name}
                               </span>
-                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100 cursor-pointer">
-                                <Image
-                                  src="/icons/search.svg"
-                                  alt="검색"
-                                  width={16}
-                                  height={16}
-                                />
+                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100">
+                                <button
+                                  type="button"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handlePreview(form);
+                                  }}
+                                  className="cursor-pointer"
+                                  aria-label={`${form.name} 미리보기`}
+                                >
+                                  <Image
+                                    src="/icons/search.svg"
+                                    alt="미리보기"
+                                    width={16}
+                                    height={16}
+                                  />
+                                </button>
                                 <Image
                                   src="/icons/upload.svg"
                                   alt="내보내기"
                                   width={16}
                                   height={16}
+                                  className="cursor-pointer"
                                 />
                               </div>
                             </div>
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.description}
                           </td>
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium font-['Pretendard'] align-middle overflow-hidden whitespace-nowrap text-ellipsis">
+                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.requiredWhen}
                           </td>
                           <td className="h-10 border-r border-b border-[#D9D9D9] text-center">
@@ -413,31 +449,92 @@ function AvailableFormsSidebar({
           </div>
         </div>
 
-        {/* 하단 버튼 */}
-        <div className="flex flex-row justify-end items-center gap-2 w-full h-[27px] flex-shrink-0">
-          <button
-            onClick={handleAddForms}
-            disabled={selectedForms.size === 0 || isAdding}
-            className={`flex flex-row justify-center items-center px-3 py-2 gap-2 w-[84px] h-[27px] ${
-              selectedForms.size > 0 && !isAdding
-                ? 'bg-[#2C2C2C] cursor-pointer'
-                : 'bg-[#E6E6E6] cursor-not-allowed'
-            }`}
+        {/* 서식 미리보기 오버레이 패널 */}
+        {previewForm && (
+          <div
+            className="absolute right-0 top-0 w-[656px] h-full max-h-[800px] bg-white flex flex-col items-center p-4 gap-4 z-10"
+            style={{
+              boxShadow:
+                '0px 8px 20px rgba(0, 0, 0, 0.06), 0px 24px 60px rgba(0, 0, 0, 0.12), 0px 32px 64px -12px rgba(0, 0, 0, 0.14)',
+            }}
           >
-            <span
-              className={`text-[11px] leading-[100%] font-medium font-['Pretendard'] ${
-                selectedForms.size > 0 && !isAdding
-                  ? 'text-[#F5F5F5]'
-                  : 'text-[#B3B3B3]'
-              }`}
-            >
-              {isAdding ? '추가중...' : '서식 추가하기'}
-            </span>
-          </button>
-        </div>
+            {/* Title */}
+            <div className="w-[624px] h-7 min-h-[28px] flex items-center">
+              <div className="w-[624px] h-5 flex items-center justify-between">
+                <div className="flex">
+                  <span className="text-sm font-semibold leading-[140%] text-[#1E1E1E]">
+                    서식 미리보기
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleClosePreview}
+                  className="w-4 h-4 flex items-center justify-center flex-none"
+                  aria-label="미리보기 닫기"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 4L12 12"
+                      stroke="#767676"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M12 4L4 12"
+                      stroke="#767676"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content Box */}
+            <div className="w-[624px] flex-1 border border-[#D9D9D9] overflow-y-auto">
+              {previewLoading && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  로딩 중...
+                </div>
+              )}
+              {!previewLoading && previewHtml && (
+                <iframe
+                  ref={iframeRef}
+                  srcDoc={`<style>html{overflow-x:hidden;}</style>${previewHtml}`}
+                  className="w-full h-full border-none"
+                  title={`${previewForm?.name} 미리보기`}
+                  sandbox="allow-same-origin"
+                  onLoad={() => {
+                    const iframe = iframeRef.current;
+                    if (!iframe?.contentDocument?.body) return;
+                    const contentWidth =
+                      iframe.contentDocument.body.scrollWidth;
+                    const containerWidth = iframe.clientWidth;
+                    if (contentWidth > containerWidth) {
+                      const zoom = containerWidth / contentWidth;
+                      iframe.contentDocument.documentElement.style.zoom =
+                        String(zoom);
+                    }
+                  }}
+                />
+              )}
+              {!previewLoading && !previewHtml && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  미리보기를 지원하지 않는 서식입니다.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-export default AvailableFormsSidebar;
+export default AvailableFormsModal;

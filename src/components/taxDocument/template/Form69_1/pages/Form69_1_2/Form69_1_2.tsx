@@ -3,7 +3,11 @@ import './form69_1_2.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
-import { Form6901Data, Form6901InputData, receiptPurchaseItem, } from '@/components/taxDocument/template/Form69_1/type';
+import {
+  Form6901Data,
+  Form6901InputData,
+  receiptPurchaseItem,
+} from '@/components/taxDocument/template/Form69_1/type';
 import {
   FORM_69_1_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
   FORM_69_1_2_RECEIPT_PURCHASE_ITEM_MAX_LENGTH,
@@ -149,14 +153,15 @@ export default function Form69_1_2({
         기)
       </p>
       <table
+        className="form69-1-2-meta-table"
         style={{
           borderCollapse: 'collapse',
-          marginLeft: 'auto',
-          marginRight: '20pt',
           width: '350pt',
           tableLayout: 'fixed',
           marginTop: '0',
           marginBottom: '10pt',
+          marginLeft: 'auto',
+          marginRight: '20pt',
           paddingBottom: '0',
           border: '1.5pt solid black',
         }}

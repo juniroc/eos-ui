@@ -356,8 +356,6 @@ export default function Form19_2({
                   className="form-textarea text"
                   style={{
                     height: '28pt',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
                   }}
                   value={bizAddress}
                   onChange={e => updater('bizAddress', e.target.value)}

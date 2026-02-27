@@ -1,6 +1,13 @@
 'use client';
 
-import { ChangeEvent, CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  CSSProperties,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { isNil } from 'lodash-es';
 import { InputType } from '@/components/taxDocument/template/common/type';
 import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
@@ -11,9 +18,19 @@ type Props = {
   maxLength?: number;
   style?: CSSProperties;
   inputType?: InputType;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
 
-const NumericInput = ({ value, onChange, maxLength, style, inputType }: Props) => {
+const NumericInput = ({
+  value,
+  onChange,
+  maxLength,
+  style,
+  inputType,
+  disabled,
+  readOnly,
+}: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [rawValue, setRawValue] = useState<string | null>(null);
 
@@ -36,6 +53,7 @@ const NumericInput = ({ value, onChange, maxLength, style, inputType }: Props) =
   }, [rawValue, value]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (disabled || readOnly) return;
     const digits = digitsOnly(e.target.value);
     const formatted = formatDigits(digits);
 
@@ -44,6 +62,7 @@ const NumericInput = ({ value, onChange, maxLength, style, inputType }: Props) =
   };
 
   const handleBlur = () => {
+    if (disabled || readOnly) return;
     setRawValue(null); // blur 시 외부 value 기준으로 다시 동기화
   };
 
@@ -64,12 +83,14 @@ const NumericInput = ({ value, onChange, maxLength, style, inputType }: Props) =
       ref={inputRef}
       type="text"
       className="form-input form-input-numeric"
-      style={{ zIndex: 2, ...style }}
+      style={{ backgroundColor: 'transparent', ...style }}
       value={displayValue}
       maxLength={maxLength}
       onChange={handleChange}
       onBlur={handleBlur}
       inputMode="numeric"
+      disabled={disabled}
+      readOnly={readOnly}
     />
   );
 };

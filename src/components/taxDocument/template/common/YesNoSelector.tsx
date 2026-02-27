@@ -16,7 +16,7 @@ const YesNoSelector = ({
   value,
   onChange,
   inputStyle,
-  mark = 'V',
+  mark = 'O',
   trueLabel = '여',
   falseLabel = '부',
   inputType,
@@ -41,9 +41,9 @@ const YesNoSelector = ({
           }
         }}
       >
-        [ 
+        [
         <Input
-          style={inputStyle}
+          style={{ backgroundColor: 'transparent', ...inputStyle }}
           value={isTrue ? mark : ''}
           onChange={() => onChange(true)}
           onClick={() => onChange(true)}
@@ -67,7 +67,7 @@ const YesNoSelector = ({
       >
         [
         <Input
-          style={inputStyle}
+          style={{ backgroundColor: 'transparent', ...inputStyle }}
           value={isFalse ? mark : ''}
           onChange={() => onChange(false)}
           onClick={() => onChange(false)}

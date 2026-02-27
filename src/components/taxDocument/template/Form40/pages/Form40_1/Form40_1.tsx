@@ -433,7 +433,7 @@ export default function Form40_1({
         <InputField
           className="text-input"
           style={{
-            width: '4ch',
+            width: '34px',
             border: 'none',
             outline: 'none',
             background: '#ffffff',

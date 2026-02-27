@@ -8,6 +8,8 @@ import {
 } from '@/components/taxDocument/template/Form34/type';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericTextArea from '@/components/taxDocument/template/common/NumericTextArea';
+import NumericInput from '@/components/taxDocument/template/common/NumericInput';
+import TextArea from '@/components/taxDocument/template/common/TextArea';
 import { PageSlot } from '@/components/documentCreate/PageSlot';
 
 type Form34Props = UpdaterProps<Form34Data> & { inputType?: Form34InputData };
@@ -846,7 +848,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -862,7 +864,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(0, 'location', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[0]?.location}
+              />
             </td>
             <td
               style={{
@@ -1394,7 +1397,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -1410,7 +1413,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(0, 'remarks', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[0]?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '13pt' }}>
@@ -1874,7 +1878,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -1890,7 +1894,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(1, 'location', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[1]?.location}
+              />
             </td>
             <td
               style={{
@@ -2435,7 +2440,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -2451,7 +2456,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(1, 'remarks', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[1]?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '13pt' }}>
@@ -2913,7 +2919,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -2929,7 +2935,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(2, 'location', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[2]?.location}
+              />
             </td>
             <td
               style={{
@@ -3474,7 +3481,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -3490,7 +3497,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(2, 'remarks', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[2]?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '13pt' }}>
@@ -3952,7 +3960,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -3968,7 +3976,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(3, 'location', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[3]?.location}
+              />
             </td>
             <td
               style={{
@@ -4513,7 +4522,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -4529,7 +4538,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(3, 'remarks', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[3]?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '13pt' }}>
@@ -4990,7 +5000,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -5006,7 +5016,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(4, 'location', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[4]?.location}
+              />
             </td>
             <td
               style={{
@@ -5545,7 +5556,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -5561,7 +5572,8 @@ export default function Form34({
                 onChange={event =>
                   updateWorkplaceField(4, 'remarks', event.target.value)
                 }
-              ></textarea>
+                inputType={inputType?.workplaceItems?.[4]?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '13pt' }}>
@@ -6062,7 +6074,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6135,7 +6147,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6201,7 +6213,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6274,7 +6286,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6315,7 +6327,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '40pt',
@@ -6352,7 +6364,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '40pt',
@@ -6389,7 +6401,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '40pt',
@@ -6426,7 +6438,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '40pt',
@@ -6465,7 +6477,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '40pt',
@@ -6501,7 +6513,7 @@ export default function Form34({
               }}
               rowSpan={4}
             >
-              <textarea
+              <TextArea
                 className="form-input form-input-text"
                 style={{
                   width: 'calc(100% - 2pt)',
@@ -6515,7 +6527,8 @@ export default function Form34({
                 }}
                 value={total.remarks ?? ''}
                 onChange={event => updateTotalRemarks(event.target.value)}
-              ></textarea>
+                inputType={inputType?.total?.remarks}
+              />
             </td>
           </tr>
           <tr style={{ height: '11pt' }}>
@@ -6638,7 +6651,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6711,7 +6724,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6775,7 +6788,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',
@@ -6848,7 +6861,7 @@ export default function Form34({
               }}
               rowSpan={2}
             >
-              <NumericTextArea
+              <NumericInput
                 style={{
                   width: 'calc(100% - 2pt)',
                   height: '20pt',

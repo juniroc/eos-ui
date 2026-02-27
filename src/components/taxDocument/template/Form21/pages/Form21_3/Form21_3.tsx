@@ -2,7 +2,10 @@
 
 import './form21_3.css';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 
@@ -869,15 +872,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesTaxInvoice.amount}
               inputType={inputType?.omissionSalesTaxInvoice?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesTaxInvoice',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionSalesTaxInvoice', 'amount', value)
               }
             />
           </td>
@@ -950,15 +948,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesTaxInvoice.tax}
               inputType={inputType?.omissionSalesTaxInvoice?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesTaxInvoice',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionSalesTaxInvoice', 'tax', value)
               }
             />
           </td>
@@ -1000,7 +993,6 @@ export default function Form21_3(props: Props) {
             >
               기타
             </p>
-            s
           </td>
           <td
             style={{
@@ -1074,15 +1066,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesOther.amount}
               inputType={inputType?.omissionSalesOther?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesOther',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionSalesOther', 'amount', value)
               }
             />
           </td>
@@ -1155,15 +1142,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesOther.tax}
               inputType={inputType?.omissionSalesOther?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesOther',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionSalesOther', 'tax', value)
               }
             />
           </td>
@@ -1317,7 +1299,6 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesZeroTaxInvoice.amount}
               inputType={inputType?.omissionSalesZeroTaxInvoice?.amount}
               onChange={value =>
@@ -1508,15 +1489,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesZeroOther.amount}
               inputType={inputType?.omissionSalesZeroOther?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesZeroOther',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionSalesZeroOther', 'amount', value)
               }
             />
           </td>
@@ -1699,15 +1675,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesTotal.amount}
               inputType={inputType?.omissionSalesTotal?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesTotal',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionSalesTotal', 'amount', value)
               }
             />
           </td>
@@ -1779,15 +1750,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionSalesTotal.tax}
               inputType={inputType?.omissionSalesTotal?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionSalesTotal',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionSalesTotal', 'tax', value)
               }
             />
           </td>
@@ -1939,15 +1905,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseTaxInvoice.amount}
               inputType={inputType?.omissionPurchaseTaxInvoice?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseTaxInvoice',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionPurchaseTaxInvoice', 'amount', value)
               }
             />
           </td>
@@ -2019,15 +1980,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseTaxInvoice.tax}
               inputType={inputType?.omissionPurchaseTaxInvoice?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseTaxInvoice',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionPurchaseTaxInvoice', 'tax', value)
               }
             />
           </td>
@@ -2143,15 +2099,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseOther.amount}
               inputType={inputType?.omissionPurchaseOther?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseOther',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionPurchaseOther', 'amount', value)
               }
             />
           </td>
@@ -2223,15 +2174,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseOther.tax}
               inputType={inputType?.omissionPurchaseOther?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseOther',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionPurchaseOther', 'tax', value)
               }
             />
           </td>
@@ -2343,15 +2289,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseTotal.amount}
               inputType={inputType?.omissionPurchaseTotal?.amount}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseTotal',
-                  'amount',
-                  value
-                )
+                updateNestedField('omissionPurchaseTotal', 'amount', value)
               }
             />
           </td>
@@ -2421,15 +2362,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.omissionPurchaseTotal.tax}
               inputType={inputType?.omissionPurchaseTotal?.tax}
               onChange={value =>
-                updateNestedField(
-                  'omissionPurchaseTotal',
-                  'tax',
-                  value
-                )
+                updateNestedField('omissionPurchaseTotal', 'tax', value)
               }
             />
           </td>
@@ -2768,13 +2704,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardGeneral.amount}
               inputType={inputType?.otherDedCreditCardGeneral?.amount}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardGeneral',
-                  'amount',
-                  value
-                )
+                updateNestedField('otherDedCreditCardGeneral', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -2813,11 +2744,7 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardGeneral.taxRate ?? ''}
               inputType={inputType?.otherDedCreditCardGeneral?.taxRate}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardGeneral',
-                  'taxRate',
-                  value
-                )
+                updateNestedField('otherDedCreditCardGeneral', 'taxRate', value)
               }
             />
           </td>
@@ -2857,13 +2784,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardGeneral.tax}
               inputType={inputType?.otherDedCreditCardGeneral?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardGeneral',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedCreditCardGeneral', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -2990,13 +2912,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardFixed.amount}
               inputType={inputType?.otherDedCreditCardFixed?.amount}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardFixed',
-                  'amount',
-                  value
-                )
+                updateNestedField('otherDedCreditCardFixed', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -3035,11 +2952,7 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardFixed.taxRate ?? ''}
               inputType={inputType?.otherDedCreditCardFixed?.taxRate}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardFixed',
-                  'taxRate',
-                  value
-                )
+                updateNestedField('otherDedCreditCardFixed', 'taxRate', value)
               }
             />
           </td>
@@ -3079,13 +2992,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedCreditCardFixed.tax}
               inputType={inputType?.otherDedCreditCardFixed?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedCreditCardFixed',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedCreditCardFixed', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -3226,13 +3134,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedDeemedInput.amount}
               inputType={inputType?.otherDedDeemedInput?.amount}
               onChange={value =>
-                updateNestedField(
-                  'otherDedDeemedInput',
-                  'amount',
-                  value
-                )
+                updateNestedField('otherDedDeemedInput', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -3307,13 +3210,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedDeemedInput.tax}
               inputType={inputType?.otherDedDeemedInput?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedDeemedInput',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedDeemedInput', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -3434,13 +3332,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedRecycledInput.amount}
               inputType={inputType?.otherDedRecycledInput?.amount}
               onChange={value =>
-                updateNestedField(
-                  'otherDedRecycledInput',
-                  'amount',
-                  value
-                )
+                updateNestedField('otherDedRecycledInput', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -3517,13 +3410,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedRecycledInput.tax}
               inputType={inputType?.otherDedRecycledInput?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedRecycledInput',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedRecycledInput', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -3734,13 +3622,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedTaxTrans.tax}
               inputType={inputType?.otherDedTaxTrans?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedTaxTrans',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedTaxTrans', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -3951,15 +3834,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.otherDedInventory.tax}
               inputType={inputType?.otherDedInventory?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedInventory',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedInventory', 'tax', value)
               }
             />
           </td>
@@ -4177,13 +4055,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedBadDebtRepay.tax}
               inputType={inputType?.otherDedBadDebtRepay?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedBadDebtRepay',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedBadDebtRepay', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -4215,11 +4088,7 @@ export default function Form21_3(props: Props) {
               value={props.otherDedBadDebtRepay.taxRate ?? ''}
               inputType={inputType?.otherDedBadDebtRepay?.taxRate}
               onChange={value =>
-                updateNestedField(
-                  'otherDedBadDebtRepay',
-                  'taxRate',
-                  value
-                )
+                updateNestedField('otherDedBadDebtRepay', 'taxRate', value)
               }
             />
           </td>
@@ -4409,13 +4278,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedForeignerRefund.tax}
               inputType={inputType?.otherDedForeignerRefund?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedForeignerRefund',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedForeignerRefund', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -4449,11 +4313,7 @@ export default function Form21_3(props: Props) {
               value={props.otherDedForeignerRefund.taxRate ?? ''}
               inputType={inputType?.otherDedForeignerRefund?.taxRate}
               onChange={value =>
-                updateNestedField(
-                  'otherDedForeignerRefund',
-                  'taxRate',
-                  value
-                )
+                updateNestedField('otherDedForeignerRefund', 'taxRate', value)
               }
             />
           </td>
@@ -4563,13 +4423,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedTotal.amount}
               inputType={inputType?.otherDedTotal?.amount}
               onChange={value =>
-                updateNestedField(
-                  'otherDedTotal',
-                  'amount',
-                  value
-                )
+                updateNestedField('otherDedTotal', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -4641,13 +4496,8 @@ export default function Form21_3(props: Props) {
               value={props.otherDedTotal.tax}
               inputType={inputType?.otherDedTotal?.tax}
               onChange={value =>
-                updateNestedField(
-                  'otherDedTotal',
-                  'tax',
-                  value
-                )
+                updateNestedField('otherDedTotal', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -4962,13 +4812,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedInputTax.amount}
               inputType={inputType?.nonDedInputTax?.amount}
               onChange={value =>
-                updateNestedField(
-                  'nonDedInputTax',
-                  'amount',
-                  value
-                )
+                updateNestedField('nonDedInputTax', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -5044,13 +4889,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedInputTax.tax}
               inputType={inputType?.nonDedInputTax?.tax}
               onChange={value =>
-                updateNestedField(
-                  'nonDedInputTax',
-                  'tax',
-                  value
-                )
+                updateNestedField('nonDedInputTax', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -5199,13 +5039,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedCommonTax.amount}
               inputType={inputType?.nonDedCommonTax?.amount}
               onChange={value =>
-                updateNestedField(
-                  'nonDedCommonTax',
-                  'amount',
-                  value
-                )
+                updateNestedField('nonDedCommonTax', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -5281,13 +5116,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedCommonTax.tax}
               inputType={inputType?.nonDedCommonTax?.tax}
               onChange={value =>
-                updateNestedField(
-                  'nonDedCommonTax',
-                  'tax',
-                  value
-                )
+                updateNestedField('nonDedCommonTax', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -5470,13 +5300,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedBadDebtDisposition.amount}
               inputType={inputType?.nonDedBadDebtDisposition?.amount}
               onChange={value =>
-                updateNestedField(
-                  'nonDedBadDebtDisposition',
-                  'amount',
-                  value
-                )
+                updateNestedField('nonDedBadDebtDisposition', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -5552,13 +5377,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedBadDebtDisposition.tax}
               inputType={inputType?.nonDedBadDebtDisposition?.tax}
               onChange={value =>
-                updateNestedField(
-                  'nonDedBadDebtDisposition',
-                  'tax',
-                  value
-                )
+                updateNestedField('nonDedBadDebtDisposition', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -5706,13 +5526,8 @@ export default function Form21_3(props: Props) {
               value={props.nonDedTotal.amount}
               inputType={inputType?.nonDedTotal?.amount}
               onChange={value =>
-                updateNestedField(
-                  'nonDedTotal',
-                  'amount',
-                  value
-                )
+                updateNestedField('nonDedTotal', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -5783,14 +5598,7 @@ export default function Form21_3(props: Props) {
               }}
               value={props.nonDedTotal.tax}
               inputType={inputType?.nonDedTotal?.tax}
-              onChange={value =>
-                updateNestedField(
-                  'nonDedTotal',
-                  'tax',
-                  value
-                )
-              }
-              
+              onChange={value => updateNestedField('nonDedTotal', 'tax', value)}
             />
           </td>
         </tr>
@@ -6193,13 +6001,8 @@ export default function Form21_3(props: Props) {
               value={props.creditElectronicReport.tax}
               inputType={inputType?.creditElectronicReport?.tax}
               onChange={value =>
-                updateNestedField(
-                  'creditElectronicReport',
-                  'tax',
-                  value
-                )
+                updateNestedField('creditElectronicReport', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -6410,13 +6213,8 @@ export default function Form21_3(props: Props) {
               value={props.creditElectronicInvoice.tax}
               inputType={inputType?.creditElectronicInvoice?.tax}
               onChange={value =>
-                updateNestedField(
-                  'creditElectronicInvoice',
-                  'tax',
-                  value
-                )
+                updateNestedField('creditElectronicInvoice', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -6606,13 +6404,8 @@ export default function Form21_3(props: Props) {
               value={props.creditTaxiTransport.tax}
               inputType={inputType?.creditTaxiTransport?.tax}
               onChange={value =>
-                updateNestedField(
-                  'creditTaxiTransport',
-                  'tax',
-                  value
-                )
+                updateNestedField('creditTaxiTransport', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -6847,13 +6640,8 @@ export default function Form21_3(props: Props) {
               value={props.creditProxyPayment.tax}
               inputType={inputType?.creditProxyPayment?.tax}
               onChange={value =>
-                updateNestedField(
-                  'creditProxyPayment',
-                  'tax',
-                  value
-                )
+                updateNestedField('creditProxyPayment', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -7064,13 +6852,8 @@ export default function Form21_3(props: Props) {
               value={props.creditCashReceiptBiz.tax}
               inputType={inputType?.creditCashReceiptBiz?.tax}
               onChange={value =>
-                updateNestedField(
-                  'creditCashReceiptBiz',
-                  'tax',
-                  value
-                )
+                updateNestedField('creditCashReceiptBiz', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -7288,14 +7071,7 @@ export default function Form21_3(props: Props) {
               }}
               value={props.creditOther.tax}
               inputType={inputType?.creditOther?.tax}
-              onChange={value =>
-                updateNestedField(
-                  'creditOther',
-                  'tax',
-                  value
-                )
-              }
-              
+              onChange={value => updateNestedField('creditOther', 'tax', value)}
             />
           </td>
         </tr>
@@ -7328,13 +7104,7 @@ export default function Form21_3(props: Props) {
               }}
               value={props.creditTotal.tax}
               inputType={inputType?.creditTotal?.tax}
-              onChange={value =>
-                updateNestedField(
-                  'creditTotal',
-                  'tax',
-                  value
-                )
-              }
+              onChange={value => updateNestedField('creditTotal', 'tax', value)}
             />
           </td>
           <td
@@ -7513,14 +7283,7 @@ export default function Form21_3(props: Props) {
               }}
               value={props.creditTotal.tax}
               inputType={inputType?.creditTotal?.tax}
-              onChange={value =>
-                updateNestedField(
-                  'creditTotal',
-                  'tax',
-                  value
-                )
-              }
-              
+              onChange={value => updateNestedField('creditTotal', 'tax', value)}
             />
           </td>
         </tr>
@@ -7840,13 +7603,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyBizReg.amount}
               inputType={inputType?.penaltyBizReg?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyBizReg',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyBizReg', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -7921,13 +7679,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyBizReg.tax}
               inputType={inputType?.penaltyBizReg?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyBizReg',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyBizReg', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -8102,7 +7855,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -8178,13 +7930,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyTaxInvoiceDelayIssue.tax}
               inputType={inputType?.penaltyTaxInvoiceDelayIssue?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyTaxInvoiceDelayIssue',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyTaxInvoiceDelayIssue', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -8307,7 +8054,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -8383,13 +8129,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyTaxInvoiceDelayReceipt.tax}
               inputType={inputType?.penaltyTaxInvoiceDelayReceipt?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyTaxInvoiceDelayReceipt',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyTaxInvoiceDelayReceipt', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -8506,13 +8247,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyTaxInvoiceNonIssue.amount}
               inputType={inputType?.penaltyTaxInvoiceNonIssue?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyTaxInvoiceNonIssue',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyTaxInvoiceNonIssue', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -8587,13 +8323,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyTaxInvoiceNonIssue.tax}
               inputType={inputType?.penaltyTaxInvoiceNonIssue?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyTaxInvoiceNonIssue',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyTaxInvoiceNonIssue', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -8756,7 +8487,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -8832,13 +8562,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyElecInvoiceDelayTrans.tax}
               inputType={inputType?.penaltyElecInvoiceDelayTrans?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyElecInvoiceDelayTrans',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyElecInvoiceDelayTrans', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -8955,13 +8680,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyElecInvoiceNonTrans.amount}
               inputType={inputType?.penaltyElecInvoiceNonTrans?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyElecInvoiceNonTrans',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyElecInvoiceNonTrans', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -9037,13 +8757,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyElecInvoiceNonTrans.tax}
               inputType={inputType?.penaltyElecInvoiceNonTrans?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyElecInvoiceNonTrans',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyElecInvoiceNonTrans', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -9194,9 +8909,7 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              value={
-                props.penaltySummaryTableSubmitUnfaithful.amount
-              }
+              value={props.penaltySummaryTableSubmitUnfaithful.amount}
               inputType={inputType?.penaltySummaryTableSubmitUnfaithful?.amount}
               onChange={value =>
                 updateNestedField(
@@ -9205,7 +8918,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -9287,7 +8999,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
         </tr>
@@ -9410,7 +9121,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -9492,7 +9202,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
         </tr>
@@ -9661,13 +9370,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyNoReportGeneral.amount}
               inputType={inputType?.penaltyNoReportGeneral?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyNoReportGeneral',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyNoReportGeneral', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -9742,13 +9446,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyNoReportGeneral.tax}
               inputType={inputType?.penaltyNoReportGeneral?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyNoReportGeneral',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyNoReportGeneral', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -9865,13 +9564,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyNoReportFraud.amount}
               inputType={inputType?.penaltyNoReportFraud?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyNoReportFraud',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyNoReportFraud', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -9946,13 +9640,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyNoReportFraud.tax}
               inputType={inputType?.penaltyNoReportFraud?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyNoReportFraud',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyNoReportFraud', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -10069,13 +9758,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyUnderReportGeneral.amount}
               inputType={inputType?.penaltyUnderReportGeneral?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyUnderReportGeneral',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyUnderReportGeneral', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -10150,13 +9834,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyUnderReportGeneral.tax}
               inputType={inputType?.penaltyUnderReportGeneral?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyUnderReportGeneral',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyUnderReportGeneral', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -10273,13 +9952,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyUnderReportFraud.amount}
               inputType={inputType?.penaltyUnderReportFraud?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyUnderReportFraud',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyUnderReportFraud', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -10354,13 +10028,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyUnderReportFraud.tax}
               inputType={inputType?.penaltyUnderReportFraud?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyUnderReportFraud',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyUnderReportFraud', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -10478,13 +10147,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyLatePayment.amount}
               inputType={inputType?.penaltyLatePayment?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyLatePayment',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyLatePayment', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -10559,13 +10223,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyLatePayment.tax}
               inputType={inputType?.penaltyLatePayment?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyLatePayment',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyLatePayment', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -10683,13 +10342,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyZeroRateUnfaithful.amount}
               inputType={inputType?.penaltyZeroRateUnfaithful?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyZeroRateUnfaithful',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyZeroRateUnfaithful', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -10765,13 +10419,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyZeroRateUnfaithful.tax}
               inputType={inputType?.penaltyZeroRateUnfaithful?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyZeroRateUnfaithful',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyZeroRateUnfaithful', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -10889,13 +10538,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltyCashSalesUnfaithful.amount}
               inputType={inputType?.penaltyCashSalesUnfaithful?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltyCashSalesUnfaithful',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltyCashSalesUnfaithful', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -10968,15 +10612,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.penaltyCashSalesUnfaithful.tax}
               inputType={inputType?.penaltyCashSalesUnfaithful?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyCashSalesUnfaithful',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyCashSalesUnfaithful', 'tax', value)
               }
             />
           </td>
@@ -11101,7 +10740,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -11174,15 +10812,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.penaltyRealEstateUnfaithful.tax}
               inputType={inputType?.penaltyRealEstateUnfaithful?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyRealEstateUnfaithful',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyRealEstateUnfaithful', 'tax', value)
               }
             />
           </td>
@@ -11343,7 +10976,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -11415,15 +11047,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.penaltySpecialAccountUnused.tax}
               inputType={inputType?.penaltySpecialAccountUnused?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltySpecialAccountUnused',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltySpecialAccountUnused', 'tax', value)
               }
             />
           </td>
@@ -11541,13 +11168,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltySpecialAccountDelay.amount}
               inputType={inputType?.penaltySpecialAccountDelay?.amount}
               onChange={value =>
-                updateNestedField(
-                  'penaltySpecialAccountDelay',
-                  'amount',
-                  value
-                )
+                updateNestedField('penaltySpecialAccountDelay', 'amount', value)
               }
-              
             />
           </td>
           <td
@@ -11619,15 +11241,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.penaltySpecialAccountDelay.tax}
               inputType={inputType?.penaltySpecialAccountDelay?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltySpecialAccountDelay',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltySpecialAccountDelay', 'tax', value)
               }
             />
           </td>
@@ -11754,7 +11371,6 @@ export default function Form21_3(props: Props) {
                   value
                 )
               }
-              
             />
           </td>
           <td
@@ -11827,15 +11443,10 @@ export default function Form21_3(props: Props) {
                 paddingLeft: '0.2pt',
                 paddingRight: '3pt',
               }}
-              
               value={props.penaltyCreditCardUnsubmitted.tax}
               inputType={inputType?.penaltyCreditCardUnsubmitted?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltyCreditCardUnsubmitted',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltyCreditCardUnsubmitted', 'tax', value)
               }
             />
           </td>
@@ -12015,13 +11626,8 @@ export default function Form21_3(props: Props) {
               value={props.penaltySumTotal.tax}
               inputType={inputType?.penaltySumTotal?.tax}
               onChange={value =>
-                updateNestedField(
-                  'penaltySumTotal',
-                  'tax',
-                  value
-                )
+                updateNestedField('penaltySumTotal', 'tax', value)
               }
-              
             />
           </td>
         </tr>
@@ -12392,9 +11998,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[0]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 0, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 0, value)}
               type="text"
             />
           </td>
@@ -12435,9 +12039,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[1]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 1, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 1, value)}
               type="text"
             />
           </td>
@@ -12478,9 +12080,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[2]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 2, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 2, value)}
               type="text"
             />
           </td>
@@ -12521,9 +12121,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[3]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 3, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 3, value)}
               type="text"
             />
           </td>
@@ -12564,9 +12162,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[4]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 4, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 4, value)}
               type="text"
             />
           </td>
@@ -12607,9 +12203,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue1.code)[5]}
               inputType={inputType?.taxFreeRevenue1?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue1', 5, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue1', 5, value)}
               type="text"
             />
           </td>
@@ -12650,13 +12244,8 @@ export default function Form21_3(props: Props) {
               value={props.taxFreeRevenue1.amount}
               inputType={inputType?.taxFreeRevenue1?.amount}
               onChange={value =>
-                updateNestedField(
-                  'taxFreeRevenue1',
-                  'amount',
-                  value
-                )
+                updateNestedField('taxFreeRevenue1', 'amount', value)
               }
-              
             />
           </td>
         </tr>
@@ -12817,9 +12406,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[0]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 0, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 0, value)}
               type="text"
             />
           </td>
@@ -12860,9 +12447,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[1]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 1, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 1, value)}
               type="text"
             />
           </td>
@@ -12903,9 +12488,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[2]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 2, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 2, value)}
               type="text"
             />
           </td>
@@ -12946,9 +12529,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[3]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 3, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 3, value)}
               type="text"
             />
           </td>
@@ -12989,9 +12570,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[4]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 4, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 4, value)}
               type="text"
             />
           </td>
@@ -13032,9 +12611,7 @@ export default function Form21_3(props: Props) {
               maxLength={1}
               value={getCodeDigits(props.taxFreeRevenue2.code)[5]}
               inputType={inputType?.taxFreeRevenue2?.code}
-              onChange={value =>
-                updateCodeDigit('taxFreeRevenue2', 5, value)
-              }
+              onChange={value => updateCodeDigit('taxFreeRevenue2', 5, value)}
               type="text"
             />
           </td>
@@ -13075,13 +12652,8 @@ export default function Form21_3(props: Props) {
               value={props.taxFreeRevenue2.amount}
               inputType={inputType?.taxFreeRevenue2?.amount}
               onChange={value =>
-                updateNestedField(
-                  'taxFreeRevenue2',
-                  'amount',
-                  value
-                )
+                updateNestedField('taxFreeRevenue2', 'amount', value)
               }
-              
             />
           </td>
         </tr>
@@ -13197,11 +12769,7 @@ export default function Form21_3(props: Props) {
               value={props.taxFreeRevenueExcluded.bizItem ?? ''}
               inputType={inputType?.taxFreeRevenueExcluded?.bizItem}
               onChange={value =>
-                updateNestedField(
-                  'taxFreeRevenueExcluded',
-                  'bizItem',
-                  value
-                )
+                updateNestedField('taxFreeRevenueExcluded', 'bizItem', value)
               }
             />
           </td>
@@ -13500,13 +13068,8 @@ export default function Form21_3(props: Props) {
               value={props.taxFreeRevenueExcluded.amount}
               inputType={inputType?.taxFreeRevenueExcluded?.amount}
               onChange={value =>
-                updateNestedField(
-                  'taxFreeRevenueExcluded',
-                  'amount',
-                  value
-                )
+                updateNestedField('taxFreeRevenueExcluded', 'amount', value)
               }
-              
             />
           </td>
         </tr>
@@ -13654,13 +13217,8 @@ export default function Form21_3(props: Props) {
               value={props.taxFreeRevenueTotal.amount}
               inputType={inputType?.taxFreeRevenueTotal?.amount}
               onChange={value =>
-                updateNestedField(
-                  'taxFreeRevenueTotal',
-                  'amount',
-                  value
-                )
+                updateNestedField('taxFreeRevenueTotal', 'amount', value)
               }
-              
             />
           </td>
         </tr>
@@ -13791,13 +13349,8 @@ export default function Form21_3(props: Props) {
               value={props.billIssuedAmount.amount}
               inputType={inputType?.billIssuedAmount?.amount}
               onChange={value =>
-                updateNestedField(
-                  'billIssuedAmount',
-                  'amount',
-                  value
-                )
+                updateNestedField('billIssuedAmount', 'amount', value)
               }
-              
             />
           </td>
         </tr>
@@ -13874,13 +13427,8 @@ export default function Form21_3(props: Props) {
               value={props.billReceivedAmount.amount}
               inputType={inputType?.billReceivedAmount?.amount}
               onChange={value =>
-                updateNestedField(
-                  'billReceivedAmount',
-                  'amount',
-                  value
-                )
+                updateNestedField('billReceivedAmount', 'amount', value)
               }
-              
             />
           </td>
         </tr>

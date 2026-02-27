@@ -21,7 +21,7 @@ function Form38({ updater, inputType, ...data }: Form38Props) {
   );
   return (
     <Fragment>
-      <PageSlot slotWidth={880} slotHeight={1243.85}>
+      <PageSlot slotWidth={880} slotHeight={1243.85} zoom={0.98}>
         <Form38_1
           pageIndex={0}
           updater={updater}
@@ -31,7 +31,7 @@ function Form38({ updater, inputType, ...data }: Form38Props) {
         />
       </PageSlot>
       {Array.from({ length: pageCount - 1 }).map((_, index) => (
-        <PageSlot key={index} slotWidth={880} slotHeight={1243.85}>
+        <PageSlot key={index} slotWidth={880} slotHeight={1243.85} zoom={0.98}>
           <Form38_2
             updater={updater}
             inputType={inputType}

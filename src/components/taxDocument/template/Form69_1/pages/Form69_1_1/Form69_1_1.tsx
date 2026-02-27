@@ -3031,21 +3031,7 @@ export default function Form69_1_1({
               padding: '1pt',
               verticalAlign: 'middle',
             }}
-          >
-            <NumericInput
-              style={{
-                width: 'calc(100% - 2pt)',
-                height: '20pt',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-              }}
-              value={receiptPurchaseItemsTotal.count}
-              onChange={value =>
-                receiptPurchaseItemsTotalUpdater('count', value)
-              }
-              inputType={inputType?.receiptPurchaseItemsTotal?.count}
-            />
-          </td>
+          ></td>
           <td
             style={{
               width: '28pt',
@@ -3065,17 +3051,18 @@ export default function Form69_1_1({
               verticalAlign: 'middle',
             }}
           >
-            <InputField
-              className="form-input form-input-text"
+            <NumericInput
               style={{
                 width: 'calc(100% - 2pt)',
                 height: '20pt',
                 padding: '1.5pt',
                 verticalAlign: 'middle',
               }}
-              type="text"
-              value=""
-              readOnly
+              value={receiptPurchaseItemsTotal.count}
+              onChange={value =>
+                receiptPurchaseItemsTotalUpdater('count', value)
+              }
+              inputType={inputType?.receiptPurchaseItemsTotal?.count}
             />
           </td>
           <td

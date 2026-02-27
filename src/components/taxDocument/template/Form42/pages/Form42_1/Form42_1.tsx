@@ -4,7 +4,11 @@ import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
-import { AttachmentItem, Form42Data, Form42InputData, } from '@/components/taxDocument/template/Form42/type';
+import {
+  AttachmentItem,
+  Form42Data,
+  Form42InputData,
+} from '@/components/taxDocument/template/Form42/type';
 import { MAX_ATTACHMENT_ITEM_LENGTH } from '@/components/taxDocument/template/Form42/constants';
 
 type Props = FormPageProps<Form42Data> & { inputType?: Form42InputData };
@@ -502,20 +506,6 @@ export default function Form42_1({
               ⑤ 업태
               <span className="s5">(종목)</span>
             </p>
-            <Input
-              style={{
-                width: '114pt',
-                height: '20pt',
-                padding: '1.5pt',
-                verticalAlign: 'middle',
-                float: 'right',
-                marginRight: '1pt',
-                fontSize: '10pt',
-              }}
-              value={submitterInfo.bizTypeAndItem}
-              onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
-              inputType={inputType?.submitterInfo?.bizTypeAndItem}
-            />
           </td>
           <td
             style={{
@@ -528,13 +518,12 @@ export default function Form42_1({
               borderBottomWidth: '1pt',
             }}
           >
-            <InputField
+            <Input
               className="text-input"
               type="text"
+              style={{ width: '100%' }}
               value={submitterInfo.bizTypeAndItem}
-              onChange={e =>
-                submitterInfoUpdater('bizTypeAndItem', e.target.value)
-              }
+              onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
               inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />
           </td>

@@ -269,7 +269,7 @@ export default function VatDocumentCreatePage() {
           style={{
             width: 1068,
             minWidth: 1068,
-            gridTemplateColumns: '692px 360px',
+            gridTemplateColumns: '1fr 360px',
           }}
         >
           {/* 액션 그룹: 전체 너비(1 / -1) → 회사인감 영역 위까지 확장 */}
@@ -281,13 +281,13 @@ export default function VatDocumentCreatePage() {
             <div className="flex flex-row items-center p-0 gap-2.5 flex-none">
               {/* 신고일자 */}
               <div className="flex flex-row items-center p-0 gap-2 w-[147px] h-8">
-                <span className="font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none">
+                <span className="font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none">
                   신고일자
                 </span>
                 <div className="box-border flex flex-row justify-between items-center px-2 gap-1 w-[100px] h-8 bg-white border border-[#E9EAEB] rounded-[2px] flex-none">
                   <input
                     type="date"
-                    className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
+                    className="flex-1 min-w-0 font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
                     value={reportingPeriodStart}
                     onChange={e => setReportingPeriodStart(e.target.value)}
                   />
@@ -295,12 +295,12 @@ export default function VatDocumentCreatePage() {
               </div>
               {/* 신고구분 */}
               <div className="flex flex-row items-center p-0 gap-2 w-[108px] h-8">
-                <span className="font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none">
+                <span className="font-medium text-[11px] leading-[100%] text-[#1E1E1E] flex-none">
                   신고구분
                 </span>
                 <div className="box-border flex flex-row justify-between items-center px-2 gap-1 w-[80px] h-8 bg-white border border-[#E9EAEB] rounded-[2px] flex-none">
                   <select
-                    className="w-full font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none cursor-pointer"
+                    className="w-full font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none cursor-pointer"
                     value={reportingType}
                     onChange={e => setReportingType(e.target.value)}
                   >
@@ -318,7 +318,7 @@ export default function VatDocumentCreatePage() {
                 type="button"
                 onClick={() => setShowCreateConfirm(true)}
                 disabled={!canCreateDocument || loading}
-                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 font-['Pretendard'] font-medium text-[11px] leading-[100%] flex-none ${
+                className={`flex flex-row justify-center items-center px-3 py-2 gap-2 font-medium text-[11px] leading-[100%] flex-none ${
                   !canCreateDocument || loading
                     ? 'bg-[#E6E6E6] text-[#B3B3B3] cursor-not-allowed'
                     : 'bg-[#2C2C2C] text-[#F5F5F5]'
@@ -339,14 +339,14 @@ export default function VatDocumentCreatePage() {
               className="flex flex-row justify-between items-end p-0"
               style={{ gridColumn: '1 / -1' }}
             >
-              <h3 className="font-['Pretendard'] font-semibold text-sm leading-[140%] text-[#1E1E1E] py-1.5 pr-0 pb-0.5">
+              <h3 className="font-semibold text-sm leading-[140%] text-[#1E1E1E] py-1.5 pr-0 pb-0.5">
                 회사정보
               </h3>
               <button
                 type="button"
                 onClick={() => setShowSaveConfirm(true)}
                 disabled={loading}
-                className="flex flex-row justify-center items-center px-3 py-2 gap-2 min-w-[66px] h-7 bg-[#F3F3F3] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
+                className="flex flex-row justify-center items-center px-3 py-2 gap-2 min-w-[66px] h-7 bg-[#F3F3F3] font-medium text-xs leading-[100%] text-[#1E1E1E] disabled:opacity-50"
               >
                 저장하기
               </button>
@@ -434,7 +434,7 @@ export default function VatDocumentCreatePage() {
                     className="flex flex-row items-center w-full min-h-[40px] border-b border-r border-[#D9D9D9]"
                   >
                     <div className="box-border flex flex-row items-center px-4 py-1.5 gap-3 min-w-[118px] h-10 bg-[#F5F5F5] border-r border-[#D9D9D9] flex-shrink-0">
-                      <span className="font-['Pretendard'] font-bold text-[11px] leading-[13px] text-center text-[#757575]">
+                      <span className="font-bold text-[11px] leading-[13px] text-center text-[#757575]">
                         {label}
                       </span>
                     </div>
@@ -443,7 +443,7 @@ export default function VatDocumentCreatePage() {
                         className={`box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 rounded-[2px] border border-[#E9EAEB] ${readOnly ? 'bg-[#E6E6E6]' : 'bg-white'}`}
                       >
                         <input
-                          className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
+                          className="flex-1 min-w-0 font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
                           placeholder="입력"
                           readOnly={readOnly}
                           value={value}
@@ -530,17 +530,21 @@ export default function VatDocumentCreatePage() {
                     className="flex flex-row items-center w-full min-h-[40px] border-b border-r border-[#D9D9D9]"
                   >
                     <div className="box-border flex flex-row items-center px-4 py-1.5 gap-3 min-w-[118px] h-10 bg-[#F5F5F5] border-r border-[#D9D9D9] flex-shrink-0">
-                      <span className="font-['Pretendard'] font-bold text-[11px] leading-[13px] text-center text-[#757575]">
+                      <span className="font-bold text-[11px] leading-[13px] text-center text-[#757575]">
                         {label}
                       </span>
                     </div>
                     <div className="box-border flex flex-row items-center p-1.5 flex-1 min-w-0 bg-white">
                       {isBank ? (
                         <div className="flex flex-row items-center flex-1 gap-0 min-w-0">
-                          <div className="box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 bg-white border border-[#E9EAEB] rounded-[2px]">
+                          <div className="box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 overflow-hidden h-7 bg-white border border-[#E9EAEB] rounded-[2px]">
                             <input
-                              className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
-                              placeholder="입력"
+                              className="min-w-[1ch] max-w-16 font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
+                              style={
+                                {
+                                  fieldSizing: 'content',
+                                } as React.CSSProperties
+                              }
                               value={vatCompanyInfo.refundBankName ?? ''}
                               onChange={e =>
                                 setVatCompanyInfo(prev =>
@@ -553,11 +557,18 @@ export default function VatDocumentCreatePage() {
                                 )
                               }
                             />
+                            <span className="font-medium text-[11px] leading-[100%] text-[#757575]">
+                              은행
+                            </span>
                           </div>
-                          <div className="box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 bg-white border border-[#E9EAEB] border-l-0 rounded-[2px]">
+                          <div className="box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 overflow-hidden h-7 bg-white border border-[#E9EAEB] border-l-0 rounded-[2px]">
                             <input
-                              className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
-                              placeholder="입력"
+                              className="min-w-[1ch] max-w-16 font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none"
+                              style={
+                                {
+                                  fieldSizing: 'content',
+                                } as React.CSSProperties
+                              }
                               value={vatCompanyInfo.refundBankBranch ?? ''}
                               onChange={e =>
                                 setVatCompanyInfo(prev =>
@@ -570,6 +581,9 @@ export default function VatDocumentCreatePage() {
                                 )
                               }
                             />
+                            <span className="font-medium text-[11px] leading-[100%] text-[#757575]">
+                              지점
+                            </span>
                           </div>
                         </div>
                       ) : (
@@ -577,7 +591,7 @@ export default function VatDocumentCreatePage() {
                           className={`box-border flex flex-row items-center px-2 gap-1 flex-1 min-w-0 h-7 rounded-[2px] border border-[#E9EAEB] ${readOnly ? 'bg-[#E6E6E6]' : 'bg-white'}`}
                         >
                           <input
-                            className="flex-1 min-w-0 font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
+                            className="flex-1 min-w-0 font-medium text-[11px] leading-[100%] text-[#1E1E1E] bg-transparent border-none outline-none placeholder:text-[#1E1E1E]"
                             placeholder="입력"
                             readOnly={readOnly}
                             value={value}
@@ -603,7 +617,7 @@ export default function VatDocumentCreatePage() {
             style={{ gridColumn: 2 }}
           >
             <div className="flex flex-col items-start p-0 gap-4 w-full flex-1">
-              <h3 className="font-['Pretendard'] font-semibold text-sm leading-[140%] text-[#1E1E1E] py-1.5 pr-0 pb-0.5">
+              <h3 className="font-semibold text-sm leading-[140%] text-[#1E1E1E] py-1.5 pr-0 pb-0.5">
                 회사인감 혹은 서명 등록
               </h3>
               <div className="flex flex-col items-start p-0 gap-1 w-full flex-1 min-h-[233px]">
@@ -618,10 +632,10 @@ export default function VatDocumentCreatePage() {
                       />
                     </div>
                     <div className="flex flex-col items-center p-0 gap-0.5">
-                      <span className="font-['Pretendard'] font-normal text-[11px] leading-[140%] text-center text-[#303030]">
+                      <span className="font-normal text-[11px] leading-[140%] text-center text-[#303030]">
                         파일을 업로드하세요.
                       </span>
-                      <span className="font-['Pretendard'] font-normal text-[11px] leading-[140%] text-center text-[#767676]">
+                      <span className="font-normal text-[11px] leading-[140%] text-center text-[#767676]">
                         (PNG 파일을 지원합니다)
                       </span>
                     </div>
@@ -653,7 +667,7 @@ export default function VatDocumentCreatePage() {
                         type="button"
                         onClick={handleStampDelete}
                         disabled={loading}
-                        className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-16 h-7 bg-[#2C2C2C] font-['Pretendard'] font-medium text-[11px] leading-[100%] text-[#F5F5F5] flex-none disabled:opacity-50"
+                        className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-16 h-7 bg-[#2C2C2C] font-medium text-[11px] leading-[100%] text-[#F5F5F5] flex-none disabled:opacity-50"
                       >
                         <Image
                           src="/icons/trash.svg"
@@ -685,18 +699,18 @@ export default function VatDocumentCreatePage() {
       <ModalContainer isOpen={showCreateConfirm}>
         <div className="flex flex-col gap-6 bg-white p-6 w-[400px]">
           <div className="flex flex-col gap-4">
-            <span className="font-['Pretendard'] font-semibold text-[15px] leading-[140%] text-black">
+            <span className="font-semibold text-[15px] leading-[140%] text-black">
               서류생성
             </span>
             <div className="flex flex-col gap-0">
-              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black">
+              <p className="font-normal text-xs leading-[140%] text-black">
                 해당기간에 입력된 회계자료가 없습니다. 서식 양식만 생성합니다.
               </p>
               <br />
-              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black">
+              <p className="font-normal text-xs leading-[140%] text-black">
                 생성 서류:
               </p>
-              <p className="font-['Pretendard'] font-normal text-xs leading-[140%] text-black whitespace-pre-line">
+              <p className="font-normal text-xs leading-[140%] text-black whitespace-pre-line">
                 {`* 일반과세자부가가치세신고서\n* 매출처별세금계산서합계표\n* 매입처별세금계산서합계표\n* 신용카드매출전표수령명세서`}
               </p>
             </div>
@@ -709,7 +723,7 @@ export default function VatDocumentCreatePage() {
                 handleCreateDocument();
               }}
               disabled={loading}
-              className="flex flex-row justify-center items-center px-3 py-2 h-7 bg-[#2C2C2C] font-['Pretendard'] font-medium text-xs leading-[100%] text-[#F5F5F5] disabled:opacity-50"
+              className="flex flex-row justify-center items-center px-3 py-2 h-7 bg-[#2C2C2C] font-medium text-xs leading-[100%] text-[#F5F5F5] disabled:opacity-50"
             >
               확인
             </button>

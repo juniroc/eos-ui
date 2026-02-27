@@ -2,11 +2,7 @@
 import '@/components/taxDocument/template/Form16/pages/Form16_1/form16_1.css';
 import Input from '@/components/taxDocument/template/common/Input';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
-import {
-  Form16Data,
-  Form16InputData,
-  OtherCreditCardItem,
-} from '@/components/taxDocument/template/Form16/type';
+import { Form16Data, Form16InputData, OtherCreditCardItem, } from '@/components/taxDocument/template/Form16/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import { FORM16_1_MAX_OTHER_CREDIT_CARD_ITEM_LENGTH } from '@/components/taxDocument/template/Form16/constants';
 import { PageSlot } from '@/components/documentCreate/PageSlot';
@@ -608,7 +604,7 @@ export default function Form16_1({
                       textAlign: 'left',
                     }}
                   >
-                    ④<span className="s7">합 계</span>
+                    <span className="s7">④ 합 계</span>
                   </p>
                 </td>
                 <td

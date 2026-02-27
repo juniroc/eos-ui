@@ -2,17 +2,12 @@ import React, { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 import { InputType } from '@/components/taxDocument/template/common/type';
 import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
-type Props = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
-  value?: string;
-  onChange: (value: string) => void;
+type Props = ComponentPropsWithoutRef<'textarea'> & {
   inputType?: InputType;
 };
 
-function Input({ value, onChange, style, inputType, className, ...rest }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const mergedClassName = ['form-input form-input-text', className]
-    .filter(Boolean)
-    .join(' ');
+function TextArea({ inputType, ...rest }: Props) {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!inputType || !inputRef.current) return;
@@ -26,17 +21,11 @@ function Input({ value, onChange, style, inputType, className, ...rest }: Props)
     };
   }, [inputType]);
 
-  return (
-    <input
-      ref={inputRef}
-      className={mergedClassName}
-      style={{ zIndex: 2, ...style }}
-      type="text"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      {...rest}
-    />
-  );
+  const mergedStyle = rest.style
+    ? { zIndex: 2, ...rest.style }
+    : { zIndex: 2 };
+
+  return <textarea ref={inputRef} {...rest} style={mergedStyle} />;
 }
 
-export default Input;
+export default TextArea;

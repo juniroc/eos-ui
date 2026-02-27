@@ -1,12 +1,16 @@
 'use client';
 import './form21_1.css';
-import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import OutputTaxTable from '@/components/taxDocument/template/Form21/pages/Form21_1/OutputTaxTable';
 import InputTaxTable from '@/components/taxDocument/template/Form21/pages/Form21_1/InputTaxTable';
 import Stamp from '@/components/taxDocument/template/common/Stamp';
+import Input from '@/components/taxDocument/template/common/Input';
 
 type Props = Form21Data &
   UpdaterProps<Form21Data> & { inputType?: Form21InputData };
@@ -126,37 +130,6 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
     homeAddress,
     mobileNumber,
     email,
-    salesTaxInvoice,
-    salesPurchaserIssued,
-    salesCreditCard,
-    salesOther,
-    salesZeroTaxInvoice,
-    salesZeroOther,
-    salesOmission,
-    salesBadDebt,
-    salesTotal,
-    purchaseGeneral,
-    purchaseImportDeferral,
-    purchaseFixedAsset,
-    purchaseOmission,
-    purchasePurchaserIssued,
-    purchaseOtherDeduction,
-    purchaseTotalInput,
-    purchaseNonDeductible,
-    purchaseNetResult,
-    taxPayableOrRefundable,
-    deductionOther,
-    deductionCreditCardIssuance,
-    deductionTotal,
-    smallBizExemption,
-    prepaidUnrefunded,
-    prepaidNotified,
-    taxPaidByProxy,
-    taxPaidBySpecialPurchase,
-    taxPaidByCardCompany,
-    penaltyTotal,
-    finalTaxToPay,
-    consolidatedPaymentTax,
     taxAgentName,
     taxAgentPhone,
     taxAgentBizNumber,
@@ -173,6 +146,23 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
     zeroRateCountry,
     taxBaseProofs,
   } = data;
+  const reportTypeFields = [
+    'isScheduled',
+    'isFinal',
+    'isAfterDeadline',
+    'isZeroRateEarlyRefund',
+  ] as const;
+
+  const handleReportTypeChange = (
+    field: (typeof reportTypeFields)[number],
+    checked: boolean
+  ) => {
+    if (!checked) {
+      updater(field, false);
+      return;
+    }
+    reportTypeFields.forEach(key => updater(key, key === field));
+  };
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
 
   const getBizNumberDigit = (index: number) =>
@@ -295,7 +285,9 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
                   name="reportType"
                   id="check1"
                   checked={isScheduled}
-                  onChange={e => updater('isScheduled', e.target.checked)}
+                  onChange={e =>
+                    handleReportTypeChange('isScheduled', e.target.checked)
+                  }
                 />
                 ] 예정 [
                 <InputField
@@ -303,7 +295,9 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
                   name="reportType"
                   id="check2"
                   checked={isFinal}
-                  onChange={e => updater('isFinal', e.target.checked)}
+                  onChange={e =>
+                    handleReportTypeChange('isFinal', e.target.checked)
+                  }
                 />
                 ]확정
               </p>
@@ -323,7 +317,9 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
                   name="reportType"
                   id="check3"
                   checked={isAfterDeadline}
-                  onChange={e => updater('isAfterDeadline', e.target.checked)}
+                  onChange={e =>
+                    handleReportTypeChange('isAfterDeadline', e.target.checked)
+                  }
                 />
                 ] 기한후 과세표준
                 <span style={{ paddingLeft: '30pt' }}>신고서</span>
@@ -345,7 +341,10 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
                   id="check4"
                   checked={isZeroRateEarlyRefund}
                   onChange={e =>
-                    updater('isZeroRateEarlyRefund', e.target.checked)
+                    handleReportTypeChange(
+                      'isZeroRateEarlyRefund',
+                      e.target.checked
+                    )
                   }
                 />
                 ] 영세율 등 조기환급
@@ -1033,13 +1032,11 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
             colSpan={2}
             rowSpan={2}
           >
-            <InputField
-              className="cell-input"
-              type="text"
+            <Input
+              className="cell-input full-cell-input"
+              style={{ width: '100%', height: '100%', boxSizing: 'border-box' }}
               value={residentNumber}
-              onChange={e =>
-                updater('residentNumber', digitsOnly(e.target.value))
-              }
+              onChange={value => updater('residentNumber', digitsOnly(value))}
               inputType={inputType?.residentNumber}
             />
           </td>

@@ -308,6 +308,7 @@ function InputTaxTable({
               )
             }
             inputType={inputType?.purchaseImportDeferral?.amount}
+            readOnly
           />
         </td>
         <td
@@ -1415,6 +1416,7 @@ function InputTaxTable({
               )
             }
             inputType={inputType?.deductionOther?.amount}
+            readOnly
           />
         </td>
         <td
@@ -2271,6 +2273,7 @@ function InputTaxTable({
               )
             }
             inputType={inputType?.taxPaidByProxy?.amount}
+            readOnly
           />
         </td>
         <td
@@ -2390,6 +2393,7 @@ function InputTaxTable({
               )
             }
             inputType={inputType?.taxPaidBySpecialPurchase?.amount}
+            readOnly
           />
         </td>
         <td
@@ -2509,6 +2513,7 @@ function InputTaxTable({
               )
             }
             inputType={inputType?.taxPaidByCardCompany?.amount}
+            readOnly
           />
         </td>
         <td

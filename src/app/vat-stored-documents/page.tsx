@@ -480,39 +480,44 @@ export default function VatStoredDocumentsPage() {
                         );
                       })()}
 
-                      {/* 업로드한 관련 파일 - 각 form마다 개별 grid cell */}
+                      {/* 업로드한 관련 파일 - 각 form마다 개별 grid cell, 파일별 행 표시 */}
                       {(() => {
                         const form = report.forms?.[reportRowIndex];
                         const docs = form?.uploadedDocuments || [];
-                        const firstDoc = docs[0];
                         return (
                           <div
-                            className="flex flex-row items-center justify-between p-2 bg-white border-b border-[#D9D9D9]"
+                            className="flex flex-col bg-white border-b border-[#D9D9D9]"
                             style={{ gridRow: globalRowIndex + 1, gridColumn: 4, minWidth: '240px' }}
                           >
-                            {firstDoc ? (
-                              <>
-                                <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
-                                  {firstDoc.name}
-                                  {docs.length > 1 && ` 외 ${docs.length - 1}개`}
-                                </span>
-                                <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
-                                  <button
-                                    onClick={() => handleDownloadDocument(firstDoc.id)}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image src="/icons/download_icon.png" alt="다운로드" width={16} height={16} />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteDocument(firstDoc.id)}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
-                                  </button>
+                            {docs.length > 0 ? (
+                              docs.map((doc, docIdx) => (
+                                <div
+                                  key={doc.id}
+                                  className={`flex flex-row items-center justify-between p-2 min-h-[32px] ${docIdx < docs.length - 1 ? 'border-b border-[#D9D9D9]' : ''}`}
+                                >
+                                  <span className="text-[10px] leading-[140%] text-[#757575] flex-1">
+                                    {doc.name}
+                                  </span>
+                                  <div className="flex flex-row items-center gap-1 ml-2 shrink-0">
+                                    <button
+                                      onClick={() => handleDownloadDocument(doc.id)}
+                                      className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                    >
+                                      <Image src="/icons/download_icon.png" alt="다운로드" width={16} height={16} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteDocument(doc.id)}
+                                      className="w-4 h-4 flex items-center justify-center hover:opacity-70"
+                                    >
+                                      <Image src="/icons/delete.png" alt="삭제" width={16} height={16} />
+                                    </button>
+                                  </div>
                                 </div>
-                              </>
+                              ))
                             ) : (
-                              <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
+                              <div className="flex flex-row items-center p-2 min-h-[32px]">
+                                <span className="text-[10px] leading-[140%] text-[#757575]">-</span>
+                              </div>
                             )}
                           </div>
                         );

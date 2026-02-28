@@ -2,11 +2,12 @@
 
 import ToastMessage from '@/components/ToastMessage';
 import { useAuth } from '@/contexts/AuthContext';
+import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
 import {
   getVatReport,
   type VatReport,
 } from '@/services/vat';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface VatSimplePreviewModalProps {
   isOpen: boolean;
@@ -19,18 +20,33 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
   const [report, setReport] = useState<VatReport | null>(null);
   const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
+  // 서식 HTML 미리보기 로드
+  const loadPreview = useCallback(async (formCode: string) => {
+    setPreviewLoading(true);
+    const html = await loadFormHtml(formCode);
+    setPreviewHtml(html);
+    setPreviewLoading(false);
+  }, []);
 
   // 신고서 상세 조회
   const fetchReport = useCallback(async () => {
     if (!token || !reportId) return;
-    
+
     try {
       setLoading(true);
       const data = await getVatReport(reportId, token);
       setReport(data);
-      setSelectedFormId(data.forms?.[0]?.id || null);
+      const firstForm = data.forms?.[0];
+      setSelectedFormId(firstForm?.id || null);
+      if (firstForm?.formCode) {
+        loadPreview(firstForm.formCode);
+      }
     } catch (error) {
       console.error('신고서 조회 실패:', error);
       setToastMessage(error instanceof Error ? error.message : '신고서 조회에 실패했습니다.');
@@ -38,7 +54,7 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
     } finally {
       setLoading(false);
     }
-  }, [token, reportId]);
+  }, [token, reportId, loadPreview]);
 
   useEffect(() => {
     if (isOpen && token && reportId) {
@@ -115,8 +131,35 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
 
             {/* Document Viewer - Full Width */}
             <div className="flex flex-col items-center justify-center w-full h-full overflow-hidden mt-[60px] border border-[#D9D9D9] m-4">
-              <div className="flex flex-col items-center justify-center w-full h-full bg-white">
-              </div>
+              {previewLoading && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  로딩 중...
+                </div>
+              )}
+              {!previewLoading && previewHtml && (
+                <iframe
+                  ref={iframeRef}
+                  srcDoc={`<style>html{overflow-x:hidden;}</style>${previewHtml}`}
+                  className="w-full h-full border-none"
+                  title={`${selectedForm?.name || '서류'} 미리보기`}
+                  sandbox="allow-same-origin"
+                  onLoad={() => {
+                    const iframe = iframeRef.current;
+                    if (!iframe?.contentDocument?.body) return;
+                    const contentWidth = iframe.contentDocument.body.scrollWidth;
+                    const containerWidth = iframe.clientWidth;
+                    if (contentWidth > containerWidth) {
+                      const zoom = containerWidth / contentWidth;
+                      iframe.contentDocument.documentElement.style.zoom = String(zoom);
+                    }
+                  }}
+                />
+              )}
+              {!previewLoading && !previewHtml && (
+                <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                  {selectedForm ? '미리보기를 지원하지 않는 서식입니다.' : '서류를 선택해주세요.'}
+                </div>
+              )}
             </div>
           </div>
         </div>

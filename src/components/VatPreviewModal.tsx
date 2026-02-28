@@ -11,7 +11,8 @@ import {
   type VatReport,
   type VatUploadedDocument
 } from '@/services/vat';
-import { useCallback, useEffect, useState } from 'react';
+import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface VatPreviewModalProps {
   isOpen: boolean;
@@ -27,6 +28,9 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
   const [uploadedFiles, setUploadedFiles] = useState<VatUploadedDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
@@ -42,18 +46,30 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
     }
   }, [token]);
 
+  // 서식 HTML 미리보기 로드
+  const loadPreview = useCallback(async (formCode: string) => {
+    setPreviewLoading(true);
+    const html = await loadFormHtml(formCode);
+    setPreviewHtml(html);
+    setPreviewLoading(false);
+  }, []);
+
   // 신고서 상세 조회
   const fetchReport = useCallback(async () => {
     if (!token || !reportId) return;
-    
+
     try {
       setLoading(true);
       const data = await getVatReport(reportId, token);
       setReport(data);
-      setSelectedFormId(data.forms?.[0]?.id || null);
+      const firstForm = data.forms?.[0];
+      setSelectedFormId(firstForm?.id || null);
       // 첫 번째 form의 uploadedDocuments를 기본으로 설정
-      if (data.forms && data.forms.length > 0 && data.forms[0].uploadedDocuments) {
-        setUploadedFiles(data.forms[0].uploadedDocuments);
+      if (firstForm?.uploadedDocuments) {
+        setUploadedFiles(firstForm.uploadedDocuments);
+      }
+      if (firstForm?.formCode) {
+        loadPreview(firstForm.formCode);
       }
     } catch (error) {
       console.error('신고서 조회 실패:', error);
@@ -62,7 +78,7 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
     } finally {
       setLoading(false);
     }
-  }, [token, reportId]);
+  }, [token, reportId, loadPreview]);
 
   useEffect(() => {
     if (isOpen && token && reportId) {
@@ -74,11 +90,16 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
   // Form 선택
   const handleFormSelect = (formId: string) => {
     setSelectedFormId(formId);
-    const selectedForm = report?.forms?.find(f => f.id === formId);
-    if (selectedForm?.uploadedDocuments) {
-      setUploadedFiles(selectedForm.uploadedDocuments);
+    const form = report?.forms?.find(f => f.id === formId);
+    if (form?.uploadedDocuments) {
+      setUploadedFiles(form.uploadedDocuments);
     } else {
       setUploadedFiles([]);
+    }
+    if (form?.formCode) {
+      loadPreview(form.formCode);
+    } else {
+      setPreviewHtml(null);
     }
   };
 
@@ -351,10 +372,36 @@ export default function VatPreviewModal({ isOpen, onClose, reportId }: VatPrevie
               </div>
 
               {/* Document Content Area */}
-              <div className="flex flex-col items-center justify-center w-full flex-1 bg-white border border-[#D9D9D9]">
-                <p className="text-[11px] text-[#B3B3B3]">
-                  {selectedForm ? `${selectedForm.name} 내용이 여기에 표시됩니다.` : '서류를 선택해주세요.'}
-                </p>
+              <div className="flex flex-col items-center justify-center w-full flex-1 bg-white border border-[#D9D9D9] overflow-hidden">
+                {previewLoading && (
+                  <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                    로딩 중...
+                  </div>
+                )}
+                {!previewLoading && previewHtml && (
+                  <iframe
+                    ref={iframeRef}
+                    srcDoc={`<style>html{overflow-x:hidden;}</style>${previewHtml}`}
+                    className="w-full h-full border-none"
+                    title={`${selectedForm?.name || '서류'} 미리보기`}
+                    sandbox="allow-same-origin"
+                    onLoad={() => {
+                      const iframe = iframeRef.current;
+                      if (!iframe?.contentDocument?.body) return;
+                      const contentWidth = iframe.contentDocument.body.scrollWidth;
+                      const containerWidth = iframe.clientWidth;
+                      if (contentWidth > containerWidth) {
+                        const zoom = containerWidth / contentWidth;
+                        iframe.contentDocument.documentElement.style.zoom = String(zoom);
+                      }
+                    }}
+                  />
+                )}
+                {!previewLoading && !previewHtml && (
+                  <div className="w-full h-full flex items-center justify-center text-[11px] text-[#757575]">
+                    {selectedForm ? '미리보기를 지원하지 않는 서식입니다.' : '서류를 선택해주세요.'}
+                  </div>
+                )}
               </div>
 
               {/* Footer - Attached File Info */}

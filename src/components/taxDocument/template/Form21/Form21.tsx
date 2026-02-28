@@ -2,7 +2,10 @@
 
 import React, { Fragment } from 'react';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
-import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
+import {
+  Form21Data,
+  Form21InputData,
+} from '@/components/taxDocument/template/Form21/type';
 import Form21_1 from '@/components/taxDocument/template/Form21/pages/Form21_1/Form21_1';
 import Form21_2 from '@/components/taxDocument/template/Form21/pages/Form21_2/Form21_2';
 import Form21_3 from '@/components/taxDocument/template/Form21/pages/Form21_3/Form21_3';

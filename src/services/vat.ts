@@ -60,37 +60,6 @@ export interface VatDownloadResponse {
  * 신고서 목록 조회
  */
 export async function getVatReports(token: string): Promise<VatReport[]> {
-  // 임시 mockdata - 실제 API 연동 시 아래 실제 API 호출 코드로 교체
-  const mockReports: VatReport[] = [
-    {
-      id: 'rpt_2025_01_confirmed_001',
-      title: '0000년 0기 확정 신고서',
-      filingType: 'CONFIRMED',
-      isCompleted: true,
-      isDeadlinePassed: true,
-      lastModifiedAt: '2025-01-25T10:12:33.000Z',
-      forms: [],
-    },
-    {
-      id: 'rpt_2025_04_expected_001',
-      title: '0000년 0기 예정 신고서',
-      filingType: 'EXPECTED',
-      isCompleted: false,
-      isDeadlinePassed: false,
-      lastModifiedAt: '2025-04-25T06:40:10.000Z',
-      forms: [],
-    },
-  ];
-
-  // 임시로 mockdata 반환 (실제 API 연동 시 아래 코드로 교체)
-  return mockReports.sort(
-    (a, b) =>
-      new Date(b.lastModifiedAt).getTime() -
-      new Date(a.lastModifiedAt).getTime()
-  );
-
-  // 실제 API 호출 코드 (실제 API 연동 시 위의 mockdata 반환 코드를 제거하고 아래 주석 해제)
-  /*
   const response = await fetch(`${API_BASE_URL}/api/vat/reports`, {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -108,16 +77,12 @@ export async function getVatReports(token: string): Promise<VatReport[]> {
   return reports.sort((a: VatReport, b: VatReport) =>
     new Date(b.lastModifiedAt).getTime() - new Date(a.lastModifiedAt).getTime()
   );
-  */
 }
 
 /**
  * 신고서 상세 조회
  */
-export async function getVatReport(
-  id: string,
-  token: string
-): Promise<VatReportDetailResponse> {
+export async function getVatReport(id: string, token: string): Promise<VatReportDetailResponse> {
   const response = await fetch(`${API_BASE_URL}/api/vat/reports/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,

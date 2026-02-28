@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
+import React, { ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react';
 import { InputType } from '@/components/taxDocument/template/common/type';
 import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
@@ -8,8 +8,17 @@ type Props = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
   inputType?: InputType;
 };
 
-function Input({ value, onChange, style, inputType, className, ...rest }: Props) {
+function Input({
+  value,
+  onChange,
+  style,
+  inputType,
+  className,
+  readOnly: readOnlyProp,
+  ...rest
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [forcedReadOnly, setForcedReadOnly] = useState(false);
   const mergedClassName = ['form-input form-input-text', className]
     .filter(Boolean)
     .join(' ');
@@ -26,6 +35,14 @@ function Input({ value, onChange, style, inputType, className, ...rest }: Props)
     };
   }, [inputType]);
 
+  useEffect(() => {
+    if (!inputRef.current) return;
+    const td = inputRef.current.closest('td');
+    if (td?.classList.contains('readonly-cell')) {
+      setForcedReadOnly(true);
+    }
+  }, []);
+
   return (
     <input
       ref={inputRef}
@@ -34,6 +51,7 @@ function Input({ value, onChange, style, inputType, className, ...rest }: Props)
       type="text"
       value={value}
       onChange={e => onChange(e.target.value)}
+      readOnly={readOnlyProp || forcedReadOnly}
       {...rest}
     />
   );

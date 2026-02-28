@@ -1347,6 +1347,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '91pt',
               borderTopStyle: 'solid',
@@ -1533,6 +1534,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '91pt',
               borderTopStyle: 'solid',
@@ -1683,6 +1685,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -1913,6 +1916,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -2107,6 +2111,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -2297,6 +2302,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -2397,13 +2403,32 @@ export default function Form21_3(props: Props) {
               width: '73pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
+              borderBottomStyle: 'solid',
+              borderBottomWidth: '1pt',
+              borderRight: '1pt solid rgb(128, 128, 128)',
               verticalAlign: 'middle',
               height: '12pt',
             }}
-          ></td>
+            rowSpan={13}
+          >
+            <p
+              className="s2"
+              style={{
+                textIndent: '0pt',
+                lineHeight: '120%',
+                textAlign: 'center',
+                fontFamily: '돋움체, monospace',
+              }}
+            >
+              (15)
+              <br />
+              그 밖의 공제
+              <br />
+              매입세액
+              <br />
+              명세
+            </p>
+          </td>
           <td
             style={{
               width: '192pt',
@@ -2544,16 +2569,6 @@ export default function Form21_3(props: Props) {
           </td>
         </tr>
         <tr style={{ height: '13.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          ></td>
           <td
             style={{
               width: '104pt',
@@ -2792,16 +2807,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '12pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          ></td>
-          <td
-            style={{
               width: '65pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -2998,29 +3003,6 @@ export default function Form21_3(props: Props) {
           </td>
         </tr>
         <tr style={{ height: '12pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-              textAlign: 'center',
-            }}
-            rowSpan={2}
-          >
-            <p
-              className="s2"
-              style={{
-                textIndent: '0pt',
-                lineHeight: '100%',
-                textAlign: 'center',
-              }}
-            >
-              (15)
-            </p>
-          </td>
           <td
             style={{
               width: '169pt',
@@ -3415,30 +3397,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
         </tr>
-        <tr style={{ height: '7.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-            rowSpan={2}
-          >
-            <p
-              className="s2"
-              style={{
-                textIndent: '0pt',
-                lineHeight: '100%',
-                textAlign: 'center',
-              }}
-            >
-              그 밖의 공제
-            </p>
-          </td>
-        </tr>
+        <tr style={{ height: '7.5pt' }}></tr>
         <tr style={{ height: '7.5pt' }}>
           <td
             style={{
@@ -3514,6 +3473,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -3550,6 +3510,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '42pt',
               borderTopStyle: 'solid',
@@ -3627,30 +3588,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
         </tr>
-        <tr style={{ height: '7.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-            rowSpan={2}
-          >
-            <p
-              className="s2"
-              style={{
-                textIndent: '0pt',
-                lineHeight: '100%',
-                textAlign: 'center',
-              }}
-            >
-              매입세액
-            </p>
-          </td>
-        </tr>
+        <tr style={{ height: '7.5pt' }}></tr>
         <tr style={{ height: '7.5pt' }}>
           <td
             style={{
@@ -3729,6 +3667,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -3765,6 +3704,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '42pt',
               borderTopStyle: 'solid',
@@ -3842,32 +3782,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
         </tr>
-        <tr style={{ height: '7.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-            rowSpan={2}
-          >
-            <p
-              className="s2"
-              style={{
-                paddingLeft: '13pt',
-                paddingRight: '12pt',
-                textIndent: '0pt',
-                lineHeight: '100%',
-                textAlign: 'center',
-              }}
-            >
-              명세
-            </p>
-          </td>
-        </tr>
+        <tr style={{ height: '7.5pt' }}></tr>
         <tr style={{ height: '12pt' }}>
           <td
             style={{
@@ -3944,6 +3859,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -3979,6 +3895,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '42pt',
               borderTopStyle: 'solid',
@@ -4011,7 +3928,24 @@ export default function Form21_3(props: Props) {
               }}
             >
               <NumericInput
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  outline: 'none',
+                  textAlign: 'right',
+                  fontFamily: 'Arial',
+                  fontSize: '8pt',
+                  background: 'transparent',
+                  margin: '0',
+                  boxSizing: 'border-box',
+                  paddingTop: '0.2pt',
+                  paddingBottom: '0.2pt',
+                  paddingLeft: '0.2pt',
+                  paddingRight: '3pt',
+                }}
                 value={props.otherDedBadDebtRepay.amount}
+                inputType={inputType?.otherDedBadDebtRepay?.amount}
                 onChange={value =>
                   updateNestedField('otherDedBadDebtRepay', 'amount', value)
                 }
@@ -4061,37 +3995,6 @@ export default function Form21_3(props: Props) {
           </td>
         </tr>
         <tr style={{ height: '13.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <Input
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                outline: 'none',
-                textAlign: 'center',
-                fontFamily: 'Arial',
-                fontSize: '8pt',
-                background: 'transparent',
-                margin: '0',
-                boxSizing: 'border-box',
-                padding: '0.2pt',
-              }}
-              value={props.otherDedBadDebtRepay.taxRate ?? ''}
-              inputType={inputType?.otherDedBadDebtRepay?.taxRate}
-              onChange={value =>
-                updateNestedField('otherDedBadDebtRepay', 'taxRate', value)
-              }
-            />
-          </td>
           <td
             style={{
               width: '169pt',
@@ -4167,6 +4070,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -4202,6 +4106,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '42pt',
               borderTopStyle: 'solid',
@@ -4234,7 +4139,24 @@ export default function Form21_3(props: Props) {
               }}
             >
               <NumericInput
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  outline: 'none',
+                  textAlign: 'right',
+                  fontFamily: 'Arial',
+                  fontSize: '8pt',
+                  background: 'transparent',
+                  margin: '0',
+                  boxSizing: 'border-box',
+                  paddingTop: '0.2pt',
+                  paddingBottom: '0.2pt',
+                  paddingLeft: '0.2pt',
+                  paddingRight: '3pt',
+                }}
                 value={props.otherDedForeignerRefund.amount}
+                inputType={inputType?.otherDedForeignerRefund?.amount}
                 onChange={v =>
                   updateNestedField('otherDedForeignerRefund', 'amount', v)
                 }
@@ -4284,39 +4206,6 @@ export default function Form21_3(props: Props) {
           </td>
         </tr>
         <tr style={{ height: '13.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <Input
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                outline: 'none',
-                textAlign: 'center',
-                fontFamily: 'Arial',
-                fontSize: '8pt',
-                background: 'transparent',
-                margin: '0',
-                boxSizing: 'border-box',
-                padding: '0.2pt',
-              }}
-              value={props.otherDedForeignerRefund.taxRate ?? ''}
-              inputType={inputType?.otherDedForeignerRefund?.taxRate}
-              onChange={value =>
-                updateNestedField('otherDedForeignerRefund', 'taxRate', value)
-              }
-            />
-          </td>
           <td
             style={{
               width: '169.0pt',
@@ -4428,6 +4317,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '42pt',
               borderTopStyle: 'solid',
@@ -4817,6 +4707,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -5044,6 +4935,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -5305,6 +5197,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -5531,6 +5424,7 @@ export default function Form21_3(props: Props) {
             />
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -5633,25 +5527,33 @@ export default function Form21_3(props: Props) {
               borderRightStyle: 'solid',
               borderRightWidth: '1pt',
               borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          ></td>
-          <td
-            style={{
-              width: '59pt',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1pt',
-              borderLeftStyle: 'solid',
-              borderLeftWidth: '1pt',
-              borderLeftColor: '#808080',
               borderBottomStyle: 'solid',
               borderBottomWidth: '1pt',
               borderBottomColor: '#808080',
               verticalAlign: 'middle',
               height: '12pt',
+              textAlign: 'center',
             }}
-          ></td>
+            rowSpan={9}
+          >
+            <p
+              className="s2"
+              style={{
+                textIndent: '0pt',
+                lineHeight: '120%',
+                textAlign: 'center',
+                fontFamily: '돋움체, monospace',
+              }}
+            >
+              (19)
+              <br />
+              그 밖의
+              <br />
+              경감ㆍ공제
+              <br />
+              세액 명세
+            </p>
+          </td>
           <td
             style={{
               width: '133.0pt',
@@ -5667,7 +5569,7 @@ export default function Form21_3(props: Props) {
               height: '12pt',
               textAlign: 'center',
             }}
-            colSpan={3}
+            colSpan={4}
           >
             <p
               style={{
@@ -5797,16 +5699,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '13.5pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          ></td>
-          <td
-            style={{
               width: '110pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -5896,6 +5788,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -5931,6 +5824,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -6009,29 +5903,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '13.5pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              textAlign: 'center',
-              height: '9pt',
-            }}
-            rowSpan={2}
-          >
-            <p
-              className="s2"
-              style={{
-                textIndent: '0pt',
-                lineHeight: '120%',
-                textAlign: 'center',
-              }}
-            >
-              (19)
-            </p>
-          </td>
-          <td
-            style={{
               width: '169pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -6108,6 +5979,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -6143,6 +6015,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -6296,6 +6169,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -6332,6 +6206,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -6409,54 +6284,8 @@ export default function Form21_3(props: Props) {
             />
           </td>
         </tr>
+        <tr style={{ height: '13.5pt' }}></tr>
         <tr style={{ height: '13.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <p
-              className="s2"
-              style={{
-                paddingLeft: '13pt',
-                paddingRight: '12pt',
-                textIndent: '0pt',
-                lineHeight: '120%',
-                textAlign: 'center',
-              }}
-            >
-              그 밖의
-            </p>
-          </td>
-        </tr>
-        <tr style={{ height: '13.5pt' }}>
-          <td
-            style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <p
-              className="s2"
-              style={{
-                paddingLeft: '1pt',
-                textIndent: '0pt',
-                lineHeight: '120%',
-                textAlign: 'center',
-              }}
-            >
-              경감ㆍ공제
-            </p>
-          </td>
           <td
             style={{
               width: '169pt',
@@ -6535,6 +6364,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -6570,6 +6400,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -6648,29 +6479,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '13.5pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <p
-              className="s2"
-              style={{
-                paddingLeft: '13pt',
-                paddingRight: '12pt',
-                textIndent: '0pt',
-                lineHeight: '120%',
-                textAlign: 'center',
-              }}
-            >
-              세액 명세
-            </p>
-          </td>
-          <td
-            style={{
               width: '169pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -6747,6 +6555,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -6782,6 +6591,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -6860,37 +6670,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '13.5pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <Input
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                outline: 'none',
-                textAlign: 'center',
-                fontFamily: 'Arial',
-                fontSize: '8pt',
-                background: 'transparent',
-                margin: '0',
-                boxSizing: 'border-box',
-                padding: '0.2pt',
-              }}
-              value={props.creditOther.taxRate ?? ''}
-              inputType={inputType?.creditOther?.taxRate}
-              onChange={value =>
-                updateNestedField('creditOther', 'taxRate', value)
-              }
-            />
-          </td>
-          <td
-            style={{
               width: '169pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -6967,6 +6746,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -7002,6 +6782,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -7078,37 +6859,6 @@ export default function Form21_3(props: Props) {
         <tr style={{ height: '13.5pt' }}>
           <td
             style={{
-              width: '73pt',
-              borderBottomStyle: 'solid',
-              borderBottomWidth: '1pt',
-              borderRightStyle: 'solid',
-              borderRightWidth: '1pt',
-              borderRightColor: '#808080',
-              verticalAlign: 'middle',
-              height: '12pt',
-            }}
-          >
-            <NumericInput
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                outline: 'none',
-                textAlign: 'center',
-                fontFamily: 'Arial',
-                fontSize: '8pt',
-                background: 'transparent',
-                margin: '0',
-                boxSizing: 'border-box',
-                padding: '0.2pt',
-              }}
-              value={props.creditTotal.tax}
-              inputType={inputType?.creditTotal?.tax}
-              onChange={value => updateNestedField('creditTotal', 'tax', value)}
-            />
-          </td>
-          <td
-            style={{
               width: '169pt',
               borderTopStyle: 'solid',
               borderTopWidth: '1pt',
@@ -7182,6 +6932,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -7216,6 +6967,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',
@@ -11524,6 +11276,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '80pt',
               borderTopStyle: 'solid',
@@ -11558,6 +11311,7 @@ export default function Form21_3(props: Props) {
             </p>
           </td>
           <td
+  className="readonly-cell"
             style={{
               width: '43pt',
               borderTopStyle: 'solid',

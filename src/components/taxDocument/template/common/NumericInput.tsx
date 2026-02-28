@@ -29,10 +29,11 @@ const NumericInput = ({
   style,
   inputType,
   disabled,
-  readOnly,
+  readOnly: readOnlyProp,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [rawValue, setRawValue] = useState<string | null>(null);
+  const [forcedReadOnly, setForcedReadOnly] = useState(false);
 
   const digitsOnly = (str: string) => str.replace(/[^0-9]/g, '');
 
@@ -51,9 +52,10 @@ const NumericInput = ({
     if (isNil(value)) return '';
     return value?.toLocaleString('ko-KR');
   }, [rawValue, value]);
+  const resolvedReadOnly = readOnlyProp || forcedReadOnly;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (disabled || readOnly) return;
+    if (disabled || resolvedReadOnly) return;
     const digits = digitsOnly(e.target.value);
     const formatted = formatDigits(digits);
 
@@ -62,7 +64,7 @@ const NumericInput = ({
   };
 
   const handleBlur = () => {
-    if (disabled || readOnly) return;
+    if (disabled || resolvedReadOnly) return;
     setRawValue(null); // blur 시 외부 value 기준으로 다시 동기화
   };
 
@@ -78,6 +80,14 @@ const NumericInput = ({
     };
   }, [inputType]);
 
+  useEffect(() => {
+    if (!inputRef.current) return;
+    const td = inputRef.current.closest('td');
+    if (td?.classList.contains('readonly-cell')) {
+      setForcedReadOnly(true);
+    }
+  }, []);
+
   return (
     <input
       ref={inputRef}
@@ -90,7 +100,7 @@ const NumericInput = ({
       onBlur={handleBlur}
       inputMode="numeric"
       disabled={disabled}
-      readOnly={readOnly}
+      readOnly={resolvedReadOnly}
     />
   );
 };

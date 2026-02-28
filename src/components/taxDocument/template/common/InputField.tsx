@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
+import React, { ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react';
 import { InputType } from '@/components/taxDocument/template/common/type';
 import { getInputTypeClass } from '@/components/taxDocument/template/common/utils/styleUtils';
 
@@ -6,8 +6,9 @@ type Props = ComponentPropsWithoutRef<'input'> & {
   inputType?: InputType;
 };
 
-function InputField({ inputType, ...rest }: Props) {
+function InputField({ inputType, readOnly: readOnlyProp, ...rest }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [forcedReadOnly, setForcedReadOnly] = useState(false);
 
   useEffect(() => {
     if (!inputType || !inputRef.current) return;
@@ -21,11 +22,26 @@ function InputField({ inputType, ...rest }: Props) {
     };
   }, [inputType]);
 
+  useEffect(() => {
+    if (!inputRef.current) return;
+    const td = inputRef.current.closest('td');
+    if (td?.classList.contains('readonly-cell')) {
+      setForcedReadOnly(true);
+    }
+  }, []);
+
   const mergedStyle = rest.style
     ? { zIndex: 2, ...rest.style }
     : { zIndex: 2 };
 
-  return <input ref={inputRef} {...rest} style={mergedStyle} />;
+  return (
+    <input
+      ref={inputRef}
+      {...rest}
+      style={mergedStyle}
+      readOnly={readOnlyProp || forcedReadOnly}
+    />
+  );
 }
 
 export default InputField;

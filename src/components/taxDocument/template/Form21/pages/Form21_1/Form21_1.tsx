@@ -1,9 +1,6 @@
 'use client';
 import './form21_1.css';
-import {
-  Form21Data,
-  Form21InputData,
-} from '@/components/taxDocument/template/Form21/type';
+import { Form21Data, Form21InputData, } from '@/components/taxDocument/template/Form21/type';
 import { UpdaterProps } from '@/components/taxDocument/template/common/type';
 import InputField from '@/components/taxDocument/template/common/InputField';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
@@ -121,6 +118,11 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
     isAfterDeadline,
     isZeroRateEarlyRefund,
     attributionYear,
+    attributionTerm,
+    periodStartMonth,
+    periodStartDay,
+    periodEndMonth,
+    periodEndDay,
     bizName,
     repName,
     bizNumber,
@@ -449,8 +451,9 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
           textAlign: 'left',
         }}
       >
-        신고기간
-        <InputField
+        신고기간{' '}
+        <Input
+          maxLength={4}
           className="report-period-input"
           style={{
             width: '40pt',
@@ -458,12 +461,81 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
             textAlign: 'center',
             fontSize: '8pt',
           }}
-          type="text"
-          maxLength={4}
           value={attributionYear}
-          onChange={e => updater('attributionYear', digitsOnly(e.target.value))}
+          onChange={value => updater('attributionYear', digitsOnly(value))}
           inputType={inputType?.attributionYear}
         />
+        년 제{' '}
+        <Input
+          maxLength={2}
+          className="report-period-input"
+          style={{
+            width: '15pt',
+            border: 'none',
+            textAlign: 'center',
+            fontSize: '8pt',
+          }}
+          value={attributionTerm}
+          onChange={value => updater('attributionTerm', digitsOnly(value))}
+          inputType={inputType?.attributionTerm}
+        />{' '}
+        기 (
+        <Input
+          maxLength={2}
+          className="report-period-input"
+          style={{
+            width: '15pt',
+            border: 'none',
+            textAlign: 'center',
+            fontSize: '8pt',
+          }}
+          value={periodStartMonth}
+          onChange={value => updater('periodStartMonth', digitsOnly(value))}
+          inputType={inputType?.periodStartMonth}
+        />
+        월{' '}
+        <Input
+          maxLength={2}
+          className="report-period-input"
+          style={{
+            width: '15pt',
+            border: 'none',
+            textAlign: 'center',
+            fontSize: '8pt',
+          }}
+          value={periodStartDay}
+          onChange={value => updater('periodStartDay', digitsOnly(value))}
+          inputType={inputType?.periodStartDay}
+        />
+        일 ~{' '}
+        <Input
+          maxLength={2}
+          className="report-period-input"
+          style={{
+            width: '15pt',
+            border: 'none',
+            textAlign: 'center',
+            fontSize: '8pt',
+          }}
+          value={periodEndMonth}
+          onChange={value => updater('periodEndMonth', digitsOnly(value))}
+          inputType={inputType?.periodEndMonth}
+        />
+        월{' '}
+        <Input
+          maxLength={2}
+          className="report-period-input"
+          style={{
+            width: '15pt',
+            border: 'none',
+            textAlign: 'center',
+            fontSize: '8pt',
+          }}
+          value={periodEndDay}
+          onChange={value => updater('periodEndDay', digitsOnly(value))}
+          inputType={inputType?.periodEndDay}
+        />{' '}
+        일)
       </p>
       <table
         className="business-info-table"
@@ -1206,15 +1278,7 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
               margin: '0',
             }}
             colSpan={1}
-          >
-            <InputField
-              className="cell-input"
-              type="text"
-              value={bizAddress}
-              onChange={e => updater('bizAddress', e.target.value)}
-              inputType={inputType?.bizAddress}
-            />
-          </td>
+          />
           <td
             style={{
               verticalAlign: 'middle',
@@ -1317,11 +1381,11 @@ export default function Form21_1({ updater, inputType, ...data }: Props) {
             }}
             colSpan={3}
           >
-            <InputField
+            <Input
               className="cell-input"
               type="text"
               value={bizAddress}
-              onChange={e => updater('bizAddress', e.target.value)}
+              onChange={value => updater('bizAddress', value)}
               inputType={inputType?.bizAddress}
             />
           </td>

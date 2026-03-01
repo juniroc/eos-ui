@@ -41,6 +41,9 @@ export default function VatStoredDocumentsPage() {
   const [simplePreviewReportId, setSimplePreviewReportId] = useState<
     string | null
   >(null);
+  const [simplePreviewFormId, setSimplePreviewFormId] = useState<
+    string | null
+  >(null);
   const [hasSearched, setHasSearched] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -117,8 +120,9 @@ export default function VatStoredDocumentsPage() {
   };
 
   // 서류명 클릭 - simple preview 모달 열기
-  const handleReportClick = (reportId: string) => {
+  const handleReportClick = (reportId: string, formId?: string) => {
     setSimplePreviewReportId(reportId);
+    setSimplePreviewFormId(formId || null);
     setShowSimplePreviewModal(true);
   };
 
@@ -454,31 +458,6 @@ export default function VatStoredDocumentsPage() {
                                       : null
                                   }
                                 >
-                                  <button
-                                    onClick={() => handleReportClick(report.id)}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image
-                                      src="/icons/search.png"
-                                      alt="조회"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setPreviewReportId(report.id);
-                                      setShowPreviewModal(true);
-                                    }}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image
-                                      src="/icons/upload_icon.png"
-                                      alt="업로드"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </button>
                                   {report.isCompleted ? (
                                     <button
                                       onClick={e => {
@@ -554,7 +533,7 @@ export default function VatStoredDocumentsPage() {
                                     <>
                                       <span
                                         onClick={() =>
-                                          handleReportClick(report.id)
+                                          handleReportClick(report.id, form.id)
                                         }
                                         className="text-[10px] leading-[140%] text-[#757575] flex-1 cursor-pointer hover:underline"
                                       >
@@ -741,7 +720,7 @@ export default function VatStoredDocumentsPage() {
             <div className="flex flex-row justify-between items-center p-4 border-b border-[#D9D9D9]">
               <div className="flex flex-col">
                 <h3 className="text-[14px] font-semibold text-[#1E1E1E]">
-                  서류보기 납부할 세액(환급받을 세액): 0원
+                  서류보기
                 </h3>
               </div>
               <div className="flex flex-row gap-2">
@@ -806,8 +785,10 @@ export default function VatStoredDocumentsPage() {
         onClose={() => {
           setShowSimplePreviewModal(false);
           setSimplePreviewReportId(null);
+          setSimplePreviewFormId(null);
         }}
         reportId={simplePreviewReportId}
+        initialFormId={simplePreviewFormId}
       />
     </>
   );

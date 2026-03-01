@@ -13,9 +13,10 @@ interface VatSimplePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   reportId: string | null;
+  initialFormId?: string | null;
 }
 
-export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: VatSimplePreviewModalProps) {
+export default function VatSimplePreviewModal({ isOpen, onClose, reportId, initialFormId }: VatSimplePreviewModalProps) {
   const { token } = useAuth();
   const [report, setReport] = useState<VatReport | null>(null);
   const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
@@ -42,10 +43,12 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
       setLoading(true);
       const data = await getVatReport(reportId, token);
       setReport(data);
-      const firstForm = data.forms?.[0];
-      setSelectedFormId(firstForm?.id || null);
-      if (firstForm?.formCode) {
-        loadPreview(firstForm.formCode);
+      const targetForm = initialFormId
+        ? data.forms?.find(f => f.id === initialFormId) || data.forms?.[0]
+        : data.forms?.[0];
+      setSelectedFormId(targetForm?.id || null);
+      if (targetForm?.formCode) {
+        loadPreview(targetForm.formCode);
       }
     } catch (error) {
       console.error('신고서 조회 실패:', error);
@@ -54,7 +57,7 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
     } finally {
       setLoading(false);
     }
-  }, [token, reportId, loadPreview]);
+  }, [token, reportId, initialFormId, loadPreview]);
 
   useEffect(() => {
     if (isOpen && token && reportId) {
@@ -108,9 +111,6 @@ export default function VatSimplePreviewModal({ isOpen, onClose, reportId }: Vat
               <div className="flex flex-row items-center gap-2">
                 <span className="text-[14px] leading-[140%] text-[#1E1E1E] font-semibold">
                   서류보기
-                </span>
-                <span className="text-[11px] leading-[100%] text-[#757575]">
-                  납부할 세액(환급받을 세액): 000,000,000,000원
                 </span>
               </div>
               <div className="flex flex-row items-center gap-2">

@@ -32,8 +32,8 @@ export interface BusinessInfo {
   representativeName: string;
   establishmentDate: string;
   address: string;
-  businessType: string;
-  businessCategory2: string;
+  businessType: string[];
+  businessCategory2: string[];
   taxOffice: string;
   settlementMonth?: string;
   settlementDay?: string;

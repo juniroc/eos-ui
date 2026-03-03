@@ -17,8 +17,8 @@ interface FormData {
   representativeName: string;
   establishmentDate: string;
   address: string;
-  businessType: string; // 업태
-  businessCategory2: string; // 종목
+  businessType: string[]; // 업태
+  businessCategory2: string[]; // 종목
   taxOffice: string;
   businessPhone?: string; // 사업장 전화번호
   settlementMonth?: string;
@@ -36,8 +36,8 @@ export default function BusinessInfoPage() {
     representativeName: '',
     establishmentDate: '',
     address: '',
-    businessType: '',
-    businessCategory2: '',
+    businessType: [],
+    businessCategory2: [],
     taxOffice: '',
     businessPhone: '',
     settlementMonth: '',
@@ -56,9 +56,10 @@ export default function BusinessInfoPage() {
   }, [isAuthenticated, authLoading, router]);
 
   /** 저장 버튼 활성화 여부 → 필수 데이터가 하나라도 있으면 true */
-  const hasData = Object.values(formData).some(value => 
-    value !== undefined && value !== null && value.toString().trim() !== ''
-  );
+  const hasData = Object.values(formData).some(value => {
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== undefined && value !== null && String(value).trim() !== '';
+  });
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -81,8 +82,8 @@ export default function BusinessInfoPage() {
         representativeName: data.representativeName || '',
         establishmentDate: data.establishmentDate || '',
         address: data.address || '',
-        businessType: data.businessType || '',
-        businessCategory2: data.businessCategory2 || '',
+        businessType: data.businessType || [],
+        businessCategory2: data.businessCategory2 || [],
         taxOffice: data.taxOffice || '',
         // businessPhone: data.businessPhone || '',
         settlementMonth: data.settlementMonth || '',
@@ -113,8 +114,8 @@ export default function BusinessInfoPage() {
         representativeName: data.data.representativeName || prev.representativeName || '',
         establishmentDate: data.data.establishmentDate || prev.establishmentDate || '',
         address: data.data.address || prev.address || '',
-        businessType: data.data.businessType?.[0] || prev.businessType || '',
-        businessCategory2: data.data.businessCategory2?.[0] || prev.businessCategory2 || '',
+        businessType: data.data.businessType?.length ? data.data.businessType : prev.businessType,
+        businessCategory2: data.data.businessCategory2?.length ? data.data.businessCategory2 : prev.businessCategory2,
         taxOffice: data.data.taxOffice || prev.taxOffice || '',
         // businessPhone: data.data.businessPhone || prev.businessPhone || '',
       }));
@@ -347,8 +348,16 @@ export default function BusinessInfoPage() {
                     <input
                       className="flex-1 text-xs leading-[100%] text-[#B3B3B3] font-medium bg-transparent border-none outline-none"
                       placeholder="입력하기"
-                      value={formData.businessType}
-                      onChange={e => handleChange('businessType', e.target.value)}
+                      value={formData.businessType.join(', ')}
+                      onChange={e =>
+                        setFormData(prev => ({
+                          ...prev,
+                          businessType: e.target.value
+                            .split(',')
+                            .map(s => s.trim())
+                            .filter(Boolean),
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -362,8 +371,16 @@ export default function BusinessInfoPage() {
                     <input
                       className="flex-1 text-xs leading-[100%] text-[#B3B3B3] font-medium bg-transparent border-none outline-none"
                       placeholder="입력하기"
-                      value={formData.businessCategory2}
-                      onChange={e => handleChange('businessCategory2', e.target.value)}
+                      value={formData.businessCategory2.join(', ')}
+                      onChange={e =>
+                        setFormData(prev => ({
+                          ...prev,
+                          businessCategory2: e.target.value
+                            .split(',')
+                            .map(s => s.trim())
+                            .filter(Boolean),
+                        }))
+                      }
                     />
                   </div>
                 </div>

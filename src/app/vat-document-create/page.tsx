@@ -52,6 +52,20 @@ export default function VatDocumentCreatePage() {
     }
   };
 
+  const formatEstablishmentDate = (value: string): string => {
+    if (!value) return '';
+    // ISO 문자열 (e.g. 2026-03-02T00:00:00.000Z) 또는 YYYY-MM-DD
+    const isoMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (isoMatch) {
+      return `${isoMatch[1]}년 ${isoMatch[2]}월 ${isoMatch[3]}일`;
+    }
+    // YYYYMMDD
+    if (/^\d{8}$/.test(value)) {
+      return `${value.slice(0, 4)}년 ${value.slice(4, 6)}월 ${value.slice(6, 8)}일`;
+    }
+    return value;
+  };
+
   const [reportingPeriodStart, setReportingPeriodStart] =
     useState<string>(getTodayDateString());
   const [reportingType, setReportingType] = useState<string>(
@@ -231,7 +245,7 @@ export default function VatDocumentCreatePage() {
     > = {
       예정: 'SCHEDULED',
       확정: 'CONFIRMED',
-      '기한 후 환급': 'AFTER_DEADLINE',
+      '기한 후': 'AFTER_DEADLINE',
       '조기 환급': 'EARLY_REFUND',
     };
 
@@ -306,7 +320,7 @@ export default function VatDocumentCreatePage() {
                   >
                     <option value="예정">예정</option>
                     <option value="확정">확정</option>
-                    <option value="기한 후 환급">기한 후 환급</option>
+                    <option value="기한 후">기한 후</option>
                     <option value="조기 환급">조기 환급</option>
                   </select>
                 </div>
@@ -361,20 +375,14 @@ export default function VatDocumentCreatePage() {
                   {
                     label: '회사명',
                     value: vatCompanyInfo.name ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, name: v } : null
-                      ),
-                    readOnly: false,
+                    onChange: undefined,
+                    readOnly: true,
                   },
                   {
                     label: '개업일자',
-                    value: vatCompanyInfo.establishmentDate ?? '',
-                    onChange: (v: string) =>
-                      setVatCompanyInfo(prev =>
-                        prev ? { ...prev, establishmentDate: v } : null
-                      ),
-                    readOnly: false,
+                    value: formatEstablishmentDate(vatCompanyInfo.establishmentDate ?? ''),
+                    onChange: undefined,
+                    readOnly: true,
                   },
                   {
                     label: '법인/개인 구분',
@@ -450,7 +458,7 @@ export default function VatDocumentCreatePage() {
                           onChange={
                             onChange ? e => onChange(e.target.value) : undefined
                           }
-                          type={label === '개업일자' ? 'date' : 'text'}
+                          type="text"
                         />
                       </div>
                     </div>

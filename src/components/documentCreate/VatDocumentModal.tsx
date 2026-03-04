@@ -205,7 +205,11 @@ function VatDocumentModal({
       if (!selectedDocument) return;
       const { id, data } = convertToApiData(selectedDocument);
       //@ts-ignore
-      const { data: responseData } = await completeVatForm(id, data, token!);
+      const { data: responseData } = await completeVatForm(
+        id,
+        { data, inputType: selectedDocument.inputType },
+        token!
+      );
       const normalizedResponseData = removeEmptyFromArrays(responseData);
       // @ts-ignore
       setDocumentList(prev =>
@@ -541,22 +545,13 @@ function VatDocumentModal({
                       작업완료
                     </span>
                   </button>
-                  <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#F3F3F3]">
-                    <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">
-                      다운로드
-                    </span>
-                  </button>
+
                   <button
                     className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#F3F3F3]"
                     onClick={handlePrint}
                   >
                     <span className="text-[11px] leading-[100%] text-[#1E1E1E] font-medium font-['Pretendard']">
                       인쇄하기
-                    </span>
-                  </button>
-                  <button className="flex flex-row justify-center items-center px-3 py-2 gap-2 w-[63px] h-[27px] bg-[#2C2C2C]">
-                    <span className="text-[11px] leading-[100%] text-[#F5F5F5] font-medium font-['Pretendard']">
-                      파일변환
                     </span>
                   </button>
                 </div>
@@ -575,7 +570,10 @@ function VatDocumentModal({
                           : 0.98,
                     }}
                   >
-                    <PreviewWrapper orientation={previewOrientation} maxWidth={882}>
+                    <PreviewWrapper
+                      orientation={previewOrientation}
+                      maxWidth={882}
+                    >
                       <TaxDocument
                         formCode={selectedDocument.formCode}
                         data={selectedDocument.data}

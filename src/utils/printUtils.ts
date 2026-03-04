@@ -172,8 +172,8 @@ export const printElement = (options: PrintOptions) => {
 
   const pageStyle =
     orientation === 'landscape'
-      ? '@page { size: A4 landscape; margin: 10 0; }'
-      : '@page { size: A4 portrait; margin: 10 0; }';
+      ? '@page { size: A4 landscape; margin: 0; }'
+      : '@page { size: A4 portrait; margin: 0; }';
 
   const slotStyle =
     orientation === 'landscape'
@@ -220,6 +220,15 @@ export const printElement = (options: PrintOptions) => {
           @media print {
             body {
               margin: 0;
+              text-align: center;
+            }
+
+            #preview-content {
+              display: inline-block;
+              margin: 0 auto;
+              width: auto !important;
+              max-width: none !important;
+              text-align: left;
             }
             
             /* 불필요한 요소 숨기기 */

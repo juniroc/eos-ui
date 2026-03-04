@@ -163,6 +163,7 @@ input[type="number"] {
   body {
     -webkit-print-color-adjust: exact;
     color-adjust: exact;
+    margin: 0;
   }
 
   /* 링크 URL 표시 안함 */
@@ -182,6 +183,16 @@ input[type="number"] {
     color-adjust: exact;
   }
 
+  .print-preview-page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .print-preview-page > * {
+    margin: 0 auto;
+  }
+
   /* 프린트 시에도 숫자 입력 필드 스핀 버튼 숨기기 */
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
@@ -194,17 +205,97 @@ input[type="number"] {
   }
 }
 
+/* Print preview helpers (apply print variants in preview mode) */
+body.print-preview .no-print {
+  display: none !important;
+}
+
+body.print-preview .print-only {
+  display: block !important;
+}
+
+body.print-preview .print\:hidden {
+  display: none !important;
+}
+
+body.print-preview .print\:block {
+  display: block !important;
+}
+
+body.print-preview .print\:inline {
+  display: inline !important;
+}
+
+body.print-preview .print\:inline-block {
+  display: inline-block !important;
+}
+
+body.print-preview .print\:flex {
+  display: flex !important;
+}
+
+body.print-preview .print\:grid {
+  display: grid !important;
+}
+
+body.print-preview .print\:bg-\[transparent\] {
+  background-color: transparent !important;
+}
+
+body.print-preview .print\:bg-white {
+  background-color: #ffffff !important;
+}
+
+body.print-preview [data-pageslot] {
+  display: none !important;
+}
+
+body.print-preview .hidden.print\:block {
+  display: block !important;
+}
+
+body.print-preview .hidden.print\:inline {
+  display: inline !important;
+}
+
+body.print-preview .hidden.print\:inline-block {
+  display: inline-block !important;
+}
+
+body.print-preview .hidden.print\:flex {
+  display: flex !important;
+}
+
+body.print-preview .hidden.print\:grid {
+  display: grid !important;
+}
+
 /* 인쇄 미리보기 모드 */
-.print-preview {
+body.print-preview {
   background: var(--gray-100);
 }
 
-.print-preview * {
+body.print-preview .print-preview-page {
   max-width: 210mm;
   margin: 0 auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: white;
   padding: 20mm;
+}
+
+body.print-preview .print-preview-modal .print-preview-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-shadow: none;
+  margin: 0;
+}
+
+body.print-preview .print-preview-modal input,
+body.print-preview .print-preview-modal textarea,
+body.print-preview .print-preview-modal select,
+body.print-preview .print-preview-modal button {
+  pointer-events: none;
 }
 
 #luckysheet-wa-calculate {

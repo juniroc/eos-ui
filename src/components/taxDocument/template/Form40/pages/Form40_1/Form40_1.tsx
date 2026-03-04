@@ -3,7 +3,10 @@ import './form40_1.css';
 import { FormPageProps } from '@/components/taxDocument/template/common/type';
 import NumericInput from '@/components/taxDocument/template/common/NumericInput';
 import InputField from '@/components/taxDocument/template/common/InputField';
-import { Form40Data, Form40InputData, } from '@/components/taxDocument/template/Form40/type';
+import {
+  Form40Data,
+  Form40InputData,
+} from '@/components/taxDocument/template/Form40/type';
 import { FORM_40_1_MAX_EXPORT_DETAIL_LIST_MAX_LENGTH } from '@/components/taxDocument/template/Form40/constants';
 
 type Props = FormPageProps<Form40Data> & { inputType?: Form40InputData };

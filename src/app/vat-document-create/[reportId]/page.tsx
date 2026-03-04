@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ConfirmModal from '@/components/ConfirmModal';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
+import FormPreviewModal from '@/components/documentCreate/FormPreviewModal';
 import { convertToApiData, getOrientation, } from '@/components/taxDocument/template/common/utils/formUitls';
 import { FormCode } from '@/components/taxDocument/template/common/type';
 import { getVatReport } from '@/services/vat';
@@ -38,6 +39,7 @@ function VatDocumentCreateContent() {
   const [showToast, setShowToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handleOpenSidePanel = useCallback(() => {
     if (!reportId) {
@@ -276,6 +278,7 @@ function VatDocumentCreateContent() {
               <button
                 type="button"
                 className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
+                onClick={() => setIsPreviewOpen(true)}
               >
                 미리보기
               </button>
@@ -341,6 +344,16 @@ function VatDocumentCreateContent() {
         onClose={() => setShowSidePanel(false)}
         reportId={reportId}
         onFormsAdded={handleFormsAdded}
+      />
+
+      <FormPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        title="서류 미리보기"
+        documentList={documentList}
+        selectedDocument={selectedDocument}
+        previewFrameWidth={previewFrameWidth}
+        onUpdate={handleDocumentUpdate}
       />
 
       <ConfirmModal

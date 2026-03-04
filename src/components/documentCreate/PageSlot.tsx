@@ -144,10 +144,19 @@ export function PageSlot({
       </div>
       <div
         className={
-          'hidden print:block print:break-before-page print:break-inside-avoid'
+          'hidden print:block print:break-before-page print:break-inside-avoid print-preview-page'
         }
       >
-        {children}
+        <div
+          style={{
+            width: '100%',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          {children}
+        </div>
       </div>
     </Fragment>
   );

@@ -21,12 +21,10 @@ type Props = {
 export default function PreviewWrapper({
   children,
   maxWidth = 1000,
-  orientation = 'portrait',
   fit: _fit = 'content',
-  disableScaleOnPrint = true,
 }: Props) {
   return (
-    <div className="w-full" style={{ maxWidth }}>
+    <div id={'preview-content'} className="w-full" style={{ maxWidth }}>
       <div
         id={'preview-section'}
         className="flex flex-col items-start overflow-x-hidden [scrollbar-gutter:stable]"

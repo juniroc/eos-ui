@@ -15,7 +15,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import ConfirmModal from '@/components/ConfirmModal';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
-import FormPreviewModal from '@/components/documentCreate/FormPreviewModal';
 import {
   convertToApiData,
   getOrientation,
@@ -23,6 +22,7 @@ import {
 import { FormCode } from '@/components/taxDocument/template/common/type';
 import { getVatReport } from '@/services/vat';
 import FileUpload from '@/components/documentCreate/FileUpload';
+import ReportPreviewModal from '@/components/documentCreate/ReportPreviewModal';
 
 interface DocumentItem {
   id: string;
@@ -354,12 +354,11 @@ function VatDocumentCreateContent() {
         onFormsAdded={handleFormsAdded}
       />
 
-      <FormPreviewModal
+      <ReportPreviewModal
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        title="서류 미리보기"
-        documentList={documentList}
-        selectedDocument={selectedDocument}
+        reportId={reportId}
+        formId={selectedDocument?.id}
       />
 
       <ConfirmModal

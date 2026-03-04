@@ -1,12 +1,19 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ModalProps } from '@/types/props';
 import Image from 'next/image';
 import ChatArea from '@/components/ChatArea';
 import AvailableFormsSidebar from '@/components/documentCreate/AvailableFormsSidebar';
 import ToastMessage from '@/components/ToastMessage';
-import { completeVatForm, completeVatReport, deleteVatForm, uploadVatFormFile, VatFormData, } from '@/services/api';
+import {
+  completeVatForm,
+  completeVatReport,
+  deleteVatForm,
+  getVatReport,
+  uploadVatFormFile,
+  VatFormData,
+} from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   convertToApiData,
@@ -19,25 +26,16 @@ import TaxDocument from '@/components/taxDocument/TaxDocument';
 import { printElement } from '@/utils/printUtils';
 
 interface VatDocumentCreateModalProps extends ModalProps {
-  reportForms: VatFormData[];
-  reportId?: string;
+  reportId: string;
 }
 
-interface DocumentItem {
-  id: string;
-  name: string;
-  formCode: string;
-  isAdded?: boolean; // 추가된 서식인지 여부
-}
-
-function VatDocumentCreateModal({
+function VatDocumentModal({
   isOpen,
   onClose,
-  reportForms,
   reportId,
 }: VatDocumentCreateModalProps) {
   const { token } = useAuth();
-  const [documentList, setDocumentList] = useState<VatFormData[]>(reportForms);
+  const [documentList, setDocumentList] = useState<VatFormData[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<VatFormData | null>(
     null
   );
@@ -47,13 +45,30 @@ function VatDocumentCreateModal({
   const [showToast, setShowToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const previewOrientation = getOrientation(
     selectedDocument?.formCode as FormCode
   );
+
+  const fetchDocumentList = useCallback(async () => {
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    if (!reportId) {
+      return;
+    }
+
+    try {
+      const { forms } = await getVatReport(reportId, token);
+      setDocumentList(forms);
+    } catch (error) {
+      console.error('서류 조회 중 오류 발생:', error);
+      alert('서류 조회에 실패했습니다. 다시 시도해주세요.');
+    }
+  }, [reportId, token]);
 
   const handleDocumentUpdate = (field: string, value: unknown) => {
     if (!selectedDocument) return;
@@ -100,7 +115,6 @@ function VatDocumentCreateModal({
     }
 
     try {
-      setIsUploading(true);
       const { data, inputType } = await uploadVatFormFile(
         selectedDocument.id,
         file,
@@ -121,8 +135,6 @@ function VatDocumentCreateModal({
       const errorMessage =
         error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
       alert(errorMessage);
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -250,9 +262,10 @@ function VatDocumentCreateModal({
       orientation: previewOrientation,
     });
   };
+
   useEffect(() => {
-    setDocumentList(reportForms);
-  }, [reportForms]);
+    fetchDocumentList();
+  }, [fetchDocumentList]);
 
   useEffect(() => {
     return () => {
@@ -264,7 +277,6 @@ function VatDocumentCreateModal({
       setShowToast(false);
       setIsDeleting(null);
       setSelectedFile(null);
-      setIsUploading(false);
       setIsDragging(false);
     };
   }, []);
@@ -554,17 +566,25 @@ function VatDocumentCreateModal({
             {/* 서류 미리보기 영역 */}
             <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0 overflow-y-scroll">
               {selectedDocument && (
-                <PreviewWrapper
-                  orientation={previewOrientation}
-                  maxWidth={previewOrientation === 'portrait' ? 624 : 882}
-                >
-                  <TaxDocument
-                    formCode={selectedDocument.formCode}
-                    data={selectedDocument.data}
-                    inputType={selectedDocument.inputType}
-                    updater={handleDocumentUpdate}
-                  />
-                </PreviewWrapper>
+                <div className="flex justify-center">
+                  <div
+                    style={{
+                      zoom:
+                        previewOrientation === 'portrait'
+                          ? (624 / 880) * 0.98
+                          : 0.98,
+                    }}
+                  >
+                    <PreviewWrapper orientation={previewOrientation} maxWidth={882}>
+                      <TaxDocument
+                        formCode={selectedDocument.formCode}
+                        data={selectedDocument.data}
+                        inputType={selectedDocument.inputType}
+                        updater={handleDocumentUpdate}
+                      />
+                    </PreviewWrapper>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -594,4 +614,4 @@ function VatDocumentCreateModal({
   );
 }
 
-export default VatDocumentCreateModal;
+export default VatDocumentModal;

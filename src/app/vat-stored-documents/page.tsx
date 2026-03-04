@@ -1,7 +1,6 @@
 'use client';
 
 import ToastMessage from '@/components/ToastMessage';
-import VatPreviewModal from '@/components/VatPreviewModal';
 import { useAuth } from '@/contexts/AuthContext';
 import type { VatFormData } from '@/services/api';
 import {
@@ -17,6 +16,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReportPreviewModal from '@/components/documentCreate/ReportPreviewModal';
+import VatDocumentModal from '@/components/documentCreate/VatDocumentModal';
 
 export default function VatStoredDocumentsPage() {
   const router = useRouter();
@@ -794,7 +794,7 @@ export default function VatStoredDocumentsPage() {
       />
 
       {/* Preview Modal */}
-      <VatPreviewModal
+      <VatDocumentModal
         isOpen={showPreviewModal}
         onClose={() => {
           setShowPreviewModal(false);

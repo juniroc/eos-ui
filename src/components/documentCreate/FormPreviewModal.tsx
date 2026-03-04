@@ -8,21 +8,18 @@ import { printElement } from '@/utils/printUtils';
 
 type FormPreviewModalProps = {
   isOpen: boolean;
-  onClose: () => void;
   title?: string;
-  selectedDocument: VatFormData | null;
   documentList: VatFormData[];
-  previewFrameWidth: number;
-  onUpdate: (field: string, value: unknown) => void;
+  onClose: () => void;
 };
+
+const previewFrameWidth = 624;
 
 export default function FormPreviewModal({
   isOpen,
   onClose,
   title = '서류보기',
   documentList,
-  previewFrameWidth,
-  onUpdate,
 }: FormPreviewModalProps) {
   const previewContainerRef = useRef<HTMLDivElement>(null);
   const previewContentRef = useRef<HTMLDivElement>(null);
@@ -31,6 +28,8 @@ export default function FormPreviewModal({
   const [previewContainerWidth, setPreviewContainerWidth] =
     useState(previewFrameWidth);
   const [previewContentWidth, setPreviewContentWidth] =
+    useState(previewFrameWidth);
+  const [previewContentHeight, setPreviewContentHeight] =
     useState(previewFrameWidth);
 
   const onPrint = () => {
@@ -61,24 +60,35 @@ export default function FormPreviewModal({
     const updateScale = () => {
       const width = container.clientWidth;
       if (!width) return;
-      const padding = 32; // p-4 left/right
-      const availableWidth = Math.max(1, width - padding);
+      const computed = window.getComputedStyle(container);
+      const paddingX =
+        parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight);
+      const borderX =
+        parseFloat(computed.borderLeftWidth) +
+        parseFloat(computed.borderRightWidth);
+      const availableWidth = Math.max(1, width - paddingX - borderX);
       setPreviewContainerWidth(availableWidth);
 
       const contentWidth =
         previewContentRef.current?.scrollWidth || previewFrameWidth;
+      const contentHeight =
+        previewContentRef.current?.scrollHeight || previewFrameWidth;
       if (contentWidth !== previewContentWidth) {
         setPreviewContentWidth(contentWidth);
       }
+      if (contentHeight !== previewContentHeight) {
+        setPreviewContentHeight(contentHeight);
+      }
 
-      setPreviewScale(Math.min(1, availableWidth / contentWidth));
+      const safetyGap = 2;
+      setPreviewScale(Math.min(1, (availableWidth - safetyGap) / contentWidth));
     };
 
     updateScale();
     const ro = new ResizeObserver(() => updateScale());
     ro.observe(container);
     return () => ro.disconnect();
-  }, [isOpen, previewFrameWidth, previewContentWidth]);
+  }, [isOpen, previewContentWidth]);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -87,8 +97,12 @@ export default function FormPreviewModal({
 
     const updateContent = () => {
       const width = content.scrollWidth || previewFrameWidth;
+      const height = content.scrollHeight || previewFrameWidth;
       if (width !== previewContentWidth) {
         setPreviewContentWidth(width);
+      }
+      if (height !== previewContentHeight) {
+        setPreviewContentHeight(height);
       }
     };
 
@@ -96,7 +110,7 @@ export default function FormPreviewModal({
     const ro = new ResizeObserver(() => updateContent());
     ro.observe(content);
     return () => ro.disconnect();
-  }, [isOpen, previewFrameWidth, previewContentWidth]);
+  }, [isOpen, previewContentWidth]);
 
   if (!isOpen) return null;
 
@@ -123,7 +137,8 @@ export default function FormPreviewModal({
           </button>
         </div>
         <div
-          className="flex-1 overflow-auto p-4 w-[624px] h-[724px] mx-auto mb-2.5 border border-[#E6E6E6]"
+          className="overflow-auto w-[624px] mx-auto mb-2.5 border border-[#E6E6E6]"
+          style={{ height: Math.ceil(previewContentHeight * previewScale) }}
           ref={previewContainerRef}
         >
           <div
@@ -140,23 +155,36 @@ export default function FormPreviewModal({
           >
             <div
               style={{
-                width: previewContentWidth,
-                transform: `scale(${previewScale})`,
-                transformOrigin: 'top center',
+                width: previewContentWidth * previewScale,
+                overflow: 'hidden',
               }}
-              ref={previewContentRef}
             >
-              <PreviewWrapper orientation={'portrait'} maxWidth={882}>
-                {documentList.map(doc => (
-                  <TaxDocument
-                    key={doc.formCode}
-                    formCode={doc.formCode}
-                    data={doc.data}
-                    inputType={doc.inputType}
-                    updater={onUpdate}
-                  />
-                ))}
-              </PreviewWrapper>
+              <div
+                style={{
+                  width: previewContentWidth,
+                  zoom: previewScale,
+                }}
+              >
+                <div
+                  ref={previewContentRef}
+                  style={{
+                    width: 'fit-content',
+                    maxWidth: 'none',
+                    display: 'inline-block',
+                  }}
+                >
+                  <PreviewWrapper orientation={'portrait'} maxWidth={882}>
+                    {documentList.map(doc => (
+                      <TaxDocument
+                        key={doc.formCode}
+                        formCode={doc.formCode}
+                        data={doc.data}
+                        inputType={doc.inputType}
+                      />
+                    ))}
+                  </PreviewWrapper>
+                </div>
+              </div>
             </div>
           </div>
         </div>

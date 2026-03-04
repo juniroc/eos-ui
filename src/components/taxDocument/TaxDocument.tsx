@@ -133,15 +133,16 @@ import {
   Form6902Data,
   Form6902InputData,
 } from '@/components/taxDocument/template/Form69_2/type';
+import { noop } from 'lodash-es';
 
 export type Props = {
   formCode: FormCode;
   data: FormDataMap[Props['formCode']];
-  updater: FormUpdater<FormDataMap[Props['formCode']]>;
+  updater?: FormUpdater<FormDataMap[Props['formCode']]>;
   inputType?: Record<string, unknown>;
 };
 
-function TaxDocument({ formCode, data, updater, inputType }: Props) {
+function TaxDocument({ formCode, data, updater = noop, inputType }: Props) {
   switch (formCode) {
     case '1404':
       return (

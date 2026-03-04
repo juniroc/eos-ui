@@ -5,13 +5,21 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AvailableFormsModal from '@/components/documentCreate/AvailableFormsModal';
 import ToastMessage from '@/components/ToastMessage';
-import { completeVatForm, completeVatReport, deleteVatForm, VatFormData, } from '@/services/api';
+import {
+  completeVatForm,
+  completeVatReport,
+  deleteVatForm,
+  VatFormData,
+} from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import ConfirmModal from '@/components/ConfirmModal';
 import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
 import FormPreviewModal from '@/components/documentCreate/FormPreviewModal';
-import { convertToApiData, getOrientation, } from '@/components/taxDocument/template/common/utils/formUitls';
+import {
+  convertToApiData,
+  getOrientation,
+} from '@/components/taxDocument/template/common/utils/formUitls';
 import { FormCode } from '@/components/taxDocument/template/common/type';
 import { getVatReport } from '@/services/vat';
 import FileUpload from '@/components/documentCreate/FileUpload';
@@ -352,8 +360,6 @@ function VatDocumentCreateContent() {
         title="서류 미리보기"
         documentList={documentList}
         selectedDocument={selectedDocument}
-        previewFrameWidth={previewFrameWidth}
-        onUpdate={handleDocumentUpdate}
       />
 
       <ConfirmModal

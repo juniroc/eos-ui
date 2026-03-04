@@ -2058,10 +2058,11 @@ export async function deleteVatForm(
   return response.json();
 }
 
-export async function getVatReports(
+export async function getVatReport(
+  reportId: string,
   token: string
-): Promise<VatReportCreateResponse[]> {
-  const response = await fetch(`${API_BASE_URL}/api/vat/reports`, {
+): Promise<VatReportCreateResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/vat/reports/${reportId}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,

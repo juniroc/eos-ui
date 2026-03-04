@@ -2,7 +2,6 @@
 
 import ToastMessage from '@/components/ToastMessage';
 import VatPreviewModal from '@/components/VatPreviewModal';
-import VatSimplePreviewModal from '@/components/VatSimplePreviewModal';
 import { useAuth } from '@/contexts/AuthContext';
 import type { VatFormData } from '@/services/api';
 import {
@@ -17,6 +16,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReportPreviewModal from '@/components/documentCreate/ReportPreviewModal';
 
 export default function VatStoredDocumentsPage() {
   const router = useRouter();
@@ -37,13 +37,8 @@ export default function VatStoredDocumentsPage() {
   const [openMenuReportId, setOpenMenuReportId] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewReportId, setPreviewReportId] = useState<string | null>(null);
+  const [previewFormId, setPreviewFormId] = useState<string | null>(null);
   const [showSimplePreviewModal, setShowSimplePreviewModal] = useState(false);
-  const [simplePreviewReportId, setSimplePreviewReportId] = useState<
-    string | null
-  >(null);
-  const [simplePreviewFormId, setSimplePreviewFormId] = useState<
-    string | null
-  >(null);
   const [hasSearched, setHasSearched] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -121,8 +116,10 @@ export default function VatStoredDocumentsPage() {
 
   // 서류명 클릭 - simple preview 모달 열기
   const handleReportClick = (reportId: string, formId?: string) => {
-    setSimplePreviewReportId(reportId);
-    setSimplePreviewFormId(formId || null);
+    setPreviewReportId(reportId);
+    if (formId) {
+      setPreviewFormId(formId);
+    }
     setShowSimplePreviewModal(true);
   };
 
@@ -807,15 +804,15 @@ export default function VatStoredDocumentsPage() {
       />
 
       {/* Simple Preview Modal - 서류명 클릭 시 열림 */}
-      <VatSimplePreviewModal
+      <ReportPreviewModal
         isOpen={showSimplePreviewModal}
         onClose={() => {
+          setPreviewFormId(null);
+          setPreviewReportId(null);
           setShowSimplePreviewModal(false);
-          setSimplePreviewReportId(null);
-          setSimplePreviewFormId(null);
         }}
-        reportId={simplePreviewReportId}
-        initialFormId={simplePreviewFormId}
+        reportId={previewReportId}
+        formId={previewFormId}
       />
     </>
   );

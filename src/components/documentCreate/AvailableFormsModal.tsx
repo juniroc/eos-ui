@@ -14,7 +14,6 @@ import {
   getAvailableForms,
   VatFormData,
 } from '@/services/api';
-import Image from 'next/image';
 import { loadFormHtml } from '@/components/htmlSamples/formHtmlMap';
 
 interface AvailableFormsModalProps {
@@ -298,7 +297,7 @@ function AvailableFormsModal({
               <table className="w-full min-w-[931px] border-collapse table-fixed">
                 <thead className="sticky top-0 z-[1]">
                   <tr className="h-[30px] bg-[#F5F5F5]">
-                    <th className="w-[71px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
+                    <th className="w-[90px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
                       서식번호
                     </th>
                     <th className="w-[200px] border-r border-b border-[#D9D9D9] px-2 text-[11px] text-[#757575] font-bold font-['Pretendard']">
@@ -369,40 +368,19 @@ function AvailableFormsModal({
 
                       return (
                         <tr key={form.formCode} className="h-10 bg-white group">
-                          <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
-                            {form.formNumber}
+                          <td className="w-[90px] border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle">
+                            <span className="line-clamp-2 break-all">
+                              {form.formNumber}
+                            </span>
                           </td>
                           <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle">
-                            <div className="flex items-center gap-1 min-w-0">
-                              <span className="flex-1 min-w-0 truncate underline">
-                                {form.name}
-                              </span>
-                              <div className="flex items-center gap-1 flex-none opacity-0 group-hover:opacity-100">
-                                <button
-                                  type="button"
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    handlePreview(form);
-                                  }}
-                                  className="cursor-pointer"
-                                  aria-label={`${form.name} 미리보기`}
-                                >
-                                  <Image
-                                    src="/icons/search.svg"
-                                    alt="미리보기"
-                                    width={16}
-                                    height={16}
-                                  />
-                                </button>
-                                <Image
-                                  src="/icons/upload.svg"
-                                  alt="내보내기"
-                                  width={16}
-                                  height={16}
-                                  className="cursor-pointer"
-                                />
-                              </div>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handlePreview(form)}
+                              className="w-full text-left truncate hover:underline"
+                            >
+                              {form.name}
+                            </button>
                           </td>
                           <td className="h-10 border-r border-b border-[#D9D9D9] p-[6px] text-[11px] text-[#757575] font-medium align-middle overflow-hidden whitespace-nowrap text-ellipsis">
                             {form.description}

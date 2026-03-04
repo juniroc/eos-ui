@@ -28,7 +28,7 @@ export default function VatStoredDocumentsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showWorkModal, setShowWorkModal] = useState(false);
   const [workActionType, setWorkActionType] = useState<
-    'rework' | 'amendment' | null
+    'continue' | 'rework' | 'amendment' | null
   >(null);
   const [reportToDelete, setReportToDelete] = useState<string | null>(null);
   const [reportToWork, setReportToWork] = useState<string | null>(null);
@@ -39,6 +39,9 @@ export default function VatStoredDocumentsPage() {
   const [previewReportId, setPreviewReportId] = useState<string | null>(null);
   const [showSimplePreviewModal, setShowSimplePreviewModal] = useState(false);
   const [simplePreviewReportId, setSimplePreviewReportId] = useState<
+    string | null
+  >(null);
+  const [simplePreviewFormId, setSimplePreviewFormId] = useState<
     string | null
   >(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -117,8 +120,9 @@ export default function VatStoredDocumentsPage() {
   };
 
   // 서류명 클릭 - simple preview 모달 열기
-  const handleReportClick = (reportId: string) => {
+  const handleReportClick = (reportId: string, formId?: string) => {
     setSimplePreviewReportId(reportId);
+    setSimplePreviewFormId(formId || null);
     setShowSimplePreviewModal(true);
   };
 
@@ -149,9 +153,11 @@ export default function VatStoredDocumentsPage() {
     try {
       await workOnVatReport(reportToWork, workActionType, token);
       setToastMessage(
-        workActionType === 'rework'
-          ? '재작업이 시작되었습니다.'
-          : '수정신고가 시작되었습니다.'
+        workActionType === 'continue'
+          ? '계속 작업을 시작합니다.'
+          : workActionType === 'rework'
+            ? '재작업이 시작되었습니다.'
+            : '수정신고가 시작되었습니다.'
       );
       setShowToast(true);
       setShowWorkModal(false);
@@ -454,45 +460,37 @@ export default function VatStoredDocumentsPage() {
                                       : null
                                   }
                                 >
-                                  <button
-                                    onClick={() => handleReportClick(report.id)}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image
-                                      src="/icons/search.png"
-                                      alt="조회"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setPreviewReportId(report.id);
-                                      setShowPreviewModal(true);
-                                    }}
-                                    className="w-4 h-4 flex items-center justify-center hover:opacity-70"
-                                  >
-                                    <Image
-                                      src="/icons/upload_icon.png"
-                                      alt="업로드"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </button>
-                                  {report.isCompleted ? (
+                                  {!report.isCompleted ? (
                                     <button
                                       onClick={e => {
                                         e.stopPropagation();
-                                        setReportToWork(report.id);
-                                        setWorkActionType('amendment');
-                                        setShowWorkModal(true);
+                                        setPreviewReportId(report.id);
+                                        setShowPreviewModal(true);
                                         setOpenMenuReportId(null);
                                       }}
                                       className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-none grow-0"
                                     >
                                       <Image
                                         src="/icons/edit_icon.png"
-                                        alt="수정"
+                                        alt="계속 작업"
+                                        width={14}
+                                        height={14}
+                                      />
+                                      계속 작업
+                                    </button>
+                                  ) : report.isDeadlinePassed ? (
+                                    <button
+                                      onClick={e => {
+                                        e.stopPropagation();
+                                        setPreviewReportId(report.id);
+                                        setShowPreviewModal(true);
+                                        setOpenMenuReportId(null);
+                                      }}
+                                      className="flex flex-row justify-center items-center px-3 py-2 gap-2 h-7 text-[11px] leading-[100%] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a] whitespace-nowrap flex-none grow-0"
+                                    >
+                                      <Image
+                                        src="/icons/edit_icon.png"
+                                        alt="수정신고"
                                         width={14}
                                         height={14}
                                       />
@@ -510,7 +508,7 @@ export default function VatStoredDocumentsPage() {
                                     >
                                       <Image
                                         src="/icons/edit_icon.png"
-                                        alt="수정"
+                                        alt="재작업"
                                         width={14}
                                         height={14}
                                       />
@@ -554,7 +552,7 @@ export default function VatStoredDocumentsPage() {
                                     <>
                                       <span
                                         onClick={() =>
-                                          handleReportClick(report.id)
+                                          handleReportClick(report.id, form.id)
                                         }
                                         className="text-[10px] leading-[140%] text-[#757575] flex-1 cursor-pointer hover:underline"
                                       >
@@ -703,14 +701,18 @@ export default function VatStoredDocumentsPage() {
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
           <div className="bg-white p-6 max-w-md w-full mx-4">
             <h3 className="text-[14px] font-semibold text-black mb-2">
-              {workActionType === 'rework'
-                ? '재작업을 진행하시겠어요?'
-                : '수정신고를 진행하시겠어요?'}
+              {workActionType === 'continue'
+                ? '계속 작업을 진행하시겠어요?'
+                : workActionType === 'rework'
+                  ? '재작업을 진행하시겠어요?'
+                  : '수정신고를 진행하시겠어요?'}
             </h3>
             <p className="text-[11px] text-black mb-4">
-              {workActionType === 'rework'
-                ? '기존 신고서를 재작업합니다.'
-                : '기존 신고서는 유지되며, 새로운 신고서를 추가로 생성합니다.'}
+              {workActionType === 'continue'
+                ? '이전 작업을 이어서 진행합니다.'
+                : workActionType === 'rework'
+                  ? '기존 신고서를 재작업합니다.'
+                  : '기존 신고서는 유지되며, 새로운 신고서를 추가로 생성합니다.'}
             </p>
             <div className="flex flex-row gap-2 justify-end">
               <button
@@ -727,7 +729,11 @@ export default function VatStoredDocumentsPage() {
                 onClick={handleWork}
                 className="px-4 py-2 text-[11px] text-[#FFFFFF] bg-[#2C2C2C] hover:bg-[#1a1a1a]"
               >
-                {workActionType === 'rework' ? '재작업' : '수정신고'}
+                {workActionType === 'continue'
+                  ? '계속 작업'
+                  : workActionType === 'rework'
+                    ? '재작업'
+                    : '수정신고'}
               </button>
             </div>
           </div>
@@ -741,7 +747,7 @@ export default function VatStoredDocumentsPage() {
             <div className="flex flex-row justify-between items-center p-4 border-b border-[#D9D9D9]">
               <div className="flex flex-col">
                 <h3 className="text-[14px] font-semibold text-[#1E1E1E]">
-                  서류보기 납부할 세액(환급받을 세액): 0원
+                  서류보기
                 </h3>
               </div>
               <div className="flex flex-row gap-2">
@@ -806,8 +812,10 @@ export default function VatStoredDocumentsPage() {
         onClose={() => {
           setShowSimplePreviewModal(false);
           setSimplePreviewReportId(null);
+          setSimplePreviewFormId(null);
         }}
         reportId={simplePreviewReportId}
+        initialFormId={simplePreviewFormId}
       />
     </>
   );

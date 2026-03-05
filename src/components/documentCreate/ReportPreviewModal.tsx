@@ -20,7 +20,7 @@ function ReportPreviewModal({ reportId, formId, isOpen, onClose }: Props) {
       return;
     }
 
-    if (!reportId || !formId) {
+    if (!reportId) {
       setDocumentList([]);
       return;
     }
@@ -38,8 +38,10 @@ function ReportPreviewModal({ reportId, formId, isOpen, onClose }: Props) {
   }, [formId, reportId, token]);
 
   useEffect(() => {
-    fetchDocumentList();
-  }, [fetchDocumentList]);
+    if (isOpen) {
+      fetchDocumentList();
+    }
+  }, [fetchDocumentList, isOpen]);
 
   return (
     <FormPreviewModal

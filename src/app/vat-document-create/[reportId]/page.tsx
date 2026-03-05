@@ -155,7 +155,7 @@ function VatDocumentCreateContent() {
     async ({ data, inputType, uploadedDocuments }: VatFormData) => {
       setSelectedDocument({
         ...selectedDocument,
-        // @ts-ignore
+        //@ts-ignore
         data,
         inputType,
         uploadedDocuments,
@@ -286,7 +286,9 @@ function VatDocumentCreateContent() {
               <button
                 type="button"
                 className="box-border flex flex-row justify-center items-center py-2 px-3 gap-2 w-[63px] h-[27px] flex-none grow-0 bg-[#F3F3F3] font-medium text-[11px] leading-[100%] text-[#1E1E1E]"
-                onClick={() => setIsPreviewOpen(true)}
+                onClick={() => {
+                  setIsPreviewOpen(true);
+                }}
               >
                 미리보기
               </button>

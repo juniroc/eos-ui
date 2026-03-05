@@ -88,7 +88,7 @@ export default function FormPreviewModal({
     const ro = new ResizeObserver(() => updateScale());
     ro.observe(container);
     return () => ro.disconnect();
-  }, [isOpen, previewContentWidth]);
+  }, [isOpen, previewContentHeight, previewContentWidth]);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -110,7 +110,7 @@ export default function FormPreviewModal({
     const ro = new ResizeObserver(() => updateContent());
     ro.observe(content);
     return () => ro.disconnect();
-  }, [isOpen, previewContentWidth]);
+  }, [isOpen, previewContentHeight, previewContentWidth]);
 
   if (!isOpen) return null;
 

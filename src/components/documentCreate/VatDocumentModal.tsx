@@ -561,28 +561,14 @@ function VatDocumentModal({
             {/* 서류 미리보기 영역 */}
             <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0 overflow-y-scroll">
               {selectedDocument && (
-                <div className="flex justify-center">
-                  <div
-                    style={{
-                      zoom:
-                        previewOrientation === 'portrait'
-                          ? (624 / 880) * 0.98
-                          : 0.98,
-                    }}
-                  >
-                    <PreviewWrapper
-                      orientation={previewOrientation}
-                      maxWidth={882}
-                    >
-                      <TaxDocument
-                        formCode={selectedDocument.formCode}
-                        data={selectedDocument.data}
-                        inputType={selectedDocument.inputType}
-                        updater={handleDocumentUpdate}
-                      />
-                    </PreviewWrapper>
-                  </div>
-                </div>
+                <PreviewWrapper orientation={previewOrientation} maxWidth={882}>
+                  <TaxDocument
+                    formCode={selectedDocument.formCode}
+                    data={selectedDocument.data}
+                    inputType={selectedDocument.inputType}
+                    updater={handleDocumentUpdate}
+                  />
+                </PreviewWrapper>
               )}
             </div>
           </div>

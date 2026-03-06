@@ -30,6 +30,36 @@ export default function Form40_1({
   exportItems,
 }: Props) {
   const digitsOnly = (value: string) => value.replace(/[^0-9]/g, '');
+  const displaySubmitterBizType = (() => {
+    const raw = submitterInfo?.bizType;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
+  const displaySubmitterBizItem = (() => {
+    const raw = submitterInfo?.bizItem;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
 
   const createEmptyExportItem = (): Form40Data['exportItems'][number] => ({
     exportDeclarationNumber: '',
@@ -852,7 +882,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
                 margin: '1pt 0',
               }}
-              value={submitterInfo.bizType}
+              value={displaySubmitterBizType}
               onChange={e => updateSubmitterInfo('bizType', e.target.value)}
               inputType={inputType?.submitterInfo?.bizType}
             />
@@ -901,7 +931,7 @@ export default function Form40_1({
                 verticalAlign: 'middle',
                 margin: '1pt 0',
               }}
-              value={submitterInfo.bizItem}
+              value={displaySubmitterBizItem}
               onChange={e => updateSubmitterInfo('bizItem', e.target.value)}
               inputType={inputType?.submitterInfo?.bizItem}
             />

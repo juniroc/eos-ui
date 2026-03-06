@@ -207,6 +207,12 @@ export const printElement = (options: PrintOptions) => {
           ${pageStyle}
           
           ${slotStyle}
+
+          /* Named page setup (browser support varies) */
+          @page landscape {
+            size: A4 landscape;
+            margin: 0;
+          }
           
           @media print {
               input[type="checkbox"] {
@@ -223,12 +229,84 @@ export const printElement = (options: PrintOptions) => {
               text-align: center;
             }
 
-            #preview-content {
+            /* Ensure print variants apply even if Tailwind CSS isn't copied */
+            [data-pageslot] {
+              display: none !important;
+            }
+
+            .print\\:hidden {
+              display: none !important;
+            }
+
+            .print\\:block {
+              display: block !important;
+            }
+
+            .print\\:inline {
+              display: inline !important;
+            }
+
+            .print\\:inline-block {
+              display: inline-block !important;
+            }
+
+            .print\\:flex {
+              display: flex !important;
+            }
+
+            .print\\:grid {
+              display: grid !important;
+            }
+
+            .hidden {
+              display: none !important;
+            }
+
+            .hidden.print\\:block {
+              display: block !important;
+            }
+
+            .hidden.print\\:inline {
+              display: inline !important;
+            }
+
+            .hidden.print\\:inline-block {
+              display: inline-block !important;
+            }
+
+            .hidden.print\\:flex {
+              display: flex !important;
+            }
+
+            .hidden.print\\:grid {
+              display: grid !important;
+            }
+
+            .form25,
+            .form28,
+            .form34,
+            .form47 {
+              page: landscape;
+            }
+
+            #preview-content,
+            #form-preview-content {
               display: inline-block;
               margin: 0 auto;
               width: auto !important;
               max-width: none !important;
               text-align: left;
+            }
+
+            .preview-scale {
+              transform: none !important;
+              zoom: 1 !important;
+            }
+
+            .preview-scale-frame {
+              width: auto !important;
+              height: auto !important;
+              overflow: visible !important;
             }
             
             /* 불필요한 요소 숨기기 */

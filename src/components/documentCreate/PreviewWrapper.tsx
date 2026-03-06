@@ -7,6 +7,9 @@ type Props = {
   children: React.ReactNode;
   maxWidth?: number;
   orientation?: Orientation;
+  id?: string;
+  className?: string;
+  style?: React.CSSProperties;
 
   /**
    * content: children의 실제 크기(scrollWidth/Height) 기준으로 스케일
@@ -22,9 +25,12 @@ export default function PreviewWrapper({
   children,
   maxWidth = 1000,
   fit: _fit = 'content',
+  id = 'preview-content',
+  className = 'w-full',
+  style,
 }: Props) {
   return (
-    <div id={'preview-content'} className="w-full" style={{ maxWidth }}>
+    <div id={id} className={className} style={{ maxWidth, ...style }}>
       <div
         id={'preview-section'}
         className="flex flex-col items-start overflow-x-hidden [scrollbar-gutter:stable]"

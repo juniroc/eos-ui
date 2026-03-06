@@ -35,6 +35,21 @@ export default function Form42_1({
     { length: MAX_ATTACHMENT_ITEM_LENGTH },
     (_, i) => attachmentItems[startIndex + i] ?? {}
   );
+  const displayBizTypeAndItem = (() => {
+    const raw = submitterInfo?.bizTypeAndItem;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
 
   const submitterInfoUpdater = <K extends keyof Form42Data['submitterInfo']>(
     field: K,
@@ -522,7 +537,7 @@ export default function Form42_1({
               className="text-input"
               type="text"
               style={{ width: '100%' }}
-              value={submitterInfo.bizTypeAndItem}
+              value={displayBizTypeAndItem}
               onChange={value => submitterInfoUpdater('bizTypeAndItem', value)}
               inputType={inputType?.submitterInfo?.bizTypeAndItem}
             />

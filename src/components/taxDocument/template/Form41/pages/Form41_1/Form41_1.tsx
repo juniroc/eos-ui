@@ -42,6 +42,36 @@ export default function Form41_1({
     { length: FORM_41_1_MAX_DETAIL_LIST_MAX_LENGTH },
     (_, i) => detailList[i] ?? baseDetailItem
   );
+  const displaySubmitterBizType = (() => {
+    const raw = submitterInfo?.bizType;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
+  const displaySubmitterBizItem = (() => {
+    const raw = submitterInfo?.bizItem;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
 
   const submitterInfoUpdater = <K extends keyof Form41Data['submitterInfo']>(
     field: K,
@@ -782,7 +812,7 @@ export default function Form41_1({
                     verticalAlign: 'middle',
                     textAlign: 'center',
                   }}
-                  value={submitterInfo.bizType}
+                  value={displaySubmitterBizType}
                   onChange={value => submitterInfoUpdater('bizType', value)}
                   inputType={inputType?.submitterInfo?.bizType}
                 />
@@ -859,7 +889,7 @@ export default function Form41_1({
                     verticalAlign: 'middle',
                     textAlign: 'center',
                   }}
-                  value={submitterInfo.bizItem}
+                  value={displaySubmitterBizItem}
                   onChange={value => submitterInfoUpdater('bizItem', value)}
                   inputType={inputType?.submitterInfo?.bizItem}
                 />

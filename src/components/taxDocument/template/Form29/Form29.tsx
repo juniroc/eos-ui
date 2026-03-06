@@ -22,6 +22,36 @@ export default function Form29({
   subTotalSpecialLaw,
   grandTotalSupplyPrice,
   inputType}: Form29Props) {
+  const displaySubmitterBizType = (() => {
+    const raw = submitterInfo?.bizType;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\[\s*"?/, '').replace(/"?\s*\]$/, '');
+  })();
+  const displaySubmitterBizItem = (() => {
+    const raw = submitterInfo?.bizItem;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\[\s*"?/, '').replace(/"?\s*\]$/, '');
+  })();
   const updateSubmitterInfo = <K extends keyof Form29Data['submitterInfo']>(
     field: K,
     value: Form29Data['submitterInfo'][K]
@@ -473,7 +503,7 @@ export default function Form29({
                         fontFamily: 'Arial',
                       }}
                       type="text"
-                      value={submitterInfo.bizType}
+                      value={displaySubmitterBizType}
                       onChange={e =>
                         updateSubmitterInfo('bizType', e.target.value)
                       }
@@ -520,7 +550,7 @@ export default function Form29({
                         fontFamily: 'Arial',
                       }}
                       type="text"
-                      value={submitterInfo.bizItem}
+                      value={displaySubmitterBizItem}
                       onChange={e =>
                         updateSubmitterInfo('bizItem', e.target.value)
                       }

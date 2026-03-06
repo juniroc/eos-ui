@@ -41,6 +41,36 @@ export default function Form69_2_1({
     { length: FORM_69_2_1_RECEIPT_PURCHASE_ITEM_MAX_LENGTH },
     (_, i) => receiptPurchaseItems[i] ?? baseReceiptPurchaseItem
   );
+  const displaySubmitterBizType = (() => {
+    const raw = submitterInfo?.bizType;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
+  const displaySubmitterBizItem = (() => {
+    const raw = submitterInfo?.bizItem;
+    if (typeof raw !== 'string') return raw ?? '';
+    const trimmed = raw.trim();
+    if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) return raw;
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(item => typeof item === 'string').join(', ');
+      }
+    } catch {
+      // fall through to loose cleanup
+    }
+    return trimmed.replace(/^\\[\\s*\"?/, '').replace(/\"?\\s*\\]$/, '');
+  })();
 
   const submitterInfoUpdater = <K extends keyof Form6902Data['submitterInfo']>(
     field: K,
@@ -423,7 +453,7 @@ export default function Form69_2_1({
                     marginLeft: '1pt',
                     float: 'right',
                   }}
-                  value={submitterInfo.bizType}
+                  value={displaySubmitterBizType}
                   onChange={value => submitterInfoUpdater('bizType', value)}
                   inputType={inputType?.submitterInfo?.bizType}
                 />
@@ -468,7 +498,7 @@ export default function Form69_2_1({
                     marginLeft: '1pt',
                     float: 'right',
                   }}
-                  value={submitterInfo.bizItem}
+                  value={displaySubmitterBizItem}
                   onChange={value => submitterInfoUpdater('bizItem', value)}
                   inputType={inputType?.submitterInfo?.bizItem}
                 />

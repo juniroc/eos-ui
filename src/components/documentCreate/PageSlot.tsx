@@ -33,11 +33,14 @@ export function PageSlot({
   children,
   slotWidth = 624,
   slotHeight = 882,
-  fit = 'contain',
+  fit = 'width',
   crop,
   zoom = 1,
+  className,
 }: PageSlotProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
+  const [containerScale, setContainerScale] = useState(1);
   const [childSize, setChildSize] = useState<{ w: number; h: number } | null>(
     null
   );
@@ -67,6 +70,26 @@ export function PageSlot({
 
     return () => ro.disconnect();
   }, []);
+
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const available = Math.max(1, el.clientWidth);
+      const next = Math.min(1, available / slotWidth);
+      setContainerScale(prev =>
+        Math.abs(prev - next) < 0.001 ? prev : next
+      );
+    };
+
+    measure();
+
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+
+    return () => ro.disconnect();
+  }, [slotWidth]);
 
   const scale = useMemo(() => {
     if (!childSize) return 1;
@@ -102,49 +125,62 @@ export function PageSlot({
 
   return (
     <Fragment>
-      <div
-        data-pageslot
-        className={'print:hidden'}
-        style={{
-          width: `${slotWidth}px`,
-          height: `${slotHeight}px`,
-          position: 'relative',
-          overflow: 'hidden',
-          background: 'white',
-          boxSizing: 'border-box',
-          tableLayout: 'fixed',
-          breakAfter: 'page',
-          breakInside: 'avoid',
-          pageBreakAfter: 'always',
-          pageBreakInside: 'avoid',
-        }}
-      >
+      <div ref={containerRef} data-pageslot-wrapper style={{ width: '100%' }}>
         <div
-          data-pagecanvas
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            transformOrigin: 'top left',
-            transform: `translate(${-c.left}px, ${-c.top}px) scale(${scale})`,
-            width: `${slotWidth / scale}px`,
+            width: `${slotWidth * containerScale}px`,
+            height: `${slotHeight * containerScale}px`,
+            margin: '0 auto',
           }}
         >
           <div
-            ref={measureRef}
+            data-pageslot
+            className={['print:hidden', className].filter(Boolean).join(' ')}
             style={{
-              display: 'block', // ✅ margin auto 먹게
-              width: 'fit-content', // 내용 크기만큼
-              margin: '0 auto',
+              width: `${slotWidth}px`,
+              height: `${slotHeight}px`,
+              position: 'relative',
+              overflow: 'hidden',
+              background: 'white',
+              boxSizing: 'border-box',
+              tableLayout: 'fixed',
+              breakAfter: 'page',
+              breakInside: 'avoid',
+              pageBreakAfter: 'always',
+              pageBreakInside: 'avoid',
+              transform: `scale(${containerScale})`,
+              transformOrigin: 'top left',
             }}
           >
-            {children}
+            <div
+              data-pagecanvas
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                transformOrigin: 'top left',
+                transform: `translate(${-c.left}px, ${-c.top}px) scale(${scale})`,
+                width: `${slotWidth / scale}px`,
+              }}
+            >
+              <div
+                ref={measureRef}
+                style={{
+                  display: 'block', // ✅ margin auto 먹게
+                  width: 'fit-content', // 내용 크기만큼
+                  margin: '0 auto',
+                }}
+              >
+                {children}
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        className={
-          'hidden print:block print:break-before-page print:break-inside-avoid print-preview-page'
+        className={'hidden print:block print:break-inside-avoid print-preview-page'}
+        data-pageslot-orientation={
+          slotWidth > slotHeight ? 'landscape' : 'portrait'
         }
       >
         <div

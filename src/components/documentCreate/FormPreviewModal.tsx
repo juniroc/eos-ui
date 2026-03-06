@@ -5,6 +5,8 @@ import TaxDocument from '@/components/taxDocument/TaxDocument';
 import PreviewWrapper from '@/components/documentCreate/PreviewWrapper';
 import { VatFormData } from '@/services/api';
 import { printElement } from '@/utils/printUtils';
+import { getOrientation } from '@/components/taxDocument/template/common/utils/formUitls';
+import { FormCode } from '@/components/taxDocument/template/common/type';
 
 type FormPreviewModalProps = {
   isOpen: boolean;
@@ -20,7 +22,14 @@ export default function FormPreviewModal({
   documentList,
 }: FormPreviewModalProps) {
   const onPrint = () => {
-    printElement({ selector: '#form-preview-content' });
+    const orientations = documentList.map(doc =>
+      getOrientation(doc.formCode as FormCode)
+    );
+    const hasLandscape = orientations.includes('landscape');
+    const hasPortrait = orientations.includes('portrait');
+    const orientation =
+      hasLandscape && !hasPortrait ? 'landscape' : 'portrait';
+    printElement({ selector: '#form-preview-content', orientation });
   };
 
   useEffect(() => {
@@ -63,40 +72,22 @@ export default function FormPreviewModal({
           </button>
         </div>
         <div className="overflow-auto w-[624px] h-[724px] mx-auto mb-2.5 border border-[#E6E6E6]">
-          <div
-            className="mx-auto print-preview print-preview-modal"
-            style={{
-              width: '100%',
-              boxSizing: 'border-box',
-              display: 'flex',
-              justifyContent: 'center',
-            }}
+          <PreviewWrapper
+            id="form-preview-content"
+            orientation={'portrait'}
+            maxWidth={882}
+            className="w-auto print-preview print-preview-modal"
+            style={{ maxWidth: 'none' }}
           >
-            <PreviewWrapper
-              id="form-preview-content"
-              orientation={'portrait'}
-              maxWidth={882}
-              className="w-auto"
-              style={{ maxWidth: 'none' }}
-            >
-              {documentList.map((doc, index) => (
-                <div
-                  key={`${doc.formCode}-${index}`}
-                  style={{
-                    width: 'fit-content',
-                    maxWidth: 'none',
-                    display: 'inline-block',
-                  }}
-                >
-                  <TaxDocument
-                    formCode={doc.formCode}
-                    data={doc.data}
-                    inputType={doc.inputType}
-                  />
-                </div>
-              ))}
-            </PreviewWrapper>
-          </div>
+            {documentList.map((doc, index) => (
+              <TaxDocument
+                key={index}
+                formCode={doc.formCode}
+                data={doc.data}
+                inputType={doc.inputType}
+              />
+            ))}
+          </PreviewWrapper>
         </div>
       </div>
     </div>

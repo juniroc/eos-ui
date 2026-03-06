@@ -154,6 +154,10 @@ input[type="number"] {
     page-break-inside: avoid;
   }
 
+  [data-pageslot-wrapper] {
+    display: none !important;
+  }
+
   /* 새 페이지에서 시작 */
   .print-page-break {
     page-break-before: always;
@@ -191,6 +195,15 @@ input[type="number"] {
 
   .print-preview-page > * {
     margin: 0 auto;
+  }
+
+
+  [data-pageslot-orientation="landscape"] {
+    page: landscape;
+  }
+
+  [data-pageslot-orientation="portrait"] {
+    page: portrait;
   }
 
   /* 프린트 시에도 숫자 입력 필드 스핀 버튼 숨기기 */
@@ -250,6 +263,10 @@ body.print-preview [data-pageslot] {
   display: none !important;
 }
 
+body.print-preview [data-pageslot-wrapper] {
+  display: none !important;
+}
+
 body.print-preview .hidden.print\:block {
   display: block !important;
 }
@@ -289,6 +306,26 @@ body.print-preview .print-preview-modal .print-preview-page {
   padding: 0;
   box-shadow: none;
   margin: 0;
+}
+
+body.print-preview .print-preview-modal [data-pageslot] {
+  display: block !important;
+}
+
+body.print-preview .print-preview-modal [data-pageslot-wrapper] {
+  display: block !important;
+}
+
+body.print-preview .print-preview-modal .print-preview-page {
+  display: none !important;
+}
+
+body.print-preview .print-preview-modal .print\:hidden {
+  display: block !important;
+}
+
+body.print-preview .print-preview-modal .print\:block {
+  display: none !important;
 }
 
 body.print-preview .print-preview-modal input,

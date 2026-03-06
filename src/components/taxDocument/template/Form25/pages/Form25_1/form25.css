@@ -25,28 +25,9 @@
 
     /* ✅ print에서만 중앙정렬 + 브라우저 기본 여백 제거 */
     @media print {
-        /* 프린트의 진짜 여백은 @page/body가 잡고 있어서 같이 제거해줘야 함 */
-        @page {
-            margin: 0;
-        }
-
-        html,
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* margin:auto는 transform/absolute 레이아웃에서 말썽날 때가 있어서
-           print에서만 확실하게 가운데로 보내려면 "부모를 flex"로 두는게 제일 안정적 */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
         .form25 {
-            margin: 0 !important;
-            zoom: 0.94;
+            transform: scale(0.953);
+            transform-origin: top center;
         }
     }
 }

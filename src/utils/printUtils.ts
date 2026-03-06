@@ -181,14 +181,12 @@ export const printElement = (options: PrintOptions) => {
               [data-pageslot] {
                 width: 297mm !important;
                 height: 210mm !important;
-                page-break-after: always;
             }   
           }`
       : `@media print {
               [data-pageslot] { 
                 width: 210mm !important;
                 height: 297mm !important;
-                page-break-after: always;
             }   
           }
       `;
@@ -209,6 +207,11 @@ export const printElement = (options: PrintOptions) => {
           ${slotStyle}
 
           /* Named page setup (browser support varies) */
+          @page portrait {
+            size: A4 portrait;
+            margin: 0;
+          }
+
           @page landscape {
             size: A4 landscape;
             margin: 0;
@@ -231,6 +234,10 @@ export const printElement = (options: PrintOptions) => {
 
             /* Ensure print variants apply even if Tailwind CSS isn't copied */
             [data-pageslot] {
+              display: none !important;
+            }
+
+            [data-pageslot-wrapper] {
               display: none !important;
             }
 
@@ -282,18 +289,20 @@ export const printElement = (options: PrintOptions) => {
               display: grid !important;
             }
 
-            .form25,
-            .form28,
-            .form34,
-            .form47 {
+
+            [data-pageslot-orientation="portrait"] {
+              page: portrait;
+            }
+
+            [data-pageslot-orientation="landscape"] {
               page: landscape;
             }
 
             #preview-content,
             #form-preview-content {
-              display: inline-block;
-              margin: 0 auto;
-              width: auto !important;
+              display: block;
+              margin: 0;
+              width: 100% !important;
               max-width: none !important;
               text-align: left;
             }
@@ -386,7 +395,7 @@ export const printElement = (options: PrintOptions) => {
   setTimeout(() => {
     printWindow.print();
 
-    // // 인쇄 후 창 닫기
+    // 인쇄 후 창 닫기
     // setTimeout(() => {
     //   printWindow.close();
     //   if (onAfterPrint) {

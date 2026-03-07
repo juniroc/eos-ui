@@ -794,14 +794,16 @@ export default function VatStoredDocumentsPage() {
       />
 
       {/* Preview Modal */}
-      <VatDocumentModal
-        isOpen={showPreviewModal}
-        onClose={() => {
-          setShowPreviewModal(false);
-          setPreviewReportId(null);
-        }}
-        reportId={previewReportId}
-      />
+      {previewReportId && (
+        <VatDocumentModal
+          isOpen={showPreviewModal}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setPreviewReportId(null);
+          }}
+          reportId={previewReportId}
+        />
+      )}
 
       {/* Simple Preview Modal - 서류명 클릭 시 열림 */}
       <ReportPreviewModal

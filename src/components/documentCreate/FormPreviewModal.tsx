@@ -27,8 +27,7 @@ export default function FormPreviewModal({
     );
     const hasLandscape = orientations.includes('landscape');
     const hasPortrait = orientations.includes('portrait');
-    const orientation =
-      hasLandscape && !hasPortrait ? 'landscape' : 'portrait';
+    const orientation = hasLandscape && !hasPortrait ? 'landscape' : 'portrait';
     printElement({ selector: '#form-preview-content', orientation });
   };
 
@@ -62,14 +61,24 @@ export default function FormPreviewModal({
       >
         <div className="flex items-center justify-between px-4 py-3">
           <h2 className="text-[14px] font-semibold text-[#1E1E1E]">{title}</h2>
-          <button
-            type="button"
-            onClick={onPrint}
-            className="text-[12px] leading-[100%] text-[#1E1E1E] w-[64px] h-[28px] bg-[#F3F3F3] weight-[medium]"
-            aria-label="닫기"
-          >
-            인쇄하기
-          </button>
+          <div>
+            <button
+              type="button"
+              onClick={onPrint}
+              className="mr-2 text-[12px] leading-[100%] text-[#1E1E1E] w-[64px] h-[28px] bg-[#F3F3F3] weight-[medium]"
+              aria-label="다운로드"
+            >
+              다운로드
+            </button>
+            <button
+              type="button"
+              onClick={onPrint}
+              className="text-[12px] leading-[100%] text-[#1E1E1E] w-[64px] h-[28px] bg-[#F3F3F3] weight-[medium]"
+              aria-label="닫기"
+            >
+              인쇄하기
+            </button>
+          </div>
         </div>
         <div className="overflow-auto w-[624px] h-[724px] mx-auto mb-2.5 border border-[#E6E6E6]">
           <PreviewWrapper

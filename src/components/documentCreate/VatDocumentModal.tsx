@@ -561,7 +561,11 @@ function VatDocumentModal({
             {/* 서류 미리보기 영역 */}
             <div className="w-full h-[calc(100%-40px)] bg-white border border-[#D9D9D9] flex-shrink-0 overflow-y-scroll">
               {selectedDocument && (
-                <PreviewWrapper orientation={previewOrientation} maxWidth={882}>
+                <PreviewWrapper
+                  id="preview-section"
+                  orientation={previewOrientation}
+                  maxWidth={882}
+                >
                   <TaxDocument
                     formCode={selectedDocument.formCode}
                     data={selectedDocument.data}

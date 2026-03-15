@@ -28,19 +28,28 @@ interface TrialBalanceRow {
   styles?: Record<string, unknown>;
 }
 
+interface CashflowRow {
+  key: string;
+  label: string | null;
+  amountChange: number | null;
+  cashFlow: number | null;
+  depth?: 0 | 1 | 2;
+  bold?: boolean;
+}
+
 interface StatementMeta {
   asOfDate?: string;
   periods?: {
     current: {
       start: string;
       end: string;
-    }
-    prior: {
+    };
+    prior?: {
       start: string;
       end: string;
-    }
+    };
   };
-  terms: {
+  terms?: {
     current: number;
     prior: number;
   };
@@ -58,7 +67,7 @@ interface StatementMeta {
 interface StatementData {
   type: string;
   meta: StatementMeta;
-  rows: FSRow[] | TrialBalanceRow[];
+  rows: FSRow[] | TrialBalanceRow[] | CashflowRow[];
 }
 
 type StatementType = 'balance_sheet' | 'income_statement' | 'cost_report' | 'cash_flow' | 'trial_balance' | 'retained_earnings';
@@ -176,10 +185,10 @@ export default function FinancialStatementsPage() {
     } else if (selectedType === 'cash_flow') {
       csvContent = [
         ['항목', '증감액', '현금흐름'],
-        ...(statementData.rows as FSRow[]).map(row => [
-          row.label,
-          row.currentLeft ? row.currentLeft.toLocaleString() : '',
-          row.currentRight ? row.currentRight.toLocaleString() : ''
+        ...(statementData.rows as CashflowRow[]).map(row => [
+          row.label ?? '',
+          row.amountChange != null ? row.amountChange.toLocaleString() : '',
+          row.cashFlow != null ? row.cashFlow.toLocaleString() : ''
         ])
       ];
     } else {
@@ -199,7 +208,7 @@ export default function FinancialStatementsPage() {
     const blob = new Blob(['\uFEFF' + csvString], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${statementTypes.find(s => s.key === selectedType)?.label}_${date || '전체'}.csv`;
+    link.download = `${statementTypes.find(s => s.key === selectedType)?.label}_${selectedType === 'cash_flow' || selectedType === 'income_statement' || selectedType === 'cost_report' || selectedType === 'retained_earnings' ? (startDate && endDate ? `${startDate}_${endDate}` : '전체') : (date || '전체')}.csv`;
     link.click();
   };
 
@@ -453,10 +462,16 @@ export default function FinancialStatementsPage() {
               {statementData.meta.periods && statementData.meta.periods.current && statementData.meta.periods.prior ? (
                 <div className="flex flex-col items-start p-0 h-[34px]">
                   <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
-                    {`제 ${statementData.meta.terms.current} 기`} {formatDate(statementData.meta.periods.current.start)}부터 {formatDate(statementData.meta.periods.current.end)}까지
+                    {`제 ${statementData.meta.terms?.current} 기`} {formatDate(statementData.meta.periods.current.start)}부터 {formatDate(statementData.meta.periods.current.end)}까지
                   </div>
                   <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
-                    {`제 ${statementData.meta.terms.prior} 기`} {formatDate(statementData.meta.periods.prior.start)}부터 {formatDate(statementData.meta.periods.prior.end)}까지
+                    {`제 ${statementData.meta.terms?.prior} 기`} {formatDate(statementData.meta.periods.prior.start)}부터 {formatDate(statementData.meta.periods.prior.end)}까지
+                  </div>
+                </div>
+              ) : statementData.meta.periods?.current && (selectedType === 'cash_flow' || !statementData.meta.periods.prior) ? (
+                <div className="flex flex-col items-start p-0 h-[34px]">
+                  <div className="h-[17px] text-[12px] leading-[140%] text-[#757575]">
+                    {formatDate(statementData.meta.periods.current.start)}부터 {formatDate(statementData.meta.periods.current.end)}까지
                   </div>
                 </div>
               ) : statementData.meta.asOfDate && formatDate(statementData.meta.asOfDate) !== '날짜 정보 없음' ? (
@@ -552,12 +567,12 @@ export default function FinancialStatementsPage() {
                   )}
                 </thead>
                 <tbody>
-                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow, index: number) => {
+                  {statementData.rows && Array.isArray(statementData.rows) ? statementData.rows.map((row: FSRow | TrialBalanceRow | CashflowRow, index: number) => {
                     const isLastRow = index === statementData.rows.length - 1;
                     const borderClass = isLastRow ? 'border-l border-r border-b border-[#D9D9D9]' : 'border-l border-r border-[#D9D9D9]';
                     
                     return (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={selectedType === 'cash_flow' && 'key' in row ? (row as CashflowRow).key : index} className="hover:bg-gray-50">
                       {selectedType === 'trial_balance' ? (
                         <>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
@@ -589,18 +604,18 @@ export default function FinancialStatementsPage() {
                       ) : selectedType === 'cash_flow' ? (
                         <>
                           <td className={`p-2 text-xs ${borderClass}`}>
-                            <div style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 12}px` }}>
-                              {'label' in row ? formatLabelWithSpacing(row.label) : ''}
+                            <div style={{ paddingLeft: `${('depth' in row ? (row as CashflowRow).depth ?? 0 : 0) * 12}px` }} className={('bold' in row && (row as CashflowRow).bold) ? 'font-bold' : ''}>
+                              {'label' in row && (row as CashflowRow).label != null ? formatLabelWithSpacing((row as CashflowRow).label ?? '') : ''}
                             </div>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
-                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'currentLeft' in row ? row.currentLeft?.toLocaleString() || '0' : '0'}
+                            <span className={('bold' in row && (row as CashflowRow).bold) ? 'font-bold' : ''}>
+                              {'amountChange' in row && (row as CashflowRow).amountChange != null ? (row as CashflowRow).amountChange!.toLocaleString() : ''}
                             </span>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
-                            <span className={('styles' in row && row.styles?.bold) ? 'font-bold' : ''}>
-                              {'currentRight' in row ? row.currentRight?.toLocaleString() || '0' : '0'}
+                            <span className={('bold' in row && (row as CashflowRow).bold) ? 'font-bold' : ''}>
+                              {'cashFlow' in row && (row as CashflowRow).cashFlow != null ? (row as CashflowRow).cashFlow!.toLocaleString() : ''}
                             </span>
                           </td>
                         </>
@@ -608,7 +623,7 @@ export default function FinancialStatementsPage() {
                         <>
                           <td className={`p-2 text-xs ${borderClass}`}>
                             <div style={{ paddingLeft: `${('depth' in row ? row.depth || 0 : 0) * 12}px` }}>
-                              {'label' in row ? formatLabelWithSpacing(row.label) : ''}
+                              {'label' in row ? formatLabelWithSpacing(row.label ?? '') : ''}
                             </div>
                           </td>
                           <td className={`p-2 text-xs ${borderClass} text-right`}>
